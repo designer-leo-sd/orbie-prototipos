@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Criar Nova Trilha — Orbie</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: #0d1a32;
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── TOP BAR (igual à home) ── */
+    .topbar {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 24px;
+      border-bottom: 1px solid #1d3258;
+      flex-shrink: 0;
+    }
+
+    .topbar-title {
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 24px;
+    }
+
+    .btn-icon {
+      width: 40px; height: 40px;
+      border-radius: 12px;
+      border: none; background: transparent;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      transition: background 0.15s;
+      color: #fff;
+    }
+    .btn-icon:hover { background: rgba(255,255,255,0.08); }
+
+    /* ── FORM CONTENT ── */
+    .form-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0 24px 120px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .form-inner {
+      width: 100%;
+      max-width: 676px;
+      padding: 24px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    /* ── FIELD ── */
+    .field { display: flex; flex-direction: column; gap: 4px; }
+
+    .field-label {
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 24px;
+      color: #fff;
+    }
+
+    /* Input + chip row */
+    .input-chip-row {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      height: 48px;
+      border: 2px solid #1d3258;
+      border-radius: 12px;
+      padding: 0 8px 0 12px;
+      background: transparent;
+      transition: border-color 0.15s;
+    }
+    .input-chip-row:focus-within { border-color: #0059e7; }
+
+    .input-chip-row input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      font-family: 'Roboto', sans-serif;
+      font-size: 16px;
+      color: #fff;
+      min-width: 0;
+    }
+    .input-chip-row input::placeholder { color: rgba(255,255,255,0.4); }
+
+    .chip-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      padding: 4px 0;
+    }
+
+    .chip-tag {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: #0059e7;
+      border-radius: 8px;
+      padding: 4px 8px;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .chip-tag button {
+      background: transparent;
+      border: none;
+      color: rgba(255,255,255,0.8);
+      cursor: pointer;
+      font-size: 14px;
+      line-height: 1;
+      padding: 0;
+    }
+    .chip-tag button:hover { color: #fff; }
+
+    /* Select */
+    .select-field {
+      height: 48px;
+      border: 2px solid #1d3258;
+      border-radius: 12px;
+      padding: 0 12px;
+      background: #0d1a32;
+      color: #fff;
+      font-family: 'Roboto', sans-serif;
+      font-size: 16px;
+      appearance: none;
+      cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M4 6L8 10L12 6' stroke='%2399C0FF' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      transition: border-color 0.15s;
+    }
+    .select-field:focus { outline: none; border-color: #0059e7; }
+    .select-field option { background: #142a51; }
+    .select-field.filled { border-color: #0059e7; }
+
+    /* Toggle */
+    .toggle-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 16px;
+      background: rgba(255,255,255,0.04);
+      border-radius: 12px;
+    }
+    .toggle-info { flex: 1; }
+    .toggle-title { font-size: 16px; font-weight: 700; }
+    .toggle-desc { font-size: 13px; color: rgba(255,255,255,0.6); line-height: 20px; margin-top: 4px; }
+
+    .switch {
+      position: relative;
+      width: 52px; height: 32px;
+      flex-shrink: 0;
+    }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider {
+      position: absolute;
+      inset: 0;
+      background: #1d3258;
+      border-radius: 1000px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .slider::before {
+      content: '';
+      position: absolute;
+      width: 24px; height: 24px;
+      left: 4px; top: 4px;
+      background: #fff;
+      border-radius: 50%;
+      transition: transform 0.2s;
+    }
+    .switch input:checked + .slider { background: #0059e7; }
+    .switch input:checked + .slider::before { transform: translateX(20px); }
+
+    /* ── BOTTOM ACTIONS ── */
+    .bottom-actions {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: #0d1a32;
+      border-top: 1px solid #1d3258;
+      padding: 16px 24px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-criar {
+      background: #0059e7;
+      border: 1px solid #0040a7;
+      border-bottom-width: 5px;
+      border-radius: 16px;
+      height: 52px;
+      width: 676px;
+      max-width: 100%;
+      font-family: 'Roboto', sans-serif;
+      font-weight: 700;
+      font-size: 16px;
+      color: #fff;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+    }
+    .btn-criar:hover:not(:disabled) { background: #0066ff; transform: translateY(-1px); }
+    .btn-criar:disabled {
+      background: #1d3258;
+      border-color: #1d3258;
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+
+    .btn-cancelar {
+      background: transparent;
+      border: none;
+      font-family: 'Roboto', sans-serif;
+      font-weight: 700;
+      font-size: 16px;
+      color: #fff;
+      cursor: pointer;
+      padding: 8px 24px;
+      border-radius: 12px;
+      transition: background 0.15s;
+    }
+    .btn-cancelar:hover { background: rgba(255,255,255,0.06); }
+  </style>
+</head>
+<body>
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <button class="btn-icon" onclick="location.href='index-v3.html'" title="Fechar">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <path d="M18 6L6 18M6 6L18 18" stroke="white" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    </button>
+    <span class="topbar-title">Criar Nova Trilha</span>
+    <div style="width:40px"></div>
+  </div>
+
+  <!-- FORM -->
+  <div class="form-content">
+    <div class="form-inner">
+
+      <!-- Assuntos -->
+      <div class="field">
+        <label class="field-label">Assuntos</label>
+        <div class="input-chip-row" id="assuntosRow">
+          <div class="chip-list" id="chipList"></div>
+          <input type="text" id="assuntoInput" placeholder="Adicionar assunto...">
+          <button class="btn-icon" onclick="addChip()" title="Adicionar" style="flex-shrink:0;">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M10 4V16M4 10H16" stroke="#99C0FF" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Matéria -->
+      <div class="field">
+        <label class="field-label">Matéria</label>
+        <select class="select-field" id="materiaSelect" onchange="onSelectChange(this); validate()">
+          <option value="">Selecione uma matéria</option>
+          <option value="ciencias" selected>Ciências</option>
+          <option value="matematica">Matemática</option>
+          <option value="portugues">Português</option>
+          <option value="historia">História</option>
+          <option value="geografia">Geografia</option>
+          <option value="fisica">Física</option>
+          <option value="quimica">Química</option>
+          <option value="biologia">Biologia</option>
+        </select>
+      </div>
+
+      <!-- Componente Curricular -->
+      <div class="field">
+        <label class="field-label">Componente Curricular</label>
+        <select class="select-field" id="componenteSelect" onchange="onSelectChange(this); validate()">
+          <option value="">Selecione um componente</option>
+          <option value="ecossistemas" selected>Ecossistemas e Cadeias Alimentares</option>
+          <option value="celula">Célula e Organismos</option>
+          <option value="corpo">Corpo Humano e Saúde</option>
+          <option value="evolucao">Evolução e Biodiversidade</option>
+        </select>
+      </div>
+
+      <!-- Dificuldade -->
+      <div class="field">
+        <label class="field-label">Dificuldade</label>
+        <select class="select-field" id="dificuldadeSelect" onchange="onSelectChange(this); validate()">
+          <option value="">Selecione a dificuldade</option>
+          <option value="facil" selected>Fácil</option>
+          <option value="medio">Médio</option>
+          <option value="dificil">Difícil</option>
+        </select>
+      </div>
+
+      <!-- Toggle Simulado -->
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <div class="toggle-title">Simulado</div>
+          <div class="toggle-desc">Ative para gerar uma prova de múltipla escolha com até 40 questões.</div>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="simuladoToggle">
+          <span class="slider"></span>
+        </label>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- BOTTOM ACTIONS -->
+  <div class="bottom-actions">
+    <button class="btn-criar" id="btnCriar" onclick="criarTrilha()">Criar Trilha</button>
+    <button class="btn-cancelar" onclick="location.href='index-v3.html'">Cancelar</button>
+  </div>
+
+<script>
+  // ── DADOS MOCKADOS pré-preenchidos ──
+  let chips = ['Cadeias Alimentares', 'Ecossistemas', 'Energia'];
+
+  function renderChips() {
+    const list = document.getElementById('chipList');
+    list.innerHTML = chips.map((c, i) => `
+      <div class="chip-tag">
+        ${c}
+        <button onclick="removeChip(${i})">×</button>
+      </div>
+    `).join('');
+    validate();
+  }
+
+  function addChip() {
+    const input = document.getElementById('assuntoInput');
+    const val = input.value.trim();
+    if (val && !chips.includes(val)) {
+      chips.push(val);
+      renderChips();
+    }
+    input.value = '';
+    input.focus();
+  }
+
+  function removeChip(i) {
+    chips.splice(i, 1);
+    renderChips();
+  }
+
+  document.getElementById('assuntoInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); addChip(); }
+  });
+
+  function onSelectChange(el) {
+    el.classList.toggle('filled', !!el.value);
+  }
+
+  function validate() {
+    const ok = chips.length > 0
+      && document.getElementById('materiaSelect').value
+      && document.getElementById('componenteSelect').value
+      && document.getElementById('dificuldadeSelect').value;
+    document.getElementById('btnCriar').disabled = !ok;
+  }
+
+  function criarTrilha() {
+    location.href = 'loading.html';
+  }
+
+  // Inicializa com dados mockados
+  renderChips();
+  // Marca selects como preenchidos
+  ['materiaSelect', 'componenteSelect', 'dificuldadeSelect'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el.value) el.classList.add('filled');
+  });
+</script>
+</body>
+</html>

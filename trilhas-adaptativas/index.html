@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trilhas Adaptativas - Orbie</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;900&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --brand-blue-300: #0059E7;
+            --brand-blue-200: #3F84F3;
+            --brand-blue-100: #99C0FF;
+            --brand-blue-600: #0D1A32;
+            --bg-home: #3A00A8;
+            --bg-home-deep: #1a0055;
+            --surface-card: #142A51;
+            --surface-card-dark: #10203D;
+            --text-primary: #FFFFFF;
+            --text-secondary: #99C0FF;
+            --text-muted: rgba(255,255,255,0.4);
+            --border-default: #224476;
+            --green-400: #12B76A;
+            --green-300: #32D583;
+            --red-400: #F04438;
+            --orange-400: #F79009;
+            --yellow-100: #FFEA24;
+            --purple-300: #591FC7;
+            --purple-400: #7B2FE8;
+            --ai-color: #DFB7FF;
+            --ai-glow: rgba(223,183,255,0.4);
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: var(--bg-home);
+            color: var(--text-primary);
+            max-width: 375px;
+            margin: 0 auto;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        h1, h2, h3, h4, .orbitron { font-family: 'Orbitron', sans-serif; }
+
+        /* SCREENS */
+        .screen { display: none; min-height: 100vh; flex-direction: column; position: relative; overflow: hidden; }
+        .screen.active { display: flex; }
+
+        /* SPACE BACKGROUND */
+        .space-bg {
+            position: fixed;
+            top: 0; left: 50%; transform: translateX(-50%);
+            width: 375px; height: 100vh;
+            background: radial-gradient(ellipse at 50% 0%, #6B0FD4 0%, #3A00A8 40%, #1a0055 100%);
+            z-index: 0;
+            pointer-events: none;
+        }
+        .stars {
+            position: fixed;
+            top: 0; left: 50%; transform: translateX(-50%);
+            width: 375px; height: 100vh;
+            z-index: 0;
+            pointer-events: none;
+        }
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle var(--dur, 3s) ease-in-out infinite;
+            opacity: var(--op, 0.6);
+        }
+        @keyframes twinkle {
+            0%, 100% { opacity: var(--op, 0.6); transform: scale(1); }
+            50% { opacity: 0.1; transform: scale(0.5); }
+        }
+
+        /* STATUS BAR */
+        .status-bar {
+            position: relative; z-index: 10;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 14px 24px 0;
+        }
+        .status-time { font-size: 13px; font-weight: 400; }
+        .status-icons { display: flex; align-items: center; gap: 6px; }
+        .status-icons svg { opacity: 0.9; }
+
+        /* TOP NAV */
+        .top-nav {
+            position: relative; z-index: 10;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 8px 24px 16px;
+        }
+        .orbie-logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 24px; font-weight: 700;
+            background: linear-gradient(135deg, #fff 0%, #DFB7FF 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 0 12px rgba(223,183,255,0.5));
+        }
+        .notif-btn {
+            width: 40px; height: 40px;
+            border-radius: 12px; background: rgba(255,255,255,0.08);
+            border: none; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            position: relative;
+        }
+        .notif-dot {
+            position: absolute; top: 8px; right: 8px;
+            width: 7px; height: 7px;
+            background: #F04438; border-radius: 50%;
+            border: 1.5px solid var(--bg-home);
+        }
+
+        /* AI INSIGHT BANNER */
+        .ai-banner {
+            position: relative; z-index: 10;
+            margin: 0 24px 16px;
+            background: linear-gradient(135deg, rgba(89,31,199,0.7) 0%, rgba(0,89,231,0.5) 100%);
+            border: 1px solid rgba(223,183,255,0.3);
+            border-radius: 12px;
+            padding: 12px 16px;
+            display: flex; align-items: center; gap: 10px;
+            backdrop-filter: blur(20px);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .ai-banner:hover { border-color: rgba(223,183,255,0.6); transform: translateY(-1px); }
+        .ai-icon {
+            width: 32px; height: 32px; flex-shrink: 0;
+            background: linear-gradient(135deg, #DFB7FF, #7B2FE8);
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px;
+            box-shadow: 0 0 12px rgba(223,183,255,0.4);
+        }
+        .ai-banner-text { flex: 1; }
+        .ai-banner-label {
+            font-size: 10px; font-weight: 700;
+            color: var(--ai-color); letter-spacing: 1px;
+            text-transform: uppercase; margin-bottom: 2px;
+        }
+        .ai-banner-msg { font-size: 12px; color: rgba(255,255,255,0.85); line-height: 1.3; }
+        .ai-chevron { color: var(--ai-color); font-size: 14px; }
+
+        /* PERFORMANCE PILL */
+        .perf-strip {
+            position: relative; z-index: 10;
+            display: flex; gap: 8px;
+            padding: 0 24px 20px;
+            overflow-x: auto; scrollbar-width: none;
+        }
+        .perf-strip::-webkit-scrollbar { display: none; }
+        .perf-pill {
+            flex-shrink: 0;
+            background: rgba(255,255,255,0.07);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 20px;
+            padding: 6px 12px;
+            display: flex; align-items: center; gap: 6px;
+            font-size: 11px; color: rgba(255,255,255,0.7);
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        .perf-pill:hover, .perf-pill.active {
+            background: rgba(0,89,231,0.3);
+            border-color: rgba(0,89,231,0.6);
+            color: #fff;
+        }
+        .perf-pill-dot {
+            width: 7px; height: 7px;
+            border-radius: 50%;
+        }
+
+        /* PLANETS SCROLL AREA */
+        .planets-container {
+            position: relative; z-index: 10;
+            flex: 1;
+            padding: 0 24px;
+            display: flex; flex-direction: column; gap: 32px;
+            padding-bottom: 220px;
+        }
+
+        /* PLANET ROW */
+        .planet-row {
+            display: flex; align-items: center; gap: 12px;
+            position: relative;
+        }
+        .planet-row.right { flex-direction: row-reverse; }
+
+        .planet-sphere {
+            flex-shrink: 0;
+            width: 158px; height: 158px;
+            border-radius: 50%;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.3s ease, filter 0.3s ease;
+        }
+        .planet-sphere:hover { transform: scale(1.04); }
+        .planet-sphere img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+
+        /* Planet state overlays */
+        .planet-locked .planet-sphere {
+            filter: grayscale(0.7) brightness(0.4);
+        }
+        .planet-locked .planet-sphere::after {
+            content: '🔒';
+            position: absolute; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 32px;
+            filter: grayscale(0) brightness(1);
+        }
+        .planet-recommended .planet-sphere {
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
+        @keyframes pulse-glow {
+            0%, 100% { filter: drop-shadow(0 0 12px rgba(223,183,255,0.5)); }
+            50% { filter: drop-shadow(0 0 28px rgba(223,183,255,0.9)) drop-shadow(0 0 50px rgba(89,31,199,0.6)); }
+        }
+        .planet-completed .planet-sphere {
+            filter: drop-shadow(0 0 10px rgba(50,213,131,0.5));
+        }
+
+        /* RECOMMENDED BADGE */
+        .rec-badge {
+            position: absolute; top: -10px; left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(90deg, #7B2FE8, #0059E7);
+            border-radius: 20px; padding: 3px 10px;
+            font-size: 9px; font-weight: 700;
+            letter-spacing: 0.8px; text-transform: uppercase;
+            color: #fff; white-space: nowrap;
+            box-shadow: 0 0 12px rgba(123,47,232,0.5);
+            z-index: 2;
+        }
+
+        /* MASTERY BADGE */
+        .mastery-badge {
+            position: absolute; bottom: -4px; right: -4px;
+            width: 32px; height: 32px;
+            background: var(--green-400);
+            border-radius: 50%;
+            border: 2px solid var(--bg-home);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 14px;
+        }
+
+        /* PLANET INFO CARD */
+        .planet-info {
+            flex: 1; min-width: 0;
+            display: flex; flex-direction: column; gap: 6px;
+        }
+        .planet-row.right .planet-info { align-items: flex-end; }
+        .planet-name {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 15px; font-weight: 500;
+            color: #fff; white-space: nowrap;
+        }
+        .planet-subject {
+            font-size: 10px; color: rgba(255,255,255,0.5);
+            text-transform: uppercase; letter-spacing: 0.8px;
+            margin-top: -4px;
+        }
+
+        /* PROGRESS LINE */
+        .planet-progress-bar {
+            width: 100%; display: flex; align-items: center; gap: 0;
+        }
+        .planet-row.right .planet-progress-bar { flex-direction: row-reverse; }
+        .prog-line {
+            flex: 1; height: 1px;
+            background: rgba(255,255,255,0.2);
+            position: relative;
+        }
+        .prog-fill {
+            position: absolute; left: 0; top: 0; height: 100%;
+            background: linear-gradient(90deg, #12B76A, #32D583);
+            transition: width 1s ease;
+        }
+        .planet-row.right .prog-fill { left: auto; right: 0; }
+        .prog-diamond {
+            width: 7px; height: 7px;
+            border: 1.5px solid #fff;
+            background: #142A51;
+            transform: rotate(45deg);
+            flex-shrink: 0;
+        }
+        .prog-diamond.filled {
+            background: var(--green-300);
+            border-color: var(--green-300);
+        }
+
+        /* STATUS TEXT */
+        .planet-status {
+            font-size: 11px; color: var(--brand-blue-100);
+            display: flex; align-items: center; gap: 4px;
+        }
+        .planet-row.right .planet-status { justify-content: flex-end; }
+        .status-dot {
+            width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0;
+        }
+
+        /* MASTERY MINI BAR */
+        .mastery-bars {
+            display: flex; gap: 3px; align-items: center;
+        }
+        .mastery-bar {
+            width: 16px; height: 4px; border-radius: 2px;
+            background: rgba(255,255,255,0.15);
+            transition: background 0.3s;
+        }
+        .mastery-bar.filled { background: var(--green-300); }
+        .mastery-bar.partial { background: var(--orange-400); }
+
+        /* LOCK REASON */
+        .lock-reason {
+            font-size: 10px; color: rgba(255,255,255,0.35);
+            font-style: italic;
+        }
+
+        /* AI DIAGNOSTIC LABEL */
+        .ai-suggest {
+            background: rgba(223,183,255,0.1);
+            border: 1px solid rgba(223,183,255,0.2);
+            border-radius: 6px;
+            padding: 3px 7px;
+            font-size: 10px; color: var(--ai-color);
+            display: flex; align-items: center; gap: 4px;
+        }
+
+        /* CONTINUE CARD */
+        .continue-card-wrap {
+            position: fixed;
+            bottom: 160px; left: 50%; transform: translateX(-50%);
+            z-index: 20; width: 327px;
+        }
+        .continue-card {
+            background: rgba(0,0,0,0.45);
+            backdrop-filter: blur(50px);
+            -webkit-backdrop-filter: blur(50px);
+            border-radius: 12px;
+            padding: 16px;
+            display: flex; align-items: center; gap: 16px;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .continue-planet-thumb {
+            width: 44px; height: 44px; border-radius: 50%;
+            flex-shrink: 0;
+            box-shadow: 0 0 10px rgba(223,183,255,0.4);
+            object-fit: cover;
+        }
+        .continue-info { flex: 1; min-width: 0; }
+        .continue-title { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+        .continue-breadcrumb {
+            display: flex; align-items: center; gap: 4px;
+            font-size: 13px; color: rgba(255,255,255,0.4);
+        }
+        .breadcrumb-sep { font-size: 10px; }
+        .continue-fab {
+            width: 40px; height: 40px; border-radius: 12px;
+            background: var(--brand-blue-300);
+            border: none; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0; transition: all 0.2s;
+        }
+        .continue-fab:hover { background: var(--brand-blue-200); transform: scale(1.05); }
+
+        /* BOTTOM NAV */
+        .bottom-nav-wrap {
+            position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+            z-index: 20; width: 375px;
+        }
+        .bottom-nav-container {
+            padding: 0 24px 12px;
+        }
+        .bottom-nav {
+            background: #142A51;
+            border: 2px solid #1d3258;
+            border-radius: 12px;
+            padding: 4px;
+            display: flex; align-items: center; height: 64px;
+        }
+        .nav-btn {
+            flex: 1; height: 100%;
+            border-radius: 8px; border: none;
+            background: transparent; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s;
+        }
+        .nav-btn.active {
+            background: var(--brand-blue-300);
+            border: 2px solid var(--brand-blue-300);
+        }
+        .android-bar {
+            height: 34px;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 60px 12px;
+        }
+        .android-btn {
+            background: rgba(255,255,255,0.9);
+            border-radius: 2px;
+        }
+
+        /* MODAL OVERLAY */
+        .modal-overlay {
+            display: none; position: fixed; inset: 0;
+            background: rgba(0,0,0,0.7); z-index: 50;
+            align-items: flex-end; justify-content: center;
+            backdrop-filter: blur(4px);
+        }
+        .modal-overlay.active { display: flex; }
+        .modal-sheet {
+            background: #0D1A32;
+            border: 1px solid #224476;
+            border-radius: 24px 24px 0 0;
+            padding: 24px;
+            width: 375px;
+            max-height: 85vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s ease;
+        }
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+        .modal-handle {
+            width: 40px; height: 4px; background: rgba(255,255,255,0.2);
+            border-radius: 2px; margin: 0 auto 20px;
+        }
+        .modal-close {
+            position: absolute; top: 20px; right: 20px;
+            background: rgba(255,255,255,0.08); border: none;
+            border-radius: 8px; width: 32px; height: 32px;
+            cursor: pointer; color: #fff; font-size: 16px;
+            display: flex; align-items: center; justify-content: center;
+        }
+
+        /* AI DIAGNOSTIC MODAL */
+        .diagnostic-header {
+            display: flex; align-items: center; gap: 12px; margin-bottom: 20px;
+        }
+        .diagnostic-icon {
+            width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0;
+            background: linear-gradient(135deg, #7B2FE8, #0059E7);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px; box-shadow: 0 0 16px rgba(123,47,232,0.5);
+        }
+        .diagnostic-title { font-family: 'Orbitron', sans-serif; font-size: 14px; margin-bottom: 2px; }
+        .diagnostic-sub { font-size: 12px; color: var(--text-secondary); }
+
+        .skill-section { margin-bottom: 20px; }
+        .skill-section-title {
+            font-size: 11px; color: rgba(255,255,255,0.45);
+            text-transform: uppercase; letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+        .skill-item {
+            display: flex; align-items: center; gap: 10px;
+            margin-bottom: 10px;
+        }
+        .skill-name { font-size: 13px; flex: 1; }
+        .skill-progress-track {
+            width: 80px; height: 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 3px; overflow: hidden;
+        }
+        .skill-progress-fill {
+            height: 100%; border-radius: 3px;
+            transition: width 0.8s ease;
+        }
+        .skill-pct { font-size: 11px; color: var(--text-secondary); width: 32px; text-align: right; }
+
+        .recommendation-card {
+            background: rgba(89,31,199,0.2);
+            border: 1px solid rgba(223,183,255,0.25);
+            border-radius: 12px; padding: 14px;
+            margin-bottom: 12px;
+            cursor: pointer; transition: all 0.2s;
+        }
+        .recommendation-card:hover { border-color: rgba(223,183,255,0.5); transform: translateY(-1px); }
+        .rec-card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+        .rec-planet-mini {
+            width: 36px; height: 36px; border-radius: 50%;
+            flex-shrink: 0; object-fit: cover;
+        }
+        .rec-card-title { font-family: 'Orbitron', sans-serif; font-size: 13px; }
+        .rec-card-reason { font-size: 12px; color: rgba(255,255,255,0.6); line-height: 1.4; }
+        .rec-card-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+        .rec-tag {
+            background: rgba(0,89,231,0.2); border: 1px solid rgba(0,89,231,0.3);
+            border-radius: 6px; padding: 2px 8px;
+            font-size: 10px; color: var(--brand-blue-100);
+        }
+        .btn-start-planet {
+            width: 100%; padding: 14px;
+            background: var(--brand-blue-300);
+            border: none; border-radius: 12px;
+            color: #fff; font-family: 'Roboto', sans-serif;
+            font-size: 15px; font-weight: 700;
+            cursor: pointer; transition: all 0.2s;
+            margin-top: 16px;
+        }
+        .btn-start-planet:hover { background: var(--brand-blue-200); transform: translateY(-2px); }
+
+        /* PLANET DETAIL MODAL */
+        .planet-detail-hero {
+            display: flex; align-items: center; gap: 16px; margin-bottom: 20px;
+        }
+        .planet-detail-img {
+            width: 80px; height: 80px; border-radius: 50%; object-fit: cover;
+            box-shadow: 0 0 20px rgba(223,183,255,0.3);
+        }
+        .detail-stats { display: flex; gap: 12px; margin: 16px 0; }
+        .detail-stat {
+            flex: 1; background: rgba(255,255,255,0.05);
+            border-radius: 10px; padding: 10px; text-align: center;
+        }
+        .detail-stat-val { font-family: 'Orbitron', sans-serif; font-size: 18px; color: var(--green-300); }
+        .detail-stat-lbl { font-size: 10px; color: rgba(255,255,255,0.45); margin-top: 2px; }
+
+        /* TOASTS */
+        .toast {
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-80px);
+            z-index: 100; background: #142A51;
+            border: 1px solid var(--green-400);
+            border-radius: 12px; padding: 12px 20px;
+            display: flex; align-items: center; gap: 10px;
+            font-size: 13px; white-space: nowrap;
+            transition: transform 0.3s ease;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 2px; }
+    </style>
+</head>
+<body>
+
+<!-- SPACE LAYERS -->
+<div class="space-bg"></div>
+<div class="stars" id="starsLayer"></div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+    <span id="toastIcon">✅</span>
+    <span id="toastMsg">Fase iniciada!</span>
+</div>
+
+<!-- ==================== HOME SCREEN ==================== -->
+<div id="screenHome" class="screen active">
+
+    <!-- Status Bar -->
+    <div class="status-bar">
+        <span class="status-time">9:41</span>
+        <div class="status-icons">
+            <svg width="18" height="12" viewBox="0 0 18 12" fill="none">
+                <rect x="0" y="4" width="3" height="8" rx="1" fill="white" opacity="0.4"/>
+                <rect x="5" y="2.5" width="3" height="9.5" rx="1" fill="white" opacity="0.6"/>
+                <rect x="10" y="1" width="3" height="11" rx="1" fill="white" opacity="0.8"/>
+                <rect x="15" y="0" width="3" height="12" rx="1" fill="white"/>
+            </svg>
+            <svg width="16" height="12" viewBox="0 0 16 12" fill="white" opacity="0.9">
+                <path d="M8 3C10.2 3 12.2 3.9 13.6 5.4L15 4C13.2 2.1 10.7 1 8 1C5.3 1 2.8 2.1 1 4L2.4 5.4C3.8 3.9 5.8 3 8 3Z"/>
+                <path d="M8 6C9.4 6 10.7 6.6 11.6 7.5L13 6.1C11.7 4.8 10 4 8 4C6 4 4.3 4.8 3 6.1L4.4 7.5C5.3 6.6 6.6 6 8 6Z"/>
+                <circle cx="8" cy="10" r="1.5"/>
+            </svg>
+            <svg width="25" height="12" viewBox="0 0 25 12">
+                <rect x="0.5" y="0.5" width="21" height="11" rx="3" stroke="white" stroke-opacity="0.35"/>
+                <rect x="2" y="2" width="16" height="8" rx="2" fill="white"/>
+                <path d="M23 4.5v3a1.5 1.5 0 000-3z" fill="white" opacity="0.4"/>
+            </svg>
+        </div>
+    </div>
+
+    <!-- Top Nav -->
+    <div class="top-nav">
+        <div class="orbie-logo">○rbie</div>
+        <button class="notif-btn" onclick="showToast('🔔','Você tem 2 novas conquistas!')">
+            <div class="notif-dot"></div>
+            <svg width="20" height="20" fill="white" viewBox="0 0 24 24">
+                <path d="M12 22c1.1 0 2-.9 2-2h-4a2 2 0 002 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"/>
+            </svg>
+        </button>
+    </div>
+
+    <!-- AI Insight Banner -->
+    <div class="ai-banner" onclick="openAiDiagnostic()">
+        <div class="ai-icon">🤖</div>
+        <div class="ai-banner-text">
+            <div class="ai-banner-label">IA Orbie · Diagnóstico</div>
+            <div class="ai-banner-msg">Você tem gaps em <strong>Álgebra</strong>. Tenho 3 planetas selecionados pra você.</div>
+        </div>
+        <span class="ai-chevron">›</span>
+    </div>
+
+    <!-- Performance Pills -->
+    <div class="perf-strip">
+        <div class="perf-pill active">
+            <div class="perf-pill-dot" style="background:#32D583"></div>
+            Todos
+        </div>
+        <div class="perf-pill" onclick="filterPill(this,'mat')">
+            <div class="perf-pill-dot" style="background:#0059E7"></div>
+            Matemática
+        </div>
+        <div class="perf-pill" onclick="filterPill(this,'cie')">
+            <div class="perf-pill-dot" style="background:#F79009"></div>
+            Ciências
+        </div>
+        <div class="perf-pill" onclick="filterPill(this,'por')">
+            <div class="perf-pill-dot" style="background:#DFB7FF"></div>
+            Português
+        </div>
+        <div class="perf-pill" onclick="filterPill(this,'his')">
+            <div class="perf-pill-dot" style="background:#FF6B6B"></div>
+            História
+        </div>
+    </div>
+
+    <!-- PLANETS LIST -->
+    <div class="planets-container" id="planetsList">
+
+        <!-- PLANETA 1: TUTORIAL (completed) — esquerda -->
+        <div class="planet-row planet-completed" id="p-tutorial" onclick="openPlanet('tutorial')">
+            <div class="planet-sphere">
+                <img src="https://www.figma.com/api/mcp/asset/91fc1cbd-182a-4f93-b81c-7a8838806902" alt="Tutorial">
+                <div class="mastery-badge">✓</div>
+            </div>
+            <div class="planet-info">
+                <div class="planet-name">Tutorial</div>
+                <div class="planet-subject">Introdução</div>
+                <div class="planet-progress-bar">
+                    <div class="prog-line"><div class="prog-fill" style="width:100%"></div></div>
+                    <div class="prog-diamond filled"></div>
+                </div>
+                <div class="planet-status">
+                    <div class="status-dot" style="background:#32D583"></div>
+                    Concluído · 100%
+                </div>
+                <div class="mastery-bars">
+                    <div class="mastery-bar filled"></div>
+                    <div class="mastery-bar filled"></div>
+                    <div class="mastery-bar filled"></div>
+                    <div class="mastery-bar filled"></div>
+                    <div class="mastery-bar filled"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PLANETA 2: MAT#104 (in progress) — direita, RECOMMENDED -->
+        <div class="planet-row right planet-recommended" id="p-mat104" onclick="openPlanet('mat104')">
+            <div class="planet-sphere" style="position:relative">
+                <div class="rec-badge">🤖 IA Recomenda</div>
+                <img src="https://www.figma.com/api/mcp/asset/f1f1d19b-6960-4389-9a52-a45ab707b28c" alt="MAT#104">
+            </div>
+            <div class="planet-info" style="align-items:flex-end">
+                <div class="planet-name">MAT·104</div>
+                <div class="planet-subject">Álgebra Básica</div>
+                <div class="planet-progress-bar">
+                    <div class="prog-diamond filled"></div>
+                    <div class="prog-line"><div class="prog-fill" style="width:45%"></div></div>
+                </div>
+                <div class="planet-status" style="justify-content:flex-end">
+                    <div class="status-dot" style="background:#F79009"></div>
+                    Em andamento · 45%
+                </div>
+                <div class="ai-suggest">🤖 Gap detectado: equações</div>
+            </div>
+        </div>
+
+        <!-- PLANETA 3: CIE#201 (unlocked, not started) — esquerda -->
+        <div class="planet-row" id="p-cie201" onclick="openPlanet('cie201')">
+            <div class="planet-sphere">
+                <img src="https://via.placeholder.com/158/FF8C00/fff?text=🪐" alt="CIE#201"
+                     style="background: radial-gradient(circle at 35% 30%, #FFD700, #FF8C00 50%, #8B4513); border-radius:50%;">
+            </div>
+            <div class="planet-info">
+                <div class="planet-name">CIE·201</div>
+                <div class="planet-subject">Células e Vida</div>
+                <div class="planet-progress-bar">
+                    <div class="prog-line"><div class="prog-fill" style="width:0%"></div></div>
+                    <div class="prog-diamond"></div>
+                </div>
+                <div class="planet-status">
+                    <div class="status-dot" style="background:#99C0FF"></div>
+                    Disponível · 0%
+                </div>
+                <div class="mastery-bars">
+                    <div class="mastery-bar"></div>
+                    <div class="mastery-bar"></div>
+                    <div class="mastery-bar"></div>
+                    <div class="mastery-bar"></div>
+                    <div class="mastery-bar"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PLANETA 4: POR#301 (locked — requires 60% MAT#104) — direita -->
+        <div class="planet-row right planet-locked" id="p-por301">
+            <div class="planet-sphere">
+                <img src="https://via.placeholder.com/158/7B2FE8/fff?text=🔮" alt="POR#301"
+                     style="background: radial-gradient(circle at 35% 30%, #DFB7FF, #7B2FE8 50%, #2D0066); border-radius:50%;">
+            </div>
+            <div class="planet-info" style="align-items:flex-end">
+                <div class="planet-name" style="color:rgba(255,255,255,0.4)">POR·301</div>
+                <div class="planet-subject">Interpretação Textual</div>
+                <div class="planet-progress-bar">
+                    <div class="prog-diamond"></div>
+                    <div class="prog-line"><div class="prog-fill" style="width:0%"></div></div>
+                </div>
+                <div class="planet-status" style="justify-content:flex-end; color:rgba(255,255,255,0.3)">
+                    <span>🔒</span> Bloqueado
+                </div>
+                <div class="lock-reason" style="text-align:right">Requer 60% em MAT·104</div>
+            </div>
+        </div>
+
+        <!-- PLANETA 5: HIS#401 (locked — adaptive, low performance) — esquerda -->
+        <div class="planet-row planet-locked" id="p-his401">
+            <div class="planet-sphere">
+                <img src="https://via.placeholder.com/158/FF4444/fff?text=🔴" alt="HIS#401"
+                     style="background: radial-gradient(circle at 35% 30%, #FF8888, #FF4444 50%, #8B0000); border-radius:50%;">
+            </div>
+            <div class="planet-info">
+                <div class="planet-name" style="color:rgba(255,255,255,0.4)">HIS·401</div>
+                <div class="planet-subject">Idade Média</div>
+                <div class="planet-progress-bar">
+                    <div class="prog-line"><div class="prog-fill" style="width:0%"></div></div>
+                    <div class="prog-diamond"></div>
+                </div>
+                <div class="planet-status" style="color:rgba(255,255,255,0.3)">
+                    <span>🔒</span> Bloqueado
+                </div>
+                <div class="lock-reason">Conclua CIE·201 primeiro</div>
+            </div>
+        </div>
+
+        <!-- PLANETA 6: MAT#501 (future — adaptive unlock) — direita -->
+        <div class="planet-row right planet-locked" id="p-mat501">
+            <div class="planet-sphere" style="opacity:0.3">
+                <img src="https://via.placeholder.com/158/0044AA/fff?text=❄" alt="MAT#501"
+                     style="background: radial-gradient(circle at 35% 30%, #88CCFF, #0059E7 50%, #002266); border-radius:50%;">
+            </div>
+            <div class="planet-info" style="align-items:flex-end">
+                <div class="planet-name" style="color:rgba(255,255,255,0.3)">MAT·501</div>
+                <div class="planet-subject">Geometria Avançada</div>
+                <div class="planet-progress-bar">
+                    <div class="prog-diamond"></div>
+                    <div class="prog-line" style="background:rgba(255,255,255,0.08)"><div class="prog-fill" style="width:0%"></div></div>
+                </div>
+                <div class="planet-status" style="justify-content:flex-end; color:rgba(255,255,255,0.25)">
+                    <span>🔒</span> Adaptativo
+                </div>
+                <div class="lock-reason" style="text-align:right">IA liberará com base no seu desempenho</div>
+            </div>
+        </div>
+
+    </div><!-- /planets-container -->
+
+    <!-- Continue Card -->
+    <div class="continue-card-wrap">
+        <div class="continue-card" onclick="openPlanet('mat104')">
+            <img class="continue-planet-thumb" src="https://www.figma.com/api/mcp/asset/f1f1d19b-6960-4389-9a52-a45ab707b28c" alt="MAT#104">
+            <div class="continue-info">
+                <div class="continue-title">Continuar de onde parei</div>
+                <div class="continue-breadcrumb">
+                    <span>MAT·104</span>
+                    <span class="breadcrumb-sep">›</span>
+                    <span>Ilha 2</span>
+                    <span class="breadcrumb-sep">›</span>
+                    <span>Fase 5</span>
+                </div>
+            </div>
+            <button class="continue-fab">
+                <svg width="18" height="18" fill="white" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Bottom Nav -->
+    <div class="bottom-nav-wrap">
+        <div class="bottom-nav-container">
+            <div class="bottom-nav">
+                <button class="nav-btn active">
+                    <svg width="22" height="22" fill="white" viewBox="0 0 24 24"><path d="M12 2L2 12h3v9h6v-6h2v6h6v-9h3L12 2z"/></svg>
+                </button>
+                <button class="nav-btn" onclick="showToast('🌊','Trilhas em breve!')">
+                    <svg width="22" height="22" fill="rgba(255,255,255,0.45)" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/></svg>
+                </button>
+                <button class="nav-btn" onclick="showToast('🏆','Ranking em breve!')">
+                    <svg width="22" height="22" fill="rgba(255,255,255,0.45)" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v4c0 1.1.9 2 2 2h1v9h4v-5h4v5h4V11h1c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 10c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/></svg>
+                </button>
+                <button class="nav-btn" onclick="showToast('👤','Perfil em breve!')">
+                    <svg width="22" height="22" fill="rgba(255,255,255,0.45)" viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+                </button>
+            </div>
+        </div>
+        <div class="android-bar">
+            <svg class="android-btn" width="12" height="14" viewBox="0 0 12 14"><path d="M11 7L2 1v12l9-6z" fill="rgba(255,255,255,0.9)"/></svg>
+            <div class="android-btn" style="width:16px;height:16px;border-radius:50%"></div>
+            <div class="android-btn" style="width:14px;height:14px;border-radius:2px"></div>
+        </div>
+    </div>
+
+</div><!-- /screenHome -->
+
+<!-- ==================== AI DIAGNOSTIC MODAL ==================== -->
+<div class="modal-overlay" id="modalAI" onclick="closeOnBackdrop(event,'modalAI')">
+    <div class="modal-sheet">
+        <div class="modal-handle"></div>
+        <button class="modal-close" onclick="closeModal('modalAI')">✕</button>
+
+        <div class="diagnostic-header">
+            <div class="diagnostic-icon">🤖</div>
+            <div>
+                <div class="diagnostic-title">Diagnóstico IA · Ana</div>
+                <div class="diagnostic-sub">Atualizado há 2 horas · 47 questões analisadas</div>
+            </div>
+        </div>
+
+        <!-- Skill Map -->
+        <div class="skill-section">
+            <div class="skill-section-title">Mapa de Habilidades</div>
+
+            <div class="skill-item">
+                <div class="skill-name">Adição e Subtração</div>
+                <div class="skill-progress-track">
+                    <div class="skill-progress-fill" style="width:92%;background:linear-gradient(90deg,#12B76A,#32D583)"></div>
+                </div>
+                <div class="skill-pct" style="color:#32D583">92%</div>
+            </div>
+            <div class="skill-item">
+                <div class="skill-name">Multiplicação</div>
+                <div class="skill-progress-track">
+                    <div class="skill-progress-fill" style="width:78%;background:linear-gradient(90deg,#12B76A,#32D583)"></div>
+                </div>
+                <div class="skill-pct" style="color:#32D583">78%</div>
+            </div>
+            <div class="skill-item">
+                <div class="skill-name">Frações</div>
+                <div class="skill-progress-track">
+                    <div class="skill-progress-fill" style="width:54%;background:linear-gradient(90deg,#F79009,#FFEA24)"></div>
+                </div>
+                <div class="skill-pct" style="color:#F79009">54%</div>
+            </div>
+            <div class="skill-item">
+                <div class="skill-name">Equações</div>
+                <div class="skill-progress-track">
+                    <div class="skill-progress-fill" style="width:31%;background:linear-gradient(90deg,#F04438,#FF7070)"></div>
+                </div>
+                <div class="skill-pct" style="color:#F04438">31%</div>
+            </div>
+            <div class="skill-item">
+                <div class="skill-name">Geometria</div>
+                <div class="skill-progress-track">
+                    <div class="skill-progress-fill" style="width:19%;background:linear-gradient(90deg,#F04438,#FF7070)"></div>
+                </div>
+                <div class="skill-pct" style="color:#F04438">19%</div>
+            </div>
+        </div>
+
+        <!-- Recommendations -->
+        <div class="skill-section">
+            <div class="skill-section-title">🤖 Trilhas Recomendadas pela IA</div>
+
+            <div class="recommendation-card" onclick="closeModal('modalAI'); openPlanet('mat104')">
+                <div class="rec-card-header">
+                    <img class="rec-planet-mini" src="https://www.figma.com/api/mcp/asset/f1f1d19b-6960-4389-9a52-a45ab707b28c" alt="">
+                    <div>
+                        <div class="rec-card-title">MAT·104 · Álgebra Básica</div>
+                        <div style="font-size:10px;color:#F79009;margin-top:2px">⚡ Em andamento · Prioridade Alta</div>
+                    </div>
+                </div>
+                <div class="rec-card-reason">Você errou 7 das últimas 10 questões sobre equações. Fortalecer essa base vai desbloquear 3 planetas novos.</div>
+                <div class="rec-card-tags">
+                    <span class="rec-tag">Gap crítico</span>
+                    <span class="rec-tag">Equações</span>
+                    <span class="rec-tag">+3 planetas</span>
+                </div>
+            </div>
+
+            <div class="recommendation-card" onclick="closeModal('modalAI'); openPlanet('cie201')">
+                <div class="rec-card-header">
+                    <div style="width:36px;height:36px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#FFD700,#FF8C00 50%,#8B4513);flex-shrink:0;"></div>
+                    <div>
+                        <div class="rec-card-title">CIE·201 · Células e Vida</div>
+                        <div style="font-size:10px;color:#99C0FF;margin-top:2px">✨ Disponível · Prioridade Média</div>
+                    </div>
+                </div>
+                <div class="rec-card-reason">Seu estilo de aprendizado tem afinidade com conteúdo visual. Ciências tende a ter alta retenção pra você.</div>
+                <div class="rec-card-tags">
+                    <span class="rec-tag">Visual learning</span>
+                    <span class="rec-tag">Alta retenção</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Overall Score -->
+        <div style="background:rgba(255,255,255,0.04);border-radius:12px;padding:14px;margin-bottom:4px">
+            <div style="font-size:11px;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Nível Geral de Domínio</div>
+            <div style="display:flex;align-items:center;gap:12px">
+                <div style="font-family:'Orbitron',sans-serif;font-size:36px;color:#FFEA24;font-weight:700">54<span style="font-size:18px;color:rgba(255,255,255,0.5)">%</span></div>
+                <div>
+                    <div style="font-size:13px;margin-bottom:4px">Explorer Intermediário</div>
+                    <div style="font-size:11px;color:rgba(255,255,255,0.45)">+12% essa semana · Continue assim!</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- ==================== PLANET DETAIL MODAL ==================== -->
+<div class="modal-overlay" id="modalPlanet" onclick="closeOnBackdrop(event,'modalPlanet')">
+    <div class="modal-sheet">
+        <div class="modal-handle"></div>
+        <button class="modal-close" onclick="closeModal('modalPlanet')">✕</button>
+
+        <div class="planet-detail-hero">
+            <img id="pdImg" class="planet-detail-img" src="" alt="">
+            <div>
+                <div id="pdName" style="font-family:'Orbitron',sans-serif;font-size:18px;font-weight:600;margin-bottom:4px"></div>
+                <div id="pdSubject" style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:8px"></div>
+                <div id="pdStatusBadge" style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.08);border-radius:20px;padding:4px 10px;font-size:11px;"></div>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="detail-stats">
+            <div class="detail-stat">
+                <div class="detail-stat-val" id="pdStat1">—</div>
+                <div class="detail-stat-lbl">Progresso</div>
+            </div>
+            <div class="detail-stat">
+                <div class="detail-stat-val" id="pdStat2">—</div>
+                <div class="detail-stat-lbl">Fases</div>
+            </div>
+            <div class="detail-stat">
+                <div class="detail-stat-val" id="pdStat3">—</div>
+                <div class="detail-stat-lbl">XP</div>
+            </div>
+        </div>
+
+        <!-- AI Insight for this planet -->
+        <div id="pdAiInsight" style="background:rgba(89,31,199,0.15);border:1px solid rgba(223,183,255,0.2);border-radius:10px;padding:12px;margin-bottom:16px;font-size:12px;color:rgba(255,255,255,0.7);line-height:1.5;display:none">
+            <span style="color:#DFB7FF;font-weight:700">🤖 IA: </span>
+            <span id="pdAiText"></span>
+        </div>
+
+        <!-- Content preview -->
+        <div style="margin-bottom:16px">
+            <div class="skill-section-title" style="margin-bottom:10px">Conteúdo das Ilhas</div>
+            <div id="pdIslands"></div>
+        </div>
+
+        <!-- Skill targets -->
+        <div id="pdSkillsSection" style="margin-bottom:16px">
+            <div class="skill-section-title" style="margin-bottom:10px">Habilidades trabalhadas</div>
+            <div id="pdSkills"></div>
+        </div>
+
+        <button class="btn-start-planet" id="pdCTA" onclick="startPlanet()">▶ Continuar Trilha</button>
+    </div>
+</div>
+
+<!-- SCRIPTS -->
+<script>
+// ============ DATA ============
+const PLANETAS = {
+    tutorial: {
+        img: 'https://www.figma.com/api/mcp/asset/91fc1cbd-182a-4f93-b81c-7a8838806902',
+        name: 'Tutorial', subject: 'Introdução ao Orbie',
+        status: 'completed', prog: '100%', fases: '12/12', xp: '340',
+        ai: null,
+        islands: [
+            { name: 'Ilha 1 · Boas-vindas', done: true },
+            { name: 'Ilha 2 · Primeiros passos', done: true },
+            { name: 'Ilha 3 · Missão final', done: true },
+        ],
+        skills: ['Navegação', 'Missões', 'XP e Conquistas'],
+    },
+    mat104: {
+        img: 'https://www.figma.com/api/mcp/asset/f1f1d19b-6960-4389-9a52-a45ab707b28c',
+        name: 'MAT·104', subject: 'Álgebra Básica',
+        status: 'progress', prog: '45%', fases: '5/12', xp: '210',
+        ai: 'Você tem gaps em equações. Esta trilha reforça exatamente o que está com baixa retenção no seu perfil. Completar as Ilhas 2 e 3 deve elevar sua proficiência em ~28%.',
+        islands: [
+            { name: 'Ilha 1 · Números e operações', done: true },
+            { name: 'Ilha 2 · Equações simples', done: false, current: true },
+            { name: 'Ilha 3 · Equações de 2º grau', done: false },
+            { name: 'Ilha 4 · Sistemas', done: false, locked: true },
+        ],
+        skills: ['Equações', 'Álgebra', 'Raciocínio Lógico'],
+    },
+    cie201: {
+        img: null,
+        imgBg: 'radial-gradient(circle at 35% 30%, #FFD700, #FF8C00 50%, #8B4513)',
+        name: 'CIE·201', subject: 'Células e Vida',
+        status: 'available', prog: '0%', fases: '0/10', xp: '0',
+        ai: 'Seu histórico mostra boa performance em conteúdos visuais. Ciências tem 85% de material ilustrativo — expectativa de alta retenção para o seu perfil.',
+        islands: [
+            { name: 'Ilha 1 · Células', done: false },
+            { name: 'Ilha 2 · DNA e Genética', done: false },
+            { name: 'Ilha 3 · Ecossistemas', done: false },
+        ],
+        skills: ['Biologia Celular', 'Genética', 'Ecologia'],
+    },
+};
+
+let currentPlanet = null;
+
+// ============ STARS ============
+function generateStars() {
+    const layer = document.getElementById('starsLayer');
+    for (let i = 0; i < 80; i++) {
+        const s = document.createElement('div');
+        s.classList.add('star');
+        const size = Math.random() * 2.5 + 0.5;
+        s.style.cssText = `
+            width:${size}px; height:${size}px;
+            left:${Math.random()*100}%;
+            top:${Math.random()*100}%;
+            --dur:${2 + Math.random()*4}s;
+            --op:${0.2 + Math.random()*0.7};
+            animation-delay:${Math.random()*4}s;
+        `;
+        layer.appendChild(s);
+    }
+}
+generateStars();
+
+// ============ NAVIGATION ============
+function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    window.scrollTo(0,0);
+}
+
+// ============ MODALS ============
+function openModal(id) { document.getElementById(id).classList.add('active'); }
+function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+function closeOnBackdrop(e, id) { if (e.target === e.currentTarget) closeModal(id); }
+
+function openAiDiagnostic() { openModal('modalAI'); }
+
+function openPlanet(key) {
+    const p = PLANETAS[key];
+    if (!p) {
+        showToast('🔒', 'Complete as trilhas anteriores para desbloquear!');
+        return;
+    }
+    currentPlanet = key;
+
+    // Populate modal
+    const img = document.getElementById('pdImg');
+    if (p.img) { img.src = p.img; img.style.background = ''; }
+    else { img.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'; img.style.background = p.imgBg || '#142A51'; }
+
+    document.getElementById('pdName').textContent = p.name;
+    document.getElementById('pdSubject').textContent = p.subject;
+    document.getElementById('pdStat1').textContent = p.prog;
+    document.getElementById('pdStat2').textContent = p.fases;
+    document.getElementById('pdStat3').textContent = p.xp;
+
+    const statusColors = { completed:'#32D583', progress:'#F79009', available:'#99C0FF' };
+    const statusLabels = { completed:'✓ Concluído', progress:'▶ Em andamento', available:'● Disponível' };
+    const badge = document.getElementById('pdStatusBadge');
+    badge.style.color = statusColors[p.status];
+    badge.textContent = statusLabels[p.status];
+
+    // AI insight
+    const aiDiv = document.getElementById('pdAiInsight');
+    if (p.ai) { aiDiv.style.display = 'block'; document.getElementById('pdAiText').textContent = p.ai; }
+    else { aiDiv.style.display = 'none'; }
+
+    // Islands
+    const islandsEl = document.getElementById('pdIslands');
+    islandsEl.innerHTML = (p.islands || []).map(isl => `
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:rgba(255,255,255,0.04);border-radius:10px;margin-bottom:6px;${isl.locked?'opacity:0.4':''}">
+            <span style="font-size:16px">${isl.done ? '✅' : isl.current ? '▶' : isl.locked ? '🔒' : '○'}</span>
+            <span style="font-size:13px;${isl.current?'color:#FFEA24;font-weight:700':''}">${isl.name}</span>
+            ${isl.current ? '<span style="margin-left:auto;font-size:10px;color:#F79009;font-weight:700">ATUAL</span>' : ''}
+        </div>
+    `).join('');
+
+    // Skills
+    const skillsEl = document.getElementById('pdSkills');
+    skillsEl.innerHTML = (p.skills || []).map(sk => `
+        <span style="display:inline-block;background:rgba(0,89,231,0.2);border:1px solid rgba(0,89,231,0.3);border-radius:6px;padding:4px 10px;font-size:11px;color:#99C0FF;margin:0 4px 6px 0">${sk}</span>
+    `).join('');
+
+    const cta = document.getElementById('pdCTA');
+    if (p.status === 'completed') { cta.textContent = '✓ Revisitar Trilha'; cta.style.background = '#12B76A'; }
+    else if (p.status === 'progress') { cta.textContent = '▶ Continuar Trilha'; cta.style.background = '#0059E7'; }
+    else { cta.textContent = '🚀 Iniciar Trilha'; cta.style.background = '#7B2FE8'; }
+
+    openModal('modalPlanet');
+}
+
+function startPlanet() {
+    const p = PLANETAS[currentPlanet];
+    closeModal('modalPlanet');
+    const msgs = {
+        tutorial: ['✅', 'Abrindo Tutorial...'],
+        mat104:   ['▶', 'Continuando MAT·104 · Ilha 2!'],
+        cie201:   ['🚀', 'CIE·201 iniciado! Boa jornada!'],
+    };
+    const [icon, msg] = msgs[currentPlanet] || ['▶', 'Iniciando trilha...'];
+    showToast(icon, msg);
+}
+
+// ============ PILLS FILTER ============
+function filterPill(el, cat) {
+    document.querySelectorAll('.perf-pill').forEach(p => p.classList.remove('active'));
+    el.classList.add('active');
+    const labels = {mat:'Matemática',cie:'Ciências',por:'Português',his:'História'};
+    showToast('🔭', `Filtrando: ${labels[cat]}`);
+}
+
+// ============ TOAST ============
+let toastTimer;
+function showToast(icon, msg) {
+    const t = document.getElementById('toast');
+    document.getElementById('toastIcon').textContent = icon;
+    document.getElementById('toastMsg').textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// Init
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('🚀 Orbie · Trilhas Adaptativas carregado');
+});
+</script>
+</body>
+</html>

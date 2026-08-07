@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>HU 1/6 · Vínculo Deferido — Solicitação de Alteração pelo Prestador — SIG SESI MG</title>
+<style>
+/* ── tokens ── */
+:root{
+  --blue-900:#1a2d6d;--blue-800:#1e3580;--blue-600:#233987;--blue-500:#164194;--blue-100:#b3d1e8;
+  --gray-800:#343a40;--gray-600:#6c757d;--gray-400:#ced4da;--gray-300:#dee2e6;--gray-200:#e9ecef;
+  --green-100:#d1e7dd;--green-800:#0a3622;
+  --red-100:#f8d7da;--red-800:#58151c;--red-500:#ba0c2f;
+  --yellow-100:#fff3cd;--yellow-300:#ffda6a;--yellow-800:#664d03;--yellow-900:#332701;
+  --warn-500:#ffb802;
+  --white:#fff;--black:#000;
+  --radius-xl:16px;--radius-lg:8px;--radius:6px;
+  --navbar:86px;--sidebar:180px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;font-size:14px;background:#f0f2f5;color:var(--black);min-height:100vh}
+a{text-decoration:none;color:inherit;cursor:pointer}
+button{font-family:inherit;cursor:pointer;border:none;background:transparent}
+
+/* ── navbar ── */
+.navbar{height:var(--navbar);background:var(--blue-500);display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:fixed;top:0;left:0;right:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+.nb-logo{display:flex;flex-direction:column;line-height:1}
+.nb-logo .sig{font-size:10px;font-weight:300;color:rgba(255,255,255,.7);letter-spacing:1px}
+.nb-logo .sesi{font-size:22px;font-weight:800;color:#fff;letter-spacing:-0.5px}
+.nb-logo .sesi span{color:var(--warn-500)}
+.nb-right{display:flex;align-items:center;gap:24px}
+.nb-session{font-size:14px;color:var(--blue-100)}
+.nb-icon{width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative}
+.nb-icon svg{width:22px;height:22px;stroke:#fff;fill:none}
+.nb-badge{position:absolute;top:-4px;right:-4px;background:var(--warn-500);color:var(--yellow-900);font-size:10px;font-weight:700;width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.nb-avatar{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.nb-avatar svg{width:20px;height:20px;stroke:#fff;fill:none}
+
+/* ── sidebar ── */
+.sidebar{width:var(--sidebar);background:var(--white);border-right:1px solid var(--gray-200);position:fixed;top:var(--navbar);left:0;bottom:0;z-index:90;display:flex;flex-direction:column;justify-content:space-between;padding:24px 8px}
+.sb-menu{display:flex;flex-direction:column;gap:4px}
+.sb-item{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:var(--radius);font-size:16px;font-weight:500;color:var(--gray-800);cursor:pointer;transition:background .15s}
+.sb-item:hover{background:var(--gray-200)}
+.sb-item.act{background:var(--gray-200);color:var(--blue-600)}
+.sb-item svg{width:20px;height:20px;stroke:currentColor;fill:none;flex-shrink:0}
+.sb-sub{font-size:14px;padding:8px 16px 8px 52px;color:var(--gray-800);cursor:pointer;border-radius:var(--radius)}
+.sb-sub:hover{background:var(--gray-200)}
+.sb-chevron{margin-left:auto;transition:transform .2s}
+.sb-chevron.open{transform:rotate(180deg)}
+.sb-foot{display:flex;align-items:center;justify-content:space-between;padding:0 8px}
+.sb-sesi{width:70px;height:24px;background:var(--blue-500);border-radius:4px;display:flex;align-items:center;justify-content:center}
+.sb-sesi span{font-size:12px;font-weight:700;color:#fff;letter-spacing:1px}
+.sb-collapse{width:40px;height:40px;border-radius:var(--radius);display:flex;align-items:center;justify-content:center;cursor:pointer;border:1px solid var(--gray-300)}
+.sb-collapse svg{width:18px;height:18px;stroke:var(--gray-600)}
+
+/* ── main ── */
+.main{margin-top:var(--navbar);margin-left:var(--sidebar);padding:40px 80px 80px;min-height:calc(100vh - var(--navbar))}
+
+/* ── role bar ── */
+.role-bar{background:#152D62;padding:10px 16px;display:flex;align-items:center;gap:8px;margin-bottom:32px;border-radius:var(--radius);flex-wrap:wrap}
+.role-bar-lbl{font-size:11px;color:rgba(255,255,255,.55);margin-right:2px}
+.rb{padding:4px 12px;border-radius:4px;background:rgba(255,255,255,.1);border:1px solid transparent;color:rgba(255,255,255,.7);font-size:11px;font-weight:500;cursor:pointer;transition:all .15s}
+.rb.act{background:rgba(255,255,255,.22);border-color:rgba(255,255,255,.2);color:#fff;font-weight:600}
+.rb:hover:not(.act){background:rgba(255,255,255,.15)}
+.role-hint{font-size:11px;color:rgba(255,255,255,.5);margin-left:4px}
+
+/* ── annotations ── */
+.ann{background:#FFFBEB;border:1px solid #FDE68A;border-radius:var(--radius-xl);padding:16px 20px;margin-bottom:28px}
+.ann h3{font-size:11px;font-weight:700;color:#92400E;margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px}
+.ann-item{display:flex;gap:8px;margin-bottom:7px;font-size:12px;color:#78350F;line-height:1.5}
+.ann-item:last-child{margin-bottom:0}
+.ann-n{min-width:18px;height:18px;background:#F59E0B;color:#fff;border-radius:50%;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+
+/* ── page header ── */
+.ph{margin-bottom:32px}
+.ph h1{font-size:24px;font-weight:600;line-height:40px;color:var(--black)}
+.ph-bc{display:flex;align-items:center;gap:6px;font-size:14px}
+.ph-bc a{color:var(--blue-500)}
+.ph-bc span{color:var(--gray-600)}
+.ph-bc .sep{color:var(--gray-400)}
+
+/* ── card container ── */
+.card{background:var(--white);border:1px solid var(--gray-400);border-radius:var(--radius-xl);padding:24px;margin-bottom:24px}
+
+/* ── card header (vínculo) ── */
+.vh{display:flex;gap:16px;align-items:center;padding-bottom:20px;border-bottom:1px solid var(--gray-300)}
+.vh-icon{width:56px;height:56px;background:var(--blue-500);border-radius:var(--radius-lg);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.vh-icon svg{width:32px;height:32px;stroke:#fff;fill:none}
+.vh-info{flex:1}
+.vh-row1{display:flex;align-items:center;justify-content:space-between}
+.vh-title{font-size:24px;font-weight:600;color:var(--gray-800)}
+.vh-meta{display:flex;align-items:center;justify-content:space-between;margin-top:6px;font-size:14px;color:var(--gray-600)}
+.vh-meta-left{display:flex;gap:24px}
+.vh-meta-left span{display:flex;gap:4px}
+.vh-meta-left b{font-weight:500}
+.badge{display:inline-flex;align-items:center;padding:4px 8px;border-radius:12px;font-size:12px;font-weight:400}
+.badge-warn{background:var(--yellow-100);color:var(--yellow-800)}
+.badge-ok{background:var(--green-100);color:var(--green-800)}
+.badge-err{background:var(--red-100);color:var(--red-800)}
+.badge-gray{background:var(--gray-200);color:var(--gray-800)}
+.badge-blue{background:#EEF3FF;color:var(--blue-600);border:1px solid #C7D7F9}
+.badge-orange{background:#FFF7ED;color:#C2410C;border:1px solid #FED7AA}
+
+/* ── alert ── */
+.alert{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border-radius:var(--radius);border:1px solid var(--yellow-300);background:var(--yellow-100);font-size:14px;color:var(--yellow-800);line-height:1.5;margin-top:16px}
+.alert svg{width:20px;height:20px;stroke:var(--yellow-800);fill:none;flex-shrink:0;margin-top:1px}
+.alert-info{border-color:#BFDBFE;background:#EFF6FF;color:#1E40AF}
+.alert-info svg{stroke:#1E40AF}
+
+/* ── tabs ── */
+.tabs{display:flex;gap:0;border-bottom:2px solid var(--gray-300);margin:20px 0 0}
+.tab{display:flex;align-items:center;gap:8px;padding:10px 32px;font-size:16px;font-weight:500;color:var(--blue-500);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s}
+.tab.act{color:var(--blue-600);border-bottom-color:var(--blue-600)}
+.tab .tab-badge{background:var(--warn-500);color:var(--yellow-900);font-size:11px;font-weight:700;min-width:20px;height:20px;padding:0 5px;border-radius:12px;display:flex;align-items:center;justify-content:center}
+</style>
+<style>
+/* ── tab content ── */
+.tab-content{display:none;padding:24px 0 0}
+.tab-content.act{display:block}
+
+/* ── section title ── */
+.sec-title{font-size:16px;font-weight:600;line-height:32px;color:var(--black);margin-bottom:16px}
+
+/* ── form row ── */
+.form-row{display:flex;gap:24px;margin-bottom:20px}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:14px;font-weight:300;color:var(--black)}
+.field-input{height:52px;border:1px solid var(--gray-300);border-radius:var(--radius);padding:0 16px;font-size:16px;font-family:inherit;color:var(--gray-600);background:var(--white);display:flex;align-items:center;gap:8px}
+.field-input svg{width:20px;height:20px;stroke:var(--gray-400);fill:none;flex-shrink:0;margin-left:auto}
+.field-w325{width:325px}
+
+/* ── table ── */
+.tbl-wrap{border:1px solid var(--gray-400);border-radius:var(--radius);overflow:hidden;margin-bottom:20px}
+.tbl{width:100%;border-collapse:collapse}
+.tbl thead th{background:var(--blue-500);color:#fff;font-size:16px;font-weight:500;padding:12px 24px;text-align:left;white-space:nowrap}
+.tbl tbody tr{border-bottom:1px solid var(--gray-300)}
+.tbl tbody tr:last-child{border-bottom:none}
+.tbl tbody tr:hover{background:#FAFBFF}
+.tbl tbody td{padding:12px 24px;font-size:14px;color:var(--black);vertical-align:middle}
+.tbl tbody td:last-child{white-space:nowrap;display:table-cell}
+
+/* ── locais/profissionais table (HU 1/6 — NOVO) ── */
+.tbl-lp thead th{background:var(--blue-500)}
+.row-bloqueado{background:#F9FAFB}
+.row-solicitacao{background:#EFF6FF}
+.td-nome{font-weight:500;font-size:14px}
+.td-nome small{display:block;font-weight:300;color:var(--gray-600);font-size:12px}
+.btn-acao{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:var(--radius);font-size:13px;font-weight:500;font-family:inherit;cursor:pointer;transition:all .15s;border:1px solid transparent}
+.btn-solicitar{background:var(--blue-500);color:#fff;border-color:var(--blue-500)}
+.btn-solicitar:hover{background:#1640A0}
+.btn-solicitar:disabled{opacity:.45;cursor:not-allowed}
+.btn-ver{background:var(--white);color:var(--gray-800);border-color:var(--gray-300)}
+.btn-ver:hover{background:var(--gray-200)}
+.btn-icon{width:36px;height:36px;display:inline-flex;align-items:center;justify-content:center;border-radius:var(--radius);border:1px solid var(--gray-300) !important;background:var(--white) !important;cursor:pointer;transition:all .15s;padding:0;flex-shrink:0}
+.btn-icon:hover{background:var(--gray-200) !important}
+.btn-icon svg{width:16px;height:16px;stroke:var(--gray-700);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+/* ── footer buttons ── */
+.card-footer{display:flex;justify-content:flex-end;gap:16px;padding-top:24px;border-top:1px solid var(--gray-300);margin-top:24px}
+.btn-cancel{background:var(--red-500);color:#fff;border-radius:var(--radius);padding:10px 24px;font-size:16px;font-weight:500;font-family:inherit;cursor:pointer;border:none;min-width:120px}
+.btn-save{background:var(--blue-500);color:#fff;border-radius:var(--radius);padding:10px 24px;font-size:16px;font-weight:500;font-family:inherit;cursor:pointer;border:none;min-width:120px}
+
+/* ── overlay + modais ── */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;display:none;align-items:center;justify-content:center}
+.overlay.open{display:flex}
+.modal{background:#fff;border-radius:var(--radius-xl);box-shadow:0 20px 60px rgba(0,0,0,.2);width:100%;max-height:90vh;display:flex;flex-direction:column;overflow:hidden}
+.modal-sm{max-width:520px}
+.modal-md{max-width:640px}
+.modal-hd{display:flex;align-items:flex-start;justify-content:space-between;padding:20px 24px;border-bottom:1px solid var(--gray-300)}
+.modal-hd h2{font-size:18px;font-weight:600;color:var(--black)}
+.modal-hd p{font-size:13px;color:var(--gray-600);margin-top:4px}
+.modal-close{width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:var(--radius);cursor:pointer;border:none;background:transparent;flex-shrink:0}
+.modal-close:hover{background:var(--gray-200)}
+.modal-close svg{width:18px;height:18px;stroke:var(--gray-600);fill:none}
+.modal-body{padding:20px 24px;overflow-y:auto;flex:1}
+.modal-ft{padding:16px 24px;border-top:1px solid var(--gray-300);display:flex;gap:10px;justify-content:flex-end;background:#F9FAFB}
+.modal-btn{padding:10px 20px;border-radius:var(--radius);font-size:14px;font-weight:500;font-family:inherit;cursor:pointer;border:1px solid transparent}
+.modal-btn-ghost{background:#fff;border-color:var(--gray-300);color:var(--gray-800)}
+.modal-btn-ghost:hover{background:var(--gray-200)}
+.modal-btn-primary{background:var(--blue-500);color:#fff;border-color:var(--blue-500)}
+.modal-btn-primary:hover{background:#1640A0}
+.modal-field{display:flex;flex-direction:column;gap:6px;margin-bottom:16px}
+.modal-field label{font-size:13px;font-weight:500;color:var(--black)}
+.modal-field label span{color:#DC2626}
+.modal-input{width:100%;border:1px solid var(--gray-300);border-radius:var(--radius);padding:10px 14px;font-size:14px;font-family:inherit;outline:none;transition:border-color .15s}
+.modal-input:focus{border-color:#3B82F6;box-shadow:0 0 0 3px rgba(59,130,246,.1)}
+.modal-input.err{border-color:#DC2626}
+.field-err{font-size:11px;color:#DC2626;margin-top:3px;display:none}
+.field-err.show{display:block}
+.modal-info-row{display:flex;gap:8px;font-size:13px;margin-bottom:8px}
+.modal-info-row b{font-weight:600;color:var(--black);min-width:80px}
+.modal-info-row span{color:var(--gray-600)}
+
+/* ── toast ── */
+.toast{position:fixed;bottom:24px;right:24px;background:#1F2937;color:#fff;border-radius:var(--radius);padding:12px 16px;font-size:13px;display:flex;align-items:center;gap:8px;box-shadow:0 8px 24px rgba(0,0,0,.25);z-index:600;transform:translateY(80px);opacity:0;transition:all .3s;max-width:400px}
+.toast.show{transform:translateY(0);opacity:1}
+.toast-ok{border-left:4px solid #16A34A}
+.toast-info{border-left:4px solid var(--blue-500)}
+</style>
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- NAVBAR -->
+<header class="navbar">
+  <div class="nb-logo">
+    <span class="sig">Sistema Integrado de Gestão</span>
+    <span class="sesi">SESI<span>MG</span></span>
+  </div>
+  <div class="nb-right">
+    <span class="nb-session">Sessão: 2:00h</span>
+    <div class="nb-icon">
+      <svg viewBox="0 0 24 24"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+      <span class="nb-badge">1</span>
+    </div>
+    <div class="nb-avatar">
+      <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    </div>
+  </div>
+</header>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sb-menu">
+    <div class="sb-item">
+      <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+      Início
+    </div>
+    <div class="sb-item act">
+      <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+      Prestador
+    </div>
+    <div class="sb-item">
+      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Agendamento
+    </div>
+    <div class="sb-item" onclick="this.querySelector('.sb-chevron').classList.toggle('open')">
+      <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+      Financeiro
+      <svg class="sb-chevron" viewBox="0 0 24 24" style="width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="sb-sub">Tabela de preços por cidades</div>
+    <div class="sb-sub">Romaneios</div>
+  </div>
+  <div class="sb-foot">
+    <div class="sb-sesi"><span>SESI</span></div>
+    <div class="sb-collapse"><svg viewBox="0 0 24 24" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg></div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+
+  <!-- ROLE BAR -->
+  <div class="role-bar">
+    <span class="role-bar-lbl">🎭 Simular perfil:</span>
+    <button class="rb act" id="rb-prestador"  onclick="setRole('prestador')">Prestador</button>
+    <button class="rb"     id="rb-sesi"        onclick="setRole('sesi')">SESI (Admin DR)</button>
+    <span class="role-hint" id="role-hint">Prestador: pode solicitar alterações em vínculo Deferido — não edita diretamente</span>
+  </div>
+
+  <!-- ANNOTATIONS -->
+  <div class="ann">
+    <h3>📋 Anotações — HU 1 de 6 · Solicitação de Alterações em Vínculos Deferidos pelo Prestador</h3>
+    <div class="ann-item"><div class="ann-n">1</div><div><strong>Base no Figma (node 12832:64895):</strong> Tela "Edição e inclusão de dados bloqueadas" — estado antes da HU. O alerta amarelo original informava bloqueio total. A HU 1/6 substitui esse estado: no vínculo <strong>Deferido</strong>, o Prestador agora pode <em>solicitar</em> alterações.</div></div>
+    <div class="ann-item"><div class="ann-n">2</div><div><strong>RN001/RN002:</strong> Troque para "SESI" — o SESI edita diretamente sem gerar solicitação. Troque para "Prestador" — as ações viram "Solicitar alteração".</div></div>
+    <div class="ann-item"><div class="ann-n">3</div><div><strong>RN003/RN004/RN005 — Modal de confirmação:</strong> Na aba Locais ou Profissionais, clique em "Solicitar alteração" em qualquer linha. O modal pede confirmação, informa que o SESI precisará avaliar e exige o E-mail para Comunicações Gerais (obrigatório se vazio — RN005).</div></div>
+    <div class="ann-item"><div class="ann-n">4</div><div><strong>RN012 — Badge "Solicitação em análise":</strong> Após confirmar, a linha recebe o badge e o botão de solicitar é desabilitado (RN008/RN013 — sem novas solicitações sobre o mesmo registro enquanto houver pendente).</div></div>
+    <div class="ann-item"><div class="ann-n">5</div><div><strong>RN007:</strong> Cada solicitação registra estado Antes × Depois. No protótipo, o modal de confirmação exibe os dados que serão enviados para avaliação.</div></div>
+    <div class="ann-item"><div class="ann-n">6</div><div><strong>Situação do vínculo:</strong> A HU só se aplica quando o vínculo está "Deferido". Troque para "SESI" para ver o comportamento de edição direta (sem modal de solicitação).</div></div>
+    <div class="ann-item"><div class="ann-n">7</div><div><strong>Adicionado por conta (não especificado na HU):</strong> Os filtros da tabela de Locais/Profissionais seguem o padrão visual do Figma. O campo E-mail Comunicações Gerais é pré-preenchido com dado mock para um dos cenários.</div></div>
+  </div>
+
+  <!-- PAGE HEADER -->
+  <div class="ph">
+    <h1>Editar vínculo</h1>
+    <div class="ph-bc">
+      <a>Prestadores</a><span class="sep">›</span>
+      <a>NexoTech</a><span class="sep">›</span>
+      <span>C-2025-01-002</span>
+    </div>
+  </div>
+
+  <!-- CARD PRINCIPAL -->
+  <div class="card">
+
+    <!-- Card Header Vínculo -->
+    <div class="vh">
+      <div class="vh-icon">
+        <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+      </div>
+      <div class="vh-info">
+        <div class="vh-row1">
+          <span class="vh-title">Lote 01 - Serviços de Laboratório</span>
+          <!-- NOVO — situação Deferido (HU 1/6 só se aplica quando Deferido) -->
+          <span class="badge badge-ok" id="situacao-badge">Deferido</span>
+        </div>
+        <div class="vh-meta">
+          <div class="vh-meta-left">
+            <span><b>Tipo do vínculo:</b> Credenciamento</span>
+            <span><b>Prestador:</b> NexoTech</span>
+            <span><b>Início:</b> 25/05/2025</span>
+            <span><b>Término:</b> 09/03/2027</span>
+          </div>
+          <span><b>Última atualização:</b> 28/08/2025 | 18:15</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- NOVO — alerta contextual por perfil -->
+    <div class="alert" id="alert-prestador">
+      <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+      <span>Seu vínculo está <strong>Deferido</strong>. A edição direta de Locais de Atendimento e Profissionais não está disponível. Você pode <strong>solicitar alterações</strong> — elas serão avaliadas pelo SESI antes de entrar em vigor. A atualização de documentos permanece disponível.</span>
+    </div>
+    <div class="alert alert-info" id="alert-sesi" style="display:none">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <span>Perfil SESI: você pode editar Locais e Profissionais diretamente. As alterações entram em vigor imediatamente, sem necessidade de solicitação.</span>
+    </div>
+
+    <!-- TABS -->
+    <div class="tabs">
+      <div class="tab act" onclick="switchTab('geral',this)">Geral <span class="tab-badge">1</span></div>
+      <div class="tab" onclick="switchTab('locais',this)">Locais de atendimento vinculados <span class="tab-badge">2</span></div>
+      <div class="tab" onclick="switchTab('profissionais',this)">Profissionais vinculados</div>
+    </div>
+
+    <!-- TAB GERAL -->
+    <div class="tab-content act" id="tab-geral">
+      <p class="sec-title">Informações de vínculo</p>
+      <div class="form-row">
+        <div class="field field-w325">
+          <label>Início do vínculo*</label>
+          <div class="field-input">25/05/2025<svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+        </div>
+        <div class="field field-w325">
+          <label>Término do vínculo*</label>
+          <div class="field-input">09/03/2027<svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+        </div>
+      </div>
+      <p class="sec-title">Documentos de habilitação</p>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead><tr>
+            <th style="flex:1">Documentação ↑</th>
+            <th style="width:160px">Emissão</th>
+            <th style="width:160px">Validade</th>
+            <th style="width:140px;text-align:center">Status</th>
+            <th style="width:120px;text-align:center">Ações</th>
+          </tr></thead>
+          <tbody>
+            <tr><td>Carta de Concordância <a style="color:var(--blue-500);text-decoration:underline;font-size:13px;margin-left:6px">Modelo de documento</a></td><td>09/03/2024</td><td>✅ 09/03/2027</td><td style="text-align:center"><span class="badge badge-warn">Em análise</span></td><td style="text-align:center"><button class="btn-icon" title="Visualizar"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></td></tr>
+            <tr><td>Contrato Social</td><td>09/03/2024</td><td>✅ 09/03/2027</td><td style="text-align:center"><span class="badge badge-err">Não conforme</span></td><td style="text-align:center"><button class="btn-icon" title="Visualizar"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button> <button class="btn-icon" title="Enviar"><svg viewBox="0 0 24 24"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0018 9h-1.26A8 8 0 103 16.3"/></svg></button></td></tr>
+            <tr><td>Cartão CNPJ</td><td>09/03/2024</td><td>⚠️ 09/03/2025</td><td style="text-align:center"><span class="badge badge-ok">Conforme</span></td><td style="text-align:center"><button class="btn-icon"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button> <button class="btn-icon"><svg viewBox="0 0 24 24"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0018 9h-1.26A8 8 0 103 16.3"/></svg></button></td></tr>
+            <tr><td>CND Estadual</td><td>-</td><td>-</td><td style="text-align:center"><span class="badge badge-gray">Pendente</span></td><td style="text-align:center"><button class="btn-icon"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button> <button class="btn-icon"><svg viewBox="0 0 24 24"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0018 9h-1.26A8 8 0 103 16.3"/></svg></button></td></tr>
+            <tr><td>CRF</td><td>09/03/2024</td><td>🔴 09/03/2025</td><td style="text-align:center"><span class="badge badge-ok">Conforme</span></td><td style="text-align:center"><button class="btn-icon"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button></td></tr>
+            <tr><td>Licença de Funcionamento</td><td>09/03/2023</td><td>🟣 09/06/2025</td><td style="text-align:center"><span class="badge badge-ok">Conforme</span></td><td style="text-align:center"><button class="btn-icon"><svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button> <button class="btn-icon"><svg viewBox="0 0 24 24"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0018 9h-1.26A8 8 0 103 16.3"/></svg></button></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card-footer">
+        <button class="btn-cancel">Cancelar</button>
+        <button class="btn-save">Salvar</button>
+      </div>
+    </div>
+    <!-- TAB LOCAIS DE ATENDIMENTO — HU 1/6 NOVO -->
+    <div class="tab-content" id="tab-locais">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px">
+        <div>
+          <p class="sec-title" style="margin-bottom:4px">Lista de locais de atendimento</p>
+          <p style="font-size:14px;color:var(--gray-600)">3 locais de atendimento vinculados</p>
+        </div>
+        <!-- NOVO HU 1/6: botão "Solicitar inclusão" só aparece para Prestador -->
+        <button class="btn-acao btn-solicitar" id="btn-solicitar-local" onclick="abrirModalSolicitar('Local de Atendimento',null)">
+          <svg style="width:16px;height:16px;stroke:#fff;fill:none" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Solicitar inclusão de Local
+        </button>
+      </div>
+
+      <!-- filtros padrão Figma -->
+      <div style="background:#fff;border:1px solid var(--gray-400);border-radius:var(--radius);margin-bottom:16px;overflow:visible">
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid #E9EDF5">
+          <svg style="width:16px;height:16px;stroke:#9CA3AF;fill:none;stroke-width:2;flex-shrink:0" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" style="flex:1;border:none;outline:none;font-size:13px;font-family:inherit;color:#1A1A2E;background:transparent" placeholder="Buscar por Local de Atendimento">
+        </div>
+        <div style="display:flex;align-items:center;padding:8px 14px;gap:8px">
+          <div style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border:1px solid var(--gray-300);border-radius:4px;font-size:12px;color:var(--gray-600);cursor:pointer">Situação <svg style="width:13px;height:13px;stroke:currentColor;fill:none" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+          <div style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border:1px solid var(--gray-300);border-radius:4px;font-size:12px;color:var(--gray-600);cursor:pointer">Status <svg style="width:13px;height:13px;stroke:currentColor;fill:none" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+          <div style="flex:1"></div>
+          <span style="font-size:12px;color:var(--gray-600);cursor:pointer">Limpar filtros</span>
+        </div>
+      </div>
+
+      <div class="tbl-wrap">
+        <table class="tbl tbl-lp">
+          <thead><tr>
+            <th>Local de Atendimento</th>
+            <th style="width:160px">Município</th>
+            <th style="width:120px">CNPJ</th>
+            <th style="width:130px;text-align:center">Situação</th>
+            <th style="width:200px;text-align:center">Ações</th>
+          </tr></thead>
+          <tbody id="tbody-locais">
+            <!-- preenchido por JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TAB PROFISSIONAIS — HU 1/6 NOVO -->
+    <div class="tab-content" id="tab-profissionais">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px">
+        <div>
+          <p class="sec-title" style="margin-bottom:4px">Lista de profissionais vinculados</p>
+          <p style="font-size:14px;color:var(--gray-600)">4 profissionais vinculados</p>
+        </div>
+        <button class="btn-acao btn-solicitar" id="btn-solicitar-prof" onclick="abrirModalSolicitar('Profissional',null)">
+          <svg style="width:16px;height:16px;stroke:#fff;fill:none" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Solicitar inclusão de Profissional
+        </button>
+      </div>
+
+      <!-- filtros -->
+      <div style="background:#fff;border:1px solid var(--gray-400);border-radius:var(--radius);margin-bottom:16px">
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid #E9EDF5">
+          <svg style="width:16px;height:16px;stroke:#9CA3AF;fill:none;stroke-width:2;flex-shrink:0" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" style="flex:1;border:none;outline:none;font-size:13px;font-family:inherit;color:#1A1A2E;background:transparent" placeholder="Buscar por Profissional">
+        </div>
+        <div style="display:flex;align-items:center;padding:8px 14px;gap:8px">
+          <div style="display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border:1px solid var(--gray-300);border-radius:4px;font-size:12px;color:var(--gray-600);cursor:pointer">Situação <svg style="width:13px;height:13px;stroke:currentColor;fill:none" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+          <div style="flex:1"></div>
+          <span style="font-size:12px;color:var(--gray-600);cursor:pointer">Limpar filtros</span>
+        </div>
+      </div>
+
+      <div class="tbl-wrap">
+        <table class="tbl tbl-lp">
+          <thead><tr>
+            <th>Profissional</th>
+            <th style="width:180px">Especialidade</th>
+            <th style="width:140px">CRM / CRO</th>
+            <th style="width:130px;text-align:center">Situação</th>
+            <th style="width:200px;text-align:center">Ações</th>
+          </tr></thead>
+          <tbody id="tbody-profissionais">
+            <!-- preenchido por JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div><!-- /card -->
+
+</main>
+<!-- MODAL — Editar (SESI edita direto) -->
+<div class="overlay" id="ov-editar-sesi">
+  <div class="modal modal-md">
+    <div class="modal-hd">
+      <div>
+        <h2 id="sesi-modal-titulo">Editar Local de Atendimento</h2>
+        <p id="sesi-modal-subtitulo">As alterações entram em vigor imediatamente.</p>
+      </div>
+      <button class="modal-close" onclick="fecharModal('ov-editar-sesi')">
+        <svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="modal-body" id="sesi-modal-body">
+      <!-- campos preenchidos por JS -->
+    </div>
+    <div class="modal-ft">
+      <button class="modal-btn modal-btn-ghost" onclick="fecharModal('ov-editar-sesi')">Cancelar</button>
+      <button class="modal-btn modal-btn-primary" onclick="confirmarEdicaoSesi()">Salvar alterações</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL — Solicitar alteração (Prestador) -->
+<div class="overlay" id="ov-solicitar">
+  <div class="modal modal-md">
+    <div class="modal-hd">
+      <div>
+        <h2 id="modal-sol-titulo">Solicitar alteração</h2>
+        <p id="modal-sol-subtitulo">Edite os campos desejados e confirme a solicitação</p>
+      </div>
+      <button class="modal-close" onclick="fecharModal('ov-solicitar')">
+        <svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <!-- Aviso RN004 -->
+      <div class="alert" style="margin-bottom:20px">
+        <svg viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+        <div><strong>Esta alteração não entrará em vigor imediatamente.</strong><br>
+        O SESI avaliará a solicitação antes de efetivar. Após a conclusão, você será comunicado pelo E-mail para Comunicações Gerais.</div>
+      </div>
+      <!-- Campos do registro editáveis (RN007 — captura Antes × Depois) -->
+      <div id="sol-campos-registro">
+        <!-- preenchido por JS com inputs editáveis -->
+      </div>
+      <!-- Justificativa da alteração -->
+      <div class="modal-field">
+        <label>Justificativa da solicitação <span style="color:#DC2626">*</span></label>
+        <textarea class="modal-input" id="sol-justificativa" rows="3" placeholder="Descreva o motivo da alteração solicitada..."></textarea>
+        <div class="field-err" id="sol-just-err">Justificativa é obrigatória.</div>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="modal-btn modal-btn-ghost" onclick="fecharModal('ov-solicitar')">Cancelar</button>
+      <button class="modal-btn modal-btn-primary" onclick="abrirConfirmacaoSolicitacao()">Revisar e Confirmar →</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL — Confirmar Solicitação (resumo + e-mail obrigatório) -->
+<div class="overlay" id="ov-confirmar-solicitar">
+  <div class="modal modal-md">
+    <div class="modal-hd">
+      <div>
+        <h2>Confirmar envio da solicitação</h2>
+        <p id="confirmar-sol-subtitulo">Revise antes de enviar para avaliação do SESI</p>
+      </div>
+      <button class="modal-close" onclick="fecharModal('ov-confirmar-solicitar')">
+        <svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <!-- Alerta reforçando análise SESI (RN004) -->
+      <div style="background:#FFF7ED;border:1px solid #FED7AA;border-radius:6px;padding:14px 16px;margin-bottom:20px;font-size:14px;color:#7C2D12;line-height:1.6;display:flex;gap:10px;align-items:flex-start">
+        <svg style="width:20px;height:20px;stroke:#C2410C;fill:none;flex-shrink:0;margin-top:1px" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <div>
+          <strong>Esta alteração estará sujeita à análise do SESI antes de entrar em vigor.</strong><br/>
+          A solicitação poderá ser <strong>aprovada ou rejeitada</strong>. Enquanto aguarda avaliação, o registro permanece com a configuração atual. Após a decisão, você será comunicado pelo <strong>E-mail para Comunicações Gerais</strong>.
+        </div>
+      </div>
+      <!-- Resumo da solicitação -->
+      <div style="background:#F8FAFF;border:1px solid #D0DFFE;border-radius:8px;padding:14px 16px;margin-bottom:20px">
+        <div style="font-size:11px;font-weight:700;color:#164194;margin-bottom:10px;text-transform:uppercase;letter-spacing:.4px">Resumo da Solicitação</div>
+        <div id="confirmar-sol-resumo" style="font-size:13px;color:#343a40;line-height:1.8"></div>
+      </div>
+      <!-- Campo E-mail para Comunicações Gerais (RN005) — obrigatório para liberar o envio -->
+      <div class="modal-field">
+        <label>E-mail para Comunicações Gerais <span style="color:#DC2626">*</span></label>
+        <input class="modal-input" id="sol-email" type="email" placeholder="e-mail para receber o resultado da avaliação"/>
+        <div class="field-err" id="sol-email-err">E-mail para Comunicações Gerais é obrigatório para enviar a solicitação.</div>
+        <div style="font-size:12px;color:#6c757d;margin-top:4px">Qualquer alteração neste campo atualiza automaticamente o cadastro do Prestador (RN006).</div>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="modal-btn modal-btn-ghost" onclick="voltarParaEdicao()">← Voltar e editar</button>
+      <button class="modal-btn modal-btn-primary" id="btn-enviar-solicitacao" onclick="confirmarSolicitacao()">Enviar Solicitação</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL — Confirmação enviada (RN012) -->
+<div class="overlay" id="ov-enviada">
+  <div class="modal modal-sm">
+    <div class="modal-hd">
+      <div>
+        <h2>Solicitação enviada</h2>
+        <p>Sua solicitação foi registrada e aguarda avaliação do SESI</p>
+      </div>
+      <button class="modal-close" onclick="fecharModal('ov-enviada')">
+        <svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div style="text-align:center;padding:12px 0">
+        <div style="width:56px;height:56px;background:#D1FAE5;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px">
+          <svg style="width:28px;height:28px;stroke:#16A34A;fill:none;stroke-width:2" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
+        </div>
+        <p style="font-size:16px;font-weight:600;margin-bottom:8px">Solicitação registrada com sucesso!</p>
+        <p style="font-size:14px;color:var(--gray-600);line-height:1.6" id="enviada-msg">
+          Sua solicitação de alteração foi encaminhada para avaliação do SESI.<br>
+          O status no registro ficará como <strong>"Solicitação em análise"</strong> até a conclusão da avaliação.<br>
+          Você receberá um e-mail com o resultado.
+        </p>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="modal-btn modal-btn-primary" onclick="fecharModal('ov-enviada')">Entendi</button>
+    </div>
+  </div>
+</div>
+<script>
+/* ── DADOS MOCK ── */
+let locais = [
+  {id:'L001', nome:'UPA Centro — Rua das Flores, 100', municipio:'Belo Horizonte/MG', cnpj:'98.765.432/0001-11', situacao:'Ativo', solicitacao:null},
+  {id:'L002', nome:'Clínica Norte — Av. Antônio Carlos, 500', municipio:'Contagem/MG', cnpj:'11.222.333/0001-44', situacao:'Ativo', solicitacao:null},
+  {id:'L003', nome:'Lab Sul — Rua Goiás, 200', municipio:'Betim/MG', cnpj:'55.666.777/0001-88', situacao:'Inativo', solicitacao:null},
+];
+let profissionais = [
+  {id:'P001', nome:'Dr. Paulo Henrique Rodrigues', especialidade:'Medicina do Trabalho', crm:'CRM/MG 45678', situacao:'Ativo', solicitacao:null},
+  {id:'P002', nome:'Dra. Marina Souza', especialidade:'Clínica Médica', crm:'CRM/MG 78901', situacao:'Ativo', solicitacao:null},
+  {id:'P003', nome:'Dr. Roberto Lima', especialidade:'Medicina do Trabalho', crm:'CRM/MG 11223', situacao:'Ativo', solicitacao:null},
+  {id:'P004', nome:'Dra. Carla Mendes', especialidade:'Medicina Ocupacional', crm:'CRM/MG 33445', situacao:'Inativo', solicitacao:null},
+];
+
+let perfil = 'prestador';
+let _pendingSolicitacao = null; /* {tipo, entidade, id} */
+
+/* ── PERFIL ── */
+function setRole(r){
+  perfil = r;
+  ['prestador','sesi'].forEach(x => document.getElementById('rb-'+x)?.classList.toggle('act',x===r));
+  const hints = {
+    prestador:'Prestador: pode solicitar alterações em vínculo Deferido — não edita diretamente',
+    sesi:'SESI: edita Locais e Profissionais diretamente, sem gerar solicitação',
+  };
+  document.getElementById('role-hint').textContent = hints[r];
+  document.getElementById('alert-prestador').style.display = r==='prestador'?'':'none';
+  document.getElementById('alert-sesi').style.display = r==='sesi'?'':'none';
+  document.getElementById('btn-solicitar-local').style.display = r==='prestador'?'':'none';
+  document.getElementById('btn-solicitar-prof').style.display  = r==='prestador'?'':'none';
+  renderLocais();
+  renderProfissionais();
+  toast(r==='prestador'?'Perfil Prestador: solicitações em vez de edição direta.':'Perfil SESI: edição direta disponível.','info');
+}
+
+/* ── TABS ── */
+function switchTab(id, el){
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('act'));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('act'));
+  el.classList.add('act');
+  document.getElementById('tab-'+id).classList.add('act');
+}
+
+/* ── RENDER LOCAIS ── */
+function renderLocais(){
+  const tbody = document.getElementById('tbody-locais');
+  tbody.innerHTML = '';
+  locais.forEach(l => {
+    const temSol = !!l.solicitacao;
+    const tr = document.createElement('tr');
+    tr.className = temSol ? 'row-solicitacao' : '';
+    tr.innerHTML = `
+      <td class="td-nome">${l.nome}${temSol?`<br><span class="badge badge-orange" style="margin-top:4px;display:inline-flex">⏳ Solicitação em análise</span>`:''}${perfil==='sesi'&&temSol?`<small style="color:var(--gray-600);margin-top:2px">Solicitação: ${l.solicitacao}</small>`:''}</td>
+      <td>${l.municipio}</td>
+      <td style="font-size:12px">${l.cnpj}</td>
+      <td style="text-align:center"><span class="badge ${l.situacao==='Ativo'?'badge-ok':'badge-gray'}">${l.situacao}</span></td>
+      <td style="text-align:center">${renderAcoesLocal(l,temSol)}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+function renderAcoesLocal(l, temSol){
+  if(perfil === 'sesi'){
+    return `<button class="btn-acao btn-ver" onclick="abrirModalEditarSesi('Local de Atendimento','${l.id}')">Editar</button>`;
+  }
+  /* Prestador */
+  if(temSol){
+    return `<button class="btn-acao btn-solicitar" disabled title="Já existe solicitação pendente (RN008/RN013)">Solicitar alteração</button>`;
+  }
+  return `<button class="btn-acao btn-solicitar" onclick="abrirModalSolicitar('Local de Atendimento','${l.id}')">Solicitar alteração</button>`;
+}
+
+/* ── RENDER PROFISSIONAIS ── */
+function renderProfissionais(){
+  const tbody = document.getElementById('tbody-profissionais');
+  tbody.innerHTML = '';
+  profissionais.forEach(p => {
+    const temSol = !!p.solicitacao;
+    const tr = document.createElement('tr');
+    tr.className = temSol ? 'row-solicitacao' : '';
+    tr.innerHTML = `
+      <td class="td-nome">${p.nome}${temSol?`<br><span class="badge badge-orange" style="margin-top:4px;display:inline-flex">⏳ Solicitação em análise</span>`:''}</td>
+      <td>${p.especialidade}</td>
+      <td style="font-size:12px">${p.crm}</td>
+      <td style="text-align:center"><span class="badge ${p.situacao==='Ativo'?'badge-ok':'badge-gray'}">${p.situacao}</span></td>
+      <td style="text-align:center">${renderAcoesProf(p,temSol)}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+function renderAcoesProf(p, temSol){
+  if(perfil === 'sesi'){
+    return `<button class="btn-acao btn-ver" onclick="abrirModalEditarSesi('Profissional','${p.id}')">Editar</button>`;
+  }
+  if(temSol){
+    return `<button class="btn-acao btn-solicitar" disabled title="Já existe solicitação pendente (RN008/RN013)">Solicitar alteração</button>`;
+  }
+  return `<button class="btn-acao btn-solicitar" onclick="abrirModalSolicitar('Profissional','${p.id}')">Solicitar alteração</button>`;
+}
+
+/* ── MODAL SESI — editar direto ── */
+function abrirModalEditarSesi(entidade, id){
+  const reg = getRegById(entidade, id);
+  document.getElementById('sesi-modal-titulo').textContent = `Editar ${entidade}`;
+  document.getElementById('sesi-modal-subtitulo').textContent = 'As alterações entram em vigor imediatamente.';
+
+  const body = document.getElementById('sesi-modal-body');
+  body.innerHTML = Object.entries(reg).map(([k,v]) =>
+    `<div class="modal-field">
+      <label>${k}</label>
+      <input class="modal-input" data-campo="${k}" value="${v}" type="text">
+    </div>`
+  ).join('');
+
+  /* armazena ref para salvar */
+  body.dataset.entidade = entidade;
+  body.dataset.id = id;
+  document.getElementById('ov-editar-sesi').classList.add('open');
+}
+
+function confirmarEdicaoSesi(){
+  const body = document.getElementById('sesi-modal-body');
+  const entidade = body.dataset.entidade;
+  const id = body.dataset.id;
+  const inputs = body.querySelectorAll('input[data-campo]');
+  /* aplica diretamente (SESI não gera solicitação) */
+  if(entidade === 'Local de Atendimento'){
+    const l = locais.find(x => x.id === id);
+    if(l){ inputs.forEach(inp => { if(inp.dataset.campo === 'Nome') l.nome = inp.value; if(inp.dataset.campo === 'Município') l.municipio = inp.value; }); }
+  } else {
+    const p = profissionais.find(x => x.id === id);
+    if(p){ inputs.forEach(inp => { if(inp.dataset.campo === 'Nome') p.nome = inp.value; if(inp.dataset.campo === 'Especialidade') p.especialidade = inp.value; }); }
+  }
+  fecharModal('ov-editar-sesi');
+  renderLocais(); renderProfissionais();
+  toast('Alteração salva com sucesso (SESI — efeito imediato).','ok');
+}
+
+/* ── MODAL PRESTADOR — solicitar alteração ── */
+function abrirModalSolicitar(entidade, id){
+  _pendingSolicitacao = {entidade, id};
+
+  /* título */
+  const nome = id ? getNomeById(entidade, id) : '';
+  document.getElementById('modal-sol-titulo').textContent = id ? `Solicitar alteração — ${entidade}` : `Solicitar inclusão — ${entidade}`;
+  document.getElementById('modal-sol-subtitulo').textContent = id ? `Edite os campos que deseja alterar. O registro atual é mostrado como referência.` : `Preencha os dados do novo ${entidade}.`;
+
+  /* campos editáveis com valores atuais (Antes — RN007) */
+  const campos = document.getElementById('sol-campos-registro');
+  if(id){
+    const reg = getRegById(entidade, id);
+    campos.innerHTML = `<p style="font-size:12px;font-weight:600;color:var(--gray-600);text-transform:uppercase;letter-spacing:.4px;margin-bottom:10px">Dados do registro (edite o que desejar alterar)</p>`
+      + Object.entries(reg).map(([k,v]) =>
+        `<div class="modal-field">
+          <label>${k}</label>
+          <input class="modal-input" data-campo="${k}" data-antes="${v}" value="${v}" type="text">
+        </div>`
+      ).join('');
+  } else {
+    /* inclusão: campos vazios */
+    const camposEntidade = entidade === 'Local de Atendimento'
+      ? ['Nome / Razão Social','CNPJ','Município','Responsável Técnico']
+      : ['Nome','CRM / CRO','Especialidade','Carga Horária'];
+    campos.innerHTML = `<p style="font-size:12px;font-weight:600;color:var(--gray-600);text-transform:uppercase;letter-spacing:.4px;margin-bottom:10px">Dados do novo ${entidade}</p>`
+      + camposEntidade.map(k =>
+        `<div class="modal-field">
+          <label>${k} <span style="color:#DC2626">*</span></label>
+          <input class="modal-input" data-campo="${k}" data-antes="" value="" type="text" placeholder="${k}">
+        </div>`
+      ).join('');
+  }
+
+  /* e-mail pré-preenchido (RN005) */
+  document.getElementById('sol-email').value = 'joao.prestador@nexotech.com.br';
+  document.getElementById('sol-justificativa').value = '';
+  ['sol-just-err','sol-email-err'].forEach(id => document.getElementById(id).classList.remove('show'));
+  ['sol-justificativa','sol-email'].forEach(id => document.getElementById(id).classList.remove('err'));
+
+  document.getElementById('ov-solicitar').classList.add('open');
+}
+
+function getNomeById(entidade, id){
+  if(entidade==='Local de Atendimento') return locais.find(l=>l.id===id)?.nome || id;
+  return profissionais.find(p=>p.id===id)?.nome || id;
+}
+
+function getRegById(entidade, id){
+  if(entidade==='Local de Atendimento'){
+    const l = locais.find(x=>x.id===id);
+    return {Nome:l.nome, Município:l.municipio, CNPJ:l.cnpj, Situação:l.situacao};
+  }
+  const p = profissionais.find(x=>x.id===id);
+  return {Nome:p.nome, Especialidade:p.especialidade, 'CRM/CRO':p.crm, Situação:p.situacao};
+}
+
+/* ── ABRIR CONFIRMAÇÃO (etapa intermediária) ── */
+function abrirConfirmacaoSolicitacao(){
+  const just = document.getElementById('sol-justificativa').value.trim();
+  if(!just){
+    document.getElementById('sol-justificativa').classList.add('err');
+    document.getElementById('sol-just-err').classList.add('show');
+    return;
+  }
+  document.getElementById('sol-justificativa').classList.remove('err');
+  document.getElementById('sol-just-err').classList.remove('show');
+
+  /* monta resumo dos campos alterados */
+  const inputs = document.querySelectorAll('#sol-campos-registro input[data-campo]');
+  let resumoHtml = '';
+  inputs.forEach(inp => {
+    const antes = inp.dataset.antes;
+    const depois = inp.value;
+    const alterado = antes !== depois;
+    resumoHtml += `<div style="display:flex;gap:8px;margin-bottom:6px;padding-bottom:6px;border-bottom:1px solid #E5E7EB">
+      <span style="font-weight:600;min-width:120px;color:#000">${inp.dataset.campo}</span>
+      <span style="flex:1">
+        ${alterado
+          ? `<span style="color:#6c757d;text-decoration:line-through;margin-right:6px">${antes}</span><span style="color:#164194;font-weight:500">→ ${depois}</span>`
+          : `<span style="color:#6c757d">${depois}</span>`
+        }
+      </span>
+    </div>`;
+  });
+  resumoHtml += `<div style="display:flex;gap:8px;margin-top:4px"><span style="font-weight:600;min-width:120px;color:#000">Justificativa</span><span style="color:#343a40">${just}</span></div>`;
+  document.getElementById('confirmar-sol-resumo').innerHTML = resumoHtml;
+
+  /* subtítulo da modal */
+  document.getElementById('confirmar-sol-subtitulo').textContent =
+    'Solicitação de ' + (_pendingSolicitacao.entidade || 'registro') + ' — revise antes de enviar';
+
+  fecharModal('ov-solicitar');
+  document.getElementById('ov-confirmar-solicitar').classList.add('open');
+}
+
+/* ── VOLTAR PARA EDIÇÃO ── */
+function voltarParaEdicao(){
+  fecharModal('ov-confirmar-solicitar');
+  document.getElementById('ov-solicitar').classList.add('open');
+}
+
+/* ── CONFIRMAR SOLICITAÇÃO ── */
+function confirmarSolicitacao(){
+  const email = document.getElementById('sol-email').value.trim();
+  if(!email){
+    document.getElementById('sol-email').classList.add('err');
+    document.getElementById('sol-email-err').classList.add('show');
+    return;
+  }
+  document.getElementById('sol-email').classList.remove('err');
+  document.getElementById('sol-email-err').classList.remove('show');
+
+  const just = document.getElementById('sol-justificativa').value.trim();
+
+  /* captura Antes × Depois (RN007) */
+  const inputs = document.querySelectorAll('#sol-campos-registro input[data-campo]');
+  const antes = {}, depois = {};
+  inputs.forEach(inp => { antes[inp.dataset.campo] = inp.dataset.antes; depois[inp.dataset.campo] = inp.value; });
+
+  const {entidade, id} = _pendingSolicitacao;
+
+  if(id){
+    if(entidade === 'Local de Atendimento'){ const l = locais.find(x=>x.id===id); if(l) l.solicitacao = just; }
+    else { const p = profissionais.find(x=>x.id===id); if(p) p.solicitacao = just; }
+  }
+
+  fecharModal('ov-confirmar-solicitar');
+  renderLocais(); renderProfissionais();
+
+  document.getElementById('enviada-msg').innerHTML = `Solicitação de <strong>${entidade}</strong> encaminhada para avaliação do SESI.<br>O registro ficará como <strong>"Solicitação em análise"</strong> até a conclusão.<br>Você receberá um e-mail em <strong>${email}</strong>.`;
+  document.getElementById('ov-enviada').classList.add('open');
+}
+
+/* ── HELPERS ── */
+function fecharModal(id){ document.getElementById(id)?.classList.remove('open'); }
+document.addEventListener('click', e => {
+  ['ov-solicitar','ov-confirmar-solicitar','ov-enviada','ov-editar-sesi'].forEach(id => {
+    const ov = document.getElementById(id);
+    if(e.target === ov) fecharModal(id);
+  });
+});
+
+let _ttimer = null;
+function toast(msg, type='ok'){
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = `toast toast-${type} show`;
+  if(_ttimer) clearTimeout(_ttimer);
+  _ttimer = setTimeout(()=>el.classList.remove('show'), 4000);
+}
+
+/* ── INIT ── */
+document.addEventListener('DOMContentLoaded', ()=>{
+  renderLocais();
+  renderProfissionais();
+});
+</script>
+</body>
+</html>

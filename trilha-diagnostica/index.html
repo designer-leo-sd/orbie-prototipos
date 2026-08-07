@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1280">
+  <title>Trilha Diagnóstica — Orbie</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Outfit:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg-phase: #0D1A32;
+      --bg-card: #142A51;
+      --bg-card-dark: #10203D;
+      --bg-home: #3A00A8;
+      --border: #224476;
+      --brand-blue: #0059E7;
+      --brand-blue-hover: #3F84F3;
+      --brand-green: #12B76A;
+      --brand-red: #F04438;
+      --text-primary: #FFFFFF;
+      --text-secondary: #99C0FF;
+      --text-label: #C0CADB;
+      --yellow: #FFEA24;
+      --orange: #F79009;
+      --purple-light: #C1A6F2;
+      --progress-track: #224476;
+    }
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: var(--bg-phase);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    .screen { display: none; min-height: 100vh; flex-direction: column; }
+    .screen.active { display: flex; }
+
+    /* ── TOP BAR ── */
+    .top-bar {
+      width: 100%; background: var(--bg-phase);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 16px;
+      padding: 0 32px; height: 64px; flex-shrink: 0;
+    }
+    .btn-icon {
+      width: 40px; height: 40px; border-radius: 12px;
+      border: none; background: transparent; color: var(--text-primary);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: background 0.15s; flex-shrink: 0;
+    }
+    .btn-icon:hover { background: rgba(255,255,255,0.08); }
+    .progress-wrap {
+      flex: 1; height: 6px;
+      background: var(--progress-track); border-radius: 999px; overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%; background: var(--brand-blue); border-radius: 999px;
+      transition: width 0.5s ease-out;
+    }
+    .counter-badge {
+      font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 500;
+      color: var(--text-secondary); white-space: nowrap;
+    }
+    .diag-badge {
+      display: flex; align-items: center; gap: 6px;
+      background: rgba(0,89,231,0.15); border: 1px solid rgba(0,89,231,0.4);
+      border-radius: 999px; padding: 4px 12px;
+      font-size: 12px; font-weight: 600; color: #99C0FF;
+    }
+
+    /* ── MAIN CONTENT AREA ── */
+    .main-content {
+      flex: 1; display: flex; justify-content: center; align-items: flex-start;
+      padding: 40px 32px 120px; overflow-y: auto;
+    }
+    .content-col { width: 100%; max-width: 760px; display: flex; flex-direction: column; gap: 24px; }
+
+    /* ── BOTTOM BAR ── */
+    .bottom-bar {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: linear-gradient(to top, var(--bg-phase) 70%, transparent);
+      padding: 16px 32px 28px;
+      display: flex; justify-content: center;
+    }
+    .btn-primary {
+      height: 52px; border-radius: 12px; border: none;
+      background: var(--brand-blue); color: #fff;
+      font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 700;
+      cursor: pointer; transition: background 0.2s, transform 0.1s;
+      width: 100%; max-width: 760px;
+    }
+    .btn-primary:hover { background: var(--brand-blue-hover); }
+    .btn-primary:active { transform: scale(0.99); }
+    .btn-primary:disabled {
+      background: var(--border); color: var(--text-secondary); cursor: not-allowed;
+    }
+    .btn-secondary {
+      height: 52px; border-radius: 12px;
+      border: 1px solid var(--border); background: transparent; color: #fff;
+      font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 600;
+      cursor: pointer; transition: border-color 0.2s; width: 100%; max-width: 760px;
+    }
+    .btn-secondary:hover { border-color: var(--brand-blue); }
+
+    /* ── CARDS ── */
+    .card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 16px; padding: 24px;
+    }
+    .card-dark {
+      background: var(--bg-card-dark); border: 1px solid var(--border);
+      border-radius: 16px; padding: 24px;
+    }
+
+    /* ── ANSWER OPTIONS ── */
+    .answer-option {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 16px 20px;
+      display: flex; align-items: center; gap: 16px;
+      cursor: pointer; transition: border-color 0.15s, background 0.15s;
+    }
+    .answer-option:hover { border-color: rgba(0,89,231,0.5); }
+    .answer-option.selected {
+      background: #0D2B6B; border: 2px solid var(--brand-blue);
+    }
+    .answer-option.correct {
+      background: rgba(18,183,106,0.15); border: 2px solid var(--brand-green);
+    }
+    .answer-option.wrong {
+      background: rgba(240,68,56,0.15); border: 2px solid var(--brand-red);
+    }
+    .answer-letter {
+      width: 36px; height: 36px; border-radius: 8px;
+      background: rgba(255,255,255,0.08); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; font-weight: 700; color: var(--text-secondary);
+      flex-shrink: 0; transition: background 0.15s, color 0.15s;
+    }
+    .answer-option.selected .answer-letter { background: var(--brand-blue); color: #fff; border-color: transparent; }
+    .answer-option.correct .answer-letter { background: var(--brand-green); color: #fff; border-color: transparent; }
+    .answer-option.wrong .answer-letter { background: var(--brand-red); color: #fff; border-color: transparent; }
+    .answer-text { font-size: 16px; line-height: 24px; flex: 1; }
+
+    /* ── CHIP ── */
+    .chip {
+      display: inline-flex; align-items: center; gap: 6px;
+      border-radius: 999px; padding: 4px 12px;
+      font-size: 12px; font-weight: 600;
+    }
+    .chip-blue { background: rgba(0,89,231,0.15); color: #99C0FF; border: 1px solid rgba(0,89,231,0.3); }
+    .chip-yellow { background: rgba(255,234,36,0.12); color: #FFEA24; border: 1px solid rgba(255,234,36,0.3); }
+    .chip-green { background: rgba(18,183,106,0.15); color: #6CE9A6; border: 1px solid rgba(18,183,106,0.3); }
+    .chip-purple { background: rgba(130,85,221,0.15); color: #C1A6F2; border: 1px solid rgba(130,85,221,0.3); }
+    .chip-red { background: rgba(240,68,56,0.15); color: #FDA29B; border: 1px solid rgba(240,68,56,0.3); }
+
+    /* ── UTILITY ── */
+    .flex { display: flex; }
+    .flex-col { flex-direction: column; }
+    .items-center { align-items: center; }
+    .justify-between { justify-content: space-between; }
+    .gap-8 { gap: 8px; }
+    .gap-12 { gap: 12px; }
+    .gap-16 { gap: 16px; }
+    .gap-24 { gap: 24px; }
+    .gap-32 { gap: 32px; }
+    .text-secondary { color: var(--text-secondary); }
+    .text-label { color: var(--text-label); }
+    .fw-700 { font-weight: 700; }
+    .fw-500 { font-weight: 500; }
+    .orbitron { font-family: 'Orbitron', sans-serif; }
+
+    /* ── SCREEN 1: ENTRADA ── */
+    .s1-hero {
+      background: linear-gradient(135deg, #1A0060 0%, #3A00A8 50%, #0D1A32 100%);
+      border-radius: 20px; padding: 48px 40px;
+      display: flex; flex-direction: column; align-items: center;
+      text-align: center; gap: 20px; position: relative; overflow: hidden;
+    }
+    .s1-hero::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(circle at 50% 40%, rgba(0,89,231,0.2) 0%, transparent 70%);
+    }
+    .s1-stars {
+      position: absolute; inset: 0; pointer-events: none;
+      background-image:
+        radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,0.6) 0%, transparent 100%),
+        radial-gradient(1px 1px at 60% 15%, rgba(255,255,255,0.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 80% 50%, rgba(255,255,255,0.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 40% 70%, rgba(255,255,255,0.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 10% 80%, rgba(255,255,255,0.3) 0%, transparent 100%),
+        radial-gradient(1px 1px at 90% 80%, rgba(255,255,255,0.4) 0%, transparent 100%),
+        radial-gradient(2px 2px at 35% 20%, rgba(255,255,255,0.4) 0%, transparent 100%),
+        radial-gradient(2px 2px at 75% 65%, rgba(255,255,255,0.3) 0%, transparent 100%);
+    }
+    .s1-planet-emoji {
+      font-size: 80px; position: relative; z-index: 1;
+      filter: drop-shadow(0 0 24px rgba(0,89,231,0.5));
+    }
+    .s1-hero-title {
+      font-family: 'Orbitron', sans-serif; font-size: 28px; font-weight: 700;
+      line-height: 1.3; position: relative; z-index: 1;
+    }
+    .s1-hero-sub {
+      font-size: 16px; line-height: 24px; color: var(--text-secondary);
+      max-width: 520px; position: relative; z-index: 1;
+    }
+    .s1-meta-row {
+      display: flex; gap: 12px; flex-wrap: wrap; justify-content: center;
+      position: relative; z-index: 1;
+    }
+    .info-grid {
+      display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;
+    }
+    .info-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 16px; text-align: center;
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .info-card-icon { font-size: 24px; }
+    .info-card-val { font-size: 20px; font-weight: 700; }
+    .info-card-label { font-size: 12px; color: var(--text-secondary); }
+    .notice-box {
+      background: rgba(0,89,231,0.08); border: 1px solid rgba(0,89,231,0.25);
+      border-radius: 12px; padding: 16px 20px;
+      display: flex; align-items: flex-start; gap: 12px;
+    }
+    .notice-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+    .notice-text { font-size: 14px; line-height: 21px; color: var(--text-secondary); }
+    .notice-text strong { color: var(--text-primary); }
+
+    /* ── SCREEN 3: FEEDBACK ── */
+    .feedback-bar {
+      border-radius: 16px; padding: 20px 24px;
+      display: flex; flex-direction: column; gap: 8px;
+    }
+    .feedback-correct { background: rgba(18,183,106,0.12); border: 1px solid rgba(18,183,106,0.3); }
+    .feedback-wrong { background: rgba(240,68,56,0.10); border: 1px solid rgba(240,68,56,0.3); }
+    .feedback-title { font-size: 18px; font-weight: 700; }
+    .feedback-correct .feedback-title { color: #6CE9A6; }
+    .feedback-wrong .feedback-title { color: #FDA29B; }
+    .feedback-desc { font-size: 14px; line-height: 21px; color: var(--text-label); }
+
+    /* ── SCREEN 4: RESULTADO ── */
+    .result-hero {
+      background: linear-gradient(135deg, #0E0029 0%, #230066 60%, #1A0060 100%);
+      border-radius: 20px; padding: 40px;
+      display: flex; flex-direction: column; align-items: center;
+      text-align: center; gap: 16px; position: relative; overflow: hidden;
+    }
+    .score-circle {
+      width: 120px; height: 120px; border-radius: 50%;
+      background: conic-gradient(var(--brand-blue) 0% 62%, var(--border) 62% 100%);
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+    }
+    .score-circle-inner {
+      width: 96px; height: 96px; border-radius: 50%;
+      background: #142A51;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+    }
+    .score-pct { font-family: 'Orbitron', sans-serif; font-size: 24px; font-weight: 700; }
+    .score-label { font-size: 10px; color: var(--text-secondary); }
+    .areas-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .area-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 16px; display: flex; flex-direction: column; gap: 10px;
+    }
+    .area-card-header { display: flex; align-items: center; justify-content: space-between; }
+    .area-name { font-size: 14px; font-weight: 600; }
+    .area-pct { font-family: 'Orbitron', sans-serif; font-size: 16px; font-weight: 700; }
+    .area-pct.good { color: var(--brand-green); }
+    .area-pct.warn { color: var(--orange); }
+    .area-pct.bad { color: #F04438; }
+    .area-bar-track { height: 6px; background: var(--border); border-radius: 999px; overflow: hidden; }
+    .area-bar-fill { height: 100%; border-radius: 999px; transition: width 1s ease-out; }
+    .area-bar-fill.good { background: var(--brand-green); }
+    .area-bar-fill.warn { background: var(--orange); }
+    .area-bar-fill.bad { background: #F04438; }
+
+    /* ── SCREEN 5: TRANSIÇÃO ── */
+    .s5-hero {
+      background: linear-gradient(135deg, #001D07 0%, #0E511F 50%, #0D1A32 100%);
+      border-radius: 20px; padding: 48px 40px;
+      display: flex; flex-direction: column; align-items: center;
+      text-align: center; gap: 20px; position: relative; overflow: hidden;
+    }
+    .s5-hero::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(circle at 50% 40%, rgba(18,183,106,0.15) 0%, transparent 70%);
+    }
+    .s5-icon { font-size: 72px; position: relative; z-index: 1; }
+    .recomp-steps { display: flex; flex-direction: column; gap: 12px; }
+    .recomp-step {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 16px 20px;
+      display: flex; align-items: center; gap: 16px;
+    }
+    .step-num {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: rgba(0,89,231,0.2); border: 1px solid rgba(0,89,231,0.4);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Orbitron', sans-serif; font-size: 14px; font-weight: 700;
+      color: #99C0FF; flex-shrink: 0;
+    }
+    .step-info { flex: 1; }
+    .step-title { font-size: 15px; font-weight: 600; }
+    .step-desc { font-size: 13px; color: var(--text-secondary); margin-top: 2px; }
+
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════
+     TELA 1 — ENTRADA DA TRILHA DIAGNÓSTICA
+══════════════════════════════════════════════ -->
+<div class="screen active" id="s1">
+  <header class="top-bar">
+    <button class="btn-icon" onclick="goTo('s1')" title="Fechar">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 4L16 16M16 4L4 16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+    <div class="diag-badge">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="#99C0FF" stroke-width="1.5"/><path d="M7 4v3l2 1.5" stroke="#99C0FF" stroke-width="1.5" stroke-linecap="round"/></svg>
+      Trilha Diagnóstica
+    </div>
+  </header>
+
+  <div class="main-content">
+    <div class="content-col">
+
+      <div class="s1-hero">
+        <div class="s1-stars"></div>
+        <div class="s1-planet-emoji">🔭</div>
+        <div class="s1-hero-title">Diagnóstico<br>3º Ano — 2025</div>
+        <div class="s1-hero-sub">Antes de começar sua jornada, vamos descobrir o que você já sabe do ano passado. Seja honesto — quanto mais preciso, melhor será seu plano de estudos.</div>
+        <div class="s1-meta-row">
+          <div class="chip chip-blue">📚 Multidisciplinar</div>
+          <div class="chip chip-yellow">⭐ Revisão do 2º Ano</div>
+          <div class="chip chip-purple">🏫 Turma 3A</div>
+        </div>
+      </div>
+
+      <div class="info-grid">
+        <div class="info-card">
+          <div class="info-card-icon">❓</div>
+          <div class="info-card-val orbitron">20</div>
+          <div class="info-card-label">questões</div>
+        </div>
+        <div class="info-card">
+          <div class="info-card-icon">⏱️</div>
+          <div class="info-card-val orbitron">~25</div>
+          <div class="info-card-label">minutos</div>
+        </div>
+        <div class="info-card">
+          <div class="info-card-icon">📐</div>
+          <div class="info-card-val orbitron">4</div>
+          <div class="info-card-label">áreas</div>
+        </div>
+      </div>
+
+      <div class="notice-box">
+        <div class="notice-icon">💡</div>
+        <div class="notice-text">
+          <strong>Isso não é uma prova.</strong> Suas respostas ajudam o Orbie a criar uma trilha de estudo personalizada para você. Não há nota — só o seu caminho de aprendizado.
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="bottom-bar">
+    <button class="btn-primary" onclick="goTo('s2')">Começar diagnóstico →</button>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     TELA 2 — QUESTÃO
+══════════════════════════════════════════════ -->
+<div class="screen" id="s2">
+  <header class="top-bar">
+    <button class="btn-icon" onclick="goTo('s1')" title="Fechar">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 4L16 16M16 4L4 16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+    <div class="progress-wrap">
+      <div class="progress-fill" id="progress-fill" style="width: 5%"></div>
+    </div>
+    <div class="counter-badge">1 / 20</div>
+  </header>
+
+  <div class="main-content">
+    <div class="content-col">
+
+      <div class="flex gap-8" style="flex-wrap:wrap;">
+        <div class="chip chip-purple">📐 Matemática</div>
+        <div class="chip chip-blue">Números e Operações</div>
+      </div>
+
+      <div class="card">
+        <div style="font-size:12px; color:var(--text-secondary); margin-bottom:12px; font-family:'Orbitron',sans-serif; font-weight:700; letter-spacing:0.05em;">MÚLTIPLA ESCOLHA</div>
+        <div style="font-size:18px; line-height:28px; font-weight:500;">
+          Uma fazenda tem 3 campos. No primeiro campo há 248 animais, no segundo há 175 e no terceiro há 312. Quantos animais há no total?
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-12" id="answers-container">
+        <div class="answer-option" onclick="selectAnswer(this, false)" data-idx="0">
+          <div class="answer-letter">A</div>
+          <div class="answer-text">625 animais</div>
+        </div>
+        <div class="answer-option" onclick="selectAnswer(this, false)" data-idx="1">
+          <div class="answer-letter">B</div>
+          <div class="answer-text">735 animais</div>
+        </div>
+        <div class="answer-option" onclick="selectAnswer(this, true)" data-idx="2">
+          <div class="answer-letter">C</div>
+          <div class="answer-text">735 animais</div>
+        </div>
+        <div class="answer-option" onclick="selectAnswer(this, false)" data-idx="3">
+          <div class="answer-letter">D</div>
+          <div class="answer-text">648 animais</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="bottom-bar">
+    <button class="btn-primary" id="btn-responder" disabled onclick="confirmarResposta()">Responder</button>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     TELA 3 — FEEDBACK DA RESPOSTA (ERRADA)
+══════════════════════════════════════════════ -->
+<div class="screen" id="s3">
+  <header class="top-bar">
+    <button class="btn-icon" style="visibility:hidden;">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 4L16 16M16 4L4 16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+    <div class="progress-wrap">
+      <div class="progress-fill" style="width: 10%"></div>
+    </div>
+    <div class="counter-badge">2 / 20</div>
+  </header>
+
+  <div class="main-content">
+    <div class="content-col">
+
+      <div class="flex gap-8" style="flex-wrap:wrap;">
+        <div class="chip chip-purple">📐 Matemática</div>
+        <div class="chip chip-blue">Números e Operações</div>
+      </div>
+
+      <div class="card">
+        <div style="font-size:12px; color:var(--text-secondary); margin-bottom:12px; font-family:'Orbitron',sans-serif; font-weight:700;">MÚLTIPLA ESCOLHA</div>
+        <div style="font-size:18px; line-height:28px; font-weight:500;">
+          Uma fazenda tem 3 campos. No primeiro campo há 248 animais, no segundo há 175 e no terceiro há 312. Quantos animais há no total?
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-12">
+        <div class="answer-option wrong">
+          <div class="answer-letter">A</div>
+          <div class="answer-text">625 animais</div>
+          <svg width="20" height="20" style="margin-left:auto;flex-shrink:0;" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="9" fill="rgba(240,68,56,0.2)" stroke="#F04438" stroke-width="1.5"/><path d="M6 6l8 8M14 6l-8 8" stroke="#F04438" stroke-width="2" stroke-linecap="round"/></svg>
+        </div>
+        <div class="answer-option correct">
+          <div class="answer-letter">C</div>
+          <div class="answer-text">735 animais</div>
+          <svg width="20" height="20" style="margin-left:auto;flex-shrink:0;" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="9" fill="rgba(18,183,106,0.2)" stroke="#12B76A" stroke-width="1.5"/><path d="M5.5 10l3.5 3.5L14.5 7" stroke="#12B76A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+      </div>
+
+      <div class="feedback-bar feedback-wrong">
+        <div class="feedback-title">❌ Não foi dessa vez</div>
+        <div class="feedback-desc">A resposta correta é 735 animais. 248 + 175 + 312 = 735. Essa habilidade de adição com três parcelas vai aparecer na sua trilha de recomposição.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="bottom-bar">
+    <button class="btn-primary" onclick="goTo('s2b')">Continuar →</button>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     TELA 3B — FEEDBACK DA RESPOSTA (CORRETA)
+══════════════════════════════════════════════ -->
+<div class="screen" id="s2b">
+  <header class="top-bar">
+    <button class="btn-icon" style="visibility:hidden;">×</button>
+    <div class="progress-wrap">
+      <div class="progress-fill" style="width: 15%"></div>
+    </div>
+    <div class="counter-badge">3 / 20</div>
+  </header>
+
+  <div class="main-content">
+    <div class="content-col">
+
+      <div class="flex gap-8" style="flex-wrap:wrap;">
+        <div class="chip chip-green">🌿 Ciências</div>
+        <div class="chip chip-blue">Seres Vivos</div>
+      </div>
+
+      <div class="card">
+        <div style="font-size:12px; color:var(--text-secondary); margin-bottom:12px; font-family:'Orbitron',sans-serif; font-weight:700;">MÚLTIPLA ESCOLHA</div>
+        <div style="font-size:18px; line-height:28px; font-weight:500;">
+          Qual é o processo pelo qual as plantas produzem seu próprio alimento usando luz solar, água e gás carbônico?
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-12">
+        <div class="answer-option" style="opacity:0.5; pointer-events:none;">
+          <div class="answer-letter">A</div>
+          <div class="answer-text">Respiração celular</div>
+        </div>
+        <div class="answer-option correct">
+          <div class="answer-letter">B</div>
+          <div class="answer-text">Fotossíntese</div>
+          <svg width="20" height="20" style="margin-left:auto;flex-shrink:0;" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="9" fill="rgba(18,183,106,0.2)" stroke="#12B76A" stroke-width="1.5"/><path d="M5.5 10l3.5 3.5L14.5 7" stroke="#12B76A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+      </div>
+
+      <div class="feedback-bar feedback-correct">
+        <div class="feedback-title">✅ Correto! Você sabia esse.</div>
+        <div class="feedback-desc">Fotossíntese é o processo de produção de alimento pelas plantas usando luz solar. Parabéns — essa habilidade já está no seu mapa.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="bottom-bar">
+    <button class="btn-primary" onclick="goTo('s4-loading')">Continuar →</button>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     TELA 4 — LOADING / PROCESSANDO DIAGNÓSTICO
+══════════════════════════════════════════════ -->
+<div class="screen" id="s4-loading" style="align-items:center; justify-content:center; background: linear-gradient(180deg, #0D1A32 0%, #1A0060 100%);">
+  <div style="display:flex;flex-direction:column;align-items:center;gap:32px;max-width:480px;text-align:center;padding:40px;">
+    <div style="font-size:72px; animation: pulse-glow 2s ease-in-out infinite;">🤖</div>
+    <div>
+      <div class="orbitron" style="font-size:22px; font-weight:700; margin-bottom:12px;">Analisando seu desempenho…</div>
+      <div style="font-size:16px; color:var(--text-secondary); line-height:24px;">O Orbie está identificando seus pontos fortes e as habilidades que precisam de atenção.</div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <div class="dot-loader" style="animation-delay:0s"></div>
+      <div class="dot-loader" style="animation-delay:0.2s"></div>
+      <div class="dot-loader" style="animation-delay:0.4s"></div>
+    </div>
+    <div style="background:rgba(255,255,255,0.05);border-radius:12px;padding:16px 20px;width:100%;text-align:left;">
+      <div style="font-size:13px;color:var(--text-secondary);margin-bottom:8px;">Processando…</div>
+      <div class="progress-wrap" style="height:8px;">
+        <div class="progress-fill" id="loading-bar" style="width:0%;background:linear-gradient(90deg,#0059E7,#8455DD);"></div>
+      </div>
+    </div>
+    <button class="btn-primary" onclick="goTo('s4')" style="max-width:320px;">Ver resultado →</button>
+  </div>
+</div>
+<style>
+  .dot-loader {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--brand-blue);
+    animation: dot-pulse 0.8s ease-in-out infinite;
+  }
+  @keyframes dot-pulse {
+    0%, 100% { transform: scale(0.6); opacity: 0.4; }
+    50% { transform: scale(1); opacity: 1; }
+  }
+  @keyframes pulse-glow {
+    0%, 100% { filter: drop-shadow(0 0 12px rgba(0,89,231,0.4)); }
+    50% { filter: drop-shadow(0 0 32px rgba(130,85,221,0.8)); }
+  }
+</style>
+
+
+<!-- ══════════════════════════════════════════════
+     TELA 5 — RESULTADO DO DIAGNÓSTICO
+══════════════════════════════════════════════ -->
+<div class="screen" id="s4">
+  <header class="top-bar">
+    <div style="font-family:'Orbitron',sans-serif;font-size:14px;font-weight:700;color:var(--text-secondary);">DIAGNÓSTICO CONCLUÍDO</div>
+  </header>
+
+  <div class="main-content">
+    <div class="content-col">
+
+      <div class="result-hero">
+        <div class="s1-stars"></div>
+        <div style="position:relative;z-index:1;">
+          <div class="score-circle">
+            <div class="score-circle-inner">
+              <div class="score-pct">62%</div>
+              <div class="score-label">acertos</div>
+            </div>
+          </div>
+        </div>
+        <div style="position:relative;z-index:1;">
+          <div class="orbitron" style="font-size:22px;font-weight:700;margin-bottom:8px;">Bom começo, Caio!</div>
+          <div style="font-size:15px;color:var(--text-secondary);line-height:22px;max-width:400px;">Você acertou 12 de 20 questões. Identificamos alguns pontos que merecem atenção.</div>
+        </div>
+        <div class="flex gap-12" style="position:relative;z-index:1;flex-wrap:wrap;justify-content:center;">
+          <div class="chip chip-green">✅ 12 acertos</div>
+          <div class="chip chip-red">❌ 8 erros</div>
+          <div class="chip chip-yellow">⏱️ 22 min</div>
+        </div>
+      </div>
+
+      <div style="font-size:14px;font-weight:700;color:var(--text-label);text-transform:uppercase;letter-spacing:0.08em;">Desempenho por Área</div>
+
+      <div class="areas-grid">
+        <div class="area-card">
+          <div class="area-card-header">
+            <div class="area-name">📐 Matemática</div>
+            <div class="area-pct bad">40%</div>
+          </div>
+          <div class="area-bar-track"><div class="area-bar-fill bad" style="width:40%"></div></div>
+          <div style="font-size:12px;color:var(--text-secondary);">Precisa de atenção</div>
+        </div>
+        <div class="area-card">
+          <div class="area-card-header">
+            <div class="area-name">📖 Língua Portuguesa</div>
+            <div class="area-pct good">80%</div>
+          </div>
+          <div class="area-bar-track"><div class="area-bar-fill good" style="width:80%"></div></div>
+          <div style="font-size:12px;color:var(--text-secondary);">Ótimo desempenho</div>
+        </div>
+        <div class="area-card">
+          <div class="area-card-header">
+            <div class="area-name">🌿 Ciências</div>
+            <div class="area-pct warn">60%</div>
+          </div>
+          <div class="area-bar-track"><div class="area-bar-fill warn" style="width:60%"></div></div>
+          <div style="font-size:12px;color:var(--text-secondary);">Pode melhorar</div>
+        </div>
+        <div class="area-card">
+          <div class="area-card-header">
+            <div class="area-name">🌍 Geografia/História</div>
+            <div class="area-pct warn">50%</div>
+          </div>
+          <div class="area-bar-track"><div class="area-bar-fill warn" style="width:50%"></div></div>
+          <div style="font-size:12px;color:var(--text-secondary);">Pode melhorar</div>
+        </div>
+      </div>
+
+      <div class="notice-box">
+        <div class="notice-icon">🚀</div>
+        <div class="notice-text">
+          <strong>Sua trilha de recomposição está pronta.</strong> O Orbie criou uma trilha personalizada com base nos seus resultados. Você vai revisar os conteúdos com maior dificuldade e depois praticar com questões.
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="bottom-bar">
+    <button class="btn-primary" onclick="goTo('s5')">Ver minha trilha de recomposição →</button>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     TELA 6 — ENTRADA DA TRILHA DE RECOMPOSIÇÃO
+══════════════════════════════════════════════ -->
+<div class="screen" id="s5">
+  <header class="top-bar">
+    <button class="btn-icon" onclick="goTo('s4')" title="Voltar">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 4L4 10L12 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <div class="diag-badge" style="background:rgba(18,183,106,0.12);border-color:rgba(18,183,106,0.3);color:#6CE9A6;">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7l3.5 3.5L12 3" stroke="#6CE9A6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Trilha de Recomposição
+    </div>
+  </header>
+
+  <div class="main-content">
+    <div class="content-col">
+
+      <div class="s5-hero">
+        <div class="s5-icon">✨</div>
+        <div style="position:relative;z-index:1;">
+          <div class="orbitron" style="font-size:24px;font-weight:700;margin-bottom:10px;">Sua trilha está pronta</div>
+          <div style="font-size:16px;line-height:24px;color:var(--text-secondary);max-width:420px;">O Orbie criou essa trilha especialmente para você, com base no que você ainda precisa revisar.</div>
+        </div>
+        <div class="flex gap-12" style="position:relative;z-index:1;flex-wrap:wrap;justify-content:center;">
+          <div class="chip chip-green">📚 16 fases</div>
+          <div class="chip chip-blue">🎯 3 áreas</div>
+          <div class="chip chip-yellow">⏱️ ~40 min</div>
+        </div>
+      </div>
+
+      <div style="font-size:14px;font-weight:700;color:var(--text-label);text-transform:uppercase;letter-spacing:0.08em;">Como funciona</div>
+
+      <div class="recomp-steps">
+        <div class="recomp-step">
+          <div class="step-num">1</div>
+          <div class="step-info">
+            <div class="step-title">Revisão do conteúdo</div>
+            <div class="step-desc">Você revisita o conteúdo das áreas com gap antes de ser testado. Sem pressão de nota.</div>
+          </div>
+          <div class="chip chip-blue">Revisão</div>
+        </div>
+        <div class="recomp-step">
+          <div class="step-num">2</div>
+          <div class="step-info">
+            <div class="step-title">Pratique com questões</div>
+            <div class="step-desc">Após revisar cada área, você pratica com questões adaptadas ao seu nível.</div>
+          </div>
+          <div class="chip chip-yellow">Prática</div>
+        </div>
+        <div class="recomp-step">
+          <div class="step-num">3</div>
+          <div class="step-info">
+            <div class="step-title">Veja sua evolução</div>
+            <div class="step-desc">Ao final, você verá como evoluiu em cada área do conhecimento.</div>
+          </div>
+          <div class="chip chip-green">Resultado</div>
+        </div>
+      </div>
+
+      <div style="font-size:14px;font-weight:700;color:var(--text-label);text-transform:uppercase;letter-spacing:0.08em;">Áreas que serão trabalhadas</div>
+
+      <div class="flex flex-col gap-12">
+        <div class="recomp-step">
+          <div style="font-size:24px;">📐</div>
+          <div class="step-info">
+            <div class="step-title">Matemática</div>
+            <div class="step-desc">Números e operações · Grandezas e medidas</div>
+          </div>
+          <div class="chip chip-red">40% → meta 70%</div>
+        </div>
+        <div class="recomp-step">
+          <div style="font-size:24px;">🌿</div>
+          <div class="step-info">
+            <div class="step-title">Ciências</div>
+            <div class="step-desc">Seres vivos · Ecossistemas</div>
+          </div>
+          <div class="chip chip-yellow">60% → meta 80%</div>
+        </div>
+        <div class="recomp-step">
+          <div style="font-size:24px;">🌍</div>
+          <div class="step-info">
+            <div class="step-title">Geografia & História</div>
+            <div class="step-desc">Espaço geográfico · Linha do tempo</div>
+          </div>
+          <div class="chip chip-yellow">50% → meta 75%</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="bottom-bar" style="flex-direction:column;align-items:center;gap:12px;">
+    <button class="btn-primary" onclick="alert('Iniciando trilha de recomposição...')">Iniciar trilha de recomposição →</button>
+    <button class="btn-secondary" onclick="goTo('s1')">Voltar ao início</button>
+  </div>
+</div>
+
+
+<!-- NAV LATERAL DE TELAS (dev helper) -->
+<div style="position:fixed;bottom:20px;right:20px;z-index:999;display:flex;flex-direction:column;gap:6px;background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:12px 14px;">
+  <div style="font-size:10px;font-weight:700;color:#526D98;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:4px;">Navegar</div>
+  <button onclick="goTo('s1')"  style="nav-btn-style" class="nav-shortcut">1 · Entrada</button>
+  <button onclick="goTo('s2')"  class="nav-shortcut">2 · Questão</button>
+  <button onclick="goTo('s3')"  class="nav-shortcut">3 · Feedback ❌</button>
+  <button onclick="goTo('s2b')" class="nav-shortcut">4 · Feedback ✅</button>
+  <button onclick="goTo('s4-loading')" class="nav-shortcut">5 · Loading IA</button>
+  <button onclick="goTo('s4')"  class="nav-shortcut">6 · Resultado</button>
+  <button onclick="goTo('s5')"  class="nav-shortcut">7 · Recomposição</button>
+</div>
+<style>
+  .nav-shortcut {
+    background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+    color: #C0CADB; font-family: 'Outfit', sans-serif; font-size: 12px;
+    border-radius: 8px; padding: 6px 10px; cursor: pointer; text-align: left;
+    transition: background 0.15s, color 0.15s;
+  }
+  .nav-shortcut:hover { background: rgba(0,89,231,0.2); color: #fff; border-color: rgba(0,89,231,0.4); }
+</style>
+
+<script>
+  let selectedAnswer = null;
+  let isCorrect = false;
+
+  function goTo(screenId) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    const target = document.getElementById(screenId);
+    if (target) {
+      target.classList.add('active');
+      window.scrollTo(0, 0);
+    }
+    if (screenId === 's4-loading') {
+      animateLoadingBar();
+    }
+  }
+
+  function selectAnswer(el, correct) {
+    document.querySelectorAll('.answer-option').forEach(a => a.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedAnswer = el;
+    isCorrect = correct;
+    document.getElementById('btn-responder').disabled = false;
+  }
+
+  function confirmarResposta() {
+    goTo(isCorrect ? 's2b' : 's3');
+    selectedAnswer = null;
+    isCorrect = false;
+    document.getElementById('btn-responder').disabled = true;
+    document.querySelectorAll('.answer-option').forEach(a => a.classList.remove('selected'));
+  }
+
+  function animateLoadingBar() {
+    const bar = document.getElementById('loading-bar');
+    if (!bar) return;
+    bar.style.width = '0%';
+    let pct = 0;
+    const interval = setInterval(() => {
+      pct += Math.random() * 12 + 3;
+      if (pct >= 95) { pct = 95; clearInterval(interval); }
+      bar.style.width = pct + '%';
+    }, 200);
+  }
+</script>
+</body>
+</html>

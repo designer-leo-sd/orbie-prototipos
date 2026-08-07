@@ -1,0 +1,301 @@
+/* ====================================================================
+   ORBIE APP - RESPONSIVE STYLES
+   Mobile-first responsive design
+   ==================================================================== */
+
+/* Base: Mobile (375px) - Already covered in main styles */
+
+/* Small Mobile (320px and below) */
+@media (max-width: 320px) {
+  .app-container {
+    max-width: 100%;
+  }
+  
+  .search-section,
+  .content-sections,
+  .trail-preview,
+  .create-trail-form {
+    padding-left: var(--padding-16);
+    padding-right: var(--padding-16);
+  }
+  
+  .top-bar {
+    padding-left: var(--padding-16);
+    padding-right: var(--padding-16);
+  }
+  
+  .stats-section {
+    flex-direction: column;
+    gap: var(--gap-12);
+  }
+  
+  .trail-stats-grid {
+    grid-template-columns: 1fr;
+    gap: var(--gap-12);
+  }
+  
+  .results-summary {
+    grid-template-columns: 1fr;
+    gap: var(--gap-16);
+  }
+  
+  .trail-type-options {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Large Mobile / Small Tablet (414px - 768px) */
+@media (min-width: 414px) {
+  .app-container {
+    max-width: 414px;
+  }
+  
+  .trails-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .topics-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .trail-stats-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Tablet Portrait (768px and up) */
+@media (min-width: 768px) {
+  .app-container {
+    max-width: 768px;
+  }
+  
+  /* Two-column layout for larger screens */
+  .search-section {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--gap-16);
+  }
+  
+  .search-input-container {
+    flex: 1;
+  }
+  
+  .filter-button {
+    flex-shrink: 0;
+  }
+  
+  .stats-section {
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--gap-24);
+  }
+  
+  .trails-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--gap-24);
+  }
+  
+  .trail-type-options {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--gap-24);
+  }
+  
+  .topics-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  
+  .difficulty-options {
+    flex-direction: row;
+    gap: var(--gap-16);
+  }
+  
+  .difficulty-option {
+    flex: 1;
+  }
+  
+  .form-navigation {
+    justify-content: space-between;
+  }
+  
+  .form-navigation .btn-secondary,
+  .form-navigation .btn-primary {
+    flex: none;
+    width: 150px;
+  }
+  
+  .trail-actions {
+    justify-content: center;
+    gap: var(--gap-24);
+  }
+  
+  .trail-actions .btn-secondary,
+  .trail-actions .btn-primary {
+    flex: none;
+    width: 200px;
+  }
+  
+  .completion-actions {
+    justify-content: center;
+    gap: var(--gap-24);
+  }
+  
+  .completion-actions .btn-secondary,
+  .completion-actions .btn-primary {
+    flex: none;
+    width: 200px;
+  }
+  
+  .results-summary {
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--gap-32);
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  
+  .recommendation-cards {
+    flex-direction: row;
+  }
+  
+  .recommendation-card {
+    flex: 1;
+  }
+  
+  /* Bottom navigation adjustments */
+  .bottom-navigation {
+    width: calc(100% - var(--gap-40) * 2);
+    max-width: 500px;
+  }
+  
+  .floating-action {
+    right: var(--gap-40);
+  }
+}
+
+/* Desktop / Large Tablet (1024px and up) */
+@media (min-width: 1024px) {
+  .app-container {
+    max-width: 414px; /* Keep mobile-first design centered */
+    box-shadow: var(--shadow-lg);
+  }
+  
+  /* Center the mobile layout on desktop */
+  body {
+    background: var(--gray-blue-900);
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+  }
+  
+  .trails-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  /* Modal adjustments for desktop */
+  .modal.active {
+    align-items: center;
+  }
+  
+  .modal-content {
+    border-radius: var(--radius-24);
+    max-width: 500px;
+    max-height: 90vh;
+  }
+}
+
+/* Extra Large Desktop (1440px and up) */
+@media (min-width: 1440px) {
+  .app-container {
+    max-width: 414px;
+  }
+}
+
+/* Landscape Orientation Adjustments */
+@media (orientation: landscape) and (max-height: 600px) {
+  .loading-container,
+  .completion-container {
+    padding: var(--padding-16);
+    gap: var(--gap-16);
+  }
+  
+  .loading-animation {
+    gap: var(--gap-16);
+    margin-bottom: var(--gap-24);
+  }
+  
+  .completion-animation {
+    gap: var(--gap-16);
+    margin-bottom: var(--gap-24);
+  }
+  
+  .orbie-logo {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .success-icon {
+    font-size: 60px;
+  }
+  
+  .stars-animation .star {
+    font-size: 24px;
+  }
+}
+
+/* High DPI / Retina Display Adjustments */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .orbie-logo {
+    transform: translateZ(0);
+  }
+  
+  .loading-animation,
+  .completion-animation {
+    transform: translateZ(0);
+  }
+}
+
+/* Reduced Motion Preferences */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  .logo-ring {
+    animation: none;
+  }
+  
+  .dot {
+    animation: none;
+  }
+  
+  .success-icon {
+    animation: none;
+  }
+  
+  .star {
+    animation: none;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .bottom-navigation,
+  .floating-action,
+  .back-button,
+  .close-button,
+  .filter-button,
+  .modal {
+    display: none !important;
+  }
+  
+  .screen {
+    display: block !important;
+    min-height: auto;
+    padding-bottom: 0;
+  }
+  
+  body {
+    background: white !important;
+    color: black !important;
+  }
+}

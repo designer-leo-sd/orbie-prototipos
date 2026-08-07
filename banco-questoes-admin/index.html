@@ -1,0 +1,469 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Banco de Questões — Orbie Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/primeicons@7.0.0/primeicons.css" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --color-primary: #2177FF;
+      --color-primary-5: rgba(33,119,255,0.05);
+      --color-on-primary: #FFFFFF;
+      --color-background: #FFFFFF;
+      --color-surface: #FFFFFF;
+      --color-outline: #DDE4EB;
+      --color-on-bg: #344054;
+      --color-on-bg-mid: #525E76;
+      --color-on-bg-light: #8A95B2;
+      --color-state-overlay: rgba(0,0,0,0.03);
+      --radius-xs: 6px;
+      --radius-md: 10px;
+      --radius-lg: 12px;
+      --radius-full: 1000px;
+      --font: 'Outfit', sans-serif;
+    }
+
+    body {
+      font-family: var(--font);
+      background: var(--color-background);
+      color: var(--color-on-bg);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── TOPBAR ── */
+    .topbar {
+      height: 64px;
+      background: var(--color-surface);
+      border-bottom: 1px solid var(--color-outline);
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      gap: 16px;
+      flex-shrink: 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .topbar-logo { display: flex; align-items: center; gap: 8px; width: 167px; flex-shrink: 0; }
+    .topbar-logo svg { height: 28px; width: auto; }
+    .topbar-menu-btn {
+      width: 40px; height: 40px; border-radius: var(--radius-full);
+      display: flex; align-items: center; justify-content: center;
+      border: none; background: transparent; cursor: pointer; color: var(--color-on-bg);
+    }
+    .topbar-menu-btn:hover { background: var(--color-state-overlay); }
+    .topbar-right { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+    .topbar-selector {
+      display: flex; align-items: center; gap: 8px;
+      border: 1px solid var(--color-outline); border-radius: var(--radius-lg);
+      padding: 6px 8px 6px 12px; font-size: 14px; font-family: var(--font);
+      color: var(--color-on-bg); background: var(--color-surface); cursor: pointer;
+      min-width: 180px;
+    }
+    .topbar-selector span { flex: 1; }
+    .topbar-avatar {
+      width: 40px; height: 40px; border-radius: var(--radius-full);
+      background: var(--color-state-overlay); display: flex; align-items: center;
+      justify-content: center; font-size: 16px; font-weight: 500; color: var(--color-on-bg);
+      cursor: pointer; flex-shrink: 0;
+    }
+
+    /* ── LAYOUT ── */
+    .layout { display: flex; flex: 1; min-height: 0; }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      width: 235px; flex-shrink: 0;
+      background: var(--color-surface);
+      border-right: 1px solid var(--color-outline);
+      padding: 16px 12px;
+      display: flex; flex-direction: column; gap: 8px;
+      overflow-y: auto;
+    }
+    .nav-item {
+      display: flex; align-items: center; gap: 6px;
+      padding: 8px 4px 8px 0; border-radius: var(--radius-xs);
+      cursor: pointer; text-decoration: none; color: var(--color-on-bg);
+      font-size: 14px; font-weight: 500; width: 100%;
+      border: none; background: transparent; font-family: var(--font);
+      position: relative;
+    }
+    .nav-item:hover { background: var(--color-state-overlay); }
+    .nav-item svg { width: 24px; height: 24px; flex-shrink: 0; color: var(--color-on-bg); }
+    .nav-item .expand-icon { width: 16px; height: 16px; margin-left: auto; color: var(--color-on-bg); }
+    .nav-indicator { width: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .nav-indicator-bar { width: 4px; height: 18px; background: var(--color-primary); border-radius: 99px; }
+
+    .nav-sub { display: flex; flex-direction: column; gap: 2px; padding-left: 0; width: 100%; }
+    .nav-sub-item {
+      display: flex; align-items: center; gap: 8px;
+      padding: 6px 8px 6px 12px; border-radius: var(--radius-xs);
+      cursor: pointer; font-size: 14px; font-weight: 400; color: var(--color-on-bg);
+      text-decoration: none; font-family: var(--font); position: relative;
+    }
+    .nav-sub-item:hover { background: var(--color-state-overlay); }
+    .nav-sub-item.active {
+      background: var(--color-state-overlay);
+      font-weight: 400;
+      padding-left: 0;
+      display: flex; align-items: center; gap: 0;
+    }
+    .nav-sub-item.active .nav-indicator { display: flex; }
+    .nav-sub-item.active .nav-sub-label { padding-left: 8px; color: var(--color-on-bg); }
+    .nav-sub-item .nav-indicator { display: none; }
+    .nav-accordion { display: flex; flex-direction: column; width: 100%; }
+
+    /* ── MAIN CONTENT ── */
+    .main {
+      flex: 1; min-width: 0;
+      display: flex; flex-direction: column;
+      padding-top: 8px;
+    }
+    .page-header {
+      display: flex; flex-direction: column; gap: 8px;
+      padding: 0 24px 32px;
+    }
+    .breadcrumb {
+      display: flex; align-items: center; gap: 6px; min-height: 32px;
+    }
+    .breadcrumb-link {
+      font-size: 12px; color: var(--color-on-bg-mid); text-decoration: none;
+      display: flex; align-items: center;
+    }
+    .breadcrumb-link:hover { color: var(--color-primary); }
+    .breadcrumb-current { font-size: 12px; color: var(--color-on-bg-light); }
+    .breadcrumb-chevron { color: var(--color-on-bg-light); display: flex; }
+    .breadcrumb-star {
+      width: 32px; height: 32px; border-radius: var(--radius-full);
+      display: flex; align-items: center; justify-content: center;
+      border: none; background: transparent; cursor: pointer; color: var(--color-on-bg-light);
+    }
+    .breadcrumb-star:hover { background: var(--color-state-overlay); }
+    .page-title-row {
+      display: flex; align-items: center; gap: 16px;
+    }
+    .page-title {
+      flex: 1; font-size: 28px; font-weight: 700; line-height: 33px;
+      color: var(--color-on-bg);
+    }
+    .btn-primary {
+      height: 40px; background: var(--color-primary); color: var(--color-on-primary);
+      border: none; border-radius: var(--radius-lg); padding: 0 16px;
+      display: flex; align-items: center; gap: 8px; cursor: pointer;
+      font-size: 16px; font-weight: 500; font-family: var(--font);
+      white-space: nowrap; text-decoration: none;
+    }
+    .btn-primary:hover { background: #0059E7; }
+    .btn-primary svg { width: 24px; height: 24px; }
+
+    /* ── SEARCH + FILTER BAR ── */
+    .search-bar-row {
+      display: flex; align-items: center; gap: 8px;
+      padding: 0 24px 0;
+    }
+    .search-input-wrap {
+      flex: 1; display: flex; align-items: center; gap: 8px;
+      border: 1px solid var(--color-outline); border-radius: var(--radius-lg);
+      padding: 6px 8px 6px 12px; height: 40px; background: var(--color-surface);
+    }
+    .search-input-wrap svg { width: 24px; height: 24px; color: var(--color-on-bg-light); flex-shrink: 0; }
+    .search-input-wrap input {
+      flex: 1; border: none; outline: none; font-size: 14px; font-family: var(--font);
+      color: var(--color-on-bg-light); background: transparent;
+    }
+    .search-input-wrap input::placeholder { color: var(--color-on-bg-light); }
+    .btn-filter {
+      height: 40px; border: none; background: transparent; border-radius: var(--radius-lg);
+      display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 0 16px;
+      font-size: 16px; font-weight: 500; font-family: var(--font); color: var(--color-primary);
+    }
+    .btn-filter:hover { background: var(--color-primary-5); }
+    .btn-filter svg { width: 24px; height: 24px; }
+
+    /* ── TABS ── */
+    .tabs-section { padding: 0 24px; flex: 1; display: flex; flex-direction: column; }
+    .tabs-nav {
+      display: flex; align-items: center; gap: 0;
+      border-bottom: 2px solid var(--color-outline); margin-bottom: 0;
+    }
+    .tab-item {
+      display: flex; align-items: center; gap: 6px;
+      padding: 12px; cursor: pointer; border: none; background: transparent;
+      font-size: 14px; font-weight: 500; font-family: var(--font);
+      color: var(--color-on-bg-mid); position: relative; text-decoration: none;
+    }
+    .tab-item.active {
+      color: var(--color-primary);
+      border-bottom: 2px solid var(--color-primary);
+      margin-bottom: -2px;
+    }
+    .tab-badge {
+      min-width: 24px; padding: 4px; border-radius: var(--radius-full);
+      font-size: 12px; font-weight: 500; text-align: center; line-height: 16px;
+      background: var(--color-state-overlay); color: var(--color-on-bg-mid);
+    }
+    .tab-item.active .tab-badge {
+      background: var(--color-primary-5); color: var(--color-primary);
+    }
+
+    /* ── TABLE ── */
+    .table-wrap { width: 100%; margin-top: 16px; }
+    table { width: 100%; border-collapse: collapse; }
+    thead th {
+      font-size: 14px; font-weight: 700; color: var(--color-on-bg);
+      padding: 10px 4px; text-align: left; white-space: nowrap;
+    }
+    thead th.center { text-align: center; }
+    .th-inner { display: inline-flex; align-items: center; gap: 4px; }
+    .th-sort { width: 18px; height: 18px; color: var(--color-on-bg-mid); cursor: pointer; }
+    tbody td {
+      font-size: 14px; font-weight: 400; color: var(--color-on-bg-mid);
+      padding: 0 4px; height: 60px; border-bottom: 1px solid var(--color-outline);
+      vertical-align: middle; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    tbody td.center { text-align: center; }
+    .td-vinculos { display: flex; align-items: center; justify-content: center; gap: 4px; }
+    .td-autoria { display: flex; align-items: center; justify-content: center; }
+    .td-acoes { display: flex; align-items: center; justify-content: center; gap: 2px; }
+    .icon-btn {
+      width: 32px; height: 32px; border-radius: var(--radius-full);
+      display: flex; align-items: center; justify-content: center;
+      border: none; background: transparent; cursor: pointer; color: var(--color-primary);
+      flex-shrink: 0;
+    }
+    .icon-btn:hover { background: var(--color-primary-5); }
+    .icon-btn svg { width: 20px; height: 20px; }
+  </style>
+</head>
+
+<body>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="topbar-logo">
+    <!-- Logo Orbie completo — extraído do DS Figma node 26358:172 -->
+    <svg width="112" height="33" viewBox="0 0 191 56" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0">
+      <g clip-path="url(#clip_logo)">
+        <path d="M41.763 56C56.5366 56 67.7509 45.0144 67.7509 30.4669C67.7509 15.9194 56.5392 4.9364 41.763 4.9364C26.9868 4.9364 15.7776 15.922 15.7776 30.4669C15.7776 45.0119 26.9157 56 41.7655 56M41.7655 52.1357C29.4156 52.1357 20.0967 42.893 20.0967 30.4669C20.0967 18.0408 29.4156 8.79812 41.7655 8.79812C54.1154 8.79812 63.4344 18.0408 63.4344 30.4669C63.4344 42.893 54.1154 52.1357 41.7655 52.1357Z" fill="#1064AD"/>
+        <path d="M92.769 16.8315C91.481 16.453 90.4952 16.3005 88.981 16.3005C84.1335 16.3005 80.4954 19.0291 78.4502 23.4219V18.5718C78.4502 17.5861 77.9192 16.9814 76.936 16.9814H76.0264C75.1169 16.9814 74.5122 17.5886 74.5122 18.5718V53.4238C74.5122 54.4096 75.1194 55.0905 76.0264 55.0905H77.1621C78.0716 55.0905 78.6763 54.4096 78.6763 53.4238V33.1956C78.6763 25.5433 82.8429 20.0124 88.6024 20.0124C89.512 20.0124 90.3453 20.1648 91.4047 20.4671C92.3143 20.7695 93.1476 20.6932 93.5261 19.5576L93.6786 18.9504C94.1334 17.6623 93.5261 17.0551 92.769 16.829" fill="#1064AD"/>
+        <path d="M116.487 16.3006C110.046 16.3006 104.82 19.1028 101.408 23.5743V2.58637C101.408 1.45072 100.954 0.767295 99.6655 1.14584L98.7559 1.37196C97.694 1.67429 97.3154 2.20528 97.3154 3.0386V53.4213C97.3154 54.4071 97.8464 55.088 98.8296 55.088H99.8916C100.877 55.088 101.406 54.4071 101.406 53.4213V48.4976C104.663 53.0428 109.891 55.9975 116.484 55.9975C127.699 55.9975 135.577 47.2095 135.577 36.1478C135.577 25.086 127.699 16.298 116.484 16.298M116.106 52.2095C107.696 52.2095 101.18 46.3 101.027 36.1478C100.875 25.9955 107.77 20.0861 116.106 20.0861C125.272 20.0861 131.334 27.2836 131.334 36.1478C131.334 45.0119 125.272 52.2095 116.106 52.2095Z" fill="#1064AD"/>
+        <path d="M143.848 55.0905H144.984C145.969 55.0905 146.498 54.4096 146.498 53.4239V18.5719C146.498 17.5861 145.967 16.9814 144.984 16.9814H143.848C142.939 16.9814 142.334 17.5887 142.334 18.5719V53.4239C142.334 54.4096 142.941 55.0905 143.848 55.0905Z" fill="#1064AD"/>
+        <path d="M157.566 37.4384H188.478C189.766 37.4384 190.523 36.605 190.523 35.3932C190.523 30.6194 188.856 25.998 185.749 22.5123C182.642 18.6481 177.944 16.3005 172.111 16.3005C161.125 16.3005 153.244 24.8624 153.244 36.2265C153.244 48.6526 162.64 56 172.944 56C178.097 56 184.385 53.9548 188.704 49.4071C189.235 48.7999 189.613 47.8929 188.78 47.0596L188.325 46.6811C187.644 46.0002 186.811 45.8478 185.825 46.6811C181.961 50.5453 177.037 52.212 172.794 52.212C164.99 52.212 158.097 46.7573 157.566 37.4384ZM172.113 20.0886C176.963 20.0886 180.752 22.0575 183.099 25.3934C184.842 27.591 185.901 30.3933 186.28 33.6529H157.566C158.399 25.5458 164.083 20.0911 172.113 20.0911" fill="#1064AD"/>
+        <path d="M140.645 6.44547C141.212 8.48558 143.361 9.68982 145.442 9.13343C147.522 8.57704 148.749 6.47088 148.183 4.43077C147.616 2.39067 145.467 1.18642 143.386 1.74535C141.305 2.30175 140.078 4.40791 140.645 6.44801" fill="#29B84C"/>
+        <path d="M79.9758 3.57717C79.8513 2.26876 78.863 1.32111 78.1465 0.846021C77.547 0.447146 76.203 0 74.6812 0C70.8017 0 64.3155 1.94102 56.6276 5.38608C56.3913 5.49279 54.1327 6.6259 52.9081 7.24072C53.777 7.62689 54.618 8.05626 55.4259 8.52881L57.842 7.26359C65.5299 3.81091 71.6883 1.96897 75.4306 1.96897C76.1776 1.96897 76.9652 2.07059 77.3056 2.2027C77.6486 2.33482 78.0297 2.51266 78.0449 3.22911C78.0881 5.35559 75.4306 9.25542 70.634 14.0292C64.3688 20.2639 55.0677 27.4004 44.4428 34.1203C25.3603 46.1907 10.6528 51.5946 4.54515 51.5946C1.02132 51.5946 2.0274 49.4605 1.96643 49.9457C2.27384 47.489 5.47247 42.6466 13.9911 35.2179L15.9474 33.4979C15.8458 32.5655 15.7873 31.6178 15.7797 30.6498L12.6497 33.3937C4.4486 40.4921 0 46.2644 0 49.6815C0 50.1261 0.193086 52.2856 2.77942 53.2002C3.46031 53.4416 4.30125 53.5636 5.29717 53.5636C12.9266 53.5636 28.8232 46.6277 45.797 35.8911C56.3837 29.1966 65.6849 22.088 71.9881 15.8813C75.9616 11.9662 80.2883 6.88758 79.9758 3.57971" fill="#F79850"/>
+      </g>
+      <defs>
+        <clipPath id="clip_logo"><rect width="190.523" height="56" fill="white"/></clipPath>
+      </defs>
+    </svg>
+  </div>
+  <button class="topbar-menu-btn" aria-label="Menu">
+    <i class="pi pi-bars" style="font-size:20px"></i>
+  </button>
+  <div class="topbar-right">
+    <button class="topbar-selector">
+      <span>Conteudista</span>
+      <i class="pi pi-chevron-down" style="font-size:16px;color:#344054"></i>
+    </button>
+    <div class="topbar-avatar">G</div>
+  </div>
+</header>
+
+<!-- LAYOUT -->
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <a class="nav-item" href="#">
+      <div class="nav-indicator"></div>
+      <i class="pi pi-home" style="font-size:20px;width:24px;height:24px;display:flex;align-items:center;justify-content:center;flex-shrink:0"></i>
+      <span>Início</span>
+    </a>
+
+    <div class="nav-accordion">
+      <button class="nav-item">
+        <div class="nav-indicator"></div>
+        <i class="pi pi-copy" style="font-size:20px;width:24px;height:24px;display:flex;align-items:center;justify-content:center;flex-shrink:0"></i>
+        <span>Biblioteca</span>
+        <i class="pi pi-chevron-up expand-icon" style="font-size:14px"></i>
+      </button>
+      <div class="nav-sub">
+        <a class="nav-sub-item active" href="#">
+          <div class="nav-indicator"><div class="nav-indicator-bar"></div></div>
+          <span class="nav-sub-label">Banco de Questões</span>
+        </a>
+        <a class="nav-sub-item" href="#">Curadoria</a>
+        <a class="nav-sub-item" href="#">Descrição de imagens</a>
+      </div>
+    </div>
+
+    <button class="nav-item">
+      <div class="nav-indicator"></div>
+      <i class="pi pi-question-circle" style="font-size:20px;width:24px;height:24px;display:flex;align-items:center;justify-content:center;flex-shrink:0"></i>
+      <span>Ajuda</span>
+      <i class="pi pi-chevron-down expand-icon" style="font-size:14px"></i>
+    </button>
+  </nav>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="page-header">
+      <!-- Breadcrumb -->
+      <div class="breadcrumb">
+        <a class="breadcrumb-link" href="#">
+          Biblioteca
+          <span class="breadcrumb-chevron"><i class="pi pi-chevron-right" style="font-size:14px"></i></span>
+        </a>
+        <span class="breadcrumb-current">Banco de Questões</span>
+        <button class="breadcrumb-star" aria-label="Favoritar"><i class="pi pi-star" style="font-size:14px"></i></button>
+      </div>
+      <!-- Title row -->
+      <div class="page-title-row">
+        <h1 class="page-title">Banco de Questões</h1>
+        <a class="btn-primary" href="#"><i class="pi pi-plus" style="font-size:16px"></i> Criar Questão
+        </a>
+      </div>
+    </div>
+
+    <!-- Search + Filter -->
+    <div class="search-bar-row">
+      <div class="search-input-wrap"><i class="pi pi-search" style="font-size:18px;color:var(--color-on-bg-light);flex-shrink:0"></i>
+        <input type="text" placeholder="Digite uma palavra chave" />
+      </div>
+      <button class="btn-filter"><i class="pi pi-filter" style="font-size:18px"></i> Filtros
+      </button>
+    </div>
+
+    <!-- Tabs + Table -->
+    <div class="tabs-section">
+      <div class="tabs-nav">
+        <button class="tab-item active">
+          Todas as questões <span class="tab-badge">4</span>
+        </button>
+        <button class="tab-item">
+          Criadas por mim <span class="tab-badge">3</span>
+        </button>
+        <button class="tab-item">
+          Rascunhos <span class="tab-badge">1</span>
+        </button>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>
+                <span class="th-inner">Código
+                  <i class="pi pi-sort-alt th-sort" style="font-size:14px;color:#525E76"></i>
+                </span>
+              </th>
+              <th>
+                <span class="th-inner">Título
+                  <i class="pi pi-sort-alt th-sort" style="font-size:14px;color:#525E76"></i>
+                </span>
+              </th>
+              <th>
+                <span class="th-inner">Tipo de Questão
+                  <i class="pi pi-sort-alt th-sort" style="font-size:14px;color:#525E76"></i>
+                </span>
+              </th>
+              <th class="center">
+                <span class="th-inner">Versão
+                  <i class="pi pi-sort-alt th-sort" style="font-size:14px;color:#525E76"></i>
+                </span>
+              </th>
+              <th class="center">Satisfação</th>
+              <th class="center">Vínculos</th>
+              <th class="center">Autoria</th>
+              <th class="center">Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- ROW 1 -->
+            <tr>
+              <td>4553</td>
+              <td>A vida no fundo do mar</td>
+              <td>Múltipla Escolha</td>
+              <td class="center">3</td>
+              <td class="center">N/A</td>
+              <td class="center">
+                <div class="td-vinculos">
+                  <button class="icon-btn" title="Ver vínculos"><i class="pi pi-eye"></i></button>
+                  <span>2</span>
+                </div>
+              </td>
+              <td class="center">
+                <div class="td-autoria">
+                  <button class="icon-btn" title="Ver autoria"><i class="pi pi-eye"></i></button>
+                </div>
+              </td>
+              <td class="center">
+                <div class="td-acoes">
+                  <button class="icon-btn" title="Excluir"><i class="pi pi-trash"></i></button>
+                  <button class="icon-btn" title="Duplicar"><i class="pi pi-copy"></i></button>
+                  <button class="icon-btn" title="Editar"><i class="pi pi-pen-to-square"></i></button>
+                  <button class="icon-btn" title="Visualizar"><i class="pi pi-eye"></i></button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- ROW 2 -->
+            <tr>
+              <td>3245</td><td>Corrida maluca</td><td>Múltipla Escolha</td>
+              <td class="center">1</td><td class="center">N/A</td>
+              <td class="center"><div class="td-vinculos"><button class="icon-btn"><i class="pi pi-eye"></i></button><span>8</span></div></td>
+              <td class="center"><div class="td-autoria"><button class="icon-btn"><i class="pi pi-eye"></i></button></div></td>
+              <td class="center"><div class="td-acoes">
+                <button class="icon-btn"><i class="pi pi-trash"></i></button>
+                <button class="icon-btn"><i class="pi pi-copy"></i></button>
+                <button class="icon-btn"><i class="pi pi-pen-to-square"></i></button>
+                <button class="icon-btn"><i class="pi pi-eye"></i></button>
+              </div></td>
+            </tr>
+            <!-- ROW 3 -->
+            <tr>
+              <td>897</td><td>A quadra de voleibol</td><td>Múltipla Escolha</td>
+              <td class="center">1</td><td class="center">N/A</td>
+              <td class="center"><div class="td-vinculos"><button class="icon-btn"><i class="pi pi-eye"></i></button><span>3</span></div></td>
+              <td class="center"><div class="td-autoria"><button class="icon-btn"><i class="pi pi-eye"></i></button></div></td>
+              <td class="center"><div class="td-acoes">
+                <button class="icon-btn"><i class="pi pi-trash"></i></button>
+                <button class="icon-btn"><i class="pi pi-copy"></i></button>
+                <button class="icon-btn"><i class="pi pi-pen-to-square"></i></button>
+                <button class="icon-btn"><i class="pi pi-eye"></i></button>
+              </div></td>
+            </tr>
+            <!-- ROW 4 -->
+            <tr>
+              <td>2175</td><td>Saúde</td><td>Múltipla Escolha</td>
+              <td class="center">1</td><td class="center">N/A</td>
+              <td class="center"><div class="td-vinculos"><button class="icon-btn"><i class="pi pi-eye"></i></button><span>9</span></div></td>
+              <td class="center"><div class="td-autoria"><button class="icon-btn"><i class="pi pi-eye"></i></button></div></td>
+              <td class="center"><div class="td-acoes">
+                <button class="icon-btn"><i class="pi pi-trash"></i></button>
+                <button class="icon-btn"><i class="pi pi-copy"></i></button>
+                <button class="icon-btn"><i class="pi pi-pen-to-square"></i></button>
+                <button class="icon-btn"><i class="pi pi-eye"></i></button>
+              </div></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div><!-- /tabs-section -->
+  </main><!-- /main -->
+</div><!-- /layout -->
+</body>
+</html>
+
+
+
+
+

@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>HU 5/6 · Home — Pendência de Solicitações de Alteração — SIG SESI MG</title>
+<style>
+:root{
+  --side:#1B3A7A;--side2:#152D62;--side-act:#1E4CB8;
+  --bg:#F4F5F8;--card:#fff;
+  --blue:#1E4CB8;--blue-h:#1640A0;--blue-lt:#EEF3FF;--blue-bd:#C7D7F9;
+  --tx:#1A1A2E;--tx2:#6B7280;--tx3:#374151;--txd:#9CA3AF;
+  --bdr:#E5E7EB;--bdf:#3B82F6;
+  --red:#DC2626;--red-bg:#FEF2F2;--red-bd:#FECACA;
+  --grn:#16A34A;--grn-bg:#F0FDF4;--grn-bd:#BBF7D0;
+  --ylw:#D97706;--ylw-bg:#FFFBEB;--ylw-bd:#FDE68A;
+  --orn:#EA580C;--orn-bg:#FFF7ED;--orn-bd:#FED7AA;
+  --r:8px;--rs:4px;--shadow:0 1px 3px rgba(0,0,0,.08);
+  --navbar:86px;--sidebar:336px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter','Segoe UI',system-ui,sans-serif;font-size:14px;background:var(--bg);color:var(--tx);min-height:100vh}
+a{text-decoration:none;color:inherit}
+</style>
+<style>
+/* NAVBAR */
+.navbar{height:var(--navbar);background:var(--side);display:flex;align-items:center;justify-content:space-between;padding:0 28px 0 24px;position:fixed;top:0;left:0;right:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.18)}
+.nb-left{display:flex;align-items:center;gap:20px}
+.nb-logo{display:flex;align-items:center;gap:10px}
+.nb-logo-box{width:36px;height:36px;background:#fff;border-radius:6px;display:flex;align-items:center;justify-content:center}
+.nb-logo-box svg{width:22px;height:22px}
+.nb-title{color:#fff;font-weight:700;font-size:15px}
+.nb-sep{width:1px;height:24px;background:rgba(255,255,255,.2)}
+.nb-bc{font-size:13px;color:rgba(255,255,255,.7)}
+.nb-right{display:flex;align-items:center;gap:12px}
+.nb-user-badge{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);border-radius:6px;padding:5px 12px;font-size:12px;color:#fff;font-weight:500}
+.nb-avatar{width:36px;height:36px;background:#2E4A80;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:600;cursor:pointer}
+.nb-notif{position:relative;cursor:pointer}
+.nb-notif svg{width:20px;height:20px;stroke:#fff;fill:none}
+.nb-notif-dot{position:absolute;top:-2px;right:-2px;width:8px;height:8px;background:#EF4444;border-radius:50%;border:2px solid var(--side)}
+/* SIDEBAR */
+.sidebar{width:var(--sidebar);background:var(--side);position:fixed;top:var(--navbar);left:0;bottom:0;overflow-y:auto;z-index:90;display:flex;flex-direction:column}
+.sb-section{padding:16px 8px 4px}
+.sb-section-lbl{font-size:10px;font-weight:600;color:rgba(255,255,255,.4);letter-spacing:.8px;text-transform:uppercase;padding:4px 12px 8px}
+.sb-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:6px;color:rgba(255,255,255,.7);font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;margin-bottom:2px}
+.sb-item:hover{background:rgba(255,255,255,.08);color:#fff}
+.sb-item.act{background:var(--side-act);color:#fff;font-weight:600}
+.sb-item svg{width:18px;height:18px;flex-shrink:0;opacity:.8}
+.sb-item.act svg{opacity:1}
+.sb-foot{margin-top:auto;padding:12px 8px;border-top:1px solid rgba(255,255,255,.1)}
+.sb-user-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:6px;cursor:pointer}
+.sb-user-row:hover{background:rgba(255,255,255,.07)}
+.sb-av{width:34px;height:34px;background:#2E4A80;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:600;flex-shrink:0}
+.sb-user-info{color:#fff;font-size:12px;line-height:1.4}
+.sb-user-info small{display:block;opacity:.5;font-size:11px}
+/* MAIN */
+.main{margin-top:var(--navbar);margin-left:var(--sidebar);min-height:calc(100vh - var(--navbar));padding:32px 40px 48px}
+/* ROLE BAR */
+.role-bar{background:var(--side2);padding:10px 16px;display:flex;align-items:center;gap:8px;margin-bottom:28px;border-radius:var(--r);flex-wrap:wrap}
+.role-bar-lbl{font-size:11px;color:rgba(255,255,255,.55);margin-right:2px}
+.rb{padding:4px 12px;border-radius:4px;background:rgba(255,255,255,.1);border:1px solid transparent;color:rgba(255,255,255,.7);font-size:11px;font-weight:500;cursor:pointer;transition:all .15s}
+.rb.act{background:rgba(255,255,255,.22);border-color:rgba(255,255,255,.2);color:#fff;font-weight:600}
+.rb:hover:not(.act){background:rgba(255,255,255,.15)}
+.role-hint{font-size:11px;color:rgba(255,255,255,.5);margin-left:4px}
+/* PAGE HEADER */
+.page-header{margin-bottom:24px}
+.page-header h1{font-size:22px;font-weight:700;color:var(--tx)}
+.page-header p{font-size:13px;color:var(--tx2);margin-top:4px}
+/* ANNOTATIONS */
+.ann{background:#FFFBEB;border:1px solid #FDE68A;border-radius:var(--r);padding:14px 18px;margin-bottom:24px}
+.ann h3{font-size:11px;font-weight:700;color:#92400E;margin-bottom:10px;text-transform:uppercase;letter-spacing:.4px}
+.ann-item{display:flex;gap:8px;margin-bottom:7px;font-size:12px;color:#78350F;line-height:1.5}
+.ann-item:last-child{margin-bottom:0}
+.ann-n{min-width:18px;height:18px;background:#F59E0B;color:#fff;border-radius:50%;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+</style>
+<style>
+/* ACORDEON BASE */
+.accordion-wrap{display:flex;flex-direction:column;border:1px solid var(--bdr);border-radius:var(--r);overflow:hidden;background:var(--card);box-shadow:var(--shadow);margin-bottom:16px}
+.accordion-title{display:flex;align-items:center;gap:10px;padding:0 16px;height:64px;cursor:pointer;user-select:none;background:var(--card);transition:background .15s;border-bottom:1px solid transparent}
+.accordion-title:hover{background:#FAFAFA}
+.accordion-title.open{border-bottom-color:var(--bdr)}
+.acc-ico{width:24px;height:24px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.acc-ico svg{width:18px;height:18px}
+.acc-label{font-size:14px;font-weight:600;color:var(--tx);flex:1}
+.acc-badge{display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:20px;padding:0 6px;background:#E5E7EB;border-radius:20px;font-size:11px;font-weight:700;color:var(--tx2)}
+.acc-badge.alert{background:#FEE2E2;color:#991B1B}
+.acc-chevron{width:16px;height:16px;transition:transform .2s;flex-shrink:0}
+.acc-chevron.open{transform:rotate(180deg)}
+.accordion-body{display:none;padding:0}
+.accordion-body.open{display:block}
+/* ACORDEON SOLICITAÇÕES — destaque azul-suave */
+.accordion-wrap.solicit .accordion-title{background:var(--blue-lt);border-bottom-color:var(--blue-bd)}
+.accordion-wrap.solicit .accordion-title:hover{background:#E0EAFF}
+.accordion-wrap.solicit .accordion-title.open{border-bottom-color:var(--blue-bd)}
+.accordion-wrap.solicit .acc-ico svg{stroke:var(--blue)}
+.accordion-wrap.solicit .acc-label{color:#1E3A8A}
+.accordion-wrap.solicit .acc-badge{background:#BFDBFE;color:#1E3A8A}
+/* LOADING SKELETON */
+.skeleton-row{height:20px;background:linear-gradient(90deg,#F3F4F6 25%,#E5E7EB 50%,#F3F4F6 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:4px;margin:6px 0}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+/* TABELA */
+.pend-table{width:100%;border-collapse:collapse}
+.pend-table thead th{font-size:12px;font-weight:600;color:var(--tx2);text-align:left;padding:10px 16px;background:#F9FAFB;border-bottom:2px solid var(--bdr);white-space:nowrap;cursor:pointer;user-select:none;transition:background .15s}
+.pend-table thead th:hover{background:#F3F4F6}
+.pend-table thead th.no-sort{cursor:default}
+.pend-table thead th.no-sort:hover{background:#F9FAFB}
+.sort-icon{display:inline-block;margin-left:4px;font-size:10px;opacity:.5}
+.sort-icon.asc::after{content:'▲'}
+.sort-icon.desc::after{content:'▼'}
+.sort-icon.none::after{content:'⇅'}
+.pend-table tbody tr{border-bottom:1px solid var(--bdr);transition:background .12s}
+.pend-table tbody tr:last-child{border-bottom:none}
+.pend-table tbody tr:hover{background:#F0F5FF}
+.pend-table tbody td{padding:12px 16px;font-size:13px;vertical-align:top;color:var(--tx)}
+.td-obs{min-width:200px;max-width:280px}
+.obs-input{width:100%;border:1px solid var(--bdr);border-radius:var(--rs);padding:6px 9px;font-size:12px;font-family:inherit;resize:vertical;min-height:34px;max-height:80px;outline:none;transition:border-color .15s;color:var(--tx);background:#fff}
+.obs-input:focus{border-color:var(--bdf);box-shadow:0 0 0 3px rgba(59,130,246,.1)}
+.btn-action{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:var(--rs);background:var(--blue-lt);border:1px solid var(--blue-bd);cursor:pointer;transition:all .15s}
+.btn-action:hover{background:var(--blue);border-color:var(--blue)}
+.btn-action:hover svg{stroke:#fff}
+.btn-action svg{width:16px;height:16px;stroke:var(--blue);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.tipo-tag{display:inline-flex;align-items:center;font-size:11px;background:var(--blue-lt);border:1px solid var(--blue-bd);border-radius:4px;padding:2px 8px;white-space:nowrap;font-weight:500;color:#1E3A8A}
+.pend-footer{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:#F9FAFB;border-top:1px solid var(--bdr);font-size:12px;color:var(--tx2)}
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:#1F2937;color:#fff;border-radius:var(--r);padding:12px 16px;font-size:13px;display:flex;align-items:center;gap:8px;box-shadow:0 8px 24px rgba(0,0,0,.25);z-index:600;transform:translateY(80px);opacity:0;transition:all .3s;max-width:360px}
+.toast.show{transform:translateY(0);opacity:1}
+.toast-ok{border-left:4px solid var(--grn)}
+</style>
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- NAVBAR -->
+<header class="navbar">
+  <div class="nb-left">
+    <div class="nb-logo">
+      <div class="nb-logo-box">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#1B3A7A" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+      </div>
+      <span class="nb-title">SIG SESI MG</span>
+    </div>
+    <span class="nb-sep"></span>
+    <span class="nb-bc">Página Inicial</span>
+  </div>
+  <div class="nb-right">
+    <span class="nb-notif">
+      <svg viewBox="0 0 24 24"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+      <span class="nb-notif-dot"></span>
+    </span>
+    <span class="nb-user-badge" id="nb-badge">Admin DR</span>
+    <div class="nb-avatar" id="nb-av">AS</div>
+  </div>
+</header>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sb-section">
+    <div class="sb-item act">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+      Página Inicial
+    </div>
+  </div>
+  <div class="sb-section">
+    <div class="sb-section-lbl">Administração</div>
+    <div class="sb-item" onclick="window.location.href='hu-avaliacao-solicitacoes.html'">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+      Avaliação de Solicitações
+    </div>
+    <div class="sb-section-lbl">Cadastros</div>
+    <div class="sb-item">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+      Prestadores
+    </div>
+    <div class="sb-item">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+      Agendamentos
+    </div>
+  </div>
+  <div class="sb-foot">
+    <div class="sb-user-row">
+      <div class="sb-av" id="sb-av">AS</div>
+      <div class="sb-user-info" id="sb-info">Ana Silveira<small>Admin DR</small></div>
+    </div>
+  </div>
+</aside>
+<!-- MAIN -->
+<main class="main">
+  <!-- ROLE BAR -->
+  <div class="role-bar">
+    <span class="role-bar-lbl">🎭 Simular perfil:</span>
+    <button class="rb act" id="rb-admindr"   onclick="setRole('admindr')">Admin DR</button>
+    <button class="rb"     id="rb-creddr"    onclick="setRole('creddr')">Credenciamento DR</button>
+    <button class="rb"     id="rb-creduo"    onclick="setRole('creduo')">Credenciamento UO</button>
+    <button class="rb"     id="rb-sem"       onclick="setRole('sem')">Perfil sem acesso</button>
+    <span class="role-hint" id="role-hint">Visualiza todas as solicitações do sistema</span>
+  </div>
+
+  <!-- ANNOTATIONS -->
+  <div class="ann">
+    <h3>📋 Anotações — HU 5 de 6 · Pendência de Solicitações de Alteração de Vínculo aguardando avaliação</h3>
+    <div class="ann-item"><div class="ann-n">1</div><div><strong>RN001/CA001:</strong> O acordeon só aparece quando há ao menos 1 solicitação pendente na abrangência do usuário. Troque para "Perfil sem acesso" para ver o acordeon desaparecer completamente.</div></div>
+    <div class="ann-item"><div class="ann-n">2</div><div><strong>RN002/RN004/CA002:</strong> Admin DR e Credenciamento DR visualizam todas as 4 solicitações do sistema. Credenciamento UO visualiza apenas as 2 da UO-BH. Troque os perfis para comparar.</div></div>
+    <div class="ann-item"><div class="ann-n">3</div><div><strong>RN005/CA003:</strong> Ao expandir, há carregamento lazy simulado (800ms de skeleton) antes de exibir a tabela — mesmo padrão das demais pendências do sistema.</div></div>
+    <div class="ann-item"><div class="ann-n">4</div><div><strong>RN008/CA007:</strong> A coluna "Observações" permite registrar anotações de acompanhamento (ex: tentativas de contato) sem alterar a situação da solicitação.</div></div>
+    <div class="ann-item"><div class="ann-n">5</div><div><strong>RN009/CA006:</strong> O botão de ação (→) navega diretamente para a página de Avaliação de Solicitações (HU 3 de 6). O registro sai do acordeon somente após a avaliação ser efetivada naquela página.</div></div>
+    <div class="ann-item"><div class="ann-n">6</div><div><strong>RN010/CA009:</strong> Após a conclusão da avaliação de uma solicitação, ela deixa de ser contabilizada no título do acordeon e na tabela.</div></div>
+    <div class="ann-item"><div class="ann-n">7</div><div><strong>Ordenação (RN007/CA008):</strong> Clique nos cabeçalhos de coluna para ordenar asc/desc/original. Todas as colunas ordenam, exceto "Ação".</div></div>
+  </div>
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <h1>Página Inicial</h1>
+    <p>Bem-vindo, <span id="ph-nome">Ana Silveira</span>. Acompanhe as pendências do sistema abaixo.</p>
+  </div>
+
+  <!-- ACORDEONS DA HOME -->
+  <div id="acordeons-wrap"></div>
+</main>
+<script>
+// ---- BANCO DE SOLICITAÇÕES PENDENTES ----
+let solicitacoes = [
+  {id:'SOL001', prestador:'Clínica VidaSaúde Ltda — 12.345.678/0001-90',    lote:'Lote 2025-BH-01', tipo:'Inclusão de Local',      registro:'UPA Centro — Rua das Flores, 100',    solicitante:'João Prestador',  data:'21/07/2026', uo:'UO-BH', obs:''},
+  {id:'SOL002', prestador:'Medicina Preventiva S/S — 23.456.789/0001-11',   lote:'Lote 2025-BH-02', tipo:'Inativação de Profissional', registro:'Dr. Paulo Henrique CRM/MG 45678',   solicitante:'Carla Gestora',   data:'22/07/2026', uo:'UO-BH', obs:''},
+  {id:'SOL003', prestador:'Centro Saúde Trabalho ME — 34.567.890/0001-22',  lote:'Lote 2025-CP-01', tipo:'Alteração de Profissional',  registro:'Dra. Marina Souza CRM/MG 78901',   solicitante:'Lucas Prestador', data:'24/07/2026', uo:'UO-CP', obs:''},
+  {id:'SOL004', prestador:'Lab Diagnósticos Rápidos — 45.678.901/0001-33',  lote:'Lote 2025-CP-02', tipo:'Inclusão de Profissional',   registro:'Dr. Roberto Lima CRM/MG 11223',    solicitante:'Fernanda Admin',  data:'25/07/2026', uo:'UO-CP', obs:''},
+];
+
+// ---- PERFIS ----
+const PERFIS = {
+  admindr: {lbl:'Admin DR',           av:'AS', nome:'Ana Silveira',     hint:'Visualiza todas as solicitações do sistema (RN004)',           acesso:true,  abrangencia:'todos'},
+  creddr:  {lbl:'Credenciamento DR',  av:'MR', nome:'Marcos Rocha',     hint:'Visualiza todas as solicitações do sistema (RN004)',           acesso:true,  abrangencia:'todos'},
+  creduo:  {lbl:'Credenciamento UO',  av:'CT', nome:'Carla Torres',     hint:'Visualiza somente solicitações da UO-BH (RN004)',              acesso:true,  abrangencia:'uo', uo:'UO-BH'},
+  sem:     {lbl:'Gestor Financeiro',  av:'GF', nome:'Guilherme Freitas',hint:'Sem acesso à pendência de solicitações (RN003)',               acesso:false, abrangencia:null},
+};
+let perfil = 'admindr';
+let accordionLoaded = false;
+
+function getRegistros(){
+  const p = PERFIS[perfil];
+  if(!p.acesso) return [];
+  if(p.abrangencia === 'todos') return [...solicitacoes];
+  return solicitacoes.filter(s => s.uo === p.uo);
+}
+</script>
+<script>
+// ---- RENDER HOME ----
+function renderHome(){
+  const wrap = document.getElementById('acordeons-wrap');
+  wrap.innerHTML = '';
+  accordionLoaded = false;
+
+  const registros = getRegistros();
+  const qtd = registros.length;
+
+  // Outros acordeons da home (mocks dos existentes)
+  const outros = [
+    {key:'doc-venc',    label:'Documentos de prestadores vencidos',                 qtd:4,  alerta:true},
+    {key:'doc-vencer',  label:'Documentos de prestadores a vencer em 10 dias',      qtd:7,  alerta:false},
+    {key:'doc-aval',    label:'Documentos atualizados aguardando avaliação do SESI', qtd:2,  alerta:false},
+    {key:'doc-vencida', label:'Documentos não conformes com diligência vencida',     qtd:3,  alerta:true},
+  ];
+  outros.forEach(o => wrap.appendChild(buildOtherAccordion(o)));
+
+  // HU 5/6: só aparece se qtd > 0 (RN001/CA001)
+  if(qtd > 0){
+    wrap.appendChild(buildSolicitacoesAccordion(registros));
+  }
+}
+
+function buildOtherAccordion(cfg){
+  const div = document.createElement('div');
+  div.className = 'accordion-wrap';
+  div.innerHTML = `
+    <div class="accordion-title" onclick="toggleOther(this)">
+      <span class="acc-ico">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+        </svg>
+      </span>
+      <span class="acc-label">${cfg.label}</span>
+      <span class="acc-badge ${cfg.alerta?'alert':''}">${cfg.qtd}</span>
+      <svg class="acc-chevron" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="accordion-body">
+      <div style="padding:20px 16px;font-size:13px;color:var(--tx2);font-style:italic">Conteúdo não detalhado neste protótipo.</div>
+    </div>`;
+  return div;
+}
+
+function toggleOther(titleEl){
+  titleEl.classList.toggle('open');
+  titleEl.nextElementSibling.classList.toggle('open');
+  titleEl.querySelector('.acc-chevron').classList.toggle('open');
+}
+
+function buildSolicitacoesAccordion(registros){
+  const qtd = registros.length;
+  const div = document.createElement('div');
+  div.className = 'accordion-wrap solicit';
+  div.id = 'acc-solicit';
+  div.innerHTML = `
+    <div class="accordion-title" id="acc-solicit-title" onclick="toggleSolicit()">
+      <span class="acc-ico">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+        </svg>
+      </span>
+      <span class="acc-label">Solicitações de Alteração de Vínculo a Lotes aguardando avaliação</span>
+      <span class="acc-badge" id="solicit-count">${qtd}</span>
+      <svg class="acc-chevron" id="solicit-chevron" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="accordion-body" id="acc-solicit-body"></div>`;
+  return div;
+}
+</script>
+<script>
+// ---- TOGGLE + LAZY LOAD ----
+function toggleSolicit(){
+  const title = document.getElementById('acc-solicit-title');
+  const body  = document.getElementById('acc-solicit-body');
+  const chev  = document.getElementById('solicit-chevron');
+  const isOpen = title.classList.toggle('open');
+  body.classList.toggle('open');
+  chev.classList.toggle('open');
+
+  if(isOpen && !accordionLoaded){
+    body.innerHTML = `<div style="padding:16px 24px">
+      <div class="skeleton-row" style="width:60%"></div>
+      <div class="skeleton-row" style="width:80%;margin-top:8px"></div>
+      <div class="skeleton-row" style="width:70%;margin-top:8px"></div>
+    </div>`;
+    setTimeout(()=>{
+      body.innerHTML = '';
+      body.appendChild(buildTable());
+      accordionLoaded = true;
+    }, 800);
+  }
+}
+
+// ---- TABELA ----
+let sortCol = null;
+let sortDir = 'none';
+
+function buildTable(){
+  const registros = sortRegistros(getRegistros());
+  const cols = [
+    {key:'acao',       label:'Ação',               sortable:false},
+    {key:'prestador',  label:'Prestador',           sortable:true},
+    {key:'lote',       label:'Lote',                sortable:true},
+    {key:'tipo',       label:'Tipo da Solicitação', sortable:true},
+    {key:'registro',   label:'Registro Afetado',    sortable:true},
+    {key:'solicitante',label:'Solicitante',          sortable:true},
+    {key:'data',       label:'Data da Solicitação', sortable:true},
+    {key:'obs',        label:'Observações',         sortable:false},
+  ];
+
+  const table = document.createElement('table');
+  table.className = 'pend-table';
+
+  const thead = table.createTHead();
+  const tr = thead.insertRow();
+  cols.forEach(c=>{
+    const th = document.createElement('th');
+    if(!c.sortable) th.className = 'no-sort';
+    let icon = '';
+    if(c.sortable){
+      const dir = sortCol===c.key ? sortDir : 'none';
+      icon = `<span class="sort-icon ${dir}"></span>`;
+      th.onclick = ()=>{ sortBy(c.key); };
+    }
+    th.innerHTML = c.label + icon;
+    tr.appendChild(th);
+  });
+
+  const tbody = table.createTBody();
+  registros.forEach(s=>{
+    const row = tbody.insertRow();
+    // Ação
+    const tdAcao = row.insertCell();
+    // RN009: botão navega para a página de Avaliação de Solicitações (HU 3/6)
+    tdAcao.innerHTML = `<a class="btn-action" href="hu-avaliacao-solicitacoes.html" title="Acessar página de avaliação">
+      <svg viewBox="0 0 24 24"><path d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+    </a>`;
+    // Prestador
+    row.insertCell().textContent = s.prestador;
+    // Lote
+    row.insertCell().textContent = s.lote;
+    // Tipo da Solicitação
+    const tdTipo = row.insertCell();
+    tdTipo.innerHTML = `<span class="tipo-tag">${s.tipo}</span>`;
+    // Registro Afetado
+    row.insertCell().textContent = s.registro;
+    // Solicitante
+    row.insertCell().textContent = s.solicitante;
+    // Data
+    row.insertCell().textContent = s.data;
+    // Observações (editável — RN008/CA007)
+    const tdObs = row.insertCell();
+    tdObs.className = 'td-obs';
+    tdObs.innerHTML = `<textarea class="obs-input" placeholder="Registre observações de acompanhamento..." onchange="salvarObs('${s.id}',this.value)">${s.obs}</textarea>`;
+  });
+
+  const footer = document.createElement('div');
+  footer.className = 'pend-footer';
+  footer.innerHTML = `<span>${registros.length} solicitaç${registros.length!==1?'ões':'ão'} aguardando avaliação</span>
+    <span style="color:var(--tx3);font-size:11px">Acesse cada registro para avaliar na página de Avaliação de Solicitações</span>`;
+
+  const wrapper = document.createElement('div');
+  wrapper.appendChild(table);
+  wrapper.appendChild(footer);
+  return wrapper;
+}
+
+function sortBy(col){
+  if(sortCol === col){
+    sortDir = sortDir==='asc'?'desc':sortDir==='desc'?'none':'asc';
+    if(sortDir==='none') sortCol = null;
+  } else {
+    sortCol = col; sortDir = 'asc';
+  }
+  refreshTable();
+}
+
+function sortRegistros(list){
+  if(!sortCol || sortDir==='none') return [...list];
+  return [...list].sort((a,b)=>{
+    const va = a[sortCol]+'', vb = b[sortCol]+'';
+    return sortDir==='asc' ? va.localeCompare(vb,'pt-BR') : vb.localeCompare(va,'pt-BR');
+  });
+}
+
+function refreshTable(){
+  if(!accordionLoaded) return;
+  const body = document.getElementById('acc-solicit-body');
+  body.innerHTML = '';
+  body.appendChild(buildTable());
+}
+
+function salvarObs(id, val){
+  const s = solicitacoes.find(x=>x.id===id);
+  if(s){ s.obs = val; toast('Observação salva.'); }
+}
+
+// RN010/CA009: navegação para a página de avaliação — o registro sai do acordeon
+// após a avaliação ser efetivada na página de destino (HU 3/6)
+function acessarAvaliacao(_id){
+  window.location.href = 'hu-avaliacao-solicitacoes.html';
+}
+</script>
+<script>
+// ---- CONTROLE DE PERFIL ----
+function setRole(r){
+  perfil = r;
+  const p = PERFIS[r];
+  ['admindr','creddr','creduo','sem'].forEach(x=>document.getElementById('rb-'+x)?.classList.toggle('act',x===r));
+  document.getElementById('role-hint').textContent   = p.hint;
+  document.getElementById('nb-badge').textContent    = p.lbl;
+  document.getElementById('nb-av').textContent       = p.av;
+  document.getElementById('sb-av').textContent       = p.av;
+  document.getElementById('ph-nome').textContent     = p.nome;
+  document.getElementById('sb-info').innerHTML       = p.nome+'<small>'+p.lbl+'</small>';
+  renderHome();
+  const msgs = {
+    admindr: 'Admin DR: vê todas as 4 solicitações do sistema.',
+    creddr:  'Credenciamento DR: vê todas as 4 solicitações do sistema.',
+    creduo:  'Credenciamento UO: vê apenas as 2 solicitações da UO-BH.',
+    sem:     'Perfil sem acesso: acordeon não é exibido.',
+  };
+  toast(msgs[r]);
+}
+
+// ---- TOAST ----
+let ttimer = null;
+function toast(msg){
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast toast-ok show';
+  if(ttimer) clearTimeout(ttimer);
+  ttimer = setTimeout(()=>el.classList.remove('show'), 3500);
+}
+
+// ---- INIT ----
+document.addEventListener('DOMContentLoaded', ()=>{ renderHome(); });
+</script>
+</body>
+</html>

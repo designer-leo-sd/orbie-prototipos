@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>[PS] HU · Evoluir o cadastro e a edição de Usuários — SIG SESI MG</title>
+<style>
+:root{
+  --blue:#164194;--blue2:#1D4ED8;--blue-lt:#EEF3FF;--blue-bd:#C7D7F9;
+  --bg:#F4F5F8;--card:#fff;
+  --tx:#343a40;--tx2:#6c757d;--tx3:#495057;--txd:#adb5bd;
+  --bdr:#ced4da;--bdf:#164194;
+  --red:#ba0c2f;--red-bg:#fcd3d2;--red-lt:#fff5f5;
+  --grn:#198754;--grn-bg:#b3ead9;--grn-lt:#d1e7dd;
+  --ylw:#ffb802;--ylw-bg:#ffeab6;
+  --r:8px;--rl:16px;--rs:6px;
+  --sidebar:336px;--navbar:86px;
+  font-family:'Segoe UI',system-ui,sans-serif
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-size:14px;background:var(--bg);color:var(--tx);min-height:100vh}
+a{text-decoration:none;color:inherit}
+</style>
+</head>
+<body>
+<style>
+/* NAVBAR */
+.navbar{height:var(--navbar);background:var(--blue);display:flex;align-items:center;justify-content:space-between;padding:0 24px 0 0;position:fixed;top:0;left:0;right:0;z-index:200;box-shadow:0 2px 8px rgba(0,0,0,.18)}
+.nb-logo{width:var(--sidebar);display:flex;align-items:center;padding:16px 16px;gap:8px;border-right:1px solid rgba(255,255,255,.1)}
+.nb-logo-img{height:50px}
+.nb-right{display:flex;align-items:center;gap:20px;padding-right:8px}
+.nb-session{font-size:14px;color:#b3d1e8;font-weight:500}
+.nb-icon{width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;position:relative}
+.nb-icon svg{width:22px;height:22px;fill:currentColor}
+.nb-dot{position:absolute;top:2px;right:2px;width:10px;height:10px;background:var(--ylw);border-radius:50%;border:2px solid var(--blue);display:flex;align-items:center;justify-content:center;font-size:8px;color:#332701;font-weight:700}
+
+/* SIDEBAR */
+.sidebar{width:var(--sidebar);background:#fff;border-right:1px solid var(--bdr);position:fixed;top:var(--navbar);left:0;bottom:0;overflow-y:auto;z-index:100;display:flex;flex-direction:column;justify-content:space-between;padding:24px 8px}
+.sb-menu{display:flex;flex-direction:column;gap:4px}
+.sb-item{display:flex;align-items:center;gap:16px;padding:16px;border-radius:var(--rs);color:var(--tx);font-size:20px;font-weight:500;cursor:pointer;transition:background .15s}
+.sb-item:hover{background:#f8f9fa}
+.sb-item svg{width:22px;height:22px;flex-shrink:0;fill:var(--tx)}
+.sb-item .chev{margin-left:auto;width:20px;height:20px;fill:var(--tx2)}
+.sb-foot{display:flex;align-items:center;justify-content:space-between;padding:8px}
+.sb-sesi{height:32px}
+.sb-logout{width:48px;height:48px;display:flex;align-items:center;justify-content:center;border-radius:var(--rs);cursor:pointer}
+.sb-logout:hover{background:#f8f9fa}
+.sb-logout svg{width:22px;height:22px;fill:var(--blue)}
+
+/* MAIN */
+.main{margin-top:var(--navbar);margin-left:var(--sidebar);min-height:calc(100vh - var(--navbar));padding:40px 40px 60px 80px}
+
+/* VIEW SWITCHER */
+.view{display:none}.view.active{display:block}
+
+/* PAGE HEADER */
+.ph-title{font-size:24px;font-weight:600;color:var(--tx);line-height:40px}
+.ph-bc{display:flex;align-items:center;gap:6px;font-size:16px;color:var(--tx2);margin-top:0}
+.ph-bc a{color:var(--blue);cursor:pointer}.ph-bc a:hover{text-decoration:underline}
+.ph-bc span{color:var(--txd);font-size:12px}
+.ph-row{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:32px}
+
+/* CARD */
+.card{background:var(--card);border:1px solid var(--bdr);border-radius:var(--rl);box-shadow:0 0 2px rgba(145,158,171,.2),0 12px 24px -4px rgba(145,158,171,.12);padding:24px;margin-bottom:24px}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:var(--rs);font-size:16px;font-weight:500;cursor:pointer;border:none;font-family:inherit;transition:all .15s;white-space:nowrap}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn-primary{background:var(--blue);color:#fff}.btn-primary:hover:not(:disabled){background:#122e6e}
+.btn-danger{background:var(--red);color:#fff}.btn-danger:hover:not(:disabled){background:#8f0924}
+.btn-secondary{background:#fff;color:var(--tx);border:1px solid var(--bdr)}.btn-secondary:hover:not(:disabled){background:#f8f9fa}
+.btn-ghost{background:none;border:none;color:var(--blue);padding:6px 8px;font-size:14px;cursor:pointer;font-family:inherit}
+.btn-ghost:hover{text-decoration:underline}
+.btn-sm{padding:6px 12px;font-size:14px}
+
+/* FORM */
+.form-section{margin-bottom:28px}
+.section-title{font-size:16px;font-weight:600;color:var(--tx);margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--bdr)}
+.form-row{display:flex;gap:24px;margin-bottom:0}
+.fg{flex:1;display:flex;flex-direction:column;gap:6px;margin-bottom:20px}
+.fg label{font-size:14px;font-weight:500;color:var(--tx3)}
+.fg input,.fg select,.fg textarea{height:44px;border:1px solid var(--bdr);border-radius:var(--rs);padding:0 12px;font-size:14px;font-family:inherit;color:var(--tx);background:#fff;outline:none;transition:border-color .15s}
+.fg input:focus,.fg select:focus{border-color:var(--bdf);box-shadow:0 0 0 3px rgba(22,65,148,.1)}
+.fg input:disabled,.fg select:disabled{background:#f8f9fa;color:var(--txd);cursor:not-allowed}
+.fg .hint{font-size:12px;color:var(--tx2);margin-top:2px}
+.fg .err{font-size:12px;color:var(--red);margin-top:2px;display:none}
+.fg .err.on{display:block}
+.fg input.has-err{border-color:var(--red);background:#fff5f5}
+
+/* BADGE */
+.badge{display:inline-flex;align-items:center;padding:4px 8px;border-radius:12px;font-size:12px;font-weight:400}
+.bg-ativo{background:var(--grn-lt);color:#0a3622}
+.bg-inativo{background:#e9ecef;color:#495057}
+.bg-pendente{background:var(--ylw-bg);color:#332701}
+
+/* TABLE */
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+thead th{font-size:16px;font-weight:600;color:var(--tx2);text-align:left;padding:12px 16px;background:#f8f9fa;border-bottom:2px solid var(--bdr);white-space:nowrap;cursor:pointer;user-select:none}
+thead th:last-child{cursor:default}
+tbody tr{border-bottom:1px solid var(--bdr);transition:background .12s}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:#f8f9fa}
+tbody td{padding:14px 16px;font-size:16px;vertical-align:middle}
+.td-actions{display:flex;gap:6px}
+.ico-btn{width:40px;height:40px;background:none;border:1px solid var(--bdr);border-radius:var(--rs);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;color:var(--tx2)}
+.ico-btn:hover{background:var(--blue-lt);border-color:var(--blue-bd);color:var(--blue)}
+.ico-btn svg{width:18px;height:18px;fill:currentColor}
+
+/* SEARCH / FILTER */
+.search-wrap{margin-bottom:16px}
+.search-bar{width:100%;height:52px;border:1px solid var(--bdr);border-radius:var(--rs);padding:0 16px;font-size:16px;font-family:inherit;outline:none;transition:border .15s}
+.search-bar:focus{border-color:var(--bdf);box-shadow:0 0 0 3px rgba(22,65,148,.1)}
+.filter-row{display:flex;gap:10px;align-items:center;margin-top:10px;flex-wrap:wrap}
+.filter-chip{padding:5px 12px;border:1px solid var(--bdr);border-radius:16px;font-size:12px;background:#fff;cursor:pointer;transition:all .15s;white-space:nowrap}
+.filter-chip.on{background:var(--blue);border-color:var(--blue);color:#fff}
+
+/* ALERT */
+.alert{border-radius:var(--rs);padding:12px 16px;font-size:14px;line-height:1.5;display:flex;gap:10px;align-items:flex-start;margin-bottom:16px}
+.alert svg{width:18px;height:18px;flex-shrink:0;margin-top:1px}
+.alert-info{background:var(--blue-lt);border:1px solid var(--blue-bd);color:#1e40af}
+.alert-warn{background:var(--ylw-bg);border:1px solid #fde68a;color:#78350f}
+.alert-success{background:var(--grn-lt);border:1px solid #bbf7d0;color:#166534}
+.alert-danger{background:#fef2f2;border:1px solid #fecaca;color:#991b1b}
+.alert-body strong{display:block;font-weight:600;margin-bottom:2px}
+
+/* CPF LOOKUP */
+.cpf-result{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:var(--rs);padding:12px 16px;font-size:14px;color:#166534;display:none;margin-top:4px}
+.cpf-result.on{display:block}
+.cpf-result strong{font-weight:600}
+
+/* MODAL */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:500;align-items:center;justify-content:center}
+.overlay.open{display:flex}
+.modal{background:#fff;border-radius:var(--rl);width:520px;max-width:95vw;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.modal-h{display:flex;align-items:center;justify-content:space-between;padding:20px 24px;border-bottom:1px solid var(--bdr)}
+.modal-h h2{font-size:20px;font-weight:600}
+.modal-cls{background:none;border:none;font-size:22px;cursor:pointer;color:var(--tx2);padding:2px 6px;border-radius:4px}
+.modal-cls:hover{color:var(--tx)}
+.modal-b{padding:24px}
+.modal-f{padding:16px 24px;border-top:1px solid var(--bdr);display:flex;justify-content:flex-end;gap:12px}
+
+/* PAGINATION */
+.pagination{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:20px}
+.pg-btn{width:36px;height:36px;border:1px solid var(--bdr);border-radius:var(--rs);background:#fff;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.pg-btn:hover{background:var(--blue-lt);border-color:var(--blue-bd)}
+.pg-btn.act{background:var(--blue);border-color:var(--blue);color:#fff}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:#1f2937;color:#fff;border-radius:var(--r);padding:14px 18px;font-size:14px;display:flex;align-items:center;gap:8px;box-shadow:0 8px 24px rgba(0,0,0,.25);z-index:700;transform:translateY(80px);opacity:0;transition:all .3s;max-width:380px}
+.toast.show{transform:translateY(0);opacity:1}
+.toast-ok{border-left:4px solid var(--grn)}
+.toast-err{border-left:4px solid var(--red)}
+
+/* HISTÓRICO TIMELINE */
+.hist-year{font-size:16px;font-weight:600;color:var(--tx);margin-bottom:12px;margin-top:4px}
+.hist-group{border-left:2px solid var(--bdr);padding:0 0 0 12px;margin-bottom:20px;display:flex;flex-direction:column;gap:20px}
+.hist-entry{display:flex;flex-direction:column;gap:10px}
+.hist-ts{font-size:12px;color:var(--tx2)}
+.hist-row{display:flex;align-items:flex-start;gap:16px}
+.hist-ico{width:40px;height:40px;border-radius:var(--r);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.hist-ico svg{width:20px;height:20px}
+.hist-ico.blue{background:#b3d1e8}.hist-ico.blue svg{fill:#164194}
+.hist-ico.green{background:var(--grn-bg)}.hist-ico.green svg{fill:#198754}
+.hist-ico.current{background:#dbeafe}.hist-ico.current svg{fill:#1e40af}
+.hist-detail{display:flex;flex-direction:column;gap:2px}
+.hist-detail strong{font-size:14px;font-weight:500;color:var(--tx)}
+.hist-detail span{font-size:14px;color:var(--tx2)}
+.hist-badge-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px}
+.hist-tipo{background:var(--blue-lt);color:var(--blue);border-radius:4px;padding:2px 8px;font-size:12px;font-weight:500}
+.hist-perfil{background:#f0fdf4;color:#166534;border-radius:4px;padding:2px 8px;font-size:12px;font-weight:500}
+.hist-current-tag{background:#fef9c3;color:#854d0e;border-radius:4px;padding:2px 8px;font-size:11px;font-weight:600}
+
+/* ANNOTATIONS */
+.ann{background:#FFFBEB;border:1px solid #FDE68A;border-radius:var(--r);padding:14px 18px;margin-bottom:24px}
+.ann h3{font-size:11px;font-weight:700;color:#92400E;margin-bottom:10px;text-transform:uppercase;letter-spacing:.4px}
+.ann-item{display:flex;gap:8px;margin-bottom:7px;font-size:12px;color:#78350F;line-height:1.5}
+.ann-item:last-child{margin-bottom:0}
+.ann-n{min-width:18px;height:18px;background:#F59E0B;color:#fff;border-radius:50%;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+
+/* TABS */
+.tipo-uo,.tipo-prest,.tipo-cliente{display:none}
+.show-uo .tipo-uo{display:flex}
+.show-prest .tipo-prest{display:flex}
+.show-cliente .tipo-cliente{display:flex}
+</style>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- MODAL CONFIRMAÇÃO -->
+<div class="overlay" id="overlay-confirm">
+  <div class="modal">
+    <div class="modal-h">
+      <h2 id="conf-title">Confirmar alteração</h2>
+      <button class="modal-cls" onclick="closeConfirm()">✕</button>
+    </div>
+    <div class="modal-b" id="conf-body"></div>
+    <div class="modal-f">
+      <button class="btn btn-secondary" onclick="closeConfirm()">Cancelar</button>
+      <button class="btn btn-primary" id="conf-ok">Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<!-- NAVBAR -->
+<header class="navbar">
+  <div class="nb-logo">
+    <svg width="154" height="50" viewBox="0 0 154 50" fill="none" style="height:50px;width:auto">
+      <rect width="154" height="50" rx="4" fill="white" fill-opacity=".1"/>
+      <text x="10" y="32" fill="white" font-size="18" font-weight="700" font-family="Segoe UI,sans-serif">SIG SESI MG</text>
+    </svg>
+  </div>
+  <div class="nb-right">
+    <span class="nb-session">Sessão: 2:00h</span>
+    <div class="nb-icon">
+      <svg viewBox="0 0 24 24"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+      <span class="nb-dot">1</span>
+    </div>
+    <div class="nb-icon">
+      <svg viewBox="0 0 24 24"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+    </div>
+  </div>
+</header>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <nav class="sb-menu">
+    <div class="sb-item"><svg viewBox="0 0 24 24"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/></svg> Início</div>
+    <div class="sb-item"><svg viewBox="0 0 24 24"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg> Prestadores</div>
+    <div class="sb-item"><svg viewBox="0 0 24 24"><path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg> Unidades Operacionais</div>
+    <div class="sb-item"><svg viewBox="0 0 24 24"><path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg> Agendamento <svg class="chev" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7"/></svg></div>
+    <div class="sb-item"><svg viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg> Financeiro <svg class="chev" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7"/></svg></div>
+    <div class="sb-item" style="background:#f0f4ff"><svg viewBox="0 0 24 24" style="fill:#164194"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg> <span style="color:#164194;font-weight:600">Administração</span> <svg class="chev" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7"/></svg></div>
+    <div class="sb-item" style="padding-left:40px;font-size:16px;font-weight:500;color:#164194;background:#eff3ff">
+      <svg viewBox="0 0 24 24" style="fill:#164194;width:18px;height:18px"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg> Usuários
+    </div>
+    <div class="sb-item" style="padding-left:40px;font-size:16px;color:var(--tx2)">Configurações</div>
+    <div class="sb-item" style="padding-left:40px;font-size:16px;color:var(--tx2)">Logs</div>
+  </nav>
+  <div class="sb-foot">
+    <svg class="sb-sesi" viewBox="0 0 92 32" fill="none">
+      <text x="0" y="24" font-size="20" font-weight="700" fill="#164194" font-family="Segoe UI">SESI</text>
+    </svg>
+    <div class="sb-logout"><svg viewBox="0 0 24 24"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg></div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+
+<!-- VIEW: LISTA -->
+<div class="view active" id="view-lista">
+  <div class="ph-row">
+    <div>
+      <div class="ph-title">Lista de usuários</div>
+      <div class="ph-bc"><a onclick="goView('lista')">Administração</a><span>›</span><span>Usuários</span></div>
+    </div>
+    <button class="btn btn-primary" onclick="goView('novo')">+ Novo usuário</button>
+  </div>
+
+  <div class="ann">
+    <h3>📋 Anotações — Lista de Usuários</h3>
+    <div class="ann-item"><div class="ann-n">1</div><div>Tela existente no sistema. Estrutura baseada no Figma (seção Usuários). Nenhuma mudança de layout prevista pelas HUs nesta tela.</div></div>
+    <div class="ann-item"><div class="ann-n">2</div><div>O botão <strong>"+ Novo usuário"</strong> abre o novo fluxo de cadastro com a ordem E-mail → CPF (HU 1).</div></div>
+    <div class="ann-item"><div class="ann-n">3</div><div>O botão de edição (lápis) abre a tela de edição com os campos E-mail e Tipo de Usuário agora desbloqueados (HU 1) e o histórico de perfis (HU 2).</div></div>
+  </div>
+  <div class="card">
+    <div class="search-wrap">
+      <input class="search-bar" placeholder="🔍  Buscar por nome, CPF ou e-mail..." oninput="filterTable(this.value)"/>
+      <div class="filter-row">
+        <span style="font-size:12px;color:var(--tx2)">Filtrar por:</span>
+        <span class="filter-chip on" onclick="toggleChip(this,'todos')">Todos</span>
+        <span class="filter-chip" onclick="toggleChip(this,'sesi')">SESI</span>
+        <span class="filter-chip" onclick="toggleChip(this,'prestador')">Prestador</span>
+        <span class="filter-chip" onclick="toggleChip(this,'cliente')">Cliente</span>
+        <span class="filter-chip" onclick="toggleChip(this,'ativo')">Ativo</span>
+        <span class="filter-chip" onclick="toggleChip(this,'inativo')">Inativo</span>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table id="user-table">
+        <thead>
+          <tr>
+            <th onclick="sortTable(0)">Nome ⇅</th>
+            <th onclick="sortTable(1)">CPF ⇅</th>
+            <th onclick="sortTable(2)">E-mail ⇅</th>
+            <th onclick="sortTable(3)">Tipo ⇅</th>
+            <th onclick="sortTable(4)">Perfil ⇅</th>
+            <th onclick="sortTable(5)">Status ⇅</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody id="user-tbody"></tbody>
+      </table>
+    </div>
+    <div class="pagination">
+      <button class="pg-btn">‹</button>
+      <button class="pg-btn act">1</button>
+      <button class="pg-btn">2</button>
+      <button class="pg-btn">3</button>
+      <button class="pg-btn">›</button>
+    </div>
+  </div>
+</div>
+
+<!-- VIEW: NOVO USUÁRIO -->
+<div class="view" id="view-novo">
+  <div class="ph-row">
+    <div>
+      <div class="ph-title">Novo usuário</div>
+      <div class="ph-bc"><a onclick="goView('lista')">Administração</a><span>›</span><a onclick="goView('lista')">Usuários</a><span>›</span><span>Novo usuário</span></div>
+    </div>
+  </div>
+
+  <div class="ann">
+    <h3>📋 Anotações — Novo Usuário (HU 1)</h3>
+    <div class="ann-item"><div class="ann-n">1</div><div><strong>Ordem dos campos (mudança):</strong> E-mail é o primeiro campo, CPF é o segundo. Exceção ao padrão do sistema, necessária para que a validação do domínio @fiemg.com.br (HU 3) ocorra antes da busca de Pessoa Física.</div></div>
+    <div class="ann-item"><div class="ann-n">2</div><div><strong>CPF integrado a Pessoas Físicas (mudança):</strong> Ao digitar o CPF completo, o sistema consulta a estrutura centralizada. Se a pessoa já existe, os dados são pré-carregados. Se não existe, uma nova Pessoa Física será criada ao salvar.</div></div>
+    <div class="ann-item"><div class="ann-n">3</div><div><strong>E-mail @fiemg.com.br:</strong> E-mails corporativos são validados automaticamente no Microsoft Entra ID (HU 3). Se válido, o Tipo de Usuário é definido como SESI automaticamente. Teste: informe <em>novo.usuario@fiemg.com.br</em>.</div></div>
+    <div class="ann-item"><div class="ann-n">4</div><div><strong>Campos dinâmicos por Tipo de Usuário:</strong> SESI exige UO(s), Prestador exige o Prestador vinculado, Cliente exige a Empresa. Comportamento existente, mantido.</div></div>
+  </div>
+  <div class="card">
+    <div class="form-section">
+      <div class="section-title">Dados de identificação</div>
+      <div class="form-row">
+        <div class="fg" style="max-width:340px">
+          <label>E-mail <span style="color:var(--red)">*</span></label>
+          <input type="email" id="novo-email" placeholder="usuario@dominio.com.br" oninput="onEmailChange('novo')" autocomplete="off"/>
+          <span class="hint">Informe o e-mail antes do CPF — e-mails @fiemg.com.br serão validados automaticamente.</span>
+          <span class="err" id="novo-email-err"></span>
+        </div>
+      </div>
+      <!-- CPF — segundo campo conforme HU -->
+      <div class="form-row">
+        <div class="fg" style="max-width:220px">
+          <label>CPF <span style="color:var(--red)">*</span></label>
+          <input type="text" id="novo-cpf" placeholder="000.000.000-00" maxlength="14" oninput="onCpfInput('novo')" autocomplete="off"/>
+          <span class="hint">Usado para vincular à estrutura centralizada de Pessoas Físicas.</span>
+          <span class="err" id="novo-cpf-err"></span>
+          <!-- Resultado de busca de Pessoa Física -->
+          <div class="cpf-result" id="novo-cpf-result"></div>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="fg">
+          <label>Nome completo <span style="color:var(--red)">*</span></label>
+          <input type="text" id="novo-nome" placeholder="Nome completo"/>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-section" id="novo-acesso-section">
+      <div class="section-title">Dados de acesso</div>
+      <div class="form-row">
+        <div class="fg" style="max-width:260px">
+          <label>Tipo de Usuário <span style="color:var(--red)">*</span></label>
+          <select id="novo-tipo" onchange="onTipoChange('novo')">
+            <option value="">Selecione...</option>
+            <option value="sesi">SESI</option>
+            <option value="prestador">Prestador</option>
+            <option value="cliente">Cliente</option>
+          </select>
+        </div>
+        <div class="fg" style="max-width:300px">
+          <label>Perfil <span style="color:var(--red)">*</span></label>
+          <select id="novo-perfil">
+            <option value="">Selecione o Tipo primeiro</option>
+          </select>
+        </div>
+      </div>
+      <!-- Campos dinâmicos por tipo -->
+      <div class="form-row tipo-uo" id="novo-tipo-uo">
+        <div class="fg">
+          <label>Unidades Operacionais <span style="color:var(--red)">*</span></label>
+          <select multiple id="novo-uos" style="height:auto;min-height:90px;padding:8px">
+            <option>UO — Belo Horizonte</option>
+            <option>UO — Contagem</option>
+            <option>UO — Juiz de Fora</option>
+            <option>UO — Uberlândia</option>
+            <option>UO — Montes Claros</option>
+          </select>
+          <span class="hint">Segure Ctrl para selecionar mais de uma UO.</span>
+        </div>
+      </div>
+      <div class="form-row tipo-prest" id="novo-tipo-prest">
+        <div class="fg" style="max-width:400px">
+          <label>Prestador <span style="color:var(--red)">*</span></label>
+          <select id="novo-prest">
+            <option value="">Selecione o Prestador...</option>
+            <option>NexoTech Laboratórios</option>
+            <option>Clínica São Lucas Ltda.</option>
+            <option>Metalúrgica BH Ltda.</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row tipo-cliente" id="novo-tipo-cliente">
+        <div class="fg" style="max-width:400px">
+          <label>Empresa Cliente <span style="color:var(--red)">*</span></label>
+          <select id="novo-empresa">
+            <option value="">Selecione a Empresa...</option>
+            <option>Têxtil Norte S.A.</option>
+            <option>Supermercado Central</option>
+            <option>Logística Rápida</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;justify-content:flex-end;gap:12px;padding-top:8px">
+      <button class="btn btn-secondary" onclick="goView('lista')">Cancelar</button>
+      <button class="btn btn-primary" onclick="salvarNovo()">Salvar usuário</button>
+    </div>
+  </div>
+</div>
+
+<!-- VIEW: EDITAR USUÁRIO (HU 1 + HU 2) -->
+<div class="view" id="view-editar">
+  <div class="ph-row">
+    <div>
+      <div class="ph-title" id="edit-ph-title">Editar usuário</div>
+      <div class="ph-bc"><a onclick="goView('lista')">Administração</a><span>›</span><a onclick="goView('lista')">Usuários</a><span>›</span><span id="edit-ph-name">—</span></div>
+    </div>
+    <div style="display:flex;gap:12px">
+      <button class="btn btn-secondary" onclick="goView('lista')">Cancelar</button>
+      <button class="btn btn-primary" onclick="salvarEdicao()">Salvar alterações</button>
+    </div>
+  </div>
+
+  <div class="ann">
+    <h3>📋 Anotações — Edição de Usuário (HU 1 + HU 2)</h3>
+    <div class="ann-item"><div class="ann-n">1</div><div><strong>CPF bloqueado (mantido):</strong> O CPF permanece desabilitado na edição — é a chave de relacionamento com a Pessoa Física e não pode ser alterado (RN004).</div></div>
+    <div class="ann-item"><div class="ann-n">2</div><div><strong>E-mail desbloqueado (mudança — HU 1):</strong> Anteriormente bloqueado, agora permite edição. Ao salvar com e-mail alterado, o sistema solicita confirmação antes de persistir (RN005/RN010). Teste: edite um usuário e altere o e-mail.</div></div>
+    <div class="ann-item"><div class="ann-n">3</div><div><strong>Tipo de Usuário desbloqueado (mudança — HU 1):</strong> Anteriormente bloqueado, agora permite alteração entre SESI, Prestador e Cliente. Ao trocar o Tipo, o Perfil incompatível é limpo e os campos dinâmicos são atualizados (RN006/RN007). Ao salvar, exige confirmação (RN010).</div></div>
+    <div class="ann-item"><div class="ann-n">4</div><div><strong>Validação do estado final (HU 1):</strong> O sistema só salva se o cadastro estiver completo e consistente com o novo Tipo de Usuário. E-mail, Tipo, Perfil e vínculos podem ser alterados na mesma operação (RN008).</div></div>
+    <div class="ann-item"><div class="ann-n">5</div><div><strong>Histórico de Tipos de Usuário e Perfis (novo — HU 2):</strong> Seção abaixo do formulário. Registrada automaticamente a cada alteração de Tipo ou Perfil. Somente leitura. Agrupada por ano, da mais recente à mais antiga. Teste: troque o Tipo de Usuário e salve — uma nova entrada aparecerá.</div></div>
+  </div>
+
+  <div class="card">
+    <div class="form-section">
+      <div class="section-title">Dados de identificação</div>
+      <div class="form-row">
+        <div class="fg" style="max-width:340px">
+          <label>E-mail <span style="color:var(--red)">*</span></label>
+          <input type="email" id="edit-email" oninput="onEmailChange('edit')"/>
+          <span class="hint" id="edit-email-hint">E-mails @fiemg.com.br são validados automaticamente no Microsoft Entra ID.</span>
+          <span class="err" id="edit-email-err"></span>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="fg" style="max-width:220px">
+          <!-- CPF bloqueado após criação (RN004) -->
+          <label>CPF</label>
+          <input type="text" id="edit-cpf" disabled/>
+          <span class="hint">O CPF é a referência da Pessoa Física e não pode ser alterado.</span>
+        </div>
+        <div class="fg">
+          <label>Nome completo</label>
+          <input type="text" id="edit-nome"/>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <div class="section-title">Dados de acesso</div>
+      <div class="form-row">
+        <div class="fg" style="max-width:260px">
+          <!-- Tipo de Usuário editável (HU 1) -->
+          <label>Tipo de Usuário <span style="color:var(--red)">*</span></label>
+          <select id="edit-tipo" onchange="onTipoChange('edit')">
+            <option value="sesi">SESI</option>
+            <option value="prestador">Prestador</option>
+            <option value="cliente">Cliente</option>
+          </select>
+          <span class="hint">Alterar o Tipo de Usuário atualizará os campos de Perfil e vínculos.</span>
+        </div>
+        <div class="fg" style="max-width:300px">
+          <label>Perfil <span style="color:var(--red)">*</span></label>
+          <select id="edit-perfil"></select>
+        </div>
+      </div>
+      <div class="form-row tipo-uo" id="edit-tipo-uo">
+        <div class="fg">
+          <label>Unidades Operacionais <span style="color:var(--red)">*</span></label>
+          <select multiple id="edit-uos" style="height:auto;min-height:90px;padding:8px">
+            <option>UO — Belo Horizonte</option>
+            <option>UO — Contagem</option>
+            <option>UO — Juiz de Fora</option>
+            <option>UO — Uberlândia</option>
+            <option>UO — Montes Claros</option>
+          </select>
+          <span class="hint">Segure Ctrl para selecionar mais de uma UO.</span>
+        </div>
+      </div>
+      <div class="form-row tipo-prest" id="edit-tipo-prest">
+        <div class="fg" style="max-width:400px">
+          <label>Prestador <span style="color:var(--red)">*</span></label>
+          <select id="edit-prest">
+            <option value="">Selecione o Prestador...</option>
+            <option>NexoTech Laboratórios</option>
+            <option>Clínica São Lucas Ltda.</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row tipo-cliente" id="edit-tipo-cliente">
+        <div class="fg" style="max-width:400px">
+          <label>Empresa Cliente <span style="color:var(--red)">*</span></label>
+          <select id="edit-empresa">
+            <option value="">Selecione a Empresa...</option>
+            <option>Têxtil Norte S.A.</option>
+            <option>Supermercado Central</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HU 2: Seção de Histórico de Tipos de Usuário e Perfis -->
+  <div class="card">
+    <div class="section-title" style="margin-bottom:20px">Histórico de Tipos de Usuário e Perfis</div>
+    <div class="alert alert-info" style="margin-bottom:20px">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg>
+      <div class="alert-body">Este histórico registra automaticamente cada alteração de Tipo de Usuário e/ou Perfil. Alterações de e-mail, UOs ou outros dados não geram nova entrada. O histórico é somente para consulta.</div>
+    </div>
+    <div id="hist-container"></div>
+  </div>
+</div>
+
+</main>
+
+<script>
+// ---- BANCO MOCKADO ----
+const PERFIS = {
+  sesi:['Admin DR','Agendamento DR','Agendamento UO','Gestão UO'],
+  prestador:['Admin Prestador','Operador Prestador'],
+  cliente:['Admin Cliente','Usuário Cliente'],
+};
+
+let usuarios = [
+  {id:1,nome:'Ana Silveira',       cpf:'123.456.789-00',email:'ana.silveira@fiemg.com.br',   tipo:'sesi',      perfil:'Admin DR',         status:'ativo',  vinculo:'UO — Belo Horizonte',
+   historico:[
+     {data:'10/01/2025',hora:'09:00',tipo:'Prestador',perfil:'Admin Prestador',fim:'14/07/2026'},
+     {data:'15/07/2026',hora:'10:22',tipo:'SESI',     perfil:'Admin DR',       fim:null},
+   ]},
+  {id:2,nome:'Carlos Souza',       cpf:'234.567.890-11',email:'carlos@nexotech.com.br',      tipo:'prestador', perfil:'Admin Prestador',  status:'ativo',  vinculo:'NexoTech Laboratórios',
+   historico:[
+     {data:'03/03/2025',hora:'14:00',tipo:'Prestador',perfil:'Admin Prestador',fim:null},
+   ]},
+  {id:3,nome:'Maria Ferreira',     cpf:'345.678.901-22',email:'maria@textilnorte.com.br',    tipo:'cliente',   perfil:'Admin Cliente',    status:'ativo',  vinculo:'Têxtil Norte S.A.',
+   historico:[
+     {data:'15/06/2024',hora:'11:30',tipo:'Cliente',  perfil:'Admin Cliente',  fim:null},
+   ]},
+  {id:4,nome:'Roberto Nunes',      cpf:'456.789.012-33',email:'roberto.nunes@fiemg.com.br',  tipo:'sesi',      perfil:'Agendamento DR',   status:'ativo',  vinculo:'UO — Contagem',
+   historico:[
+     {data:'20/08/2024',hora:'08:15',tipo:'SESI',     perfil:'Agendamento UO', fim:'01/02/2026'},
+     {data:'02/02/2026',hora:'09:00',tipo:'SESI',     perfil:'Agendamento DR', fim:null},
+   ]},
+  {id:5,nome:'Fernanda Lima',      cpf:'567.890.123-44',email:'fernanda@clinicasl.com.br',   tipo:'prestador', perfil:'Operador Prestador',status:'inativo',vinculo:'Clínica São Lucas Ltda.',
+   historico:[
+     {data:'10/11/2023',hora:'16:00',tipo:'Prestador',perfil:'Operador Prestador',fim:null},
+   ]},
+  {id:6,nome:'João Pedro Alves',   cpf:'678.901.234-55',email:'joao@supercentral.com.br',    tipo:'cliente',   perfil:'Usuário Cliente',  status:'ativo',  vinculo:'Supermercado Central',
+   historico:[
+     {data:'05/05/2025',hora:'10:00',tipo:'Cliente',  perfil:'Usuário Cliente', fim:null},
+   ]},
+];
+
+let editingId = null;
+let editOriginalTipo = null;
+let editOriginalPerfil = null;
+let editOriginalEmail = null;
+
+// ---- RENDER LISTA ----
+function renderLista(){
+  const tbody = document.getElementById('user-tbody');
+  tbody.innerHTML = usuarios.map(u=>`
+    <tr>
+      <td style="font-weight:500">${u.nome}</td>
+      <td style="color:var(--tx2)">${u.cpf}</td>
+      <td>${u.email}</td>
+      <td><span class="badge" style="background:${u.tipo==='sesi'?'#dbeafe':u.tipo==='prestador'?'#f3e8ff':'#dcfce7'};color:${u.tipo==='sesi'?'#1e40af':u.tipo==='prestador'?'#6b21a8':'#166534'}">${u.tipo.charAt(0).toUpperCase()+u.tipo.slice(1)}</span></td>
+      <td>${u.perfil}</td>
+      <td><span class="badge ${u.status==='ativo'?'bg-ativo':'bg-inativo'}">${u.status.charAt(0).toUpperCase()+u.status.slice(1)}</span></td>
+      <td>
+        <div class="td-actions">
+          <button class="ico-btn" title="Editar" onclick="abrirEdicao(${u.id})">
+            <svg viewBox="0 0 24 24"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+          </button>
+          <button class="ico-btn" title="Inativar/Ativar" onclick="toggleStatus(${u.id})">
+            <svg viewBox="0 0 24 24"><path d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/></svg>
+          </button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+function filterTable(q){
+  const rows = document.querySelectorAll('#user-tbody tr');
+  rows.forEach(r=>{
+    r.style.display = r.innerText.toLowerCase().includes(q.toLowerCase())?'':'none';
+  });
+}
+
+function toggleChip(el,tipo){
+  document.querySelectorAll('.filter-chip').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on');
+}
+
+function toggleStatus(id){
+  const u = usuarios.find(x=>x.id===id);
+  if(u){ u.status = u.status==='ativo'?'inativo':'ativo'; renderLista(); toast(`Status de ${u.nome} alterado para ${u.status}.`,'ok'); }
+}
+
+// ---- NOVO USUÁRIO ----
+function onCpfInput(ctx){
+  const cpf = document.getElementById(ctx+'-cpf').value.replace(/\D/g,'');
+  if(cpf.length===11){
+    // simula lookup de Pessoa Física
+    const found = usuarios.find(u=>u.cpf.replace(/\D/g,'')=== cpf);
+    const el = document.getElementById(ctx+'-cpf-result');
+    if(found){
+      el.innerHTML = `✅ Pessoa Física encontrada: <strong>${found.nome}</strong> — dados carregados.`;
+      el.classList.add('on');
+      document.getElementById(ctx+'-nome').value = found.nome;
+      if(!document.getElementById(ctx+'-email').value) document.getElementById(ctx+'-email').value = found.email;
+    } else {
+      el.innerHTML = `ℹ️ Nenhuma Pessoa Física encontrada para este CPF. Uma nova será criada ao salvar.`;
+      el.classList.add('on');
+    }
+  }
+}
+
+function onEmailChange(ctx){
+  const email = document.getElementById(ctx+'-email').value;
+  const err = document.getElementById(ctx+'-email-err');
+  if(email.endsWith('@fiemg.com.br') && email.length > 12){
+    const valid = ['ana.silveira@fiemg.com.br','roberto.nunes@fiemg.com.br','novo.usuario@fiemg.com.br'];
+    if(valid.some(v=>email===v)){
+      err.textContent=''; err.classList.remove('on');
+      if(ctx==='novo'){ document.getElementById('novo-tipo').value='sesi'; onTipoChange('novo'); }
+    } else {
+      err.textContent='Não foi possível validar o e-mail corporativo. A conta não foi localizada ou está inativa no Microsoft Entra ID.';
+      err.classList.add('on');
+    }
+  } else {
+    err.textContent=''; err.classList.remove('on');
+  }
+}
+
+function onTipoChange(ctx){
+  const tipo = document.getElementById(ctx+'-tipo').value;
+  const perfSel = document.getElementById(ctx+'-perfil');
+  const container = document.getElementById(ctx === 'novo' ? 'novo-acesso-section' : 'view-editar');
+  // remove classes de tipo
+  ['show-uo','show-prest','show-cliente'].forEach(c=> container && container.classList.remove(c));
+  if(tipo==='sesi') container.classList.add('show-uo');
+  else if(tipo==='prestador') container.classList.add('show-prest');
+  else if(tipo==='cliente') container.classList.add('show-cliente');
+  // atualiza perfis
+  const ops = PERFIS[tipo]||[];
+  perfSel.innerHTML = `<option value="">Selecione...</option>` + ops.map(p=>`<option>${p}</option>`).join('');
+}
+
+function salvarNovo(){
+  const email=document.getElementById('novo-email').value.trim();
+  const cpf=document.getElementById('novo-cpf').value.trim();
+  const nome=document.getElementById('novo-nome').value.trim();
+  const tipo=document.getElementById('novo-tipo').value;
+  const perfil=document.getElementById('novo-perfil').value;
+  if(!email||!cpf||!nome||!tipo||!perfil){ toast('Preencha todos os campos obrigatórios.','err'); return; }
+  const newId = Math.max(...usuarios.map(u=>u.id))+1;
+  usuarios.push({id:newId,nome,cpf,email,tipo,perfil,status:'ativo',vinculo:'—',
+    historico:[{data:new Date().toLocaleDateString('pt-BR'),hora:'agora',tipo:tipo.charAt(0).toUpperCase()+tipo.slice(1),perfil,fim:null}]});
+  renderLista();
+  goView('lista');
+  toast(`✅ Usuário ${nome} cadastrado com sucesso.`,'ok');
+}
+
+// ---- EDITAR USUÁRIO ----
+function abrirEdicao(id){
+  const u = usuarios.find(x=>x.id===id);
+  if(!u) return;
+  editingId = id;
+  editOriginalTipo = u.tipo;
+  editOriginalPerfil = u.perfil;
+  editOriginalEmail = u.email;
+  document.getElementById('edit-ph-title').textContent = 'Editar usuário';
+  document.getElementById('edit-ph-name').textContent = u.nome;
+  document.getElementById('edit-email').value = u.email;
+  document.getElementById('edit-cpf').value = u.cpf;
+  document.getElementById('edit-nome').value = u.nome;
+  document.getElementById('edit-tipo').value = u.tipo;
+  onTipoChange('edit');
+  setTimeout(()=>{
+    document.getElementById('edit-perfil').value = u.perfil;
+  },10);
+  renderHistorico(u.historico);
+  goView('editar');}
+
+function salvarEdicao(){
+  const u = usuarios.find(x=>x.id===editingId);
+  if(!u) return;
+  const novoTipo = document.getElementById('edit-tipo').value;
+  const novoPerfil = document.getElementById('edit-perfil').value;
+  const novoEmail = document.getElementById('edit-email').value;
+  const tipoChanged = novoTipo !== editOriginalTipo || novoPerfil !== editOriginalPerfil;
+  const emailChanged = novoEmail !== editOriginalEmail;
+  if(!tipoChanged && !emailChanged){
+    // salva direto
+    commitEdicao(u, novoTipo, novoPerfil, novoEmail);
+    return;
+  }
+  // monta confirmação
+  let desc = 'Você está prestes a salvar as seguintes alterações:<br><br>';
+  if(emailChanged) desc += `<strong>E-mail:</strong> ${editOriginalEmail} → ${novoEmail}<br>`;
+  if(tipoChanged)  desc += `<strong>Tipo de Usuário:</strong> ${editOriginalTipo} → ${novoTipo}<br><strong>Perfil:</strong> ${editOriginalPerfil} → ${novoPerfil}<br>`;
+  desc += '<br>Confirma o salvamento?';
+  document.getElementById('conf-title').textContent = 'Confirmar alteração';
+  document.getElementById('conf-body').innerHTML = `<p style="font-size:14px;line-height:1.6;color:var(--tx)">${desc}</p>`;
+  document.getElementById('conf-ok').onclick = ()=>{ commitEdicao(u,novoTipo,novoPerfil,novoEmail); closeConfirm(); };
+  document.getElementById('overlay-confirm').classList.add('open');
+}
+
+function commitEdicao(u, novoTipo, novoPerfil, novoEmail){
+  const tipoChanged = novoTipo !== u.tipo || novoPerfil !== u.perfil;
+  if(tipoChanged){
+    // fecha registro histórico vigente
+    const vigente = u.historico.find(h=>!h.fim);
+    if(vigente) vigente.fim = new Date().toLocaleDateString('pt-BR');
+    // cria novo registro
+    u.historico.push({data:new Date().toLocaleDateString('pt-BR'),hora:new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}),tipo:novoTipo.charAt(0).toUpperCase()+novoTipo.slice(1),perfil:novoPerfil,fim:null});
+  }
+  u.tipo = novoTipo; u.perfil = novoPerfil; u.email = novoEmail;
+  u.nome = document.getElementById('edit-nome').value;
+  editOriginalTipo = novoTipo; editOriginalPerfil = novoPerfil; editOriginalEmail = novoEmail;
+  renderLista();
+  renderHistorico(u.historico);
+  toast('✅ Usuário atualizado com sucesso.','ok');
+}
+
+function closeConfirm(){ document.getElementById('overlay-confirm').classList.remove('open'); }
+
+// ---- HISTÓRICO TIMELINE ----
+function renderHistorico(hist){
+  const container = document.getElementById('hist-container');
+  if(!hist||!hist.length){
+    container.innerHTML='<p style="color:var(--tx2);font-size:14px">Nenhum registro histórico.</p>';
+    return;
+  }
+  // agrupa por ano
+  const byYear = {};
+  [...hist].reverse().forEach(h=>{
+    const ano = h.data.split('/')[2] || '—';
+    if(!byYear[ano]) byYear[ano]=[];
+    byYear[ano].push(h);
+  });
+  container.innerHTML = Object.keys(byYear).sort((a,b)=>b-a).map(ano=>`
+    <div class="hist-year">${ano}</div>
+    <div class="hist-group">
+      ${byYear[ano].map(h=>{
+        const isCurrent = !h.fim;
+        return `<div class="hist-entry">
+          <div class="hist-ts">${h.data} — ${h.hora}</div>
+          <div class="hist-row">
+            <div class="hist-ico ${isCurrent?'current':'blue'}">
+              <svg viewBox="0 0 24 24"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+            </div>
+            <div class="hist-detail">
+              <strong>${isCurrent?'Configuração atual':'Configuração encerrada'}</strong>
+              <span>${h.fim ? `Vigência: ${h.data} a ${h.fim}` : `A partir de ${h.data}`}</span>
+              <div class="hist-badge-row">
+                <span class="hist-tipo">${h.tipo}</span>
+                <span class="hist-perfil">${h.perfil}</span>
+                ${isCurrent?'<span class="hist-current-tag">⚡ Vigente</span>':''}
+              </div>
+            </div>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>`).join('');
+}
+
+// ---- NAVEGAÇÃO ----
+function goView(v){
+  document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
+  document.getElementById('view-'+v).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+// ---- TOAST ----
+let ttimer=null;
+function toast(msg,type='ok'){
+  const el=document.getElementById('toast');
+  el.innerHTML=msg; el.className=`toast toast-${type} show`;
+  if(ttimer) clearTimeout(ttimer);
+  ttimer=setTimeout(()=>el.classList.remove('show'),4000);
+}
+
+// ---- INIT ----
+document.addEventListener('DOMContentLoaded',()=>{ renderLista(); });
+
+document.getElementById('overlay-confirm').addEventListener('click',e=>{
+  if(e.target===document.getElementById('overlay-confirm')) closeConfirm();
+});
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeConfirm(); });
+</script>
+</body>
+</html>

@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fase — Questão v2 — Orbie</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: #0d1a32; color: #fff;
+      min-height: 100vh; display: flex; flex-direction: column;
+    }
+
+    /* ── TOP BAR ── */
+    .top-bar {
+      width: 100%; background: #0d1a32;
+      border-bottom: 1px solid #142a51;
+      display: flex; align-items: center; gap: 12px;
+      padding: 8px 20px; flex-shrink: 0;
+    }
+    .btn-close {
+      width: 40px; height: 40px; border-radius: 12px;
+      border: none; background: transparent; color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; flex-shrink: 0; transition: background 0.15s;
+    }
+    .btn-close:hover { background: rgba(255,255,255,0.08); }
+
+    .progress-wrap {
+      flex: 1; height: 10px;
+      background: rgba(255,255,255,0.06); border-radius: 999px; overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%; background: #35C2FF; border-radius: 999px;
+      transition: width 0.4s ease;
+    }
+
+    /* XP mult pill — right of progress */
+    .xp-pill {
+      display: flex; align-items: center; gap: 5px;
+      background: rgba(255,201,77,0.16); border-radius: 999px;
+      padding: 4px 10px; flex-shrink: 0;
+    }
+    .xp-pill-val {
+      font-family: 'Orbitron', monospace; font-weight: 700;
+      font-size: 11px; color: #FFC94D; white-space: nowrap;
+    }
+    .xp-pill-icon { font-size: 12px; }
+
+    /* ── SKILL TAG ── */
+    .skill-tag-wrap {
+      padding: 12px 20px 0;
+      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    }
+    .skill-tag {
+      background: rgba(255,255,255,0.08); border-radius: 999px;
+      padding: 4px 12px; font-size: 11px; font-weight: 600;
+      color: rgba(255,255,255,0.75); white-space: nowrap;
+    }
+    .gap-tag {
+      background: rgba(255,93,93,0.16); color: #FF8383;
+      border-radius: 999px; padding: 4px 12px;
+      font-size: 11px; font-weight: 700; white-space: nowrap;
+    }
+    .mult-tag {
+      background: rgba(255,201,77,0.18); color: #FFC94D;
+      border-radius: 999px; padding: 4px 12px;
+      font-size: 11px; font-weight: 700; white-space: nowrap;
+    }
+
+    /* ── CONTENT ── */
+    .content {
+      flex: 1; display: flex; justify-content: center;
+      overflow-y: auto; padding: 16px 20px 140px;
+    }
+    .phase-template {
+      width: 100%; max-width: 676px;
+      display: flex; flex-direction: column; gap: 20px;
+    }
+
+    .question-statement {
+      font-size: 17px; font-weight: 400; line-height: 1.6; color: #fff;
+    }
+
+    /* ── OPTIONS ── */
+    .options-container { display: flex; flex-direction: column; gap: 10px; }
+
+    .option-item {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 14px 16px; border-radius: 16px;
+      border: 2px solid #1d3258; border-bottom-width: 4px;
+      cursor: pointer; transition: border-color 0.15s, background 0.15s;
+      background: transparent; width: 100%; text-align: left; color: #fff;
+    }
+    .option-item:hover { background: rgba(255,255,255,0.04); border-color: #526d98; }
+
+    .option-item.selected { border-color: #35C2FF; background: rgba(53,194,255,0.1); }
+    .option-item.selected .option-num { border-color: #35C2FF; color: #35C2FF; }
+
+    .option-item.correct { border-color: #2abc4e; background: rgba(42,188,78,0.12); }
+    .option-item.correct .option-num { border-color: #2abc4e; color: #37ec65; }
+
+    .option-item.incorrect { border-color: #f04438; background: rgba(240,68,56,0.12); }
+    .option-item.incorrect .option-num { border-color: #f04438; color: #f04438; }
+
+    .option-num {
+      width: 32px; height: 32px; flex-shrink: 0;
+      border: 2px solid #233d6b; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Orbitron', monospace; font-weight: 700;
+      font-size: 14px; color: rgba(255,255,255,0.5);
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .option-text { flex: 1; font-size: 15px; line-height: 1.5; color: #fff; padding-top: 3px; }
+
+    /* hint — sem cronômetro */
+    .no-timer-hint {
+      text-align: center; font-size: 11px;
+      color: rgba(255,255,255,0.3); margin-top: -8px;
+    }
+
+    /* ── BOTTOM BAR ── */
+    .bottom-bar {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: #0d1a32; border-top: 1px solid #142a51;
+      padding: 14px 20px; display: flex; justify-content: center;
+    }
+    .btn-confirm {
+      background: #0059e7; border: 1px solid #0040a7; border-bottom-width: 5px;
+      border-radius: 16px; height: 52px; width: 327px; max-width: 100%;
+      font-family: 'Roboto', sans-serif; font-weight: 700; font-size: 16px; color: #fff;
+      cursor: pointer; transition: background 0.15s, transform 0.1s;
+    }
+    .btn-confirm:hover:not(:disabled) { background: #0066ff; transform: translateY(-1px); }
+    .btn-confirm:disabled {
+      background: #1d3258; border-color: #1d3258; cursor: not-allowed; opacity: 0.45;
+    }
+
+    /* ── FEEDBACK BAR ── */
+    .feedback-bar {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      padding: 18px 20px 28px;
+      display: none; flex-direction: column; align-items: center; gap: 12px;
+    }
+    .feedback-bar.show { display: flex; }
+    .feedback-bar.correct-bg  { background: rgba(42,188,78,0.14); border-top: 2px solid #2abc4e; }
+    .feedback-bar.incorrect-bg { background: rgba(240,68,56,0.14); border-top: 2px solid #f04438; }
+
+    .feedback-row {
+      display: flex; align-items: center; gap: 10px;
+      width: 100%; max-width: 676px;
+    }
+    .feedback-icon {
+      width: 32px; height: 32px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 17px; font-weight: 700; flex-shrink: 0;
+    }
+    .feedback-icon.correct   { background: #2abc4e; }
+    .feedback-icon.incorrect { background: #f04438; }
+
+    .feedback-text { flex: 1; }
+    .feedback-label { font-weight: 700; font-size: 15px; }
+    .feedback-label.correct   { color: #37ec65; }
+    .feedback-label.incorrect { color: #f04438; }
+    .feedback-sub { font-size: 11.5px; color: rgba(255,255,255,0.5); margin-top: 2px; }
+
+    /* XP earned in feedback */
+    .feedback-xp {
+      display: flex; flex-direction: column; align-items: flex-end; gap: 2px; flex-shrink: 0;
+    }
+    .feedback-xp-val {
+      font-family: 'Orbitron', monospace; font-weight: 700;
+      font-size: 16px; color: #FFC94D;
+    }
+    .feedback-xp-label { font-size: 10px; color: rgba(255,201,77,0.6); }
+
+    .btn-next {
+      background: linear-gradient(90deg, #35C2FF, #8B5CF6);
+      border: none; border-radius: 16px; height: 52px;
+      width: 327px; max-width: 100%;
+      font-family: 'Roboto', sans-serif; font-weight: 700; font-size: 16px; color: #fff;
+      cursor: pointer; box-shadow: 0 6px 20px rgba(139,92,246,0.35);
+      transition: opacity 0.15s, transform 0.1s;
+    }
+    .btn-next:hover { opacity: 0.9; transform: translateY(-1px); }
+  </style>
+</head>
+<body>
+
+  <!-- TOP BAR -->
+  <div class="top-bar">
+    <button class="btn-close" id="btnClose">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+        <path d="M18 6L6 18M6 6L18 18" stroke="white" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    </button>
+    <div class="progress-wrap">
+      <div class="progress-fill" id="progressFill" style="width:10%"></div>
+    </div>
+    <div class="xp-pill">
+      <span class="xp-pill-icon">⚡</span>
+      <span class="xp-pill-val" id="xpPillLabel">×1.8 XP</span>
+    </div>
+  </div>
+
+  <!-- SKILL TAG -->
+  <div class="skill-tag-wrap">
+    <span class="skill-tag" id="skillTag">Equivalência de frações</span>
+    <span class="gap-tag">Gap alto</span>
+    <span class="mult-tag" id="multTag">×1.8 XP</span>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content">
+    <div class="phase-template">
+      <p class="no-timer-hint">Sem cronômetro — vá no seu ritmo.</p>
+      <p class="question-statement" id="questionText"></p>
+      <div class="options-container" id="optionsContainer"></div>
+    </div>
+  </div>
+
+  <!-- BOTTOM BAR -->
+  <div class="bottom-bar" id="bottomBar">
+    <button class="btn-confirm" id="btnConfirm" disabled onclick="confirmAnswer()">
+      Confirmar Resposta
+    </button>
+  </div>
+
+  <!-- FEEDBACK BAR -->
+  <div class="feedback-bar" id="feedbackBar">
+    <div class="feedback-row">
+      <div class="feedback-icon" id="feedbackIcon"></div>
+      <div class="feedback-text">
+        <div class="feedback-label" id="feedbackLabel"></div>
+        <div class="feedback-sub" id="feedbackSub"></div>
+      </div>
+      <div class="feedback-xp" id="feedbackXp" style="display:none">
+        <span class="feedback-xp-val" id="feedbackXpVal"></span>
+        <span class="feedback-xp-label">XP ganho</span>
+      </div>
+    </div>
+    <button class="btn-next" id="btnNext" onclick="nextQuestion()">Próxima</button>
+  </div>
+
+<script>
+  const MULT = 1.8;
+  const BASE_XP = 10;
+
+  const QUESTIONS = [
+    {
+      skill: "Equivalência de frações",
+      text: "Qual fração abaixo é equivalente a 2/3?",
+      options: ["4/9", "6/9", "3/6", "5/8"],
+      correct: 1,
+      explanation: "6/9 = 2/3 porque ambos os termos foram multiplicados por 3."
+    },
+    {
+      skill: "Equivalência de frações",
+      text: "Se simplificarmos 8/12, qual fração obtemos?",
+      options: ["4/6", "2/3", "3/4", "1/2"],
+      correct: 1,
+      explanation: "Dividindo numerador e denominador por 4: 8÷4=2 e 12÷4=3. Resultado: 2/3."
+    },
+    {
+      skill: "Equivalência de frações",
+      text: "Quais das frações abaixo formam um par equivalente?",
+      options: ["1/2 e 3/5", "2/4 e 4/8", "3/5 e 5/8", "1/3 e 2/5"],
+      correct: 1,
+      explanation: "2/4 = 1/2 e 4/8 = 1/2. Os dois representam a mesma proporção."
+    },
+    {
+      skill: "Equivalência de frações",
+      text: "Para transformar 3/4 em uma fração com denominador 20, o numerador deve ser:",
+      options: ["12", "15", "10", "8"],
+      correct: 1,
+      explanation: "20 ÷ 4 = 5. Multiplicamos o numerador por 5: 3 × 5 = 15. Resultado: 15/20."
+    }
+  ];
+
+  let currentIdx = 0;
+  let selected = null;
+  let answered = false;
+
+  function loadQuestion() {
+    const q = QUESTIONS[currentIdx];
+    answered = false; selected = null;
+
+    const pct = (currentIdx / QUESTIONS.length) * 100;
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('skillTag').textContent = q.skill;
+    document.getElementById('questionText').textContent = q.text;
+
+    const container = document.getElementById('optionsContainer');
+    container.innerHTML = '';
+    q.options.forEach((opt, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'option-item';
+      btn.innerHTML = `<div class="option-num">${i + 1}</div><div class="option-text">${opt}</div>`;
+      btn.addEventListener('click', () => selectOption(i));
+      container.appendChild(btn);
+    });
+
+    document.getElementById('btnConfirm').disabled = true;
+    document.getElementById('bottomBar').style.display = 'flex';
+    document.getElementById('feedbackBar').className = 'feedback-bar';
+    document.getElementById('btnNext').textContent =
+      currentIdx < QUESTIONS.length - 1 ? 'Próxima' : 'Ver resultado';
+  }
+
+  function selectOption(idx) {
+    if (answered) return;
+    selected = idx;
+    document.querySelectorAll('.option-item').forEach((el, i) =>
+      el.classList.toggle('selected', i === idx)
+    );
+    document.getElementById('btnConfirm').disabled = false;
+  }
+
+  function confirmAnswer() {
+    if (selected === null || answered) return;
+    answered = true;
+    const q = QUESTIONS[currentIdx];
+    const isCorrect = selected === q.correct;
+
+    document.querySelectorAll('.option-item').forEach((el, i) => {
+      el.classList.remove('selected');
+      if (i === q.correct) el.classList.add('correct');
+      else if (i === selected) el.classList.add('incorrect');
+    });
+
+    const fb = document.getElementById('feedbackBar');
+    const icon = document.getElementById('feedbackIcon');
+    const label = document.getElementById('feedbackLabel');
+    const sub = document.getElementById('feedbackSub');
+    const xpWrap = document.getElementById('feedbackXp');
+    const xpVal = document.getElementById('feedbackXpVal');
+
+    if (isCorrect) {
+      icon.textContent = '✓';
+      icon.className = 'feedback-icon correct';
+      label.textContent = 'Correto!';
+      label.className = 'feedback-label correct';
+      sub.textContent = q.explanation;
+      const earned = Math.round(BASE_XP * MULT);
+      xpVal.textContent = `+${earned} XP`;
+      xpWrap.style.display = 'flex';
+      fb.className = 'feedback-bar show correct-bg';
+    } else {
+      icon.textContent = '✗';
+      icon.className = 'feedback-icon incorrect';
+      label.textContent = 'Não foi dessa vez';
+      label.className = 'feedback-label incorrect';
+      sub.textContent = q.explanation;
+      xpWrap.style.display = 'none';
+      fb.className = 'feedback-bar show incorrect-bg';
+    }
+
+    document.getElementById('bottomBar').style.display = 'none';
+  }
+
+  function nextQuestion() {
+    currentIdx++;
+    if (currentIdx < QUESTIONS.length) {
+      loadQuestion();
+    } else {
+      location.href = 'fase-resultado-v2.html';
+    }
+  }
+
+  document.getElementById('btnClose').addEventListener('click', () => {
+    location.href = 'trilha-detalhe-v2.html';
+  });
+
+  loadQuestion();
+</script>
+</body>
+</html>

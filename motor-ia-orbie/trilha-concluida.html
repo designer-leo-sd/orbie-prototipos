@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lab / Trilha — Concluída — Orbie</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: #0d1a32;
+      color: #fff;
+      min-height: 100vh;
+    }
+
+    .page { max-width: 1024px; margin: 0 auto; padding-bottom: 120px; }
+
+    /* ── PHASE HEADER ── */
+    .phase-header {
+      width: 100%;
+      background: linear-gradient(180deg,
+        #0b43af 0%, #0c40a6 7%, #0d3d9d 14%, #0d3a94 21%,
+        #0e388b 29%, #0e3582 36%, #0e3279 43%, #0f2f71 50%,
+        #0f2c68 57%, #0f2960 64%, #0e2658 71%, #0e2450 79%,
+        #0e2148 86%, #0d1e40 90%, #0d1a32 100%
+      );
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 24px 48px;
+      position: relative;
+      gap: 8px;
+    }
+
+    .btn-back {
+      align-self: flex-start;
+      width: 40px; height: 40px;
+      border-radius: 12px;
+      border: none; background: transparent;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn-back:hover { background: rgba(255,255,255,0.08); }
+
+    .header-badges { display: flex; align-items: center; gap: 4px; margin-top: 8px; }
+    .badge-subject { background: #e040fb; border-radius: 8px; padding: 4px 6px; font-size: 11px; }
+    .badge-more    { background: rgba(255,255,255,0.04); border-radius: 8px; padding: 4px 6px; font-size: 11px; display: flex; align-items: center; gap: 3px; }
+
+    .header-title   { font-weight: 700; font-size: 20px; line-height: 24px; text-align: center; margin-top: 8px; }
+    .header-desc    { font-size: 13px; line-height: 20px; color: rgba(255,255,255,0.8); text-align: center; margin-top: 8px; }
+    .header-keywords { display: flex; gap: 4px; flex-wrap: wrap; justify-content: center; margin-top: 8px; }
+    .kw { background: rgba(255,255,255,0.04); border-radius: 8px; padding: 4px 8px; font-size: 11px; }
+    .header-meta { font-size: 13px; color: rgba(255,255,255,0.6); margin-top: 8px; }
+
+    /* ── RESULT BAR ── */
+    .result-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      max-width: 480px;
+      padding: 16px 0;
+      margin-top: 4px;
+    }
+    .result-stat {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+    .result-val {
+      font-family: 'Orbitron', monospace;
+      font-weight: 700;
+      font-size: 20px;
+      line-height: 24px;
+    }
+    .result-val.white  { color: #fff; }
+    .result-val.green  { color: #32d583; }
+    .result-label {
+      font-size: 13px;
+      line-height: 20px;
+      color: rgba(255,255,255,0.8);
+    }
+
+    /* ── PHASE LIST ── */
+    .phase-list { padding: 24px; display: flex; flex-direction: column; }
+
+    .phase-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 0 8px;
+    }
+
+    .phase-timeline {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex-shrink: 0;
+      width: 40px;
+      height: 72px;
+    }
+    .phase-timeline.last { height: auto; }
+
+    .circle-done {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: #142a51;
+      border: 2.57px solid #0d1a32;
+      outline: 2.57px solid #2abc4e;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .phase-line-green { flex: 1; width: 1px; background: #2abc4e; min-height: 4px; }
+
+    .phase-content { flex: 1; padding-top: 2px; }
+    .phase-name   { font-size: 16px; font-weight: 700; line-height: 24px; color: #fff; }
+    .phase-status { font-size: 11px; font-weight: 400; line-height: 16px; color: rgba(255,255,255,0.6); }
+
+    .xp-green { font-size: 11px; color: #32d583; white-space: nowrap; padding-top: 2px; min-width: 40px; text-align: right; }
+    .xp-muted { font-size: 11px; color: rgba(255,255,255,0.4); white-space: nowrap; padding-top: 2px; min-width: 40px; text-align: right; }
+
+    /* ── BOTTOM CTA ── */
+    .bottom-cta {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: linear-gradient(to top, #0d1a32 72%, rgba(13,26,50,0) 100%);
+      padding: 64px 24px 24px;
+      display: flex; align-items: center; justify-content: center;
+      pointer-events: none;
+    }
+    .btn-refazer {
+      background: #0059e7;
+      border: 1px solid #0040a7;
+      border-bottom-width: 5px;
+      border-radius: 16px;
+      height: 52px;
+      width: 327px;
+      max-width: 100%;
+      font-family: 'Roboto', sans-serif;
+      font-weight: 700;
+      font-size: 16px;
+      color: #fff;
+      cursor: pointer;
+      pointer-events: all;
+      transition: background 0.15s, transform 0.1s;
+    }
+    .btn-refazer:hover { background: #0066ff; transform: translateY(-1px); }
+    .btn-refazer:active { transform: scale(0.99); }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER — full width, fora do container centralizado -->
+  <div class="phase-header">
+    <button class="btn-back" onclick="location.href='index.html'">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <path d="M15 18L9 12L15 6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+
+    <div class="header-badges">
+      <span class="badge-subject">Ciências</span>
+      <span class="badge-more">+4
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style="opacity:0.7;flex-shrink:0;">
+          <path d="M3 4.5L6 7.5L9 4.5" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </span>
+    </div>
+
+    <h1 class="header-title">Cadeias Alimentares e Ecossistemas</h1>
+    <p class="header-desc">Revise conceitos fundamentais e teste seus conhecimentos com questões práticas.</p>
+
+    <div class="header-keywords">
+      <span class="kw">Ecossistema</span>
+      <span class="kw">Energia</span>
+      <span class="kw">Matéria</span>
+    </div>
+
+    <p class="header-meta">10 fases · Fácil · 100 XP</p>
+
+    <!-- RESULT BAR -->
+    <div class="result-bar">
+      <div class="result-stat">
+        <span class="result-val white">8/10</span>
+        <span class="result-label">Acertos</span>
+      </div>
+      <div class="result-stat">
+        <span class="result-val green">80%</span>
+        <span class="result-label">Performance</span>
+      </div>
+      <div class="result-stat">
+        <span class="result-val green">+160</span>
+        <span class="result-label">XP Ganho</span>
+      </div>
+    </div>
+  </div>
+
+<div class="page">
+
+  <!-- PHASE LIST — todas concluídas -->
+  <div class="phase-list" id="phaseList"></div>
+
+</div>
+
+<!-- BOTTOM CTA -->
+<div class="bottom-cta">
+  <button class="btn-refazer" onclick="location.href='trilha-nao-iniciada.html'">Refazer</button>
+</div>
+
+<script>
+  const phases = [
+    { name: 'Produtores Primários',      xp: '+10 XP', xpClass: 'xp-green' },
+    { name: 'Produtores e Consumidores', xp: '0 XP',   xpClass: 'xp-muted' },
+    { name: 'Teias Ecológicas',          xp: '+10 XP', xpClass: 'xp-green' },
+    { name: 'Magnificação Trófica',      xp: '0 XP',   xpClass: 'xp-muted' },
+    { name: 'Fluxo de Energia',          xp: '+10 XP', xpClass: 'xp-green' },
+    { name: 'Consumo e Eficiência',      xp: '+10 XP', xpClass: 'xp-green' },
+    { name: 'Transferência Térmica',     xp: '+10 XP', xpClass: 'xp-green' },
+    { name: 'Ação dos Decompositores',   xp: '+10 XP', xpClass: 'xp-green' },
+    { name: 'Dinâmica de Pirâmides',     xp: '+10 XP', xpClass: 'xp-green' },
+    { name: 'Dinâmica dos Fluidos',      xp: '+10 XP', xpClass: 'xp-green' },
+  ];
+
+  const checkSVG = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+    <path d="M3 8L6.5 11.5L13 5" stroke="#2abc4e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>`;
+
+  const list = document.getElementById('phaseList');
+
+  phases.forEach((phase, i) => {
+    const isLast = i === phases.length - 1;
+    list.innerHTML += `
+      <div class="phase-item">
+        <div class="phase-timeline${isLast ? ' last' : ''}">
+          <div class="circle-done">${checkSVG}</div>
+          ${!isLast ? '<div class="phase-line-green"></div>' : ''}
+        </div>
+        <div class="phase-content">
+          <div class="phase-name">${phase.name}</div>
+          <div class="phase-status">Concluída</div>
+        </div>
+        <div class="${phase.xpClass}">${phase.xp}</div>
+      </div>
+    `;
+  });
+</script>
+</body>
+</html>

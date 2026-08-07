@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Laboratório v2 — Orbie</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: #0d1a32;
+      color: #fff;
+      min-height: 100vh;
+    }
+
+    .page {
+      max-width: 928px;
+      margin: 0 auto;
+      padding-bottom: 80px;
+      padding-top: 32px;
+      position: relative;
+    }
+
+    /* ── HEADER ── */
+    .lab-header {
+      width: 100%;
+      background: linear-gradient(180deg, #0073ff 0%, #0073ff 50%, #0d1a32 100%);
+      padding-bottom: 48px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 24px;
+      padding-left: 24px;
+      padding-right: 24px;
+      position: relative;
+      gap: 8px;
+    }
+
+    .btn-back {
+      position: absolute;
+      left: 24px;
+      top: 28px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-family: 'Roboto', sans-serif;
+      font-weight: 700;
+      font-size: 16px;
+      cursor: pointer;
+      padding: 8px 12px;
+      border-radius: 12px;
+    }
+    .btn-back:hover { background: rgba(255,255,255,0.1); }
+
+    .xp-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(0,0,0,0.08);
+      border: 2px solid rgba(255,255,255,0.2);
+      border-radius: 1000px;
+      padding: 8px 16px;
+    }
+    .xp-badge span.xp-val {
+      font-family: 'Orbitron', monospace;
+      font-weight: 700;
+      font-size: 16px;
+      color: #32d583;
+    }
+    .xp-badge span.xp-label {
+      font-family: 'Orbitron', monospace;
+      font-weight: 700;
+      font-size: 16px;
+      color: rgba(255,255,255,0.6);
+    }
+
+    .lab-icon {
+      width: 104px;
+      height: 108px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .lab-icon img { width: 100%; height: 100%; object-fit: contain; }
+
+    .lab-title {
+      font-family: 'Orbitron', monospace;
+      font-weight: 700;
+      font-size: 25px;
+      line-height: 30px;
+      text-align: center;
+    }
+
+    /* ── CONTENT ── */
+    .content {
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    /* ── SEARCH ── */
+    .search-wrap { display: flex; flex-direction: column; gap: 12px; }
+    .search-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      height: 48px;
+      border: 2px solid #1d3258;
+      border-radius: 12px;
+      padding: 0 12px;
+      background: transparent;
+      cursor: pointer;
+      transition: border-color 0.15s;
+      text-decoration: none;
+    }
+    .search-box:hover { border-color: #526d98; }
+    .search-box span {
+      flex: 1;
+      font-size: 16px;
+      color: rgba(255,255,255,0.6);
+    }
+
+    .filter-chips { display: flex; gap: 8px; }
+    .chip {
+      border-radius: 1000px;
+      padding: 8px 12px;
+      font-size: 16px;
+      cursor: pointer;
+      border: 1px solid #1d3258;
+      background: rgba(255,255,255,0.04);
+      color: #fff;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .chip.active { border-color: #0059e7; }
+    .chip:hover:not(.active) { border-color: #526d98; }
+
+    /* ── CONSTELAÇÃO BANNER ── */
+    .constellation-banner {
+      background: linear-gradient(135deg, rgba(139,92,246,0.22), rgba(53,194,255,0.12));
+      border: 1px solid rgba(139,92,246,0.5);
+      border-radius: 16px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      transition: border-color 0.15s;
+      text-decoration: none;
+      color: inherit;
+    }
+    .constellation-banner:hover { border-color: rgba(139,92,246,0.8); }
+
+    .constellation-banner::before {
+      content: '';
+      position: absolute;
+      top: -30px; right: -30px;
+      width: 120px; height: 120px;
+      background: radial-gradient(circle, rgba(139,92,246,0.18), transparent 70%);
+      pointer-events: none;
+    }
+
+    .cb-badge {
+      position: absolute;
+      top: -8px; left: 14px;
+      background: #8B5CF6;
+      color: #fff;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: .04em;
+      padding: 3px 8px;
+      border-radius: 999px;
+    }
+
+    .cb-icon {
+      flex: none;
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #1b1440, #120a3d);
+      border: 1.5px solid #8B5CF6;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 14px rgba(139,92,246,0.4);
+    }
+
+    .cb-body { flex: 1; }
+    .cb-title {
+      color: #fff;
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 3px;
+    }
+    .cb-sub {
+      color: rgba(255,255,255,0.6);
+      font-size: 11.5px;
+      line-height: 1.4;
+    }
+
+    .cb-streak {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      margin-top: 7px;
+    }
+    .cb-streak-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: #FF8A3D;
+    }
+    .cb-streak-val {
+      color: #FFC94D;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .cb-progress {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 5px;
+      flex: none;
+    }
+    .cb-stars {
+      display: flex;
+      gap: 4px;
+    }
+    .cb-star {
+      width: 14px; height: 14px;
+      border-radius: 50%;
+    }
+    .cb-star.done { background: #37D67A; }
+    .cb-star.active {
+      background: #35C2FF;
+      box-shadow: 0 0 6px rgba(53,194,255,0.7);
+    }
+    .cb-star.locked { background: rgba(255,255,255,0.15); }
+    .cb-cta {
+      background: linear-gradient(90deg, #35C2FF, #8B5CF6);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      border: none;
+      border-radius: 8px;
+      padding: 5px 10px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    /* ── SECTION ── */
+    .section { display: flex; flex-direction: column; gap: 12px; }
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .section-title {
+      font-weight: 700;
+      font-size: 16px;
+      line-height: 24px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .section-subtitle {
+      font-size: 11px;
+      font-weight: 400;
+      color: rgba(255,255,255,0.45);
+      margin-left: 4px;
+    }
+    .btn-see-all {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      padding: 6px 8px;
+      border-radius: 8px;
+    }
+    .btn-see-all:hover { background: rgba(255,255,255,0.06); }
+
+    /* ── CAROUSEL ── */
+    .carousel {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      cursor: grab;
+      scrollbar-width: none;
+    }
+    .carousel::-webkit-scrollbar { display: none; }
+    .carousel.grabbing { cursor: grabbing; }
+
+    /* ── EXP CARD ── */
+    .exp-card {
+      background: #142a51;
+      border-radius: 16px;
+      padding: 16px;
+      flex: 0 0 327px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+      text-decoration: none;
+      color: inherit;
+    }
+    .exp-card:hover { background: #1a3259; transform: translateY(-1px); }
+    .exp-card:active { transform: scale(0.98); }
+
+    /* Orbie-generated card gets subtle purple tint */
+    .exp-card.orbie-card {
+      background: linear-gradient(160deg, #16294e, #1a1640);
+      border: 1px solid rgba(139,92,246,0.22);
+    }
+    .exp-card.orbie-card:hover {
+      border-color: rgba(139,92,246,0.45);
+      background: linear-gradient(160deg, #1c2f58, #1f1b48);
+    }
+
+    .card-badges-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .badges-left { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+
+    .badge-subject {
+      background: #e040fb;
+      border-radius: 8px;
+      padding: 4px 6px;
+      font-size: 11px;
+      font-weight: 400;
+      line-height: 16px;
+      white-space: nowrap;
+    }
+    .badge-subject.mat  { background: #2979ff; }
+    .badge-subject.port { background: #ff6d00; }
+    .badge-subject.hist { background: #f9a825; color: #0d1a32; }
+    .badge-subject.geo  { background: #00bfa5; }
+    .badge-subject.fis  { background: #00b0ff; }
+    .badge-subject.quim { background: #69f0ae; color: #0d1a32; }
+
+    .badge-secondary {
+      background: rgba(255,255,255,0.04);
+      border-radius: 8px;
+      padding: 4px 6px;
+      font-size: 11px;
+      line-height: 16px;
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      white-space: nowrap;
+    }
+    .badge-diff {
+      background: rgba(255,255,255,0.04);
+      border-radius: 8px;
+      padding: 4px 8px;
+      font-size: 11px;
+      font-weight: 700;
+      line-height: 16px;
+      white-space: nowrap;
+    }
+
+    /* XP badge — cor dinâmica conforme multiplicador */
+    .badge-xp {
+      font-family: 'Orbitron', monospace;
+      font-weight: 700;
+      font-size: 12px;
+      color: #32d583;
+      white-space: nowrap;
+    }
+    .badge-xp.xp-boost-md { color: #FFC94D; }  /* ×1.3 */
+    .badge-xp.xp-boost-hi { color: #FF8A3D; }  /* ×1.8 */
+
+    /* ── GAP TAGS (novidade da Constelação) ── */
+    .gap-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .tag-gap {
+      border-radius: 999px;
+      padding: 2px 8px;
+      font-size: 10px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .tag-gap.hi  { background: rgba(255,93,93,0.18); color: #FF8383; }
+    .tag-gap.md  { background: rgba(255,138,61,0.18); color: #FF8A3D; }
+    .tag-gap.low { background: rgba(255,255,255,0.1);  color: rgba(255,255,255,0.55); }
+
+    .tag-mult {
+      background: rgba(255,201,77,0.18);
+      color: #FFC94D;
+      border-radius: 999px;
+      padding: 2px 8px;
+      font-size: 10px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    /* ── GAP REASON (motivo explícito) ── */
+    .gap-reason {
+      color: rgba(255,255,255,0.45);
+      font-size: 10.5px;
+      line-height: 1.5;
+      border-top: 1px solid rgba(255,255,255,0.07);
+      padding-top: 8px;
+    }
+    .gap-reason strong { color: rgba(255,255,255,0.7); font-weight: 600; }
+
+    /* ── ORBIE ORIGIN LABEL ── */
+    .orbie-label {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 10px;
+      color: rgba(139,92,246,0.9);
+      font-weight: 600;
+    }
+    .user-label {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 10px;
+      color: rgba(255,255,255,0.4);
+      font-weight: 600;
+    }
+
+    /* card body */
+    .card-body { display: flex; flex-direction: column; gap: 8px; }
+    .card-title { font-weight: 700; font-size: 16px; line-height: 24px; }
+    .card-desc  { font-size: 13px; line-height: 20px; color: rgba(255,255,255,0.6); }
+    .card-keywords { display: flex; flex-wrap: wrap; gap: 4px; }
+    .kw {
+      background: rgba(255,255,255,0.04);
+      border-radius: 8px;
+      padding: 4px 8px;
+      font-size: 11px;
+    }
+
+    /* progress */
+    .card-progress { display: flex; flex-direction: column; gap: 4px; }
+    .progress-bar {
+      width: 100%; height: 8px;
+      background: rgba(255,255,255,0.04);
+      border-radius: 1000px;
+      overflow: hidden;
+    }
+    .progress-fill { height: 100%; background: #32d583; border-radius: 1000px; }
+    .progress-label { font-size: 11px; color: rgba(255,255,255,0.6); }
+
+    /* ── MAESTRIA BAR (novidade) ── */
+    .mastery-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding-top: 4px;
+      border-top: 1px solid rgba(255,255,255,0.07);
+    }
+    .mastery-label {
+      font-size: 10.5px;
+      color: rgba(255,255,255,0.5);
+      white-space: nowrap;
+    }
+    .mastery-bar {
+      flex: 1;
+      height: 5px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .mastery-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #35C2FF, #8B5CF6);
+    }
+    .mastery-pct {
+      font-size: 10.5px;
+      font-weight: 700;
+      color: #35C2FF;
+      white-space: nowrap;
+    }
+
+    /* ── FAB CRIAR ── */
+    .fab-criar {
+      position: fixed;
+      bottom: 28px; right: 28px;
+      background: #0059e7;
+      border: 3px solid #0040a7;
+      border-radius: 12px;
+      padding: 8px 14px;
+      height: 46px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+      font-size: 16px;
+      color: #fff;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(0,89,231,0.4);
+      transition: transform 0.1s, box-shadow 0.1s;
+    }
+    .fab-criar:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,89,231,0.5); }
+    .fab-criar:active { transform: scale(0.97); }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="lab-header">
+    <button class="btn-back">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M15 5l-7 7 7 7" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Voltar
+    </button>
+
+    <div class="xp-badge">
+      <span class="xp-val">380</span>
+      <span class="xp-label">XP</span>
+    </div>
+
+    <div class="lab-icon">
+      <img src="Filter Icon.svg" alt="Laboratório">
+    </div>
+
+    <h1 class="lab-title">Laboratório</h1>
+  </header>
+
+  <div class="page">
+    <main class="content">
+
+      <!-- SEARCH -->
+      <div class="search-wrap">
+        <a class="search-box" href="busca-sem-resultados.html">
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" style="flex-shrink:0;opacity:0.7;">
+            <circle cx="8" cy="8" r="5.5" stroke="white" stroke-width="1.5"/>
+            <path d="M12.5 12.5L16 16" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          <span>O que você quer aprender?</span>
+        </a>
+        <div class="filter-chips">
+          <button class="chip active" data-filter="todas">Todas</button>
+          <button class="chip" data-filter="simulados">Simulados</button>
+          <button class="chip" data-filter="recomendados">Recomendados</button>
+        </div>
+      </div>
+
+      <!-- ── CONSTELAÇÃO DO DIA (novo) ── -->
+      <a class="constellation-banner" href="trilha-detalhe-v2.html" data-section="todas recomendados">
+        <span class="cb-badge">NOVO · DIÁRIO</span>
+
+        <div class="cb-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <circle cx="7" cy="17" r="2" fill="#35C2FF"/>
+            <circle cx="12" cy="9" r="2" fill="#35C2FF"/>
+            <circle cx="19" cy="7" r="2.5" fill="#FFC94D"/>
+            <path d="M7 17 L12 9 L19 7" stroke="#8B5CF6" stroke-width="1.4" fill="none"/>
+          </svg>
+        </div>
+
+        <div class="cb-body">
+          <div class="cb-title">Constelação de hoje</div>
+          <div class="cb-sub">3 estrelas · Matemática · habilidades com maior gap</div>
+          <div class="cb-streak">
+            <div class="cb-streak-dot"></div>
+            <span class="cb-streak-val">3 dias seguidos</span>
+          </div>
+        </div>
+
+        <div class="cb-progress">
+          <div class="cb-stars">
+            <div class="cb-star done"></div>
+            <div class="cb-star done"></div>
+            <div class="cb-star active"></div>
+            <div class="cb-star locked"></div>
+            <div class="cb-star locked"></div>
+          </div>
+          <button class="cb-cta">Continuar</button>
+        </div>
+      </a>
+
+      <!-- CONTINUE — card com origem explícita -->
+      <section class="section" data-section="todas continue">
+        <div class="section-header">
+          <span class="section-title">
+            Continue
+          </span>
+          <button class="btn-see-all">Ver todos
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg>
+          </button>
+        </div>
+        <div class="carousel" id="carousel-continue">
+
+          <!-- Trilha CRIADA PELO ALUNO -->
+          <a class="exp-card" href="trilha-detalhe-v2.html" data-tags="todas continue">
+            <div class="user-label">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" stroke="rgba(255,255,255,0.4)" stroke-width="1.8"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke="rgba(255,255,255,0.4)" stroke-width="1.8" stroke-linecap="round"/></svg>
+              Criada por você
+            </div>
+            <div class="card-badges-row">
+              <div class="badges-left">
+                <span class="badge-subject">Ciências</span>
+                <span class="badge-secondary">+4</span>
+                <span class="badge-diff">Fácil</span>
+              </div>
+              <span class="badge-xp">100 XP</span>
+            </div>
+            <div class="card-body">
+              <p class="card-title">Cadeias Alimentares e Ecossistemas</p>
+              <p class="card-desc">Revise conceitos fundamentais e teste seus conhecimentos com questões práticas.</p>
+              <div class="card-keywords">
+                <span class="kw">Ecossistema</span><span class="kw">Energia</span><span class="kw">Matéria</span>
+              </div>
+            </div>
+            <div class="card-progress">
+              <div class="progress-bar"><div class="progress-fill" style="width:18%"></div></div>
+              <span class="progress-label">2/8 fases concluídas</span>
+            </div>
+          </a>
+
+        </div>
+      </section>
+
+      <!-- RECOMENDADOS — com gap + multiplicador + motivo -->
+      <section class="section" data-section="todas recomendados">
+        <div class="section-header">
+          <span class="section-title">
+            Recomendados
+            <span class="section-subtitle">personalizados para você</span>
+          </span>
+          <button class="btn-see-all">Ver todos
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg>
+          </button>
+        </div>
+        <div class="carousel" id="carousel-rec">
+
+          <!-- Card 1: Gap ALTO → multiplicador ×1.8 -->
+          <a class="exp-card orbie-card" href="trilha-detalhe-v2.html" data-tags="todas recomendados" style="text-decoration:none;color:inherit;">
+            <div class="orbie-label">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M12 2l2.6 6.9 7.4.3-5.8 4.7 2 7.1-6.2-4.1L5.8 21l2-7.1L2 9l7.4-.3L12 2z" fill="rgba(139,92,246,0.9)"/></svg>
+              Orbie escolheu
+            </div>
+            <div class="card-badges-row">
+              <div class="badges-left">
+                <span class="badge-subject mat">Matemática</span>
+                <span class="badge-secondary">+4</span>
+                <span class="badge-diff">Médio</span>
+              </div>
+              <span class="badge-xp xp-boost-hi">180 XP</span>
+            </div>
+            <div class="gap-row">
+              <span class="tag-gap hi">Gap alto</span>
+              <span class="tag-mult">×1.8 XP</span>
+            </div>
+            <div class="card-body">
+              <p class="card-title">Frações, Equivalências e Números Mistos</p>
+              <p class="card-desc">Reforce a habilidade onde você tem mais espaço pra crescer.</p>
+              <div class="card-keywords">
+                <span class="kw">Frações</span><span class="kw">Equivalências</span><span class="kw">Números Mistos</span>
+              </div>
+            </div>
+            <div class="gap-reason">
+              Por que esse? Você acertou <strong>38%</strong> das questões de frações nas últimas 2 semanas.
+            </div>
+            <div class="mastery-row">
+              <span class="mastery-label">Maestria</span>
+              <div class="mastery-bar"><div class="mastery-fill" style="width:38%"></div></div>
+              <span class="mastery-pct">38%</span>
+            </div>
+          </a>
+
+          <!-- Card 2: Gap MODERADO → ×1.3 -->
+          <div class="exp-card orbie-card" data-tags="todas recomendados">
+            <div class="orbie-label">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M12 2l2.6 6.9 7.4.3-5.8 4.7 2 7.1-6.2-4.1L5.8 21l2-7.1L2 9l7.4-.3L12 2z" fill="rgba(139,92,246,0.9)"/></svg>
+              Orbie escolheu
+            </div>
+            <div class="card-badges-row">
+              <div class="badges-left">
+                <span class="badge-subject port">Português</span>
+                <span class="badge-secondary">+2</span>
+                <span class="badge-diff">Fácil</span>
+              </div>
+              <span class="badge-xp xp-boost-md">130 XP</span>
+            </div>
+            <div class="gap-row">
+              <span class="tag-gap md">Gap moderado</span>
+              <span class="tag-mult">×1.3 XP</span>
+            </div>
+            <div class="card-body">
+              <p class="card-title">Interpretação de Textos Argumentativos</p>
+              <p class="card-desc">Pratique identificar tese, argumento e conclusão em textos dissertativos.</p>
+              <div class="card-keywords">
+                <span class="kw">Argumentação</span><span class="kw">Coesão</span>
+              </div>
+            </div>
+            <div class="gap-reason">
+              Por que esse? Você acertou <strong>54%</strong> nas questões de interpretação do último mês.
+            </div>
+            <div class="mastery-row">
+              <span class="mastery-label">Maestria</span>
+              <div class="mastery-bar"><div class="mastery-fill" style="width:54%"></div></div>
+              <span class="mastery-pct">54%</span>
+            </div>
+          </div>
+
+          <!-- Card 3: Gap baixo → ×1.0, sem destaque especial -->
+          <div class="exp-card" data-tags="todas recomendados">
+            <div class="card-badges-row">
+              <div class="badges-left">
+                <span class="badge-subject mat">Matemática</span>
+                <span class="badge-secondary">+4</span>
+                <span class="badge-diff">Médio</span>
+              </div>
+              <span class="badge-xp">200 XP</span>
+            </div>
+            <div class="gap-row">
+              <span class="tag-gap low">Domínio ok</span>
+            </div>
+            <div class="card-body">
+              <p class="card-title">Geometria Analítica</p>
+              <p class="card-desc">Revise conceitos fundamentais e teste seus conhecimentos com questões práticas.</p>
+              <div class="card-keywords">
+                <span class="kw">Análise</span><span class="kw">Geometria</span><span class="kw">Cálculo</span>
+              </div>
+            </div>
+            <div class="mastery-row">
+              <span class="mastery-label">Maestria</span>
+              <div class="mastery-bar"><div class="mastery-fill" style="width:72%"></div></div>
+              <span class="mastery-pct">72%</span>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- SIMULADOS — sem alteração estrutural, mesmos cards -->
+      <section class="section" data-section="todas simulados">
+        <div class="section-header">
+          <span class="section-title">Simulados</span>
+          <button class="btn-see-all">Ver todos
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg>
+          </button>
+        </div>
+        <div class="carousel">
+
+          <div class="exp-card" data-tags="todas simulados">
+            <div class="card-badges-row">
+              <div class="badges-left">
+                <span class="badge-subject hist">História</span>
+                <span class="badge-secondary">+4</span>
+                <span class="badge-diff">Difícil</span>
+              </div>
+              <span class="badge-xp">100 XP</span>
+            </div>
+            <div class="card-body">
+              <p class="card-title">Simulado Preparatório Enem 2025</p>
+              <p class="card-desc">Revise conceitos fundamentais e teste seus conhecimentos com questões práticas.</p>
+              <div class="card-keywords">
+                <span class="kw">Revisão</span><span class="kw">Vestibular</span><span class="kw">ENEM</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="exp-card" data-tags="todas simulados">
+            <div class="card-badges-row">
+              <div class="badges-left">
+                <span class="badge-subject port">Português</span>
+                <span class="badge-secondary">+4</span>
+                <span class="badge-diff">Fácil</span>
+              </div>
+              <span class="badge-xp">100 XP</span>
+            </div>
+            <div class="card-body">
+              <p class="card-title">Simulado Preparatório Avalia #2</p>
+              <p class="card-desc">Revise conceitos fundamentais e teste seus conhecimentos com questões práticas.</p>
+              <div class="card-keywords">
+                <span class="kw">Revisão</span><span class="kw">Avalia</span><span class="kw">Prova</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- MATÉRIAS -->
+      <section class="section" data-section="todas">
+        <div class="section-header">
+          <span class="section-title">Matérias</span>
+          <button class="btn-see-all">Ver todos
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M9 18l6-6-6-6" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg>
+          </button>
+        </div>
+        <div class="carousel">
+
+          <div class="exp-card" data-tags="todas">
+            <div class="card-badges-row">
+              <div class="badges-left">
+                <span class="badge-subject mat">Matemática</span>
+                <span class="badge-secondary">+4</span>
+                <span class="badge-diff">Fácil</span>
+              </div>
+              <span class="badge-xp">100 XP</span>
+            </div>
+            <div class="card-body">
+              <p class="card-title">Frações, Equivalências e Números Mistos</p>
+              <p class="card-desc">Revise conceitos fundamentais e teste seus conhecimentos com questões práticas.</p>
+              <div class="card-keywords">
+                <span class="kw">Divisão</span><span class="kw">Frações</span><span class="kw">Números Mistos</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="exp-card" data-tags="todas">
+            <div class="card-badges-row">
+              <div class="badges-left">
+                <span class="badge-subject geo">Geografia</span>
+                <span class="badge-secondary">+4</span>
+                <span class="badge-diff">Fácil</span>
+              </div>
+              <span class="badge-xp">100 XP</span>
+            </div>
+            <div class="card-body">
+              <p class="card-title">Geopolítica e Conflitos Contemporâneos</p>
+              <p class="card-desc">Entenda as relações de poder entre nações e os principais conflitos do século XXI.</p>
+              <div class="card-keywords">
+                <span class="kw">Geopolítica</span><span class="kw">Conflitos</span><span class="kw">Globalização</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+
+    <!-- FAB CRIAR -->
+    <button class="fab-criar" onclick="location.href='modal-criar-trilha.html'">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg>
+      Criar
+    </button>
+
+  </div><!-- /page -->
+
+  <script>
+    // FILTER CHIPS
+    document.querySelectorAll('.chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        const filter = chip.dataset.filter;
+        document.querySelectorAll('.section, .constellation-banner').forEach(sec => {
+          const tags = sec.dataset.section || '';
+          sec.style.display = (filter === 'todas' || tags.includes(filter)) ? '' : 'none';
+        });
+      });
+    });
+
+    // CAROUSEL DRAG
+    document.querySelectorAll('.carousel').forEach(c => {
+      let isDown = false, startX, scrollLeft;
+      c.addEventListener('mousedown', e => {
+        isDown = true; c.classList.add('grabbing');
+        startX = e.pageX - c.offsetLeft; scrollLeft = c.scrollLeft;
+      });
+      c.addEventListener('mouseleave', () => { isDown = false; c.classList.remove('grabbing'); });
+      c.addEventListener('mouseup',    () => { isDown = false; c.classList.remove('grabbing'); });
+      c.addEventListener('mousemove',  e => {
+        if (!isDown) return; e.preventDefault();
+        c.scrollLeft = scrollLeft - (e.pageX - c.offsetLeft - startX) * 1.5;
+      });
+    });
+  </script>
+</body>
+</html>

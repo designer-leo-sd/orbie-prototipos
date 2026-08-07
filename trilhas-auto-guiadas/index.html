@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orbie App - Trilhas Auto-Guiadas</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Outfit:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="css/design-tokens.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+    <!-- Main App Container -->
+    <div id="app" class="app-container">
+        
+        <!-- Screen 1: Lab Home Screen -->
+        <section id="lab-home" class="screen active">
+            <header class="top-bar">
+                <h1 class="header-lg font-bold text-primary">Laboratório</h1>
+            </header>
+            
+            <!-- Search and Filter Section -->
+            <div class="search-section">
+                <div class="search-input-container">
+                    <input type="text" id="search-input" class="search-input body-lg" 
+                           placeholder="Buscar trilhas..." />
+                    <button class="search-button" aria-label="Buscar">
+                        <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
+                            <path d="M21 21L16.514 16.506M19 10.5C19 15.194 15.194 19 10.5 19S2 15.194 2 10.5 5.806 2 10.5 2 19 5.806 19 10.5Z" 
+                                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+                
+                <button id="filter-btn" class="filter-button body-md font-medium">
+                    Filtros
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                        <path d="M3 6H21M7 12H17M11 18H13" stroke="currentColor" stroke-width="2" 
+                              stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <!-- Quick Stats -->
+            <div class="stats-section">
+                <div class="stat-card">
+                    <div class="stat-value display-md font-bold" id="user-xp">1247</div>
+                    <div class="stat-label body-sm text-secondary">XP Total</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value display-md font-bold" id="user-completed">23</div>
+                    <div class="stat-label body-sm text-secondary">Trilhas Concluídas</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value display-md font-bold" id="user-streak">7</div>
+                    <div class="stat-label body-sm text-secondary">Sequência (dias)</div>
+                </div>
+            </div>
+            
+            <!-- Trilhas Sections -->
+            <div class="content-sections">
+                
+                <!-- Continue Section -->
+                <section class="trilhas-section">
+                    <h2 class="section-title header-sm font-bold text-primary">Continue de onde parou</h2>
+                    <div class="continue-trail-card" id="continue-trail-card">
+                        <div class="trail-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 60%"></div>
+                            </div>
+                            <span class="progress-text body-sm text-secondary">6/10 questões</span>
+                        </div>
+                        <h3 class="trail-title body-lg font-bold text-primary">Frações Equivalentes</h3>
+                        <p class="trail-description body-md text-secondary">Matemática • 5º ano • Nível Médio</p>
+                        <div class="trail-meta">
+                            <span class="xp-reward body-sm">+15 XP</span>
+                            <span class="estimated-time body-sm text-secondary">~8 min restantes</span>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Recommended Trails -->
+                <section class="trilhas-section">
+                    <h2 class="section-title header-sm font-bold text-primary">Recomendadas para você</h2>
+                    <div class="trails-grid" id="recommended-trails">
+                        <!-- Trails will be populated by JavaScript -->
+                    </div>
+                </section>
+                        
+                        <article class="trail-card">
+                            <div class="trail-header">
+                                <div class="subject-badge">Ciências</div>
+                                <div class="difficulty-indicator difficulty-medium"></div>
+                            </div>
+                            <h3 class="trail-title body-lg font-bold">Sistema Solar</h3>
+                            <p class="trail-description body-sm text-secondary">7º ano • 15 questões</p>
+                            <div class="trail-meta">
+                                <span class="xp-reward body-sm">+22 XP</span>
+                                <span class="estimated-time body-sm text-secondary">~18 min</span>
+                            </div>
+                            <div class="trail-stats">
+                                <div class="stat-item">
+                                    <svg class="stat-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                        <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" 
+                                              fill="var(--star-active)"/>
+                                    </svg>
+                                    <span class="body-sm">4.6</span>
+                                </div>
+                                <div class="stat-item">
+                                    <svg class="stat-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                        <path d="M16 21V19C16 17.9391 15.5786 16.9217 14.8284 16.1716C14.0783 15.4214 13.0609 15 12 15H5C3.93913 15 2.92172 15.4214 2.17157 16.1716C1.42143 16.9217 1 17.9391 1 19V21" 
+                                              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <circle cx="8.5" cy="7" r="4" stroke="currentColor" stroke-width="2"/>
+                                        <path d="M20 8V14M23 11H17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                    <span class="body-sm">189</span>
+                                </div>
+                            </div>
+                        </article>
+                        
+                        <article class="trail-card">
+                            <div class="trail-header">
+                                <div class="subject-badge">História</div>
+                                <div class="difficulty-indicator difficulty-hard"></div>
+                            </div>
+                            <h3 class="trail-title body-lg font-bold">Brasil Colônia</h3>
+                            <p class="trail-description body-sm text-secondary">8º ano • 20 questões</p>
+                            <div class="trail-meta">
+                                <span class="xp-reward body-sm">+30 XP</span>
+                                <span class="estimated-time body-sm text-secondary">~25 min</span>
+                            </div>
+                            <div class="trail-stats">
+                                <div class="stat-item">
+                                    <svg class="stat-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                        <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" 
+                                              fill="var(--star-active)"/>
+                                    </svg>
+                                    <span class="body-sm">4.9</span>
+                                </div>
+                                <div class="stat-item">
+                                    <svg class="stat-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                                        <path d="M16 21V19C16 17.9391 15.5786 16.9217 14.8284 16.1716C14.0783 15.4214 13.0609 15 12 15H5C3.93913 15 2.92172 15.4214 2.17157 16.1716C1.42143 16.9217 1 17.9391 1 19V21" 
+                                              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <circle cx="8.5" cy="7" r="4" stroke="currentColor" stroke-width="2"/>
+                                        <path d="M20 8V14M23 11H17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                    <span class="body-sm">156</span>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+                </section>
+                
+                <!-- Popular Trails -->
+                <section class="trilhas-section">
+                    <h2 class="section-title header-sm font-bold text-primary">Trilhas Populares</h2>
+                    <div class="trails-list" id="popular-trails">
+                        <!-- Popular trails will be populated by JavaScript -->
+                    </div>
+                </section>
+                
+            </div>
+            
+            <!-- Create Trail Button -->
+            <div class="floating-action">
+                <button id="create-trail-btn" class="create-trail-button">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path d="M12 5V19M5 12H19" stroke="currentColor" stroke-width="2" 
+                              stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span class="button-lg font-bold">Criar Trilha</span>
+                </button>
+            </div>
+        </section>
+        
+        <!-- Screen 2: Create Trail Form -->
+        <section id="create-trail" class="screen">
+            <header class="top-bar">
+                <button class="back-button" aria-label="Voltar">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path d="M19 12H5M12 19L5 12L12 5" stroke="currentColor" stroke-width="2" 
+                              stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+                <h1 class="header-lg font-bold text-primary">Criar Nova Trilha</h1>
+            </header>
+            
+            <form class="create-trail-form">
+                
+                <!-- Step 1: Basic Info -->
+                <div class="form-step active" data-step="1">
+                    <div class="step-header">
+                        <h2 class="header-md font-bold text-primary">Informações Básicas</h2>
+                        <p class="body-md text-secondary">Defina o foco da sua trilha de estudos</p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label body-md font-medium text-label" for="grade-select">
+                            Ano/Série
+                        </label>
+                        <select id="grade-select" class="form-select body-lg">
+                            <option value="">Selecione o ano</option>
+                            <option value="4">4º ano - Ensino Fundamental</option>
+                            <option value="5">5º ano - Ensino Fundamental</option>
+                            <option value="6">6º ano - Ensino Fundamental</option>
+                            <option value="7">7º ano - Ensino Fundamental</option>
+                            <option value="8">8º ano - Ensino Fundamental</option>
+                            <option value="9">9º ano - Ensino Fundamental</option>
+                            <option value="10">1º ano - Ensino Médio</option>
+                            <option value="11">2º ano - Ensino Médio</option>
+                            <option value="12">3º ano - Ensino Médio</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label body-md font-medium text-label" for="subject-select">
+                            Componente Curricular
+                        </label>
+                        <select id="subject-select" class="form-select body-lg">
+                            <option value="">Selecione a matéria</option>
+                            <option value="matematica">Matemática</option>
+                            <option value="portugues">Português</option>
+                            <option value="ciencias">Ciências</option>
+                            <option value="historia">História</option>
+                            <option value="geografia">Geografia</option>
+                            <option value="artes">Artes</option>
+                            <option value="educacao-fisica">Educação Física</option>
+                            <option value="ingles">Inglês</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label body-md font-medium text-label">
+                            Assuntos de Interesse
+                        </label>
+                        <div class="topics-grid">
+                            <label class="topic-chip">
+                                <input type="checkbox" name="topics" value="fracoes">
+                                <span class="body-sm">Frações</span>
+                            </label>
+                            <label class="topic-chip">
+                                <input type="checkbox" name="topics" value="geometria">
+                                <span class="body-sm">Geometria</span>
+                            </label>
+                            <label class="topic-chip">
+                                <input type="checkbox" name="topics" value="operacoes">
+                                <span class="body-sm">Operações</span>
+                            </label>
+                            <label class="topic-chip">
+                                <input type="checkbox" name="topics" value="algebra">
+                                <span class="body-sm">Álgebra</span>
+                            </label>
+                            <label class="topic-chip">
+                                <input type="checkbox" name="topics" value="estatistica">
+                                <span class="body-sm">Estatística</span>
+                            </label>
+                            <label class="topic-chip">
+                                <input type="checkbox" name="topics" value="probabilidade">
+                                <span class="body-sm">Probabilidade</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label body-md font-medium text-label">
+                            Nível de Dificuldade
+                        </label>
+                        <div class="difficulty-options">
+                            <label class="difficulty-option difficulty-easy">
+                                <input type="radio" name="difficulty" value="facil">
+                                <div class="difficulty-content">
+                                    <span class="difficulty-name body-md font-medium">Fácil</span>
+                                    <span class="difficulty-desc body-sm text-secondary">Questões básicas e conceitos fundamentais</span>
+                                </div>
+                            </label>
+                            <label class="difficulty-option difficulty-medium">
+                                <input type="radio" name="difficulty" value="medio" checked>
+                                <div class="difficulty-content">
+                                    <span class="difficulty-name body-md font-medium">Médio</span>
+                                    <span class="difficulty-desc body-sm text-secondary">Aplicação de conceitos e raciocínio</span>
+                                </div>
+                            </label>
+                            <label class="difficulty-option difficulty-hard">
+                                <input type="radio" name="difficulty" value="dificil">
+                                <div class="difficulty-content">
+                                    <span class="difficulty-name body-md font-medium">Difícil</span>
+                                    <span class="difficulty-desc body-sm text-secondary">Problemas complexos e análise crítica</span>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label body-md font-medium text-label">
+                            Tipo de Trilha
+                        </label>
+                        <div class="trail-type-options">
+                            <label class="trail-type-option">
+                                <input type="radio" name="trail-type" value="estudo" checked>
+                                <div class="trail-type-content">
+                                    <div class="trail-type-icon">📚</div>
+                                    <span class="trail-type-name body-md font-medium">Estudo</span>
+                                    <span class="trail-type-desc body-sm text-secondary">Trilha focada no aprendizado</span>
+                                </div>
+                            </label>
+                            <label class="trail-type-option">
+                                <input type="radio" name="trail-type" value="simulado">
+                                <div class="trail-type-content">
+                                    <div class="trail-type-icon">📝</div>
+                                    <span class="trail-type-name body-md font-medium">Simulado</span>
+                                    <span class="trail-type-desc body-sm text-secondary">Teste de conhecimento (40 questões)</span>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Step Navigation -->
+                <div class="form-navigation">
+                    <button type="button" class="btn-secondary" id="prev-step" disabled>
+                        Anterior
+                    </button>
+                    <button type="button" class="btn-primary" id="next-step">
+                        Próximo
+                    </button>
+                </div>
+            </form>
+        </section>
+        
+        <!-- Screen 3: Trail Generation Loading -->
+        <section id="trail-loading" class="screen">
+            <div class="loading-container">
+                <div class="loading-animation">
+                    <div class="orbie-logo">
+                        <div class="logo-ring"></div>
+                        <div class="logo-center">O</div>
+                    </div>
+                    <div class="loading-dots">
+                        <span class="dot"></span>
+                        <span class="dot"></span>
+                        <span class="dot"></span>
+                    </div>
+                </div>
+                
+                <div class="loading-content">
+                    <h2 class="header-lg font-bold text-primary">Criando sua trilha...</h2>
+                    <p class="body-lg text-secondary">Nossa IA está selecionando as melhores questões para você</p>
+                    
+                    <div class="loading-steps">
+                        <div class="loading-step completed">
+                            <div class="step-icon">✓</div>
+                            <span class="body-md">Analisando preferências</span>
+                        </div>
+                        <div class="loading-step active">
+                            <div class="step-icon">⚡</div>
+                            <span class="body-md">Selecionando questões</span>
+                        </div>
+                        <div class="loading-step">
+                            <div class="step-icon">📚</div>
+                            <span class="body-md">Organizando trilha</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Screen 4: Trail Details / Preview -->
+        <section id="trail-details" class="screen">
+            <header class="top-bar">
+                <button class="back-button" aria-label="Voltar">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path d="M19 12H5M12 19L5 12L12 5" stroke="currentColor" stroke-width="2" 
+                              stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+                <h1 class="header-lg font-bold text-primary">Trilha Criada</h1>
+            </header>
+            
+            <div class="trail-preview">
+                
+                <!-- Trail Header -->
+                <div class="trail-preview-header">
+                    <div class="trail-icon">🧮</div>
+                    <div class="trail-info">
+                        <h2 class="display-md font-bold text-primary">Frações - Nível Médio</h2>
+                        <p class="body-lg text-secondary">Matemática • 5º ano • 15 questões</p>
+                        <div class="trail-metadata">
+                            <span class="xp-badge body-sm font-medium">+22 XP</span>
+                            <span class="time-estimate body-sm text-secondary">~18 min</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Trail Stats -->
+                <div class="trail-stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-icon">📊</div>
+                        <div class="stat-content">
+                            <span class="stat-value body-lg font-bold">15</span>
+                            <span class="stat-label body-sm text-secondary">Questões</span>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-icon">🎯</div>
+                        <div class="stat-content">
+                            <span class="stat-value body-lg font-bold">Médio</span>
+                            <span class="stat-label body-sm text-secondary">Dificuldade</span>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-icon">📚</div>
+                        <div class="stat-content">
+                            <span class="stat-value body-lg font-bold">3</span>
+                            <span class="stat-label body-sm text-secondary">Assuntos</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Topics Covered -->
+                <div class="topics-section">
+                    <h3 class="header-sm font-bold text-primary">Assuntos Abordados</h3>
+                    <div class="topics-list">
+                        <span class="topic-tag body-sm">Frações Equivalentes</span>
+                        <span class="topic-tag body-sm">Operações com Frações</span>
+                        <span class="topic-tag body-sm">Simplificação</span>
+                    </div>
+                </div>
+                
+                <!-- Question Types Preview -->
+                <div class="questions-section">
+                    <h3 class="header-sm font-bold text-primary">Tipos de Questões</h3>
+                    <div class="question-types">
+                        <div class="question-type-item">
+                            <span class="question-count body-lg font-bold">8</span>
+                            <span class="question-type body-md text-secondary">Múltipla Escolha</span>
+                        </div>
+                        <div class="question-type-item">
+                            <span class="question-count body-lg font-bold">4</span>
+                            <span class="question-type body-md text-secondary">Verdadeiro/Falso</span>
+                        </div>
+                        <div class="question-type-item">
+                            <span class="question-count body-lg font-bold">3</span>
+                            <span class="question-type body-md text-secondary">Associação</span>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="trail-actions">
+                <button class="btn-secondary">
+                    Salvar para Depois
+                </button>
+                <button class="btn-primary" id="start-trail-btn">
+                    Iniciar Trilha
+                </button>
+            </div>
+        </section>
+        
+        <!-- Screen 5: Question Screen -->
+        <section id="question-screen" class="screen">
+            
+            <!-- Question Header -->
+            <header class="question-header">
+                <button class="close-button" aria-label="Fechar">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" 
+                              stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+                
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 20%"></div>
+                    </div>
+                </div>
+                
+                <div class="question-meta">
+                    <span class="question-counter body-sm text-secondary">3/15</span>
+                    <span class="timer body-sm text-secondary">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                            <path d="M12 6V12L16 14" stroke="currentColor" stroke-width="2" 
+                                  stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        15:42
+                    </span>
+                </div>
+            </header>
+            
+            <!-- Question Content -->
+            <div class="question-content">
+                
+                <!-- Question Type Label -->
+                <div class="question-type-label">
+                    <span class="display-sm font-bold text-primary">Múltipla Escolha</span>
+                    <span class="body-sm text-secondary">(uma alternativa)</span>
+                </div>
+                
+                <!-- Question Statement -->
+                <div class="question-statement">
+                    <h2 class="body-xl font-normal text-primary" id="question-text">
+                        Maria tinha 3/4 de uma pizza. Ela comeu 1/4 da pizza. 
+                        Qual fração representa a quantidade de pizza que sobrou?
+                    </h2>
+                </div>
+                
+                <!-- Question Image (optional) -->
+                <div class="question-image" id="question-image">
+                    <div class="image-placeholder">
+                        <div class="pizza-illustration">🍕</div>
+                        <p class="body-sm text-secondary">Ilustração: Pizza dividida em quartos</p>
+                    </div>
+                </div>
+                
+                <!-- Answer Options -->
+                <div class="answer-options">
+                    <label class="answer-option" data-option="A">
+                        <input type="radio" name="answer" value="A">
+                        <div class="option-content">
+                            <span class="option-letter body-lg font-bold">A</span>
+                            <span class="option-text body-lg">1/4</span>
+                        </div>
+                        <div class="option-check">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                <path d="M20 6L9 17L4 12" stroke="currentColor" stroke-width="2" 
+                                      stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                    </label>
+                    
+                    <label class="answer-option" data-option="B">
+                        <input type="radio" name="answer" value="B">
+                        <div class="option-content">
+                            <span class="option-letter body-lg font-bold">B</span>
+                            <span class="option-text body-lg">2/4</span>
+                        </div>
+                        <div class="option-check">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                <path d="M20 6L9 17L4 12" stroke="currentColor" stroke-width="2" 
+                                      stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                    </label>
+                    
+                    <label class="answer-option" data-option="C">
+                        <input type="radio" name="answer" value="C">
+                        <div class="option-content">
+                            <span class="option-letter body-lg font-bold">C</span>
+                            <span class="option-text body-lg">3/4</span>
+                        </div>
+                        <div class="option-check">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                <path d="M20 6L9 17L4 12" stroke="currentColor" stroke-width="2" 
+                                      stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                    </label>
+                    
+                    <label class="answer-option" data-option="D">
+                        <input type="radio" name="answer" value="D">
+                        <div class="option-content">
+                            <span class="option-letter body-lg font-bold">D</span>
+                            <span class="option-text body-lg">4/4</span>
+                        </div>
+                        <div class="option-check">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                <path d="M20 6L9 17L4 12" stroke="currentColor" stroke-width="2" 
+                                      stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                    </label>
+                </div>
+                
+            </div>
+            
+            <!-- Submit Button -->
+            <div class="question-actions">
+                <button id="submit-answer-btn" class="btn-primary" disabled>
+                    Responder
+                </button>
+            </div>
+        </section>
+        
+        <!-- Screen 6: Trail Completion -->
+        <section id="trail-completion" class="screen">
+            <div class="completion-container">
+                
+                <!-- Success Animation Area -->
+                <div class="completion-animation">
+                    <div class="success-icon">🎉</div>
+                    <div class="stars-animation">
+                        <span class="star">⭐</span>
+                        <span class="star">⭐</span>
+                        <span class="star">⭐</span>
+                    </div>
+                </div>
+                
+                <!-- Completion Message -->
+                <div class="completion-message">
+                    <h1 class="display-lg font-bold text-primary">Parabéns!</h1>
+                    <p class="body-xl text-secondary">Você concluiu a trilha de Frações</p>
+                </div>
+                
+                <!-- Results Summary -->
+                <div class="results-summary">
+                    <div class="result-stat">
+                        <span class="stat-value display-md font-bold text-primary">12/15</span>
+                        <span class="stat-label body-md text-secondary">Acertos</span>
+                    </div>
+                    <div class="result-stat">
+                        <span class="stat-value display-md font-bold" style="color: var(--orange-400)">+22</span>
+                        <span class="stat-label body-md text-secondary">XP Ganho</span>
+                    </div>
+                    <div class="result-stat">
+                        <span class="stat-value display-md font-bold text-primary">16m</span>
+                        <span class="stat-label body-md text-secondary">Tempo</span>
+                    </div>
+                </div>
+                
+                <!-- Performance Rating -->
+                <div class="performance-section">
+                    <h3 class="header-sm font-bold text-primary">Seu Desempenho</h3>
+                    <div class="performance-rating">
+                        <div class="rating-stars">
+                            <span class="star filled">⭐</span>
+                            <span class="star filled">⭐</span>
+                            <span class="star filled">⭐</span>
+                            <span class="star empty">⭐</span>
+                            <span class="star empty">⭐</span>
+                        </div>
+                        <span class="rating-text body-lg font-medium text-primary">Bom trabalho!</span>
+                    </div>
+                </div>
+                
+                <!-- Recommendations -->
+                <div class="recommendations-section">
+                    <h3 class="header-sm font-bold text-primary">Continue Aprendendo</h3>
+                    <div class="recommendation-cards">
+                        <div class="recommendation-card">
+                            <h4 class="body-md font-bold text-primary">Operações com Frações</h4>
+                            <p class="body-sm text-secondary">Próximo nível recomendado</p>
+                            <span class="xp-badge body-sm">+25 XP</span>
+                        </div>
+                        <div class="recommendation-card">
+                            <h4 class="body-md font-bold text-primary">Decimais e Porcentagens</h4>
+                            <p class="body-sm text-secondary">Assunto relacionado</p>
+                            <span class="xp-badge body-sm">+20 XP</span>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="completion-actions">
+                <button class="btn-secondary">
+                    Ver Respostas
+                </button>
+                <button class="btn-primary" id="back-to-lab-btn">
+                    Voltar ao Laboratório
+                </button>
+            </div>
+        </section>
+        
+        <!-- Bottom Navigation -->
+        <nav class="bottom-navigation">
+            <a href="#" class="nav-item active" data-screen="lab-home">
+                <svg class="nav-icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path d="M3 9L12 2L21 9V20C21 20.5304 20.7893 21.0391 20.4142 21.4142C20.0391 21.7893 19.5304 22 19 22H5C4.46957 22 3.96086 21.7893 3.58579 21.4142C3.21071 21.0391 3 20.5304 3 20V9Z" 
+                          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M9 22V12H15V22" stroke="currentColor" stroke-width="2" 
+                          stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span class="nav-label">Home</span>
+            </a>
+            
+            <a href="#" class="nav-item" data-screen="missions">
+                <svg class="nav-icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path d="M12 2L3.09 8.26L12 14L20.91 8.26L12 2Z" stroke="currentColor" stroke-width="2" 
+                          stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M3.09 8.26L12 14.52L20.91 8.26" stroke="currentColor" stroke-width="2" 
+                          stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M3.09 15.78L12 22.04L20.91 15.78" stroke="currentColor" stroke-width="2" 
+                          stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span class="nav-label">Missões</span>
+            </a>
+            
+            <a href="#" class="nav-item" data-screen="ranking">
+                <svg class="nav-icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path d="M6 9H4.5C4.10218 9 3.72064 9.15804 3.43934 9.43934C3.15804 9.72064 3 10.1022 3 10.5V19.5C3 19.8978 3.15804 20.2794 3.43934 20.5607C3.72064 20.8420 4.10218 21 4.5 21H6M6 9V21M6 9H10.5C10.8978 9 11.2794 8.84196 11.5607 8.56066C11.8420 8.27936 12 7.89782 12 7.5V4.5C12 4.10218 12.1580 3.72064 12.4393 3.43934C12.7206 3.15804 13.1022 3 13.5 3H19.5C19.8978 3 20.2794 3.15804 20.5607 3.43934C20.8420 3.72064 21 4.10218 21 4.5V19.5C21 19.8978 20.8420 20.2794 20.5607 20.5607C20.2794 20.8420 19.8978 21 19.5 21H6" 
+                          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span class="nav-label">Ranking</span>
+            </a>
+            
+            <a href="#" class="nav-item" data-screen="profile">
+                <svg class="nav-icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path d="M20 21V19C20 17.9391 19.5786 16.9217 18.8284 16.1716C18.0783 15.4214 17.0609 15 16 15H8C6.93913 15 5.92172 15.4214 5.17157 16.1716C4.42143 16.9217 4 17.9391 4 19V21" 
+                          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2"/>
+                </svg>
+                <span class="nav-label">Perfil</span>
+            </a>
+        </nav>
+        
+        <!-- Filter Modal -->
+        <div id="filter-modal" class="modal">
+            <div class="modal-backdrop"></div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="header-md font-bold text-primary">Filtros</h2>
+                    <button class="modal-close" aria-label="Fechar">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" 
+                                  stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </div>
+                
+                <div class="modal-body">
+                    <div class="filter-group">
+                        <h3 class="body-lg font-bold text-primary">Matéria</h3>
+                        <div class="filter-options">
+                            <label class="filter-option">
+                                <input type="checkbox" value="matematica">
+                                <span class="body-md">Matemática</span>
+                            </label>
+                            <label class="filter-option">
+                                <input type="checkbox" value="portugues">
+                                <span class="body-md">Português</span>
+                            </label>
+                            <label class="filter-option">
+                                <input type="checkbox" value="ciencias">
+                                <span class="body-md">Ciências</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="filter-group">
+                        <h3 class="body-lg font-bold text-primary">Dificuldade</h3>
+                        <div class="filter-options">
+                            <label class="filter-option">
+                                <input type="checkbox" value="facil">
+                                <span class="body-md">Fácil</span>
+                            </label>
+                            <label class="filter-option">
+                                <input type="checkbox" value="medio">
+                                <span class="body-md">Médio</span>
+                            </label>
+                            <label class="filter-option">
+                                <input type="checkbox" value="dificil">
+                                <span class="body-md">Difícil</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <button class="btn-secondary">Limpar</button>
+                    <button class="btn-primary">Aplicar</button>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+    
+    <!-- JavaScript -->
+    <script src="js/mock-data.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

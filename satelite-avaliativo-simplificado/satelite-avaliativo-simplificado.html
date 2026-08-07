@@ -1,0 +1,2607 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Satelite Avaliativo - AVALIA #1</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary: #2177FF;
+  --primary-light: #EBF3FF;
+  --text: #344054;
+  --text-secondary: #525e76;
+  --text-light: #8a95b2;
+  --border: #C8D0DC;
+  --surface: #FFFFFF;
+  --bg: #FFFFFF;
+  --success: #027A48;
+  --success-bg: #ECFDF3;
+  --success-border: #A9EFC5;
+  --warning: #B54708;
+  --warning-bg: #FFFAEB;
+  --warning-border: #FEDF89;
+  --error: #B42318;
+  --error-bg: #FEF3F2;
+  --error-border: #FECDCA;
+  --orange: #DC6803;
+  --orange-bg: #FFF6ED;
+  --orange-border: #FDDCAB;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.10);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.5; overflow: hidden; }
+.app { display: flex; flex-direction: column; height: 100vh; width: 100%; min-width: 1440px; }
+.header { height: 64px; background: var(--surface); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 20px; gap: 12px; flex-shrink: 0; z-index: 100; }
+.header-logo { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 18px; color: var(--primary); }
+.header-logo span { font-size: 22px; }
+.header-menu-btn { width: 36px; height: 36px; border: none; background: none; cursor: pointer; color: var(--text-secondary); display: flex; align-items: center; justify-content: center; border-radius: var(--radius-sm); }
+.header-menu-btn:hover { background: var(--bg); }
+.header-spacer { flex: 1; }
+.header-right { display: flex; align-items: center; gap: 8px; }
+.select-pill { display: flex; align-items: center; gap: 6px; padding: 6px 12px; border: 1px solid var(--border); border-radius: 20px; background: var(--surface); font-size: 13px; cursor: pointer; color: var(--text); font-family: 'Outfit', sans-serif; }
+.select-pill:hover { border-color: var(--primary); }
+.icon-btn { width: 36px; height: 36px; border: none; background: none; cursor: pointer; color: var(--text-secondary); display: flex; align-items: center; justify-content: center; border-radius: 50%; }
+.icon-btn:hover { background: var(--bg); }
+.avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 14px; cursor: pointer; }
+.body { display: flex; flex: 1; overflow: hidden; }
+.sidebar { width: 235px; flex-shrink: 0; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow-y: auto; padding: 12px 0; }
+.nav-item { display: flex; align-items: center; gap: 10px; padding: 9px 16px; cursor: pointer; color: var(--text-secondary); font-size: 14px; font-weight: 500; transition: background 0.15s; }
+.nav-item:hover { background: var(--bg); color: var(--text); }
+.nav-item.active { background: var(--primary-light); color: var(--primary); }
+.nav-item .nav-icon { width: 18px; text-align: center; flex-shrink: 0; }
+.nav-group { display: flex; flex-direction: column; }
+.nav-group-header { display: flex; align-items: center; gap: 10px; padding: 9px 16px; cursor: pointer; color: var(--text-secondary); font-size: 14px; font-weight: 500; }
+.nav-group-header:hover { background: var(--bg); color: var(--text); }
+.nav-group-header .chevron { margin-left: auto; transition: transform 0.2s; }
+.nav-group-header.open .chevron { transform: rotate(180deg); }
+.nav-sub { padding-left: 28px; display: flex; flex-direction: column; }
+.nav-sub-item { padding: 8px 16px; cursor: pointer; color: var(--text-secondary); font-size: 13px; }
+.nav-sub-item:hover { color: var(--text); }
+.nav-sub-item.active { color: var(--primary); font-weight: 600; }
+.nav-divider { height: 1px; background: var(--border); margin: 8px 16px; }
+.main { flex: 1; overflow-y: auto; display: flex; flex-direction: column; background: #F4F6FA; }
+.activity-header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 24px; flex-shrink: 0; }
+.breadcrumb { display: flex; align-items: center; gap: 6px; padding: 12px 0 8px; font-size: 13px; color: var(--text-light); }
+.breadcrumb a { color: var(--text-secondary); text-decoration: none; cursor: pointer; }
+.breadcrumb a:hover { color: var(--primary); }
+.breadcrumb .sep { color: var(--border); }
+.breadcrumb .current { color: var(--text); font-weight: 500; }
+.activity-row { display: flex; align-items: center; gap: 14px; padding-bottom: 12px; }
+.activity-thumb { width: 72px; height: 72px; border-radius: var(--radius-lg); background: #FFF3E0; display: flex; align-items: center; justify-content: center; font-size: 32px; flex-shrink: 0; }
+.activity-info { flex: 1; }
+.activity-title { font-size: 20px; font-weight: 700; color: var(--text); display: flex; align-items: center; gap: 8px; }
+.activity-title .star { color: #F79009; cursor: pointer; }
+.activity-edit-btn { padding: 4px 10px; font-size: 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); cursor: pointer; color: var(--text-secondary); font-family: 'Outfit', sans-serif; }
+.activity-edit-btn:hover { border-color: var(--primary); color: var(--primary); }
+.activity-meta { font-size: 13px; color: var(--text-light); margin-top: 3px; }
+.activity-actions { display: flex; gap: 8px; align-items: center; }
+.btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: var(--radius-sm); font-size: 14px; font-weight: 500; cursor: pointer; border: none; font-family: 'Outfit', sans-serif; transition: opacity 0.15s, background 0.15s; }
+.btn-primary { background: var(--primary); color: white; }
+.btn-primary:hover { opacity: 0.88; }
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-ghost { background: none; color: var(--text-secondary); border: 1px solid transparent; }
+.btn-ghost:hover { background: var(--bg); }
+.btn-outline { background: none; color: var(--text); border: 1px solid var(--border); }
+.btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+.btn-success { background: var(--success); color: white; }
+.btn-success:hover { opacity: 0.88; }
+.btn-success:disabled { opacity: 0.4; cursor: not-allowed; }
+.btn-sm { padding: 5px 10px; font-size: 13px; }
+.tabs { display: flex; gap: 0; margin-top: 4px; }
+.tab { padding: 10px 18px; font-size: 14px; font-weight: 500; cursor: pointer; color: var(--text-secondary); border-bottom: 2px solid transparent; transition: color 0.15s, border-color 0.15s; }
+.tab:hover { color: var(--text); }
+.tab.active { color: var(--primary); border-bottom: 2px solid var(--primary); }
+.tab-content { display: none; padding: 20px 24px; background: #F4F6FA; }
+.tab-content.active { display: block; }
+.acomp-container { max-width: 1157px; }
+.publish-bar { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 12px 16px; display: flex; align-items: center; gap: 12px; margin-top: 14px; }
+.publish-bar-text { font-size: 13px; color: var(--text-secondary); flex: 1; }
+.banner-info { background: var(--primary-light); border: 1px solid #b3d4ff; border-radius: var(--radius-md); padding: 12px 16px; font-size: 13px; color: #1558b0; display: flex; gap: 10px; align-items: flex-start; margin-bottom: 20px; }
+.banner-info svg { flex-shrink: 0; margin-top: 1px; }
+.section-label { font-size: 11px; font-weight: 600; color: var(--text-light); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 12px; }
+.option-cards { display: flex; flex-direction: column; gap: 10px; max-width: 640px; }
+.option-card { display: flex; align-items: center; gap: 14px; padding: 14px 16px; border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); }
+.option-card-icon { width: 36px; height: 36px; background: var(--bg); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+.option-card-body { flex: 1; }
+.option-card-title { font-weight: 600; font-size: 14px; color: var(--text); }
+.option-card-desc { font-size: 12px; color: var(--text-light); margin-top: 2px; }
+.option-card-control { margin-left: auto; }
+.num-input-group { display: flex; align-items: center; gap: 6px; }
+.num-input { width: 64px; padding: 6px 10px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-size: 14px; font-family: 'Outfit', sans-serif; text-align: center; }
+.num-input:focus { outline: none; border-color: var(--primary); }
+.unit-label { font-size: 13px; color: var(--text-secondary); }
+.toggle { position: relative; width: 44px; height: 24px; display: inline-flex; align-items: center; cursor: pointer; flex-shrink: 0; }
+.toggle input { opacity: 0; width: 0; height: 0; position: absolute; }
+.toggle-track { width: 44px; height: 24px; background: #D0D5DD; border-radius: 12px; transition: background 0.2s; }
+.toggle input:checked + .toggle-track { background: var(--primary); }
+.toggle-thumb { position: absolute; left: 2px; width: 20px; height: 20px; background: white; border-radius: 50%; transition: left 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+.toggle input:checked ~ .toggle-thumb { left: 22px; }
+.progress-card { display: inline-flex; align-items: center; gap: 20px; border: 1px solid var(--border); border-radius: var(--radius-xl); padding: 20px 24px; background: var(--surface); margin-bottom: 24px; min-width: 360px; box-shadow: var(--shadow-sm); }
+.progress-card-info { flex: 1; }
+.progress-card-title { font-weight: 600; font-size: 13px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.04em; }
+.progress-card-desc { font-size: 28px; font-weight: 700; color: var(--text); margin-top: 4px; line-height: 1; }
+.progress-card-sub { font-size: 13px; color: var(--text-light); margin-top: 6px; }
+.progress-ring { position: relative; width: 94px; height: 94px; flex-shrink: 0; }
+.progress-ring svg { transform: rotate(-90deg); }
+.progress-ring-label { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; color: var(--success); }
+.group-header { display: flex; align-items: center; gap: 10px; margin: 20px 0 6px; }
+.group-label { font-size: 11px; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.08em; white-space: nowrap; }
+.group-line { flex: 1; height: 1px; background: var(--border); }
+/* ===== ACCORDION / VÍNCULO — fiel ao Figma ===== */
+.vinculo { border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); margin-bottom: 8px; overflow: hidden; }
+.vinculo.border-success { border-left: 3px solid var(--success); }
+.vinculo.border-primary { border-left: 3px solid var(--primary); }
+.vinculo.border-warning { border-left: 3px solid var(--orange); }
+
+/* Linha superior do header: tag tipo + datas + botões */
+.vinculo-top-row { display: flex; align-items: center; gap: 12px; padding: 0 16px; height: 56px; border-bottom: 1px solid var(--border); background: var(--surface); }
+/* Linha inferior do header: turma/status/progresso + chevron */
+.vinculo-bottom-row { display: flex; align-items: center; gap: 8px; padding: 0 16px; height: 56px; cursor: pointer; transition: background 0.15s; background: var(--surface); }
+.vinculo-bottom-row:hover { background: var(--bg); }
+
+.vinculo-dates { display: flex; align-items: center; gap: 20px; flex: 1; }
+.vinculo-date-item { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-secondary); }
+.vinculo-date-item svg { color: var(--text-light); flex-shrink: 0; }
+.vinculo-date-label { color: var(--text-light); }
+.vinculo-date-val { color: var(--text); font-weight: 500; }
+.vinculo-locked { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-light); }
+.vinculo-row-btns { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+
+.vinculo-title { font-weight: 600; font-size: 14px; color: var(--text); }
+.vinculo-progress-inline { display: flex; align-items: center; gap: 16px; margin-left: 12px; }
+.vinculo-progress-item { display: flex; align-items: center; gap: 6px; font-size: 12px; }
+.vinculo-progress-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.vinculo-progress-label { color: var(--text-secondary); }
+.vinculo-progress-val { color: var(--text); font-weight: 600; }
+.vinculo-chevron { margin-left: auto; color: var(--text-light); transition: transform 0.2s; flex-shrink: 0; }
+.vinculo-chevron.open { transform: rotate(180deg); }
+.vinculo-body { display: none; padding: 16px; border-top: 1px solid var(--border); background: var(--bg); }
+.vinculo-body.open { display: block; }
+
+/* Btn icon pequeno para ações inline nos vínculos */
+.btn-icon { width: 36px; height: 36px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); cursor: pointer; color: var(--text-secondary); display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: border-color 0.15s, color 0.15s; }
+.btn-icon:hover { border-color: var(--primary); color: var(--primary); }
+.pill { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 1000px; font-size: 12px; font-weight: 600; line-height: 1; height: 25px; white-space: nowrap; }
+.pill-success { background: var(--success-bg); color: var(--success); border: 1px solid var(--success-border); }
+.pill-primary { background: var(--primary-light); color: var(--primary); border: 1px solid #c4deff; }
+.pill-warning { background: var(--warning-bg); color: var(--warning); border: 1px solid var(--warning-border); }
+.pill-orange { background: var(--orange-bg); color: var(--orange); border: 1px solid var(--orange-border); }
+.pill-error { background: var(--error-bg); color: var(--error); border: 1px solid var(--error-border); }
+.pill-gray { background: var(--bg); color: var(--text-secondary); border: 1px solid var(--border); }
+.pill-blue { background: #EBF3FF; color: var(--primary); border: 1px solid #c4deff; }
+/* subsec */
+.subsec { border: 1px solid var(--border); border-radius: var(--radius-md); margin-bottom: 8px; overflow: hidden; }
+.subsec-header { display: flex; align-items: center; gap: 10px; padding: 12px 16px; cursor: pointer; background: var(--surface); transition: background 0.15s; min-height: 48px; }
+.subsec-header:hover { background: var(--bg); }
+.subsec-title { font-weight: 600; font-size: 13px; color: var(--text); flex: 1; }
+.subsec-chevron { color: var(--text-light); transition: transform 0.2s; flex-shrink: 0; }
+.subsec-chevron.open { transform: rotate(180deg); }
+.subsec-body { display: none; padding: 14px 16px; border-top: 1px solid var(--border); background: var(--surface); }
+.subsec-body.open { display: block; }
+.counters-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+.counter-card { display: flex; flex-direction: column; align-items: center; padding: 10px 18px; border-radius: var(--radius-md); border: 1px solid var(--border); background: var(--surface); min-width: 70px; }
+.counter-num { font-size: 22px; font-weight: 700; }
+.counter-label { font-size: 11px; color: var(--text-light); margin-top: 2px; }
+.counter-green { color: var(--success); border-color: var(--success-border); background: var(--success-bg); }
+.counter-orange { color: var(--orange); border-color: var(--orange-border); background: var(--orange-bg); }
+.counter-red { color: var(--error); border-color: var(--error-border); background: var(--error-bg); }
+.upload-zones { display: flex; gap: 10px; margin-bottom: 16px; }
+.upload-zone { flex: 1; border: 2px dashed var(--border); border-radius: var(--radius-md); padding: 20px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; }
+.upload-zone-icon { font-size: 24px; color: var(--text-light); }
+.upload-zone-title { font-size: 13px; font-weight: 600; color: var(--text); }
+.upload-zone-sub { font-size: 11px; color: var(--text-light); }
+.review-queue-title { font-weight: 600; font-size: 14px; margin-bottom: 10px; color: var(--text); }
+.review-card { border: 1px solid var(--border); border-radius: var(--radius-md); overflow: hidden; margin-bottom: 10px; }
+.review-card-header { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--bg); border-bottom: 1px solid var(--border); }
+.review-card-type { font-size: 12px; font-weight: 600; }
+.review-card-type.warn { color: var(--warning); }
+.review-card-type.err { color: var(--error); }
+.review-card-name { font-weight: 600; font-size: 14px; color: var(--text); }
+.review-card-body { padding: 12px 14px; display: flex; gap: 14px; }
+.scan-thumb { width: 70px; height: 90px; border-radius: var(--radius-sm); background: #f0f0f0; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; }
+.questions-col { flex: 1; display: flex; flex-direction: column; gap: 10px; }
+.question-row { display: flex; align-items: center; gap: 8px; }
+.question-num { font-weight: 600; font-size: 13px; color: var(--text-secondary); width: 28px; }
+.options-row { display: flex; gap: 4px; }
+.opt-btn { width: 28px; height: 28px; border: 1px solid var(--border); border-radius: 50%; background: var(--surface); font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; font-family: 'Outfit', sans-serif; color: var(--text-secondary); }
+.opt-btn.selected { background: var(--primary); color: white; border-color: var(--primary); }
+.reason-text { font-size: 11px; color: var(--text-light); margin-left: 4px; }
+.review-card-footer { padding: 10px 14px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; }
+.results-layout { display: flex; gap: 16px; align-items: flex-start; }
+.results-main { flex: 1; min-width: 0; }
+.results-aside { flex-shrink: 0; }
+.results-table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius-md); overflow: hidden; }
+.results-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.results-table th { padding: 0 12px; height: 60px; text-align: left; font-size: 12px; font-weight: 600; color: var(--text-secondary); background: var(--bg); border-bottom: 1px solid var(--border); white-space: nowrap; }
+.results-table td { padding: 0 12px; height: 60px; border-bottom: 1px solid var(--border); color: var(--text); vertical-align: middle; }
+.results-table tr:last-child td { border-bottom: none; }
+.results-table tr:hover td { background: var(--bg); }
+.col-seq { width: 33px; text-align: center; }
+.col-aluno { width: 160px; font-weight: 500; }
+.col-tipo { width: 84px; }
+.col-acertos { width: 110px; }
+.col-progresso { width: 94px; }
+.col-perf { width: 111px; }
+.col-ausente { width: 101px; }
+.col-acoes { width: 120px; text-align: right; }
+.perf-hi { color: var(--success); font-weight: 600; }
+.perf-mid { color: var(--orange); font-weight: 600; }
+.results-more { font-size: 12px; color: var(--text-light); padding: 8px 10px; }
+.gabarito-panel { width: 260px; border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--surface); overflow: hidden; }
+.gabarito-header-bar { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-bottom: 1px solid var(--border); background: var(--bg); }
+.gabarito-header-bar strong { font-size: 13px; color: var(--text); flex: 1; }
+.gabarito-tabs { display: flex; border-bottom: 1px solid var(--border); }
+.gabarito-tab { flex: 1; text-align: center; padding: 7px; font-size: 12px; font-weight: 600; cursor: pointer; color: var(--text-secondary); border-bottom: 2px solid transparent; }
+.gabarito-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+.gabarito-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; padding: 12px; }
+.gabarito-item { display: flex; align-items: center; gap: 4px; font-size: 12px; }
+.gabarito-q { color: var(--text-light); width: 20px; }
+.gabarito-a { font-weight: 700; color: var(--text); }
+.field-row { display: flex; flex-direction: column; gap: 4px; margin-bottom: 10px; }
+.field-label { font-size: 12px; font-weight: 500; color: var(--text-secondary); }
+.field-select { width: 100%; padding: 7px 10px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-family: 'Outfit', sans-serif; font-size: 13px; color: var(--text); background: var(--surface); }
+.field-select:focus { outline: none; border-color: var(--primary); }
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; display: none; align-items: center; justify-content: center; }
+.modal-overlay.open { display: flex; }
+.modal { background: var(--surface); border-radius: var(--radius-xl); width: 500px; max-height: 90vh; overflow-y: auto; box-shadow: var(--shadow-md); }
+.modal-header { display: flex; align-items: center; gap: 12px; padding: 20px 24px 16px; border-bottom: 1px solid var(--border); }
+.modal-title { font-size: 17px; font-weight: 700; color: var(--text); flex: 1; }
+.modal-close { width: 32px; height: 32px; border: none; background: none; cursor: pointer; color: var(--text-light); font-size: 18px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; }
+.modal-close:hover { background: var(--bg); }
+.modal-body { padding: 20px 24px; display: flex; flex-direction: column; gap: 16px; }
+.modal-step-label { font-size: 11px; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 8px; }
+.modal-field { display: flex; flex-direction: column; gap: 6px; }
+.modal-field label { font-size: 13px; font-weight: 500; color: var(--text); }
+.modal-select { width: 100%; padding: 9px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-family: 'Outfit', sans-serif; font-size: 14px; color: var(--text); background: var(--surface); }
+.modal-select:focus { outline: none; border-color: var(--primary); }
+.modal-input { width: 100%; padding: 9px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-family: 'Outfit', sans-serif; font-size: 14px; color: var(--text); }
+.modal-input:focus { outline: none; border-color: var(--primary); }
+.modal-divider { height: 1px; background: var(--border); }
+.segmented { display: flex; border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; }
+.segmented-btn { flex: 1; padding: 8px; text-align: center; font-size: 14px; font-weight: 500; cursor: pointer; background: var(--surface); border: none; color: var(--text-secondary); font-family: 'Outfit', sans-serif; transition: background 0.15s; }
+.segmented-btn.active { background: var(--primary); color: white; }
+.modal-note { font-size: 12px; color: var(--text-light); margin-top: 4px; }
+.radio-group { display: flex; flex-direction: column; gap: 8px; }
+.radio-row { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--text); cursor: pointer; }
+.radio-row input { accent-color: var(--primary); cursor: pointer; }
+.toggle-row { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--text); }
+.toggle-row-label { flex: 1; }
+.banner-success { background: var(--success-bg); border: 1px solid var(--success-border); border-radius: var(--radius-md); padding: 10px 14px; font-size: 13px; color: var(--success); display: flex; gap: 8px; align-items: center; }
+.modal-footer { display: flex; justify-content: flex-end; gap: 10px; padding: 16px 24px; border-top: 1px solid var(--border); }
+.modal-fields-app { display: none; }
+.modal-fields-papel { display: flex; flex-direction: column; gap: 12px; }
+.lancamento-layout { display: flex; gap: 16px; align-items: flex-start; }
+.lancamento-table { flex: 1; }
+.input-acertos { width: 70px; padding: 5px 8px; border: 1px solid var(--border); border-radius: var(--radius-sm); font-family: 'Outfit', sans-serif; font-size: 13px; text-align: center; }
+.input-acertos:focus { outline: none; border-color: var(--primary); }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ===== HEADER ===== -->
+<header class="header">
+  <div class="header-logo"><span>🪐</span> orbie</div>
+  <button class="header-menu-btn" aria-label="Menu">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>
+  <div class="header-spacer"></div>
+  <div class="header-right">
+    <select class="select-pill" style="appearance:none;padding-right:28px;background-image:url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%2212%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%238a95b2%22 stroke-width=%222%22><polyline points=%226,9 12,15 18,9%22/></svg>');background-repeat:no-repeat;background-position:right 10px center;">
+      <option>👤 Professor</option>
+      <option>👩‍🏫 Gestor</option>
+    </select>
+    <select class="select-pill" style="appearance:none;padding-right:28px;background-image:url('data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%2212%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%238a95b2%22 stroke-width=%222%22><polyline points=%226,9 12,15 18,9%22/></svg>');background-repeat:no-repeat;background-position:right 10px center;">
+      <option>🏫 Escola Municipal Centro</option>
+    </select>
+    <button class="icon-btn" aria-label="Notificacoes">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+    </button>
+    <div class="avatar" title="Admin">A</div>
+  </div>
+</header>
+
+<!-- ===== BODY ===== -->
+<div class="body">
+
+<!-- ===== SIDEBAR ===== -->
+<nav class="sidebar">
+  <div class="nav-item"><span class="nav-icon">🏠</span> Inicio</div>
+  <div class="nav-item"><span class="nav-icon">👥</span> Turmas</div>
+  <div class="nav-group">
+    <div class="nav-group-header open" id="nav-biblioteca" onclick="toggleNavGroup(this)">
+      <span class="nav-icon">📚</span> Biblioteca
+      <svg class="chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"/></svg>
+    </div>
+    <div class="nav-sub" id="nav-biblioteca-sub">
+      <div class="nav-sub-item">Banco de Questoes</div>
+      <div class="nav-sub-item">Atividades</div>
+      <div class="nav-sub-item active">Avaliacoes</div>
+      <div class="nav-sub-item">Trilhas</div>
+      <div class="nav-sub-item">Metas</div>
+    </div>
+  </div>
+  <div class="nav-item"><span class="nav-icon">✏️</span> Correcao de Respostas</div>
+  <div class="nav-item"><span class="nav-icon">📊</span> Relatorios</div>
+  <div class="nav-divider"></div>
+  <div class="nav-item"><span class="nav-icon">❓</span> Central de Ajuda</div>
+  <div class="nav-item"><span class="nav-icon">⭐</span> Favoritos</div>
+</nav>
+
+<!-- ===== MAIN ===== -->
+<main class="main">
+
+  <!-- ACTIVITY HEADER -->
+  <div class="activity-header">
+    <div class="breadcrumb">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15,18 9,12 15,6"/></svg>
+      <a>Biblioteca</a><span class="sep">›</span>
+      <a>Avaliacoes</a><span class="sep">›</span>
+      <a>Simulado AVALIA 1</a><span class="sep">›</span>
+      <span class="current">AVALIA #1</span>
+      <span class="star">⭐</span>
+    </div>
+    <div class="activity-row">
+      <div class="activity-thumb">🚀</div>
+      <div class="activity-info">
+        <div class="activity-title">
+          AVALIA #1
+          <button class="activity-edit-btn">✏️ Editar</button>
+        </div>
+        <div class="activity-meta">28 questoes · Criado em 02/07/2025 · Por Maria Silva</div>
+      </div>
+      <div class="activity-actions">
+        <button class="btn btn-primary" onclick="openModal()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+          Publicar
+        </button>
+        <button class="btn btn-ghost">Salvar e Sair</button>
+        <button class="btn btn-outline">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          Duplicar
+        </button>
+      </div>
+    </div>
+    <div class="tabs">
+      <div class="tab active" data-tab="questoes" onclick="switchTab(this)">Questões</div>
+      <div class="tab" data-tab="acompanhamento" onclick="switchTab(this)">Acompanhamento</div>
+    </div>
+  </div>
+
+  <!-- TAB QUESTOES -->
+  <div class="tab-content active" id="tab-questoes">
+    <div style="color:var(--text-light);font-size:14px;padding:40px;text-align:center;">
+      <div style="font-size:40px;margin-bottom:12px;">📝</div>
+      <div>Lista de questoes da avaliacao</div>
+    </div>
+  </div>
+
+  <!-- TAB ACOMPANHAMENTO -->
+  <div class="tab-content" id="tab-acompanhamento">
+
+
+    <!-- FILTRO POR TIPO DE VÍNCULO -->
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+      <span style="font-size:13px;color:var(--text-secondary);font-weight:500;">Vínculos:</span>
+      <div style="display:flex;gap:4px;">
+        <button class="filter-btn active" onclick="filterVinculos('todos')" data-filter="todos"
+          style="padding:4px 14px;height:28px;border-radius:1000px;border:1px solid var(--primary);background:var(--primary);color:white;font-size:13px;font-weight:600;font-family:'Outfit',sans-serif;cursor:pointer;transition:all 0.15s;">
+          Todos
+        </button>
+        <button class="filter-btn" onclick="filterVinculos('app')" data-filter="app"
+          style="padding:4px 14px;height:28px;border-radius:1000px;border:1px solid var(--border);background:var(--surface);color:var(--text-secondary);font-size:13px;font-weight:500;font-family:'Outfit',sans-serif;cursor:pointer;transition:all 0.15s;">
+          App
+        </button>
+        <button class="filter-btn" onclick="filterVinculos('papel')" data-filter="papel"
+          style="padding:4px 14px;height:28px;border-radius:1000px;border:1px solid var(--border);background:var(--surface);color:var(--text-secondary);font-size:13px;font-weight:500;font-family:'Outfit',sans-serif;cursor:pointer;transition:all 0.15s;">
+          Papel
+        </button>
+      </div>
+    </div>
+
+    <!-- PROGRESS CARDS — encapsulados abaixo do filtro -->
+    <div id="summary-cards" style="display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap;padding:16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);">
+
+      <!-- CARD APP: Taxa de Participação -->
+      <div id="card-participacao" style="display:inline-flex;align-items:center;gap:20px;flex:1;min-width:260px;max-width:420px;padding:16px 20px;border:1px solid var(--border);border-radius:var(--radius-lg);background:var(--bg);">
+        <div style="flex:1;">
+          <div style="display:flex;align-items:center;gap:7px;margin-bottom:6px;">
+            <span style="font-size:12px;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.04em;">Taxa de Participação</span>
+            <span style="display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:1000px;background:var(--primary-light);color:var(--primary);border:1px solid #c4deff;font-size:11px;font-weight:600;">
+              <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+              App
+            </span>
+          </div>
+          <div style="font-size:26px;font-weight:700;color:var(--text);line-height:1;">26/38</div>
+          <div style="font-size:12px;color:var(--text-light);margin-top:5px;">Alunos que iniciaram a avaliação</div>
+        </div>
+        <div class="progress-ring" style="width:80px;height:80px;flex-shrink:0;">
+          <svg width="80" height="80" viewBox="0 0 80 80">
+            <circle cx="40" cy="40" r="32" fill="none" stroke="#E4E7EC" stroke-width="8"/>
+            <circle cx="40" cy="40" r="32" fill="none" stroke="#027A48" stroke-width="8"
+              stroke-dasharray="201.06" stroke-dashoffset="64.3" stroke-linecap="round" style="transform:rotate(-90deg);transform-origin:50% 50%;"/>
+          </svg>
+          <div class="progress-ring-label" style="font-size:13px;">68%</div>
+        </div>
+      </div>
+
+      <!-- CARD PAPEL: Progresso de Correção -->
+      <div id="card-correcao" style="display:inline-flex;align-items:center;gap:20px;flex:1;min-width:260px;max-width:420px;padding:16px 20px;border:1px solid var(--border);border-radius:var(--radius-lg);background:var(--bg);">
+        <div style="flex:1;">
+          <div style="display:flex;align-items:center;gap:7px;margin-bottom:6px;">
+            <span style="font-size:12px;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.04em;">Progresso de Correção</span>
+            <span style="display:inline-flex;align-items:center;gap:3px;padding:2px 7px;border-radius:1000px;background:#FFF6ED;color:var(--orange);border:1px solid var(--orange-border);font-size:11px;font-weight:600;">
+              <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              Papel
+            </span>
+          </div>
+          <div style="font-size:26px;font-weight:700;color:var(--text);line-height:1;">24/70</div>
+          <div style="font-size:12px;color:var(--text-light);margin-top:5px;">Alunos com resultado lançado ou marcados como ausentes</div>
+        </div>
+        <div class="progress-ring" style="width:80px;height:80px;flex-shrink:0;">
+          <svg width="80" height="80" viewBox="0 0 80 80">
+            <circle cx="40" cy="40" r="32" fill="none" stroke="#E4E7EC" stroke-width="8"/>
+            <circle cx="40" cy="40" r="32" fill="none" stroke="#DC6803" stroke-width="8"
+              stroke-dasharray="201.06" stroke-dashoffset="133.5" stroke-linecap="round" style="transform:rotate(-90deg);transform-origin:50% 50%;"/>
+          </svg>
+          <div class="progress-ring-label" style="font-size:13px;color:var(--orange);">34%</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- GRUPO APP -->
+    <div id="wrapper-app">
+    <div class="group-header" id="grupo-app">
+      <span class="group-label">App</span>
+      <div class="group-line"></div>
+    </div>
+
+    <!-- VINCULO APP 1 — expandido, borda verde -->
+    <div class="vinculo border-success">
+      <!-- Linha 1: status + vigência + lock -->
+      <div class="vinculo-top-row">
+        <span class="pill pill-success">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8" fill="currentColor" stroke="none"/></svg>
+          Em andamento
+        </span>
+        <div class="vinculo-dates">
+          <div class="vinculo-date-item">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            <span><span class="vinculo-date-label">Início: </span><span class="vinculo-date-val">10/07/2025 às 08:00</span></span>
+          </div>
+          <div class="vinculo-date-item">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            <span><span class="vinculo-date-label">Encerramento: </span><span class="vinculo-date-val">17/07/2025 às 12:00</span></span>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;color:var(--text-secondary);font-size:13px;margin-left:auto;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          Avaliação em andamento
+        </div>
+      </div>
+      <!-- Linha 2: turma + meio + progresso + chevron -->
+      <div class="vinculo-bottom-row" onclick="toggleVinculo(this)">
+        <span style="font-size:13px;color:var(--text-secondary);">Professor: <strong style="color:var(--text);">Maria Silva</strong></span>
+        <span class="pill pill-gray" style="margin-left:10px;">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          28
+        </span>
+        <div class="vinculo-progress-inline" style="margin-left:16px;">
+          <div class="vinculo-progress-item">
+            <div class="vinculo-progress-dot" style="background:var(--orange);"></div>
+            <span class="vinculo-progress-label">Progresso Geral</span>
+            <span class="vinculo-progress-val" style="color:var(--orange);">50%</span>
+          </div>
+          <div class="vinculo-progress-item">
+            <div class="vinculo-progress-dot" style="background:var(--error);"></div>
+            <span class="vinculo-progress-label">Performance Geral</span>
+            <span class="vinculo-progress-val" style="color:var(--error);">20%</span>
+          </div>
+        </div>
+        <!-- CHIP CONFIGURAÇÕES — App -->
+        <button onclick="openModalConfigs('app')" style="display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:1000px;border:1px solid var(--border);background:var(--bg);color:var(--text-secondary);font-size:12px;font-weight:600;font-family:'Outfit',sans-serif;cursor:pointer;margin-left:8px;transition:all 0.15s;white-space:nowrap;" onmouseenter="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseleave="this.style.borderColor='var(--border)';this.style.color='var(--text-secondary)'">
+          Configurações
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
+        <svg class="vinculo-chevron open" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"/></svg>
+      </div>
+      <div class="vinculo-body open">
+        <p style="font-size:13px;color:var(--text-light);font-style:italic;padding:8px 0;">Acompanhamento App — conteúdo do vínculo.</p>
+      </div>
+    </div>
+    </div><!-- /wrapper-app -->
+
+    <!-- GRUPO PAPEL -->
+    <div id="wrapper-papel">
+    <div class="group-header">
+      <span class="group-label">Papel</span>
+      <div class="group-line"></div>
+    </div>
+
+    <!-- SELETOR DE ESTADO — Vínculo 1 (Com cartão) -->
+    <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;padding:6px 10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);">
+      <span style="font-size:11px;font-weight:600;color:var(--text-light);text-transform:uppercase;letter-spacing:0.06em;flex-shrink:0;">Estado V1:</span>
+      <button onclick="setEstadoVinculo('v1','aguardando-aplicacao')" id="v1-btn-aguardando-aplicacao"
+        style="padding:3px 10px;border-radius:1000px;border:1px solid var(--border);background:var(--surface);color:var(--text-secondary);font-size:12px;font-weight:500;font-family:'Outfit',sans-serif;cursor:pointer;white-space:nowrap;">
+        Aguardando aplicação
+      </button>
+      <button onclick="setEstadoVinculo('v1','corrigindo')" id="v1-btn-corrigindo"
+        style="padding:3px 10px;border-radius:1000px;border:1px solid var(--primary);background:var(--primary-light);color:var(--primary);font-size:12px;font-weight:600;font-family:'Outfit',sans-serif;cursor:pointer;white-space:nowrap;">
+        Corrigindo
+      </button>
+      <button onclick="setEstadoVinculo('v1','prazo-vencido')" id="v1-btn-prazo-vencido"
+        style="padding:3px 10px;border-radius:1000px;border:1px solid var(--border);background:var(--surface);color:var(--text-secondary);font-size:12px;font-weight:500;font-family:'Outfit',sans-serif;cursor:pointer;white-space:nowrap;">
+        Prazo vencido
+      </button>
+      <button onclick="setEstadoVinculo('v1','publicado')" id="v1-btn-publicado"
+        style="padding:3px 10px;border-radius:1000px;border:1px solid var(--border);background:var(--surface);color:var(--text-secondary);font-size:12px;font-weight:500;font-family:'Outfit',sans-serif;cursor:pointer;white-space:nowrap;">
+        Publicado
+      </button>
+    </div>
+
+    <!-- VINCULO PAPEL 1 — borda azul, expandido -->
+    <div class="vinculo border-primary" id="v1-vinculo">
+      <!-- Linha 1: status + data aplicação + badge meio + indicadores + ações -->
+      <div class="vinculo-top-row">
+        <span id="v1-pill-status" class="pill pill-orange">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Aguardando correção
+        </span>
+        <div class="vinculo-dates">
+          <div class="vinculo-date-item">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            <span><span class="vinculo-date-label">Aplicação: </span><span class="vinculo-date-val" id="data-aplicacao-v1">14/07/2025</span></span>
+          </div>
+          <!-- Badge de meio — identifica como papel com cartão -->
+          <span class="pill pill-primary" style="display:inline-flex;align-items:center;gap:4px;">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            Papel · Com cartão
+          </span>
+          <span id="v1-pill-prazo" class="pill pill-orange">⚠ Prazo em 3 dias</span>
+          <div id="v1-vinculo-locked" class="vinculo-locked" style="display:none;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            Resultados pendentes de correção
+          </div>
+        </div>
+        <div class="vinculo-row-btns">
+          <button onclick="editarData(event,'data-aplicacao-v1')" title="Alterar data de aplicação"
+            style="width:36px;height:36px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);cursor:pointer;color:var(--text-secondary);display:flex;align-items:center;justify-content:center;font-size:14px;"
+            onmouseenter="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseleave="this.style.borderColor='var(--border)';this.style.color='var(--text-secondary)'">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          </button>
+          <button title="Mais opções"
+            style="width:36px;height:36px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);cursor:pointer;color:var(--text-secondary);display:flex;align-items:center;justify-content:center;"
+            onmouseenter="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseleave="this.style.borderColor='var(--border)';this.style.color='var(--text-secondary)'">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+          </button>
+        </div>
+      </div>
+      <!-- Linha 2: professor + alunos + tipo de prova + progresso + pendências + chevron -->
+      <div class="vinculo-bottom-row" onclick="toggleVinculo(this)">
+        <span style="font-size:13px;color:var(--text-secondary);">Professor: <strong style="color:var(--text);">Maria Silva</strong></span>
+        <span class="pill pill-gray" style="margin-left:10px;">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          32
+        </span>
+        <span class="pill pill-gray" style="margin-left:4px;">Tipos A, B, C</span>
+        <div class="vinculo-progress-inline" style="margin-left:16px;" id="v1-progress-inline">
+          <div class="vinculo-progress-item">
+            <div class="vinculo-progress-dot" id="v1-dot-prog" style="background:var(--success);"></div>
+            <span class="vinculo-progress-label">Progresso Geral</span>
+            <span class="vinculo-progress-val" id="v1-val-prog">75%</span>
+          </div>
+          <div class="vinculo-progress-item">
+            <div class="vinculo-progress-dot" id="v1-dot-perf" style="background:var(--success);"></div>
+            <span class="vinculo-progress-label">Performance Geral</span>
+            <span class="vinculo-progress-val" id="v1-val-perf" style="color:var(--success);">68%</span>
+          </div>
+        </div>
+        <span id="v1-pill-revisao" class="pill pill-orange" style="margin-left:8px;">5 em revisão</span>
+        <!-- CHIP CONFIGURAÇÕES — Papel V1 -->
+        <button onclick="openModalConfigs('papel-v1')" style="display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:1000px;border:1px solid var(--border);background:var(--bg);color:var(--text-secondary);font-size:12px;font-weight:600;font-family:'Outfit',sans-serif;cursor:pointer;margin-left:8px;transition:all 0.15s;white-space:nowrap;" onmouseenter="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseleave="this.style.borderColor='var(--border)';this.style.color='var(--text-secondary)'">
+          Configurações
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
+        <svg class="vinculo-chevron open" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"/></svg>
+      </div>
+      <div class="vinculo-body open">
+        <!-- BARRA DE AÇÕES SECUNDÁRIAS -->
+        <div style="display:flex;align-items:center;gap:8px;padding:10px 16px;border-bottom:1px solid var(--border);background:var(--surface);">
+          <button class="btn btn-outline btn-sm" onclick="openModalMateriais('v1')" style="display:flex;align-items:center;gap:5px;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Materiais
+          </button>
+          <button class="btn btn-outline btn-sm" onclick="toggleRevisaoInline('revisao-v1')" style="display:flex;align-items:center;gap:5px;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+            Ler cartões
+            <span style="padding:1px 7px;border-radius:1000px;background:var(--orange-bg);color:var(--orange);border:1px solid var(--orange-border);font-size:11px;font-weight:700;">5</span>
+          </button>
+          <button class="btn btn-outline btn-sm" onclick="openModalGabarito('v1')" style="display:flex;align-items:center;gap:5px;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            Gabarito
+          </button>
+        </div>
+        <!-- BANNER DE REVISÃO PENDENTE -->
+        <div id="revisao-v1-banner" style="border-bottom:1px solid var(--orange-border);background:var(--orange-bg);padding:10px 16px;display:flex;align-items:center;gap:10px;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2" style="flex-shrink:0;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <span style="font-size:13px;color:var(--warning);flex:1;"><strong>5 cartões precisam da sua atenção</strong> — resolva todos antes de publicar os resultados.</span>
+          <button onclick="toggleRevisaoInline('revisao-v1')" style="background:none;border:1px solid var(--orange-border);border-radius:var(--radius-sm);padding:4px 12px;font-size:12px;font-weight:600;color:var(--orange);cursor:pointer;font-family:'Outfit',sans-serif;white-space:nowrap;">Ver cartões ▾</button>
+        </div>
+        <!-- FILA DE REVISÃO INLINE -->
+        <div id="revisao-v1" style="display:none;border-bottom:1px solid var(--border);background:var(--bg);padding:16px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+            <span style="font-size:13px;font-weight:600;color:var(--text);">Cartões que precisam da sua atenção (5)</span>
+            <button onclick="toggleRevisaoInline('revisao-v1')" style="background:none;border:none;font-size:12px;color:var(--text-light);cursor:pointer;font-family:'Outfit',sans-serif;">▴ Recolher</button>
+          </div>
+          <div class="counters-row" style="margin-bottom:12px;">
+            <div class="counter-card counter-green"><span class="counter-num">24</span><span class="counter-label">Lidos</span></div>
+            <div class="counter-card counter-orange"><span class="counter-num">5</span><span class="counter-label">Em revisão</span></div>
+            <div class="counter-card counter-red"><span class="counter-num">3</span><span class="counter-label">Não lidos</span></div>
+            <div class="counter-card"><span class="counter-num" style="color:var(--text)">32</span><span class="counter-label">Total</span></div>
+          </div>
+          <!-- LEITURA-IDLE (upload + log) - PLACEHOLDER: existente no protótipo anterior -->
+          <div id="leitura-idle-v1">
+            <div class="upload-zones" style="margin-bottom:12px;">
+              <div class="upload-zone" style="cursor:pointer;" onclick="simularEnvio()">
+                <div class="upload-zone-icon">📁</div>
+                <div class="upload-zone-title">Enviar arquivo</div>
+                <div class="upload-zone-sub">PDF, PNG ou JPG — múltiplos cartões</div>
+                <button class="btn btn-outline btn-sm" style="margin-top:4px;" onclick="event.stopPropagation();simularEnvio()">Selecionar e enviar</button>
+              </div>
+              <div class="upload-zone">
+                <div class="upload-zone-icon">📷</div>
+                <div class="upload-zone-title">Usar câmera</div>
+                <div class="upload-zone-sub">Fotografar cartão</div>
+                <button class="btn btn-outline btn-sm" style="margin-top:4px;">Abrir câmera</button>
+              </div>
+            </div>
+          </div>
+          <!-- PROCESSANDO -->
+          <div id="leitura-processando" style="display:none;margin-bottom:14px;">
+            <div style="border:1px solid var(--primary);border-radius:var(--radius-md);padding:20px 18px;background:var(--primary-light);display:flex;flex-direction:column;gap:14px;">
+              <div style="display:flex;align-items:center;gap:12px;">
+                <div style="width:32px;height:32px;border:3px solid #c4deff;border-top-color:var(--primary);border-radius:50%;animation:spin 0.8s linear infinite;flex-shrink:0;"></div>
+                <div><div style="font-size:14px;font-weight:600;color:var(--text);">Processando cartões...</div><div style="font-size:12px;color:var(--text-secondary);" id="proc-status-text">Lendo QR Codes e marcações do lote</div></div>
+                <div style="margin-left:auto;font-size:22px;font-weight:700;color:var(--primary);" id="proc-contador">0/8</div>
+              </div>
+              <div style="background:#c4deff;border-radius:4px;height:6px;overflow:hidden;"><div id="proc-barra" style="height:100%;background:var(--primary);border-radius:4px;width:0%;transition:width 0.4s;"></div></div>
+              <div id="proc-log" style="display:flex;flex-direction:column;gap:4px;max-height:120px;overflow-y:auto;font-size:12px;"></div>
+            </div>
+          </div>
+          <!-- CARD DE REVISÃO 1 — DUPLA MARCAÇÃO: layout 2 colunas -->
+          <div class="review-card">
+            <div class="review-card-header">
+              <span class="review-card-type warn">⚠ Duas respostas marcadas</span>
+              <span class="review-card-name">Ana Beatriz Oliveira</span>
+              <span class="pill pill-gray" style="margin-left:auto;">Tipo B</span>
+            </div>
+
+            <!-- CORPO: 2 colunas -->
+            <div style="display:grid;grid-template-columns:200px 1fr;gap:0;border-top:1px solid var(--border);">
+
+              <!-- COLUNA ESQUERDA: imagem do cartão -->
+              <div style="border-right:1px solid var(--border);padding:14px;display:flex;flex-direction:column;gap:8px;background:var(--bg);">
+                <div style="font-size:11px;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.06em;">Cartão digitalizado</div>
+                <!-- Simulação do cartão digitalizado -->
+                <div id="cartao-img-v1" style="background:#f0f0f0;border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;position:relative;cursor:pointer;" onclick="ampliarCartao('v1')" title="Clique para ampliar">
+                  <!-- Simulação visual de um cartão com marcações -->
+                  <div style="padding:10px 8px;font-size:9px;color:#444;line-height:1.8;font-family:monospace;">
+                    <div style="font-weight:700;margin-bottom:4px;font-size:10px;">Ana Beatriz Oliveira · Tipo B</div>
+                    <div>Q1 ○ ○ ● ○ ○</div>
+                    <div>Q2 ○ ● ○ ○ ○</div>
+                    <div>Q3 ○ ○ ○ ● ○</div>
+                    <div>Q4 ● ○ ○ ○ ○</div>
+                    <div>Q5 ○ ○ ● ○ ○</div>
+                    <div>Q6 ○ ○ ○ ○ ●</div>
+                    <div style="color:var(--warning);font-weight:700;">Q7 ○ ⬤ ⬤ ○ ○ ← dupla</div>
+                    <div>Q8 ○ ○ ● ○ ○</div>
+                    <div>Q9 ● ○ ○ ○ ○</div>
+                    <div style="color:var(--warning);font-weight:700;">Q14 ○ ○ ⬤ ⬤ ○ ← dupla</div>
+                    <div>Q15 ● ○ ○ ○ ○</div>
+                    <div>Q16 ○ ● ○ ○ ○</div>
+                  </div>
+                  <!-- Overlay de zoom -->
+                  <div style="position:absolute;bottom:0;right:0;background:rgba(0,0,0,0.5);color:white;font-size:10px;padding:3px 7px;border-top-left-radius:4px;">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:-1px;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+                    Ampliar
+                  </div>
+                </div>
+                <div style="font-size:11px;color:var(--text-light);text-align:center;">Clique para ampliar</div>
+              </div>
+
+              <!-- COLUNA DIREITA: questões em conflito -->
+              <div style="padding:14px 16px;display:flex;flex-direction:column;gap:0;">
+
+                <!-- Q7 -->
+                <div style="padding:14px 0;border-bottom:1px solid var(--border);">
+                  <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+                    <span style="font-size:13px;font-weight:700;color:var(--text);">Questão 7</span>
+                    <span style="font-size:12px;color:var(--text-secondary);background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:2px 8px;">Resposta Correta: <strong style="color:var(--text);">C</strong></span>
+                  </div>
+                  <div style="font-size:12px;color:var(--text-secondary);margin-bottom:10px;">A e B aparecem marcados.</div>
+                  <div class="options-row" id="q7-opts" style="margin-bottom:10px;">
+                    <button class="opt-btn" onclick="selecionarOpcao('q7-opts',this,'q7-errada')">A</button>
+                    <button class="opt-btn" onclick="selecionarOpcao('q7-opts',this,'q7-errada')">B</button>
+                    <button class="opt-btn" onclick="selecionarOpcao('q7-opts',this,'q7-errada')">C</button>
+                    <button class="opt-btn" onclick="selecionarOpcao('q7-opts',this,'q7-errada')">D</button>
+                    <button class="opt-btn" onclick="selecionarOpcao('q7-opts',this,'q7-errada')">E</button>
+                  </div>
+                  <button id="q7-errada" onclick="toggleErrada('q7-errada','q7-opts')"
+                    style="padding:5px 14px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);color:var(--text-secondary);font-size:12px;font-weight:500;font-family:'Outfit',sans-serif;cursor:pointer;"
+                    onmouseenter="this.style.borderColor='var(--error)';this.style.color='var(--error)'" onmouseleave="this.style.borderColor='var(--border)';this.style.color='var(--text-secondary)'">
+                    Marcar como errada
+                  </button>
+                </div>
+
+                <!-- Q14 -->
+                <div style="padding:14px 0;">
+                  <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+                    <span style="font-size:13px;font-weight:700;color:var(--text);">Questão 14</span>
+                    <span style="font-size:12px;color:var(--text-secondary);background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:2px 8px;">Resposta Correta: <strong style="color:var(--text);">A</strong></span>
+                  </div>
+                  <div style="font-size:12px;color:var(--text-secondary);margin-bottom:10px;">C e D aparecem marcados.</div>
+                  <div class="options-row" id="q14-opts" style="margin-bottom:10px;">
+                    <button class="opt-btn" onclick="selecionarOpcao('q14-opts',this,'q14-errada')">A</button>
+                    <button class="opt-btn" onclick="selecionarOpcao('q14-opts',this,'q14-errada')">B</button>
+                    <button class="opt-btn" onclick="selecionarOpcao('q14-opts',this,'q14-errada')">C</button>
+                    <button class="opt-btn" onclick="selecionarOpcao('q14-opts',this,'q14-errada')">D</button>
+                    <button class="opt-btn" onclick="selecionarOpcao('q14-opts',this,'q14-errada')">E</button>
+                  </div>
+                  <button id="q14-errada" onclick="toggleErrada('q14-errada','q14-opts')"
+                    style="padding:5px 14px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);color:var(--text-secondary);font-size:12px;font-weight:500;font-family:'Outfit',sans-serif;cursor:pointer;"
+                    onmouseenter="this.style.borderColor='var(--error)';this.style.color='var(--error)'" onmouseleave="this.style.borderColor='var(--border)';this.style.color='var(--text-secondary)'">
+                    Marcar como errada
+                  </button>
+                </div>
+
+              </div>
+            </div>
+
+            <div class="review-card-footer">
+              <button class="btn btn-success btn-sm">✓ Pronto, salvar</button>
+            </div>
+          </div>
+
+          <!-- MODAL AMPLIAÇÃO DO CARTÃO -->
+          <div id="modal-cartao-v1" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:3000;align-items:center;justify-content:center;" onclick="this.style.display='none'">
+            <div style="background:white;border-radius:var(--radius-lg);padding:24px;max-width:480px;width:90%;max-height:80vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,0.3);" onclick="event.stopPropagation()">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+                <div>
+                  <div style="font-size:15px;font-weight:700;color:var(--text);">Ana Beatriz Oliveira · Tipo B</div>
+                  <div style="font-size:12px;color:var(--text-secondary);">Cartão digitalizado — questões com conflito destacadas</div>
+                </div>
+                <button onclick="document.getElementById('modal-cartao-v1').style.display='none'" style="border:none;background:none;cursor:pointer;font-size:20px;color:var(--text-light);">✕</button>
+              </div>
+              <div style="font-family:monospace;font-size:13px;line-height:2;background:#f9f9f9;border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px;">
+                <div style="display:grid;grid-template-columns:32px 20px 20px 20px 20px 20px;gap:4px;font-weight:700;color:var(--text-secondary);font-size:11px;margin-bottom:4px;">
+                  <span></span><span>A</span><span>B</span><span>C</span><span>D</span><span>E</span>
+                </div>
+                <div style="display:contents;">
+                  <div style="display:grid;grid-template-columns:32px 20px 20px 20px 20px 20px;gap:4px;align-items:center;" title="Q1">
+                    <span style="font-size:11px;color:var(--text-light);">Q1</span>
+                    <span>○</span><span>○</span><span style="font-weight:900;font-size:16px;">●</span><span>○</span><span>○</span>
+                  </div>
+                  <div style="display:grid;grid-template-columns:32px 20px 20px 20px 20px 20px;gap:4px;align-items:center;">
+                    <span style="font-size:11px;color:var(--text-light);">Q2</span>
+                    <span>○</span><span style="font-weight:900;font-size:16px;">●</span><span>○</span><span>○</span><span>○</span>
+                  </div>
+                  <div style="display:grid;grid-template-columns:32px 20px 20px 20px 20px 20px;gap:4px;align-items:center;">
+                    <span style="font-size:11px;color:var(--text-light);">Q3</span>
+                    <span>○</span><span>○</span><span>○</span><span style="font-weight:900;font-size:16px;">●</span><span>○</span>
+                  </div>
+                  <div style="display:grid;grid-template-columns:32px 20px 20px 20px 20px 20px;gap:4px;align-items:center;">
+                    <span style="font-size:11px;color:var(--text-light);">Q4</span>
+                    <span style="font-weight:900;font-size:16px;">●</span><span>○</span><span>○</span><span>○</span><span>○</span>
+                  </div>
+                  <div style="display:grid;grid-template-columns:32px 20px 20px 20px 20px 20px;gap:4px;align-items:center;">
+                    <span style="font-size:11px;color:var(--text-light);">Q5</span>
+                    <span>○</span><span>○</span><span style="font-weight:900;font-size:16px;">●</span><span>○</span><span>○</span>
+                  </div>
+                  <!-- Q7 com conflito destacado -->
+                  <div style="display:grid;grid-template-columns:32px 20px 20px 20px 20px 20px;gap:4px;align-items:center;background:var(--warning-bg);border-radius:4px;padding:2px 0;">
+                    <span style="font-size:11px;color:var(--warning);font-weight:700;">Q7⚠</span>
+                    <span style="font-weight:900;font-size:16px;color:var(--warning);">●</span>
+                    <span style="font-weight:900;font-size:16px;color:var(--warning);">●</span>
+                    <span>○</span><span>○</span><span>○</span>
+                  </div>
+                  <div style="display:grid;grid-template-columns:32px 20px 20px 20px 20px 20px;gap:4px;align-items:center;">
+                    <span style="font-size:11px;color:var(--text-light);">Q8</span>
+                    <span>○</span><span>○</span><span style="font-weight:900;font-size:16px;">●</span><span>○</span><span>○</span>
+                  </div>
+                  <div style="display:grid;grid-template-columns:32px 20px 20px 20px 20px 20px;gap:4px;align-items:center;">
+                    <span style="font-size:11px;color:var(--text-light);">Q9</span>
+                    <span style="font-weight:900;font-size:16px;">●</span><span>○</span><span>○</span><span>○</span><span>○</span>
+                  </div>
+                  <!-- Q14 com conflito destacado -->
+                  <div style="display:grid;grid-template-columns:32px 20px 20px 20px 20px 20px;gap:4px;align-items:center;background:var(--warning-bg);border-radius:4px;padding:2px 0;">
+                    <span style="font-size:11px;color:var(--warning);font-weight:700;">Q14⚠</span>
+                    <span>○</span><span>○</span>
+                    <span style="font-weight:900;font-size:16px;color:var(--warning);">●</span>
+                    <span style="font-weight:900;font-size:16px;color:var(--warning);">●</span>
+                    <span>○</span>
+                  </div>
+                </div>
+              </div>
+              <div style="margin-top:12px;font-size:12px;color:var(--text-light);text-align:center;">Clique fora para fechar</div>
+            </div>
+          </div>
+          <!-- CARD DE REVISÃO 2 — CARD MISTO: dupla marcação + em branco no mesmo aluno -->
+          <div class="review-card">
+            <div class="review-card-header">
+              <span class="review-card-type warn">⚠ Cartão precisa de atenção</span>
+              <span class="pill pill-gray" style="margin-left:auto;">Tipo A</span>
+            </div>
+            <!-- Subtítulo com contagem por tipo -->
+            <div style="display:flex;align-items:center;gap:8px;padding:8px 14px;border-bottom:1px solid var(--border);background:var(--surface);">
+              <span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:1000px;background:var(--warning-bg);color:var(--warning);border:1px solid var(--warning-border);font-size:11px;font-weight:600;">
+                ⚠ 2 duplas marcações
+              </span>
+              <span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:1000px;background:var(--bg);color:var(--text-secondary);border:1px solid var(--border);font-size:11px;font-weight:600;">
+                ○ 1 sem marcação
+              </span>
+            </div>
+
+            <!-- CORPO: 2 colunas -->
+            <div style="display:grid;grid-template-columns:200px 1fr;gap:0;border-top:1px solid var(--border);">
+
+              <!-- COLUNA ESQUERDA: imagem do cartão -->
+              <div style="border-right:1px solid var(--border);padding:14px;display:flex;flex-direction:column;gap:8px;background:var(--bg);">
+                <div style="font-size:11px;font-weight:600;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.06em;">Cartão digitalizado</div>
+                <div style="background:#f0f0f0;border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;position:relative;cursor:pointer;" onclick="ampliarCartao('v2-misto')" title="Clique para ampliar">
+                  <div style="padding:10px 8px;font-size:9px;color:#444;line-height:1.8;font-family:monospace;">
+                    <div style="font-weight:700;margin-bottom:4px;font-size:10px;">Bruno Carvalho · Tipo A</div>
+                    <div>Q1 ○ ● ○ ○ ○</div>
+                    <div>Q2 ○ ○ ● ○ ○</div>
+                    <div>Q3 ● ○ ○ ○ ○</div>
+                    <div style="color:var(--warning);font-weight:700;">Q5 ○ ⬤ ⬤ ○ ○ ← dupla</div>
+                    <div>Q6 ○ ○ ○ ● ○</div>
+                    <div style="color:var(--text-light);font-style:italic;">Q9 ○ ○ ○ ○ ○ ← branco</div>
+                    <div>Q10 ○ ● ○ ○ ○</div>
+                    <div style="color:var(--warning);font-weight:700;">Q12 ● ○ ○ ● ○ ← dupla</div>
+                    <div>Q13 ○ ○ ● ○ ○</div>
+                    <div>Q14 ● ○ ○ ○ ○</div>
+                  </div>
+                  <div style="position:absolute;bottom:0;right:0;background:rgba(0,0,0,0.5);color:white;font-size:10px;padding:3px 7px;border-top-left-radius:4px;">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:-1px;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+                    Ampliar
+                  </div>
+                </div>
+                <div style="font-size:11px;color:var(--text-light);text-align:center;">Clique para ampliar</div>
+              </div>
+
+              <!-- COLUNA DIREITA -->
+              <div style="padding:14px 16px;display:flex;flex-direction:column;gap:0;">
+
+                <!-- Q5 dupla -->
+                <div style="padding:14px 0;border-bottom:1px solid var(--border);">
+                  <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+                    <span style="font-size:13px;font-weight:700;color:var(--text);">Questão 5</span>
+                    <span style="font-size:12px;color:var(--text-secondary);background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:2px 8px;">Resposta Correta: <strong style="color:var(--text);">B</strong></span>
+                  </div>
+                  <div style="font-size:12px;color:var(--text-secondary);margin-bottom:10px;">B e C aparecem marcados.</div>
+                  <div class="options-row" id="bq5-opts" style="margin-bottom:10px;">
+                    <button class="opt-btn" onclick="selecionarOpcao('bq5-opts',this,'bq5-errada')">A</button>
+                    <button class="opt-btn" onclick="selecionarOpcao('bq5-opts',this,'bq5-errada')">B</button>
+                    <button class="opt-btn" onclick="selecionarOpcao('bq5-opts',this,'bq5-errada')">C</button>
+                    <button class="opt-btn" onclick="selecionarOpcao('bq5-opts',this,'bq5-errada')">D</button>
+                    <button class="opt-btn" onclick="selecionarOpcao('bq5-opts',this,'bq5-errada')">E</button>
+                  </div>
+                  <button id="bq5-errada" onclick="toggleErrada('bq5-errada','bq5-opts')"
+                    style="padding:5px 14px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);color:var(--text-secondary);font-size:12px;font-weight:500;font-family:'Outfit',sans-serif;cursor:pointer;"
+                    onmouseenter="this.style.borderColor='var(--error)';this.style.color='var(--error)'" onmouseleave="this.style.borderColor='var(--border)';this.style.color='var(--text-secondary)'">
+                    Marcar como errada
+                  </button>
+                </div>
+
+                <!-- Q12 dupla -->
+                <div style="padding:14px 0;border-bottom:1px solid var(--border);">
+                  <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+                    <span style="font-size:13px;font-weight:700;color:var(--text);">Questão 12</span>
+                    <span style="font-size:12px;color:var(--text-secondary);background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:2px 8px;">Resposta Correta: <strong style="color:var(--text);">D</strong></span>
+                  </div>
+                  <div style="font-size:12px;color:var(--text-secondary);margin-bottom:10px;">A e D aparecem marcados.</div>
+                  <div class="options-row" id="bq12-opts" style="margin-bottom:10px;">
+                    <button class="opt-btn" onclick="selecionarOpcao('bq12-opts',this,'bq12-errada')">A</button>
+                    <button class="opt-btn" onclick="selecionarOpcao('bq12-opts',this,'bq12-errada')">B</button>
+                    <button class="opt-btn" onclick="selecionarOpcao('bq12-opts',this,'bq12-errada')">C</button>
+                    <button class="opt-btn" onclick="selecionarOpcao('bq12-opts',this,'bq12-errada')">D</button>
+                    <button class="opt-btn" onclick="selecionarOpcao('bq12-opts',this,'bq12-errada')">E</button>
+                  </div>
+                  <button id="bq12-errada" onclick="toggleErrada('bq12-errada','bq12-opts')"
+                    style="padding:5px 14px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);color:var(--text-secondary);font-size:12px;font-weight:500;font-family:'Outfit',sans-serif;cursor:pointer;"
+                    onmouseenter="this.style.borderColor='var(--error)';this.style.color='var(--error)'" onmouseleave="this.style.borderColor='var(--border)';this.style.color='var(--text-secondary)'">
+                    Marcar como errada
+                  </button>
+                </div>
+
+                <!-- Q9 sem marcação -->
+                <div style="padding:14px 0;">
+                  <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+                    <span style="font-size:13px;font-weight:700;color:var(--text);">Questão 9</span>
+                    <span style="font-size:12px;color:var(--text-secondary);background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:2px 8px;">Resposta Correta: <strong style="color:var(--text);">D</strong></span>
+                  </div>
+                  <div style="font-size:12px;color:var(--text-secondary);margin-bottom:10px;">Nenhuma resposta marcada.</div>
+                  <div class="options-row" id="bq9-opts" style="margin-bottom:10px;">
+                    <button class="opt-btn" onclick="selecionarOpcao('bq9-opts',this,'bq9-errada')">A</button>
+                    <button class="opt-btn" onclick="selecionarOpcao('bq9-opts',this,'bq9-errada')">B</button>
+                    <button class="opt-btn" onclick="selecionarOpcao('bq9-opts',this,'bq9-errada')">C</button>
+                    <button class="opt-btn" onclick="selecionarOpcao('bq9-opts',this,'bq9-errada')">D</button>
+                    <button class="opt-btn" onclick="selecionarOpcao('bq9-opts',this,'bq9-errada')">E</button>
+                  </div>
+                  <button id="bq9-errada" onclick="toggleErrada('bq9-errada','bq9-opts')"
+                    style="padding:5px 14px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);color:var(--text-secondary);font-size:12px;font-weight:500;font-family:'Outfit',sans-serif;cursor:pointer;"
+                    onmouseenter="this.style.borderColor='var(--error)';this.style.color='var(--error)'" onmouseleave="this.style.borderColor='var(--border)';this.style.color='var(--text-secondary)'">
+                    Marcar como errada
+                  </button>
+                </div>
+
+              </div>
+            </div>
+
+            <div class="review-card-footer">
+              <button class="btn btn-success btn-sm">✓ Pronto, salvar</button>
+            </div>
+          </div>
+
+          <!-- MODAL AMPLIAÇÃO — CARD MISTO -->
+          <div id="modal-cartao-v2-misto" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:3000;align-items:center;justify-content:center;" onclick="this.style.display='none'">
+            <div style="background:white;border-radius:var(--radius-lg);padding:24px;max-width:480px;width:90%;max-height:80vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,0.3);" onclick="event.stopPropagation()">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+                <div>
+                  <div style="font-size:15px;font-weight:700;color:var(--text);">Bruno Carvalho · Tipo A</div>
+                  <div style="font-size:12px;color:var(--text-secondary);">Questões com conflito destacadas</div>
+                </div>
+                <button onclick="document.getElementById('modal-cartao-v2-misto').style.display='none'" style="border:none;background:none;cursor:pointer;font-size:20px;color:var(--text-light);">✕</button>
+              </div>
+              <div style="font-family:monospace;font-size:13px;line-height:2;background:#f9f9f9;border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px;">
+                <div style="display:grid;grid-template-columns:36px 20px 20px 20px 20px 20px;gap:4px;font-weight:700;color:var(--text-secondary);font-size:11px;margin-bottom:4px;">
+                  <span></span><span>A</span><span>B</span><span>C</span><span>D</span><span>E</span>
+                </div>
+                <div style="display:grid;grid-template-columns:36px 20px 20px 20px 20px 20px;gap:4px;align-items:center;">
+                  <span style="font-size:11px;color:var(--text-light);">Q1</span><span>○</span><span style="font-weight:900;font-size:16px;">●</span><span>○</span><span>○</span><span>○</span>
+                </div>
+                <div style="display:grid;grid-template-columns:36px 20px 20px 20px 20px 20px;gap:4px;align-items:center;">
+                  <span style="font-size:11px;color:var(--text-light);">Q2</span><span>○</span><span>○</span><span style="font-weight:900;font-size:16px;">●</span><span>○</span><span>○</span>
+                </div>
+                <div style="display:grid;grid-template-columns:36px 20px 20px 20px 20px 20px;gap:4px;align-items:center;">
+                  <span style="font-size:11px;color:var(--text-light);">Q3</span><span style="font-weight:900;font-size:16px;">●</span><span>○</span><span>○</span><span>○</span><span>○</span>
+                </div>
+                <!-- Q5 dupla -->
+                <div style="display:grid;grid-template-columns:36px 20px 20px 20px 20px 20px;gap:4px;align-items:center;background:var(--warning-bg);border-radius:4px;padding:2px 0;">
+                  <span style="font-size:11px;color:var(--warning);font-weight:700;">Q5⚠</span>
+                  <span>○</span><span style="font-weight:900;font-size:16px;color:var(--warning);">●</span><span style="font-weight:900;font-size:16px;color:var(--warning);">●</span><span>○</span><span>○</span>
+                </div>
+                <!-- Q9 em branco -->
+                <div style="display:grid;grid-template-columns:36px 20px 20px 20px 20px 20px;gap:4px;align-items:center;background:#f5f5f5;border-radius:4px;padding:2px 0;opacity:0.7;">
+                  <span style="font-size:11px;color:var(--text-light);font-style:italic;">Q9○</span>
+                  <span>○</span><span>○</span><span>○</span><span>○</span><span>○</span>
+                </div>
+                <!-- Q12 dupla -->
+                <div style="display:grid;grid-template-columns:36px 20px 20px 20px 20px 20px;gap:4px;align-items:center;background:var(--warning-bg);border-radius:4px;padding:2px 0;">
+                  <span style="font-size:11px;color:var(--warning);font-weight:700;">Q12⚠</span>
+                  <span style="font-weight:900;font-size:16px;color:var(--warning);">●</span><span>○</span><span>○</span><span style="font-weight:900;font-size:16px;color:var(--warning);">●</span><span>○</span>
+                </div>
+              </div>
+              <div style="margin-top:12px;display:flex;gap:12px;font-size:11px;color:var(--text-secondary);">
+                <span style="display:inline-flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;background:var(--warning-bg);border:1px solid var(--warning-border);border-radius:2px;display:inline-block;"></span> Dupla marcação</span>
+                <span style="display:inline-flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;background:#f5f5f5;border:1px solid var(--border);border-radius:2px;display:inline-block;"></span> Sem marcação</span>
+              </div>
+              <div style="margin-top:8px;font-size:12px;color:var(--text-light);text-align:center;">Clique fora para fechar</div>
+            </div>
+          </div>
+
+          <!-- CARD DE REVISÃO 3 (era CARD 2) -->
+          <div class="review-card">
+            <div class="review-card-header"><span class="review-card-type err">Aluno não identificado</span><span class="review-card-name">Verifique o cartão ao lado</span></div>
+            <div class="review-card-body">
+              <div class="scan-thumb" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;"><span style="font-size:24px;">📄</span><span style="font-size:10px;color:var(--error);font-weight:600;text-align:center;line-height:1.2;">QR Code<br>não lido</span></div>
+              <div class="questions-col">
+                <div style="font-size:12px;color:var(--text-secondary);margin-bottom:10px;">Não conseguimos identificar de quem é esse cartão. Confira a foto ao lado e selecione o aluno correspondente.</div>
+                <div class="field-row"><div class="field-label">Selecione o aluno</div><select class="field-select" onchange="autoDetectTipo(this)"><option value="">Selecione o aluno...</option><option value="A">Ana Beatriz Oliveira</option><option value="B">Bruno Carvalho</option><option value="C">Camila Souza</option><option value="A">Daniel Fonseca</option><option value="B">Eduarda Lima</option></select></div>
+                <div class="field-row" id="tipo-detectado-row" style="display:none;"><div class="field-label">Tipo de prova</div><div style="display:flex;align-items:center;gap:8px;padding:7px 10px;border:1px solid var(--success-border);border-radius:var(--radius-sm);background:var(--success-bg);"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span id="tipo-detectado-val" style="font-size:13px;font-weight:700;color:var(--success);"></span><span style="font-size:12px;color:var(--success);">— identificado automaticamente</span></div></div>
+              </div>
+            </div>
+            <div class="review-card-footer"><button class="btn btn-success btn-sm">✓ Pronto, salvar</button></div>
+          </div>
+        </div>
+        <!-- TABELA DE ALUNOS — conteúdo primário -->
+        <div style="padding:16px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+            <span style="font-size:14px;font-weight:600;color:var(--text);">Resultados por aluno</span>
+            <span style="font-size:12px;color:var(--text-light);">7 pendentes de lançamento</span>
+          </div>
+          <div class="results-table-wrap">
+            <table class="results-table">
+              <thead><tr>
+                <th class="col-seq">#</th><th class="col-aluno">Aluno</th><th class="col-tipo">Tipo</th>
+                <th class="col-acertos">Acertos (/28)</th><th class="col-perf">Performance</th>
+                <th style="width:90px;"></th>
+              </tr></thead>
+              <tbody>
+                <tr>
+                  <td class="col-seq" style="color:var(--text-light);font-size:12px;">1</td>
+                  <td class="col-aluno">Ana Beatriz Oliveira</td>
+                  <td class="col-tipo"><span class="pill pill-gray">B</span></td>
+                  <td class="col-acertos">22</td><td class="col-perf"><span class="perf-hi">79%</span></td>
+                  <td><div style="display:flex;gap:5px;justify-content:flex-end;align-items:center;">
+                    <button class="btn btn-outline btn-sm">Detalhes</button>
+                    <button title="Marcar ausente" onclick="marcarAusenteIcon(this)" style="width:28px;height:28px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);cursor:pointer;color:var(--text-light);display:flex;align-items:center;justify-content:center;" onmouseenter="this.style.borderColor='var(--error)';this.style.color='var(--error)'" onmouseleave="this.style.borderColor='var(--border)';this.style.color='var(--text-light)'"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4"/><line x1="17" y1="11" x2="23" y2="17"/><line x1="23" y1="11" x2="17" y2="17"/></svg></button>
+                  </div></td>
+                </tr>
+                <tr>
+                  <td class="col-seq" style="color:var(--text-light);font-size:12px;">2</td>
+                  <td class="col-aluno">Bruno Carvalho</td>
+                  <td class="col-tipo"><span class="pill pill-gray">A</span></td>
+                  <td class="col-acertos">18</td><td class="col-perf"><span class="perf-mid">64%</span></td>
+                  <td><div style="display:flex;gap:5px;justify-content:flex-end;align-items:center;">
+                    <button class="btn btn-outline btn-sm">Detalhes</button>
+                    <button title="Marcar ausente" onclick="marcarAusenteIcon(this)" style="width:28px;height:28px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);cursor:pointer;color:var(--text-light);display:flex;align-items:center;justify-content:center;" onmouseenter="this.style.borderColor='var(--error)';this.style.color='var(--error)'" onmouseleave="this.style.borderColor='var(--border)';this.style.color='var(--text-light)'"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4"/><line x1="17" y1="11" x2="23" y2="17"/><line x1="23" y1="11" x2="17" y2="17"/></svg></button>
+                  </div></td>
+                </tr>
+                <tr style="opacity:0.55;background:#fff8f8;">
+                  <td class="col-seq" style="color:var(--text-light);font-size:12px;">3</td>
+                  <td class="col-aluno" style="font-style:italic;">Camila Souza <span class="pill pill-error" style="font-size:10px;margin-left:4px;">Ausente</span></td>
+                  <td class="col-tipo">—</td><td class="col-acertos">—</td><td class="col-perf">—</td>
+                  <td><div style="display:flex;gap:5px;justify-content:flex-end;align-items:center;">
+                    <button title="Desfazer ausência" onclick="desfazerAusenteIcon(this)" style="width:28px;height:28px;border:1px solid var(--error-border);border-radius:var(--radius-sm);background:var(--error-bg);cursor:pointer;color:var(--error);display:flex;align-items:center;justify-content:center;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 14l-4-4 4-4"/><path d="M5 10h11a4 4 0 0 1 0 8h-1"/></svg></button>
+                  </div></td>
+                </tr>
+                <tr>
+                  <td class="col-seq" style="color:var(--text-light);font-size:12px;">4</td>
+                  <td class="col-aluno">Daniel Fonseca</td>
+                  <td class="col-tipo"><span class="pill pill-gray">A</span></td>
+                  <td class="col-acertos" style="color:var(--text-light);">—</td><td class="col-perf" style="color:var(--text-light);">—</td>
+                  <td><div style="display:flex;gap:5px;justify-content:flex-end;align-items:center;">
+                    <button class="btn btn-outline btn-sm" disabled style="opacity:0.4;">Detalhes</button>
+                    <button title="Marcar ausente" onclick="marcarAusenteIcon(this)" style="width:28px;height:28px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);cursor:pointer;color:var(--text-light);display:flex;align-items:center;justify-content:center;" onmouseenter="this.style.borderColor='var(--error)';this.style.color='var(--error)'" onmouseleave="this.style.borderColor='var(--border)';this.style.color='var(--text-light)'"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4"/><line x1="17" y1="11" x2="23" y2="17"/><line x1="23" y1="11" x2="17" y2="17"/></svg></button>
+                  </div></td>
+                </tr>
+                <tr>
+                  <td class="col-seq" style="color:var(--text-light);font-size:12px;">5</td>
+                  <td class="col-aluno">Eduarda Lima</td>
+                  <td class="col-tipo"><span class="pill pill-gray">A</span></td>
+                  <td class="col-acertos">25</td><td class="col-perf"><span class="perf-hi">89%</span></td>
+                  <td><div style="display:flex;gap:5px;justify-content:flex-end;align-items:center;">
+                    <button class="btn btn-outline btn-sm">Detalhes</button>
+                    <button title="Marcar ausente" onclick="marcarAusenteIcon(this)" style="width:28px;height:28px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);cursor:pointer;color:var(--text-light);display:flex;align-items:center;justify-content:center;" onmouseenter="this.style.borderColor='var(--error)';this.style.color='var(--error)'" onmouseleave="this.style.borderColor='var(--border)';this.style.color='var(--text-light)'"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4"/><line x1="17" y1="11" x2="23" y2="17"/><line x1="23" y1="11" x2="17" y2="17"/></svg></button>
+                  </div></td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="results-more">+ 27 alunos não exibidos</div>
+          </div>
+          <div id="v1-publish-bar" class="publish-bar" style="margin-top:12px;">
+            <span id="v1-publish-text" class="publish-bar-text">7 alunos pendentes de resultado</span>
+            <button id="v1-publish-btn" class="btn btn-primary" disabled>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="16 12 12 8 8 12"/><line x1="12" y1="16" x2="12" y2="8"/></svg>
+              Publicar resultados
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- SELETOR DE ESTADO — Vínculo 2 (Sem cartão) -->
+    <div style="display:flex;align-items:center;gap:6px;margin-top:12px;margin-bottom:6px;padding:6px 10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);">
+      <span style="font-size:11px;font-weight:600;color:var(--text-light);text-transform:uppercase;letter-spacing:0.06em;flex-shrink:0;">Estado V2:</span>
+      <button onclick="setEstadoVinculo('v2','aguardando-aplicacao')" id="v2-btn-aguardando-aplicacao"
+        style="padding:3px 10px;border-radius:1000px;border:1px solid var(--border);background:var(--surface);color:var(--text-secondary);font-size:12px;font-weight:500;font-family:'Outfit',sans-serif;cursor:pointer;white-space:nowrap;">
+        Aguardando aplicação
+      </button>
+      <button onclick="setEstadoVinculo('v2','corrigindo')" id="v2-btn-corrigindo"
+        style="padding:3px 10px;border-radius:1000px;border:1px solid var(--border);background:var(--surface);color:var(--text-secondary);font-size:12px;font-weight:500;font-family:'Outfit',sans-serif;cursor:pointer;white-space:nowrap;">
+        Corrigindo
+      </button>
+      <button onclick="setEstadoVinculo('v2','prazo-vencido')" id="v2-btn-prazo-vencido"
+        style="padding:3px 10px;border-radius:1000px;border:1px solid var(--border);background:var(--surface);color:var(--text-secondary);font-size:12px;font-weight:500;font-family:'Outfit',sans-serif;cursor:pointer;white-space:nowrap;">
+        Prazo vencido
+      </button>
+      <button onclick="setEstadoVinculo('v2','publicado')" id="v2-btn-publicado"
+        style="padding:3px 10px;border-radius:1000px;border:1px solid var(--border);background:var(--surface);color:var(--text-secondary);font-size:12px;font-weight:500;font-family:'Outfit',sans-serif;cursor:pointer;white-space:nowrap;">
+        Publicado
+      </button>
+    </div>
+
+    <!-- VINCULO PAPEL 2 — borda laranja, fechado -->
+    <div class="vinculo border-warning" id="v2-vinculo">
+      <!-- Linha 1: status + data aplicação + badge meio + lock -->
+      <div class="vinculo-top-row">
+        <span id="v2-pill-status" class="pill pill-gray">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Aguardando lançamento
+        </span>
+        <div class="vinculo-dates">
+          <div class="vinculo-date-item">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            <span><span class="vinculo-date-label">Aplicação: </span><span class="vinculo-date-val" id="data-aplicacao-v2">21/07/2025</span></span>
+          </div>
+          <!-- Badge de meio — identifica como papel sem cartão -->
+          <span class="pill pill-orange" style="display:inline-flex;align-items:center;gap:4px;">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            Papel · Sem cartão
+          </span>
+          <span id="v2-pill-prazo" style="display:none;" class="pill pill-error">⚠ Prazo vencido há 5 dias</span>
+          <div id="v2-vinculo-locked" class="vinculo-locked">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            Resultados pendentes de lançamento
+          </div>
+        </div>
+        <div class="vinculo-row-btns">
+          <button onclick="editarData(event,'data-aplicacao-v2')" title="Alterar data de aplicação"
+            style="width:36px;height:36px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);cursor:pointer;color:var(--text-secondary);display:flex;align-items:center;justify-content:center;"
+            onmouseenter="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseleave="this.style.borderColor='var(--border)';this.style.color='var(--text-secondary)'">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          </button>
+          <button title="Mais opções"
+            style="width:36px;height:36px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);cursor:pointer;color:var(--text-secondary);display:flex;align-items:center;justify-content:center;"
+            onmouseenter="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseleave="this.style.borderColor='var(--border)';this.style.color='var(--text-secondary)'">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+          </button>
+        </div>
+      </div>
+      <!-- Linha 2: professor + alunos + tipo de prova + progresso + chevron -->
+      <div class="vinculo-bottom-row" onclick="toggleVinculo(this)">
+        <span style="font-size:13px;color:var(--text-secondary);">Professor: <strong style="color:var(--text);">Maria Silva</strong></span>
+        <span class="pill pill-gray" style="margin-left:10px;">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          38
+        </span>
+        <span class="pill pill-warning" style="margin-left:4px;">Todas iguais</span>
+        <div class="vinculo-progress-inline" style="margin-left:16px;" id="v2-progress-inline">
+          <div class="vinculo-progress-item">
+            <div class="vinculo-progress-dot" id="v2-dot-prog" style="background:var(--border);"></div>
+            <span class="vinculo-progress-label">Progresso Geral</span>
+            <span class="vinculo-progress-val" id="v2-val-prog" style="color:var(--text-light);">0%</span>
+          </div>
+          <div class="vinculo-progress-item">
+            <div class="vinculo-progress-dot" id="v2-dot-perf" style="background:var(--border);"></div>
+            <span class="vinculo-progress-label">Performance Geral</span>
+            <span class="vinculo-progress-val" id="v2-val-perf" style="color:var(--text-light);">—</span>
+          </div>
+        </div>
+        <!-- CHIP CONFIGURAÇÕES — Papel V2 -->
+        <button onclick="openModalConfigs('papel-v2')" style="display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:1000px;border:1px solid var(--border);background:var(--bg);color:var(--text-secondary);font-size:12px;font-weight:600;font-family:'Outfit',sans-serif;cursor:pointer;margin-left:8px;transition:all 0.15s;white-space:nowrap;" onmouseenter="this.style.borderColor='var(--primary)';this.style.color='var(--primary)'" onmouseleave="this.style.borderColor='var(--border)';this.style.color='var(--text-secondary)'">
+          Configurações
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        </button>
+        <svg class="vinculo-chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"/></svg>
+      </div>
+      <div class="vinculo-body">
+        <!-- BARRA DE AÇÕES SECUNDÁRIAS — sem cartão, sem botão Ler cartões -->
+        <div style="display:flex;align-items:center;gap:8px;padding:10px 16px;border-bottom:1px solid var(--border);background:var(--surface);">
+          <button class="btn btn-outline btn-sm" onclick="openModalMateriais('v2')" style="display:flex;align-items:center;gap:5px;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Materiais
+          </button>
+          <button class="btn btn-outline btn-sm" onclick="openModalGabarito('v2')" style="display:flex;align-items:center;gap:5px;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            Gabarito
+          </button>
+        </div>
+        <!-- TABELA DE ALUNOS — conteúdo primário -->
+        <div style="padding:16px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+            <span style="font-size:14px;font-weight:600;color:var(--text);">Resultados por aluno</span>
+            <span style="font-size:12px;color:var(--text-light);">38 pendentes de lançamento</span>
+          </div>
+          <div style="margin-bottom:12px;padding:10px 12px;background:var(--primary-light);border:1px solid #c4deff;border-radius:var(--radius-md);font-size:12px;color:#1558b0;display:flex;gap:8px;align-items:flex-start;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;margin-top:1px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            Informe o total de acertos consultando o gabarito. O lançamento manual registra apenas o total — sem detalhamento por questão.
+          </div>
+          <div class="results-table-wrap">
+            <table class="results-table">
+              <thead><tr>
+                <th class="col-seq">#</th><th class="col-aluno">Aluno</th>
+                <th class="col-acertos">Acertos (/28)</th><th class="col-perf">Performance</th>
+                <th style="width:70px;"></th>
+              </tr></thead>
+              <tbody>
+                <tr>
+                  <td class="col-seq" style="color:var(--text-light);font-size:12px;">1</td>
+                  <td class="col-aluno">Alice Moreira</td>
+                  <td class="col-acertos"><input type="number" class="input-acertos" placeholder="—" min="0" max="28"></td>
+                  <td class="col-perf" style="color:var(--text-light);">—</td>
+                  <td><button title="Marcar ausente" onclick="marcarAusenteIcon(this)" style="width:28px;height:28px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);cursor:pointer;color:var(--text-light);display:flex;align-items:center;justify-content:center;float:right;" onmouseenter="this.style.borderColor='var(--error)';this.style.color='var(--error)'" onmouseleave="this.style.borderColor='var(--border)';this.style.color='var(--text-light)'"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4"/><line x1="17" y1="11" x2="23" y2="17"/><line x1="23" y1="11" x2="17" y2="17"/></svg></button></td>
+                </tr>
+                <tr>
+                  <td class="col-seq" style="color:var(--text-light);font-size:12px;">2</td>
+                  <td class="col-aluno">Bernardo Castro</td>
+                  <td class="col-acertos"><input type="number" class="input-acertos" placeholder="—" min="0" max="28"></td>
+                  <td class="col-perf" style="color:var(--text-light);">—</td>
+                  <td><button title="Marcar ausente" onclick="marcarAusenteIcon(this)" style="width:28px;height:28px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);cursor:pointer;color:var(--text-light);display:flex;align-items:center;justify-content:center;float:right;" onmouseenter="this.style.borderColor='var(--error)';this.style.color='var(--error)'" onmouseleave="this.style.borderColor='var(--border)';this.style.color='var(--text-light)'"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4"/><line x1="17" y1="11" x2="23" y2="17"/><line x1="23" y1="11" x2="17" y2="17"/></svg></button></td>
+                </tr>
+                <tr style="opacity:0.55;background:#fff8f8;">
+                  <td class="col-seq" style="color:var(--text-light);font-size:12px;">3</td>
+                  <td class="col-aluno" style="font-style:italic;">Clara Nunes <span class="pill pill-error" style="font-size:10px;margin-left:4px;">Ausente</span></td>
+                  <td class="col-acertos">—</td><td class="col-perf">—</td>
+                  <td><button title="Desfazer ausência" onclick="desfazerAusenteIcon(this)" style="width:28px;height:28px;border:1px solid var(--error-border);border-radius:var(--radius-sm);background:var(--error-bg);cursor:pointer;color:var(--error);display:flex;align-items:center;justify-content:center;float:right;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 14l-4-4 4-4"/><path d="M5 10h11a4 4 0 0 1 0 8h-1"/></svg></button></td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="results-more">+ 35 alunos não exibidos</div>
+          </div>
+          <div id="v2-publish-bar" class="publish-bar" style="margin-top:12px;">
+            <span id="v2-publish-text" class="publish-bar-text">38 alunos pendentes de resultado</span>
+            <button id="v2-publish-btn" class="btn btn-primary" disabled>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="16 12 12 8 8 12"/><line x1="12" y1="16" x2="12" y2="8"/></svg>
+              Publicar resultados
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div><!-- /wrapper-papel -->
+
+  </div><!-- /tab-acompanhamento -->
+
+</main>
+</div><!-- /body -->
+</div><!-- /app -->
+
+<!-- ===== MODAL PUBLICAR ===== -->
+<div class="modal-overlay" id="modal-overlay" onclick="handleOverlayClick(event)">
+  <div class="modal" id="modal-publicar" style="width:780px;max-height:88vh;overflow-y:auto;border-radius:16px 16px 0 0;">
+    <div class="modal-header" style="padding:16px 24px 16px;border-bottom:1px solid var(--border);">
+      <div class="modal-title" style="font-size:22px;font-weight:700;">Publicar</div>
+      <button class="modal-close" onclick="closeModal()" style="width:40px;height:40px;border-radius:50%;font-size:16px;">✕</button>
+    </div>
+    <div class="modal-body" style="padding:20px 24px;display:flex;flex-direction:column;gap:0;">
+
+      <!-- BLOCO 1: TIPO DE APLICAÇÃO — agora primeiro, pois determina a natureza do campo de data -->
+      <!-- (era "NOVO BLOCO" na versão anterior) -->
+      <div id="bloco-tipo-aplicacao" style="border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;display:flex;gap:16px;align-items:flex-start;margin-bottom:16px;background:var(--bg);">
+        <div style="width:32px;height:32px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--text-secondary);">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+        </div>
+        <div style="flex:1;">
+          <div style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:4px;">Tipo de aplicação</div>
+          <div style="font-size:13px;color:var(--text-secondary);margin-bottom:12px;">O mesmo satélite pode ter vínculos no app e em papel simultaneamente para turmas diferentes.</div>
+          <div style="display:flex;border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;max-width:280px;">
+            <button id="seg-app" onclick="switchModalMode('app')" style="flex:1;padding:9px 16px;border:none;background:var(--primary);font-family:'Outfit',sans-serif;font-size:14px;font-weight:600;color:white;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;justify-content:center;gap:6px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+              App
+            </button>
+            <button id="seg-papel" onclick="switchModalMode('papel')" style="flex:1;padding:9px 16px;border:none;background:var(--surface);font-family:'Outfit',sans-serif;font-size:14px;font-weight:500;color:var(--text-secondary);cursor:pointer;transition:all 0.15s;display:flex;align-items:center;justify-content:center;gap:6px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              Papel
+            </button>
+          </div>
+          <!-- Campos extras do papel (aleatoriedade + cartão) -->
+          <div id="modal-fields-papel" style="display:none;flex-direction:column;gap:12px;margin-top:14px;">
+            <div>
+              <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:8px;">Forma de aleatoriedade</div>
+              <div style="display:flex;flex-direction:column;gap:7px;">
+                <label style="display:flex;align-items:flex-start;gap:10px;padding:10px 13px;border:1px solid var(--primary);border-radius:var(--radius-lg);cursor:pointer;background:var(--primary-light);transition:all 0.15s;" id="ro-iguais-wrap">
+                  <input type="radio" name="modal-aleat" value="iguais" checked style="margin-top:2px;accent-color:var(--primary);flex-shrink:0;">
+                  <div>
+                    <div style="font-size:13px;font-weight:700;color:var(--text);">Todas as provas iguais</div>
+                    <div style="font-size:12px;color:var(--text-secondary);">Uma única versão para todos — gabarito único.</div>
+                  </div>
+                </label>
+                <label style="display:flex;align-items:flex-start;gap:10px;padding:10px 13px;border:1px solid var(--border);border-radius:var(--radius-lg);cursor:pointer;transition:all 0.15s;" id="ro-tipos-wrap">
+                  <input type="radio" name="modal-aleat" value="tipos" style="margin-top:2px;accent-color:var(--primary);flex-shrink:0;">
+                  <div>
+                    <div style="font-size:13px;font-weight:700;color:var(--text);">Provas por tipo A, B e C</div>
+                    <div style="font-size:12px;color:var(--text-secondary);">Três versões com ordens distintas. O sistema define o tipo de cada aluno.</div>
+                  </div>
+                </label>
+              </div>
+            </div>
+            <!-- CENÁRIO SWITCHER — botões de teste fora do modal (canto superior do bloco papel) -->
+            <div id="cenario-switcher" style="display:flex;align-items:center;gap:6px;margin-bottom:8px;padding:6px 10px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);">
+              <span style="font-size:11px;font-weight:600;color:var(--text-light);text-transform:uppercase;letter-spacing:0.06em;flex-shrink:0;">Cenário:</span>
+              <button onclick="setCenario(28)" id="btn-cenario-ok"
+                style="padding:3px 10px;border-radius:1000px;border:1px solid var(--success-border);background:var(--success-bg);color:var(--success);font-size:12px;font-weight:600;font-family:'Outfit',sans-serif;cursor:pointer;">
+                28 questões ✓
+              </button>
+              <button onclick="setCenario(38)" id="btn-cenario-err"
+                style="padding:3px 10px;border-radius:1000px;border:1px solid var(--border);background:var(--surface);color:var(--text-secondary);font-size:12px;font-weight:500;font-family:'Outfit',sans-serif;cursor:pointer;">
+                38 questões ✕
+              </button>
+            </div>
+
+            <!-- CARTÃO-RESPOSTA com toggle condicional e contador fixo -->
+            <div id="cartao-row" style="display:flex;align-items:center;justify-content:space-between;padding:10px 13px;border:1px solid var(--border);border-radius:var(--radius-lg);">
+              <div style="flex:1;">
+                <div style="font-size:13px;font-weight:700;color:var(--text);">Correção automática por cartão-resposta</div>
+                <div style="font-size:12px;color:var(--text-secondary);margin-top:1px;">Os alunos marcam as respostas em uma folha separada. Você digitaliza e o sistema corrige automaticamente.</div>
+              </div>
+              <!-- Toggle: desabilitado quando > 30 -->
+              <label id="cartao-toggle-label" class="toggle" style="margin-left:16px;flex-shrink:0;opacity:1;cursor:pointer;">
+                <input type="checkbox" checked id="cartao-toggle">
+                <div class="toggle-track"></div>
+                <div class="toggle-thumb"></div>
+              </label>
+            </div>
+
+            <!-- CONTADOR fixo — muda de aparência conforme o cenário -->
+            <div id="cartao-contador" style="display:flex;align-items:flex-start;gap:8px;padding:10px 13px;border-radius:var(--radius-lg);margin-top:4px;background:var(--success-bg);border:1px solid var(--success-border);">
+              <svg id="cartao-contador-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2.5" style="flex-shrink:0;margin-top:1px;"><polyline points="20 6 9 17 4 12"/></svg>
+              <div>
+                <span id="cartao-contador-texto" style="font-size:12px;color:var(--success);font-weight:600;">
+                  Correção automática disponível. Esta avaliação tem 28 questões — dentro do limite de 30.
+                </span>
+                <div id="cartao-contador-detalhe" style="font-size:11px;color:var(--success);margin-top:2px;display:none;"></div>
+              </div>
+            </div>
+          </div>
+          <!-- Campos extras do app — configurações do vínculo no app -->
+          <div id="modal-fields-app" style="display:flex;flex-direction:column;gap:8px;margin-top:14px;">
+            <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px;">Configurações do app para este vínculo</div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 13px;border:1px solid var(--border);border-radius:var(--radius-lg);background:var(--surface);">
+              <div>
+                <div style="font-size:13px;font-weight:600;color:var(--text);">Tempo de Resposta</div>
+                <div style="font-size:12px;color:var(--text-secondary);">Tempo total após iniciar a atividade.</div>
+              </div>
+              <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;margin-left:16px;">
+                <input type="number" value="120" min="1" style="width:56px;padding:5px 8px;border:1px solid var(--border);border-radius:var(--radius-sm);font-family:'Outfit',sans-serif;font-size:14px;text-align:center;">
+                <span style="font-size:13px;color:var(--text-secondary);">min</span>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 13px;border:1px solid var(--border);border-radius:var(--radius-lg);background:var(--surface);">
+              <div>
+                <div style="font-size:13px;font-weight:600;color:var(--text);">Ordem Aleatória de Questões</div>
+                <div style="font-size:12px;color:var(--text-secondary);">Cada estudante vê as questões em uma ordem diferente.</div>
+              </div>
+              <label class="toggle" style="margin-left:16px;flex-shrink:0;"><input type="checkbox" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 13px;border:1px solid var(--border);border-radius:var(--radius-lg);background:var(--surface);">
+              <div>
+                <div style="font-size:13px;font-weight:600;color:var(--text);">Mostrar Feedback Somente Após Vigência</div>
+                <div style="font-size:12px;color:var(--text-secondary);">Libera feedback e justificativas apenas após o fim do prazo.</div>
+              </div>
+              <label class="toggle" style="margin-left:16px;flex-shrink:0;"><input type="checkbox" checked><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 13px;border:1px solid var(--border);border-radius:var(--radius-lg);background:var(--surface);">
+              <div>
+                <div style="font-size:13px;font-weight:600;color:var(--text);">Permitir Pular Questões</div>
+                <div style="font-size:12px;color:var(--text-secondary);">O estudante pode avançar sem responder; a questão vai para o fim da fila.</div>
+              </div>
+              <label class="toggle" style="margin-left:16px;flex-shrink:0;"><input type="checkbox"><div class="toggle-track"></div><div class="toggle-thumb"></div></label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- BLOCO 2: VIGÊNCIA / DATA — muda conforme o tipo selecionado acima -->
+      <div style="border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;display:flex;gap:16px;align-items:flex-start;margin-bottom:16px;">
+        <div style="width:32px;height:32px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--text-secondary);">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><circle cx="16" cy="16" r="4" fill="none"/><polyline points="16 14 16 16 17 17"/></svg>
+        </div>
+        <div style="flex:1;">
+          <div style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:4px;" id="vigencia-title">Vigência</div>
+          <div style="font-size:13px;color:var(--text-secondary);margin-bottom:12px;" id="vigencia-desc">Defina a janela de tempo em que os estudantes poderão acessar e responder.</div>
+          <!-- Datas APP -->
+          <div id="vigencia-app-fields" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+            <div>
+              <div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:4px;">Início</div>
+              <div style="border:1px solid var(--border);border-radius:var(--radius-lg);padding:7px 10px 7px 12px;display:flex;align-items:center;gap:8px;height:36px;">
+                <span style="flex:1;font-size:14px;color:var(--text-light);">Selecione</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8a95b2" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              </div>
+            </div>
+            <div>
+              <div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:4px;">Fim</div>
+              <div style="border:1px solid var(--border);border-radius:var(--radius-lg);padding:7px 10px 7px 12px;display:flex;align-items:center;gap:8px;height:36px;">
+                <span style="flex:1;font-size:14px;color:var(--text-light);">Selecione</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8a95b2" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              </div>
+            </div>
+          </div>
+          <!-- Data única PAPEL -->
+          <div id="vigencia-papel-fields" style="display:none;">
+            <div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:4px;">Data de aplicação</div>
+            <div style="border:1px solid var(--border);border-radius:var(--radius-lg);padding:7px 10px 7px 12px;display:flex;align-items:center;gap:8px;height:36px;max-width:200px;">
+              <span style="flex:1;font-size:14px;color:var(--text);">05/08/2025</span>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8a95b2" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            </div>
+            <div style="font-size:12px;color:var(--text-light);margin-top:5px;">Define os status que o aluno vê no app. Pode ser alterada antes da publicação dos resultados.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BLOCO 3: VÍNCULO — estrutura fiel ao Figma -->
+      <div style="border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;display:flex;gap:16px;align-items:flex-start;margin-bottom:16px;">
+        <div style="width:32px;height:32px;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--text-secondary);">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+        </div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:4px;">Vínculo</div>
+          <div style="font-size:13px;color:var(--text-secondary);margin-bottom:12px;">Escolha quem receberá a avaliação, você pode selecionar turmas inteiras ou estudantes específicos.</div>
+          <!-- Radio turmas / estudantes -->
+          <div style="display:flex;align-items:center;gap:24px;margin-bottom:12px;">
+            <label style="display:flex;align-items:center;gap:8px;font-size:14px;font-weight:500;cursor:pointer;">
+              <input type="radio" name="vinculo-tipo" value="turmas" checked style="accent-color:var(--primary);width:18px;height:18px;"> Turmas
+            </label>
+            <label style="display:flex;align-items:center;gap:8px;font-size:14px;font-weight:500;cursor:pointer;">
+              <input type="radio" name="vinculo-tipo" value="estudantes" style="accent-color:var(--primary);width:18px;height:18px;"> Estudantes
+            </label>
+          </div>
+          <!-- Search -->
+          <div style="border:1px solid var(--border);border-radius:var(--radius-lg);padding:9px 12px;display:flex;align-items:center;gap:8px;margin-bottom:12px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#8a95b2" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <span style="font-size:14px;color:var(--text-light);">Pesquise</span>
+          </div>
+          <!-- Filtros 4 colunas -->
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px;">
+            <div>
+              <div style="font-size:12px;font-weight:500;color:var(--text);margin-bottom:4px;">Tipo de Departamento</div>
+              <div style="border:1px solid var(--border);border-radius:var(--radius-lg);padding:7px 10px 7px 12px;display:flex;align-items:center;gap:4px;height:36px;cursor:pointer;">
+                <span style="flex:1;font-size:13px;color:var(--text-light);">Selecione</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8a95b2" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+              </div>
+            </div>
+            <div>
+              <div style="font-size:12px;font-weight:500;color:var(--text);margin-bottom:4px;">Departamento</div>
+              <div style="border:1px solid var(--border);border-radius:var(--radius-lg);padding:7px 10px 7px 12px;display:flex;align-items:center;gap:4px;height:36px;cursor:pointer;">
+                <span style="flex:1;font-size:13px;color:var(--text-light);">Selecione</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8a95b2" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+              </div>
+            </div>
+            <div>
+              <div style="font-size:12px;font-weight:500;color:var(--text);margin-bottom:4px;">Escolas</div>
+              <div style="border:1px solid var(--border);border-radius:var(--radius-lg);padding:7px 10px 7px 12px;display:flex;align-items:center;gap:4px;height:36px;cursor:pointer;">
+                <span style="flex:1;font-size:13px;color:var(--text-light);">Selecione</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8a95b2" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+              </div>
+            </div>
+            <div>
+              <div style="font-size:12px;font-weight:500;color:var(--text);margin-bottom:4px;">Turmas</div>
+              <div style="border:1px solid var(--border);border-radius:var(--radius-lg);padding:7px 10px 7px 12px;display:flex;align-items:center;gap:4px;height:36px;cursor:pointer;">
+                <span style="flex:1;font-size:13px;color:var(--text-light);">Selecione</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8a95b2" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+              </div>
+            </div>
+          </div>
+          <!-- Tabela de turmas fiel ao Figma -->
+          <div style="border:1px solid var(--border);border-radius:var(--radius-md);overflow:hidden;">
+            <table style="width:100%;border-collapse:collapse;font-size:13px;">
+              <thead>
+                <tr style="background:var(--bg);">
+                  <th style="width:36px;padding:10px 8px;text-align:center;border-bottom:1px solid var(--border);"><input type="checkbox" style="accent-color:var(--primary);"></th>
+                  <th style="padding:10px 8px;text-align:left;font-weight:700;font-size:13px;color:var(--text);border-bottom:1px solid var(--border);">Turma</th>
+                  <th style="padding:10px 8px;text-align:left;font-weight:700;font-size:13px;color:var(--text);border-bottom:1px solid var(--border);width:180px;">Planeta</th>
+                  <th style="padding:10px 8px;text-align:left;font-weight:700;font-size:13px;color:var(--text);border-bottom:1px solid var(--border);">Temporada</th>
+                  <th style="padding:10px 8px;text-align:center;font-weight:700;font-size:13px;color:var(--text);border-bottom:1px solid var(--border);width:140px;">Status de Vínculo</th>
+                  <th style="padding:10px 8px;text-align:center;font-weight:700;font-size:13px;color:var(--text);border-bottom:1px solid var(--border);width:90px;">Estudantes</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="border-bottom:1px solid var(--border);">
+                  <td style="padding:10px 8px;text-align:center;"><input type="checkbox" style="accent-color:var(--primary);"></td>
+                  <td style="padding:10px 8px;font-weight:500;">1º Ano EF</td>
+                  <td style="padding:10px 8px;">
+                    <div style="border:1px solid var(--border);border-radius:var(--radius-lg);padding:5px 10px;display:flex;align-items:center;gap:4px;font-size:13px;">
+                      <span style="flex:1;">MAP-CNT-PR</span>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8a95b2" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                    </div>
+                  </td>
+                  <td style="padding:10px 8px;color:var(--text-secondary);">Temporada SESI EM1/2025 (SC)</td>
+                  <td style="padding:10px 8px;text-align:center;"><span style="background:var(--success-bg);color:var(--success);border:1px solid var(--success-border);padding:3px 10px;border-radius:1000px;font-size:12px;font-weight:600;">Vinculada</span></td>
+                  <td style="padding:10px 8px;text-align:center;color:var(--text-secondary);">4 <button style="border:none;background:none;cursor:pointer;padding:2px;color:var(--primary);">👁</button></td>
+                </tr>
+                <tr style="border-bottom:1px solid var(--border);background:rgba(0,0,0,0.01);">
+                  <td style="padding:10px 8px;text-align:center;"><input type="checkbox" checked style="accent-color:var(--primary);"></td>
+                  <td style="padding:10px 8px;font-weight:500;">6º Ano EF</td>
+                  <td style="padding:10px 8px;">
+                    <div style="border:1px solid var(--border);border-radius:var(--radius-lg);padding:5px 10px;display:flex;align-items:center;gap:4px;font-size:13px;">
+                      <span style="flex:1;">MAP-CNT-PR</span>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8a95b2" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                    </div>
+                  </td>
+                  <td style="padding:10px 8px;color:var(--text-secondary);">Temporada SESI EM1/2025 (SC)</td>
+                  <td style="padding:10px 8px;text-align:center;"><span style="background:var(--success-bg);color:var(--success);border:1px solid var(--success-border);padding:3px 10px;border-radius:1000px;font-size:12px;font-weight:600;">Vinculada</span></td>
+                  <td style="padding:10px 8px;text-align:center;color:var(--text-secondary);">4 <button style="border:none;background:none;cursor:pointer;padding:2px;color:var(--primary);">👁</button></td>
+                </tr>
+                <tr style="border-bottom:1px solid var(--border);">
+                  <td style="padding:10px 8px;text-align:center;"><input type="checkbox" style="accent-color:var(--primary);"></td>
+                  <td style="padding:10px 8px;font-weight:500;">1º Ano EM</td>
+                  <td style="padding:10px 8px;">
+                    <div style="border:1px solid var(--border);border-radius:var(--radius-lg);padding:5px 10px;display:flex;align-items:center;gap:4px;font-size:13px;">
+                      <span style="flex:1;">MAP-CNT-PR</span>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8a95b2" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                    </div>
+                  </td>
+                  <td style="padding:10px 8px;color:var(--text-secondary);">Temporada SESI EM1/2025 (SC)</td>
+                  <td style="padding:10px 8px;text-align:center;"><span style="background:var(--warning-bg);color:var(--warning);border:1px solid var(--warning-border);padding:3px 10px;border-radius:1000px;font-size:12px;font-weight:600;">Vínculo parcial: 2/4</span></td>
+                  <td style="padding:10px 8px;text-align:center;color:var(--text-secondary);">28 <button style="border:none;background:none;cursor:pointer;padding:2px;color:var(--primary);">👁</button></td>
+                </tr>
+                <tr>
+                  <td style="padding:10px 8px;text-align:center;"><input type="checkbox" style="accent-color:var(--primary);"></td>
+                  <td style="padding:10px 8px;font-weight:500;">2º Ano EM</td>
+                  <td style="padding:10px 8px;">
+                    <div style="border:1px solid var(--border);border-radius:var(--radius-lg);padding:5px 10px;display:flex;align-items:center;gap:4px;font-size:13px;">
+                      <span style="flex:1;">MAP-CNT-PR</span>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8a95b2" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                    </div>
+                  </td>
+                  <td style="padding:10px 8px;color:var(--text-secondary);">Temporada SESI EM1/2025 (SC)</td>
+                  <td style="padding:10px 8px;text-align:center;"><span style="background:var(--bg);color:var(--text-secondary);border:1px solid var(--border);padding:3px 10px;border-radius:1000px;font-size:12px;font-weight:600;">Não vinculada</span></td>
+                  <td style="padding:10px 8px;text-align:center;color:var(--text-secondary);">22 <button style="border:none;background:none;cursor:pointer;padding:2px;color:var(--primary);">👁</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <!-- Paginação -->
+          <div style="display:flex;justify-content:center;align-items:center;gap:2px;padding:12px 0 4px;">
+            <button style="width:32px;height:32px;border:none;background:none;cursor:pointer;color:var(--text-light);font-size:14px;border-radius:4px;display:flex;align-items:center;justify-content:center;">«</button>
+            <button style="width:32px;height:32px;border:none;background:none;cursor:pointer;color:var(--text-light);font-size:14px;border-radius:4px;display:flex;align-items:center;justify-content:center;">‹</button>
+            <button style="width:32px;height:32px;border:none;background:var(--primary);cursor:pointer;color:white;font-size:14px;font-weight:600;font-family:'Outfit',sans-serif;border-radius:4px;border-bottom:2px solid var(--primary);">1</button>
+            <button style="width:32px;height:32px;border:none;background:none;cursor:pointer;color:var(--text-secondary);font-size:14px;font-family:'Outfit',sans-serif;border-radius:4px;">2</button>
+            <button style="width:32px;height:32px;border:none;background:none;cursor:pointer;color:var(--text-secondary);font-size:14px;font-family:'Outfit',sans-serif;border-radius:4px;">3</button>
+            <button style="width:32px;height:32px;border:none;background:none;cursor:pointer;color:var(--text-light);font-size:14px;border-radius:4px;display:flex;align-items:center;justify-content:center;">›</button>
+            <button style="width:32px;height:32px;border:none;background:none;cursor:pointer;color:var(--text-light);font-size:14px;border-radius:4px;display:flex;align-items:center;justify-content:center;">»</button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /modal-body -->
+    <div class="modal-footer" id="modal-footer-form" style="padding:14px 24px 18px;display:flex;justify-content:flex-end;gap:10px;border-top:1px solid var(--border);background:var(--surface);">
+      <button class="btn btn-outline" onclick="closeModal()" style="font-size:15px;padding:9px 20px;">Cancelar</button>
+      <button class="btn btn-primary" onclick="publicarProva()" style="font-size:15px;padding:9px 20px;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        Publicar
+      </button>
+    </div>
+
+    <!-- ESTADO 2: CONFIRMAÇÃO PÓS-PUBLICAÇÃO (oculto até clicar em Publicar) -->
+    <div id="modal-confirmacao" style="display:none;">
+      <!-- Loading intermediário -->
+      <div id="conf-loading" style="padding:48px 24px;display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center;">
+        <div style="width:44px;height:44px;border:3px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin 0.8s linear infinite;"></div>
+        <div style="font-size:15px;font-weight:600;color:var(--text);">Gerando materiais...</div>
+        <div style="font-size:13px;color:var(--text-secondary);">Isso pode levar alguns instantes</div>
+      </div>
+      <!-- Confirmação com downloads (aparece após loading) -->
+      <div id="conf-success" style="display:none;">
+        <div style="padding:28px 24px 20px;display:flex;flex-direction:column;gap:20px;">
+          <!-- Header de sucesso -->
+          <div style="display:flex;align-items:center;gap:14px;">
+            <div style="width:44px;height:44px;border-radius:50%;background:var(--success-bg);border:1px solid var(--success-border);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div>
+              <div style="font-size:16px;font-weight:700;color:var(--text);">Publicado com sucesso</div>
+              <div style="font-size:13px;color:var(--text-secondary);margin-top:2px;">
+                7ºA — Manhã &nbsp;·&nbsp;
+                <span style="color:var(--primary);font-weight:600;">📄 Papel</span> &nbsp;·&nbsp;
+                Data de aplicação: <strong>14/08/2025</strong>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card de downloads -->
+          <div style="border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;">
+            <div style="background:var(--bg);padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--text-secondary)" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              <span style="font-size:13px;font-weight:700;color:var(--text);">Materiais prontos para impressão</span>
+            </div>
+            <div style="padding:12px 16px;display:flex;flex-direction:column;gap:10px;">
+              <!-- Provas -->
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border:1px solid var(--border);border-radius:var(--radius-md);background:var(--surface);">
+                <div>
+                  <div style="font-size:13px;font-weight:600;color:var(--text);">Provas nominais (Tipo A, B e C)</div>
+                  <div style="font-size:12px;color:var(--text-secondary);margin-top:2px;">32 provas · QR Code identifica o aluno e o tipo (A, B ou C) para correção automática</div>
+                </div>
+                <button class="btn btn-primary" style="font-size:13px;padding:6px 14px;flex-shrink:0;margin-left:12px;">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                  Baixar PDF
+                </button>
+              </div>
+              <!-- Cartões -->
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border:1px solid var(--border);border-radius:var(--radius-md);background:var(--surface);">
+                <div>
+                  <div style="font-size:13px;font-weight:600;color:var(--text);">Cartões-resposta</div>
+                  <div style="font-size:12px;color:var(--text-secondary);margin-top:2px;">32 cartões · nominais — QR Code com aluno, avaliação e tipo de prova (A, B ou C)</div>
+                </div>
+                <button class="btn btn-primary" style="font-size:13px;padding:6px 14px;flex-shrink:0;margin-left:12px;">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                  Baixar PDF
+                </button>
+              </div>
+              <!-- Avulsa -->
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border:1px solid var(--border);border-radius:var(--radius-md);background:var(--surface);">
+                <div>
+                  <div style="font-size:13px;font-weight:600;color:var(--text);">Prova avulsa de contingência</div>
+                  <div style="font-size:12px;color:var(--text-secondary);margin-top:2px;">Versão genérica sem identificação · imprima quantas precisar</div>
+                </div>
+                <button class="btn btn-outline" style="font-size:13px;padding:6px 14px;flex-shrink:0;margin-left:12px;">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                  Baixar modelo
+                </button>
+              </div>
+            </div>
+            <div style="padding:10px 16px;background:var(--bg);border-top:1px solid var(--border);">
+              <span style="font-size:12px;color:var(--text-light);">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-1px;margin-right:4px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                Esses materiais também ficam disponíveis a qualquer momento na aba Acompanhamento.
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer do estado 2 -->
+        <div style="padding:14px 24px 18px;display:flex;justify-content:flex-end;gap:10px;border-top:1px solid var(--border);">
+          <button class="btn btn-outline" onclick="closeModal()" style="font-size:14px;padding:9px 20px;">Fechar</button>
+          <button class="btn btn-ghost" onclick="closeModal()" style="font-size:14px;padding:9px 20px;">
+            Ir para o Acompanhamento
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ---- TOGGLE LOG DETALHES ----
+function toggleLogDetalhes() {
+  var el = document.getElementById('log-detalhes');
+  var isOpen = el.style.display === 'flex';
+  el.style.display = isOpen ? 'none' : 'flex';
+}
+
+// ---- SIMULAÇÃO DE PROCESSAMENTO RF12 ----
+var loteSimulado = [
+  { nome: 'Fernanda Rocha',      tipo: 'A', resultado: 'ok' },
+  { nome: 'Gabriel Melo',        tipo: 'C', resultado: 'ok' },
+  { nome: 'Helena Teixeira',     tipo: 'B', resultado: 'ok' },
+  { nome: 'Igor Pereira',        tipo: 'A', resultado: 'revisao', motivo: 'Dupla marcação na Q3' },
+  { nome: 'Juliana Campos',      tipo: 'C', resultado: 'ok' },
+  { nome: 'Eduarda Lima',        tipo: 'A', resultado: 'duplicado' },
+  { nome: null,                  tipo: null, resultado: 'outra-avaliacao', avaliacao: 'Simulado AVALIA #2' },
+  { nome: null,                  tipo: null, resultado: 'baixa-qualidade' },
+];
+
+function simularEnvio() {
+  var idle = document.getElementById('leitura-idle');
+  var proc = document.getElementById('leitura-processando');
+  var log  = document.getElementById('proc-log');
+
+  idle.style.display = 'none';
+  proc.style.display = 'block';
+  log.innerHTML = '';
+
+  var total = loteSimulado.length;
+  var i = 0;
+
+  function processarProximo() {
+    if (i >= total) {
+      finalizarProcessamento();
+      return;
+    }
+    var item = loteSimulado[i];
+    i++;
+
+    // Atualiza contador e barra
+    document.getElementById('proc-contador').textContent = i + '/' + total;
+    document.getElementById('proc-barra').style.width = ((i / total) * 100) + '%';
+    document.getElementById('proc-status-text').textContent = 'Lendo QR Code e marcações — cartão ' + i + ' de ' + total;
+
+    // Linha de log
+    var linha = document.createElement('div');
+    linha.style.cssText = 'display:flex;align-items:center;gap:7px;padding:4px 0;border-bottom:1px solid rgba(0,0,0,0.05);';
+    var cor, icone, texto;
+
+    if (item.resultado === 'ok') {
+      cor = 'var(--success)'; icone = '✓';
+      texto = '<strong>' + item.nome + '</strong> — Tipo ' + item.tipo + ' · Lido e corrigido';
+    } else if (item.resultado === 'revisao') {
+      cor = 'var(--orange)'; icone = '⚠';
+      texto = '<strong>' + item.nome + '</strong> — Tipo ' + item.tipo + ' · ' + item.motivo + ' → revisão manual';
+    } else if (item.resultado === 'duplicado') {
+      cor = 'var(--primary)'; icone = '↺';
+      texto = '<strong>' + item.nome + '</strong> — Tipo ' + item.tipo + ' · Cartão já lido, resultado atualizado';
+    } else if (item.resultado === 'outra-avaliacao') {
+      cor = 'var(--warning)'; icone = '⚠';
+      texto = 'Cartão de <strong>' + item.avaliacao + '</strong> — não registrado aqui';
+    } else if (item.resultado === 'baixa-qualidade') {
+      cor = 'var(--error)'; icone = '✕';
+      texto = 'Imagem de baixa qualidade — não foi possível processar. Reenvie.';
+    }
+
+    linha.innerHTML =
+      '<span style="font-size:13px;font-weight:700;color:' + cor + ';width:16px;text-align:center;flex-shrink:0;">' + icone + '</span>' +
+      '<span style="font-size:12px;color:var(--text);">' + texto + '</span>';
+    log.appendChild(linha);
+    log.scrollTop = log.scrollHeight;
+
+    setTimeout(processarProximo, 480);
+  }
+
+  setTimeout(processarProximo, 400);
+}
+
+function finalizarProcessamento() {
+  var proc = document.getElementById('leitura-processando');
+  var idle = document.getElementById('leitura-idle');
+
+  // Atualiza contadores
+  document.getElementById('cnt-lidos').textContent    = '27';
+  document.getElementById('cnt-revisao').textContent  = '6';
+  document.getElementById('cnt-nao-lidos').textContent = '2'; // baixa qualidade + outra avaliação
+  document.getElementById('cnt-total').textContent    = '32';
+
+  // Marca hora e responsável
+  var agora = new Date();
+  var hora = agora.getHours().toString().padStart(2,'0') + ':' + agora.getMinutes().toString().padStart(2,'0');
+
+  // Reexibe idle com log atualizado
+  proc.style.display = 'none';
+  idle.style.display = 'block';
+
+  // Atualiza o último processamento
+  var ultimoLog = idle.querySelector('[style*="Último processamento"]');
+  if (!ultimoLog) {
+    // Encontra o span com texto de data
+    var spans = idle.querySelectorAll('span');
+    spans.forEach(function(s) {
+      if (s.textContent.indexOf('14/07/2025') !== -1) {
+        var d = new Date();
+        s.textContent = d.getDate().toString().padStart(2,'0') + '/' +
+          (d.getMonth()+1).toString().padStart(2,'0') + '/' + d.getFullYear() +
+          ' às ' + hora + ' · Maria Silva';
+      }
+    });
+  }
+
+  // Banner de conclusão
+  var banner = document.createElement('div');
+  banner.style.cssText = 'display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--success-bg);border:1px solid var(--success-border);border-radius:var(--radius-md);margin-bottom:10px;font-size:13px;color:var(--success);font-weight:600;';
+  banner.innerHTML =
+    '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>' +
+    'Lote processado às ' + hora + ' · 27 lidos · 6 em revisão · 2 não processados';
+  idle.insertBefore(banner, idle.firstChild);
+
+  setTimeout(function() {
+    if (banner.parentNode) banner.parentNode.removeChild(banner);
+  }, 8000);
+}
+
+// ---- TIPO AUTOMÁTICO NO CARD DE QR ILEGÍVEL ----
+function autoDetectTipo(select) {
+  var row = document.getElementById('tipo-detectado-row');
+  var val = document.getElementById('tipo-detectado-val');
+  if (select.value) {
+    var tipo = select.options[select.selectedIndex].value;
+    var tipoMap = { 'A': 'Tipo A', 'B': 'Tipo B', 'C': 'Tipo C' };
+    val.textContent = tipoMap[tipo] || 'Tipo A';
+    row.style.display = 'block';
+  } else {
+    row.style.display = 'none';
+  }
+}
+
+// ---- MODAL CONFIGURAÇÕES DA PUBLICAÇÃO ----
+function openModalConfigs(tipo) {
+  var idMap = {
+    'app':      'modal-configs-app',
+    'papel-v1': 'modal-configs-papel-v1',
+    'papel-v2': 'modal-configs-papel-v2'
+  };
+  var id = idMap[tipo];
+  if (!id) return;
+  var el = document.getElementById(id);
+  if (el) el.style.display = 'flex';
+}
+function closeModalConfigs(tipo) {
+  var idMap = {
+    'app':      'modal-configs-app',
+    'papel-v1': 'modal-configs-papel-v1',
+    'papel-v2': 'modal-configs-papel-v2'
+  };
+  var id = idMap[tipo];
+  if (!id) return;
+  var el = document.getElementById(id);
+  if (el) el.style.display = 'none';
+}
+
+// ---- TOGGLE CONFIGURAÇÕES DA PUBLICAÇÃO ----
+function toggleConfigs(id) {
+  var panel   = document.getElementById(id);
+  var chevron = document.getElementById(id + '-chevron');
+  var isOpen  = panel.style.display !== 'none';
+  panel.style.display   = isOpen ? 'none' : 'block';
+  if (chevron) chevron.style.transform = isOpen ? '' : 'rotate(180deg)';
+}
+
+// ---- SELETOR DE ESTADO DOS VÍNCULOS DE PAPEL ----
+var ESTADOS = {
+  'aguardando-aplicacao': {
+    label: 'Aguardando aplicação',
+    pillClass: 'pill-primary', pillIcon: '📅',
+    pillText: 'Prova a acontecer',
+    prazo: false,
+    locked: true, lockedText: 'A prova ainda não foi aplicada',
+    prog: '—', perf: '—', progColor: 'var(--text-light)', perfColor: 'var(--text-light)',
+    dotProg: 'var(--border)', dotPerf: 'var(--border)',
+    revisao: false, revisaoBanner: false,
+    publishText: '', publishEnabled: false,
+    bordaClass: 'border-primary'
+  },
+  'corrigindo': {
+    label: 'Corrigindo',
+    pillClass: 'pill-orange', pillIcon: '⏳',
+    pillText: 'Aguardando correção',
+    prazo: false,
+    locked: true, lockedText: 'Resultados pendentes de correção',
+    prog: '75%', perf: '68%', progColor: 'var(--success)', perfColor: 'var(--success)',
+    dotProg: 'var(--success)', dotPerf: 'var(--success)',
+    revisao: true, revisaoBanner: true,
+    publishText: '7 alunos pendentes de resultado', publishEnabled: false,
+    bordaClass: 'border-primary'
+  },
+  'prazo-vencido': {
+    label: 'Prazo vencido',
+    pillClass: 'pill-error', pillIcon: '⚠',
+    pillText: 'Prazo vencido',
+    prazo: true,
+    locked: true, lockedText: 'Prazo de 20 dias encerrado — correção ainda pendente',
+    prog: '40%', perf: '55%', progColor: 'var(--orange)', perfColor: 'var(--orange)',
+    dotProg: 'var(--orange)', dotPerf: 'var(--orange)',
+    revisao: false, revisaoBanner: false,
+    publishText: '12 alunos ainda pendentes', publishEnabled: false,
+    bordaClass: 'border-warning'
+  },
+  'publicado': {
+    label: 'Publicado',
+    pillClass: 'pill-gray', pillIcon: '✓',
+    pillText: 'Finalizado',
+    prazo: false,
+    locked: false, lockedText: '',
+    prog: '100%', perf: '72%', progColor: 'var(--success)', perfColor: 'var(--success)',
+    dotProg: 'var(--success)', dotPerf: 'var(--success)',
+    revisao: false, revisaoBanner: false,
+    publishText: 'Resultados publicados', publishEnabled: false,
+    bordaClass: 'border-success'
+  }
+};
+
+function setEstadoVinculo(vid, estado) {
+  var cfg = ESTADOS[estado];
+  if (!cfg) return;
+
+  // Atualizar botões seletores
+  ['aguardando-aplicacao','corrigindo','prazo-vencido','publicado'].forEach(function(e) {
+    var btn = document.getElementById(vid + '-btn-' + e);
+    if (!btn) return;
+    var isActive = e === estado;
+    btn.style.background   = isActive ? 'var(--primary-light)' : 'var(--surface)';
+    btn.style.borderColor  = isActive ? 'var(--primary)' : 'var(--border)';
+    btn.style.color        = isActive ? 'var(--primary)' : 'var(--text-secondary)';
+    btn.style.fontWeight   = isActive ? '600' : '500';
+  });
+
+  // Pill de status
+  var pillStatus = document.getElementById(vid + '-pill-status');
+  if (pillStatus) {
+    pillStatus.className = 'pill ' + cfg.pillClass;
+    pillStatus.innerHTML = cfg.pillText;
+  }
+
+  // Pill de prazo (vínculo 2) ou badge de prazo (vínculo 1)
+  var pillPrazo = document.getElementById(vid + '-pill-prazo');
+  if (pillPrazo) pillPrazo.style.display = cfg.prazo ? 'inline-flex' : 'none';
+
+  // Locked text
+  var locked = document.getElementById(vid + '-vinculo-locked');
+  if (locked) {
+    locked.style.display = cfg.locked ? 'flex' : 'none';
+    var svg = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>';
+    locked.innerHTML = svg + ' ' + cfg.lockedText;
+  }
+
+  // Progresso e Performance
+  var valProg = document.getElementById(vid + '-val-prog');
+  var valPerf = document.getElementById(vid + '-val-perf');
+  var dotProg = document.getElementById(vid + '-dot-prog');
+  var dotPerf = document.getElementById(vid + '-dot-perf');
+  if (valProg) { valProg.textContent = cfg.prog; valProg.style.color = cfg.progColor; }
+  if (valPerf) { valPerf.textContent = cfg.perf; valPerf.style.color = cfg.perfColor; }
+  if (dotProg) dotProg.style.background = cfg.dotProg;
+  if (dotPerf) dotPerf.style.background = cfg.dotPerf;
+
+  // Pill de revisão (só vínculo 1)
+  var pillRevisao = document.getElementById(vid + '-pill-revisao');
+  if (pillRevisao) pillRevisao.style.display = cfg.revisao ? 'inline-flex' : 'none';
+
+  // Banner de revisão inline (só vínculo 1)
+  var bannerRevisao = document.getElementById('revisao-' + vid + '-banner');
+  if (bannerRevisao) bannerRevisao.style.display = cfg.revisaoBanner ? 'flex' : 'none';
+  var revisaoSection = document.getElementById('revisao-' + vid);
+  if (revisaoSection && !cfg.revisaoBanner) revisaoSection.style.display = 'none';
+
+  // Barra de publicação
+  var publishBar  = document.getElementById(vid + '-publish-bar');
+  var publishText = document.getElementById(vid + '-publish-text');
+  var publishBtn  = document.getElementById(vid + '-publish-btn');
+  if (publishText) publishText.textContent = cfg.publishText;
+  if (publishBtn) {
+    publishBtn.disabled = !cfg.publishEnabled;
+    if (estado === 'publicado') {
+      publishBtn.textContent = '✓ Resultados publicados';
+      publishBtn.className = 'btn btn-success';
+      publishBtn.disabled = true;
+    } else {
+      publishBtn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="16 12 12 8 8 12"/><line x1="12" y1="16" x2="12" y2="8"/></svg> Publicar resultados';
+      publishBtn.className = 'btn btn-primary';
+    }
+  }
+
+  // Borda do vínculo
+  var vinculo = document.getElementById(vid + '-vinculo');
+  if (vinculo) {
+    vinculo.className = 'vinculo ' + cfg.bordaClass;
+  }
+
+  // Estado aguardando aplicação: recolhe o body
+  var vinculoEl = vid === 'v2' ? document.getElementById('v2-vinculo') : null;
+  if (!vinculoEl && vid === 'v1') {
+    // v1 não tem id próprio, buscar pelo wrapper
+  }
+}
+
+// ---- TOGGLE REVISÃO INLINE ----
+function toggleRevisaoInline(id) {
+  var el = document.getElementById(id);
+  var banner = document.getElementById(id + '-banner');
+  var isOpen = el.style.display !== 'none';
+  el.style.display = isOpen ? 'none' : 'block';
+  // Atualiza texto do botão no banner
+  if (banner) {
+    var btn = banner.querySelector('button');
+    if (btn) btn.textContent = isOpen ? 'Revisar agora ▾' : 'Recolher ▴';
+  }
+}
+
+// ---- MARCAR / DESFAZER AUSENTE (ícone toggle) ----
+function marcarAusenteIcon(btn) {
+  var tr = btn.closest('tr');
+  tr.style.opacity = '0.55';
+  tr.style.background = '#fff8f8';
+  var td = tr.cells[1];
+  var nomeOriginal = td.textContent.trim();
+  td.innerHTML = '<em>' + nomeOriginal + '</em> <span class="pill pill-error" style="font-size:10px;margin-left:4px;">Ausente</span>';
+  td.dataset.nomeOriginal = nomeOriginal;
+  // Desabilita input de acertos se existir
+  var input = tr.querySelector('.input-acertos');
+  if (input) { input.value = ''; input.disabled = true; input.style.opacity = '0.3'; }
+  // Troca botão para desfazer
+  btn.title = 'Desfazer ausência';
+  btn.onclick = function() { desfazerAusenteIcon(btn); };
+  btn.style.borderColor = 'var(--error-border)';
+  btn.style.background = 'var(--error-bg)';
+  btn.style.color = 'var(--error)';
+  btn.onmouseenter = null; btn.onmouseleave = null;
+  btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 14l-4-4 4-4"/><path d="M5 10h11a4 4 0 0 1 0 8h-1"/></svg>';
+}
+
+function desfazerAusenteIcon(btn) {
+  var tr = btn.closest('tr');
+  tr.style.opacity = '1';
+  tr.style.background = '';
+  var td = tr.cells[1];
+  var nome = td.dataset.nomeOriginal || td.textContent.replace('Ausente','').trim();
+  td.innerHTML = nome;
+  var input = tr.querySelector('.input-acertos');
+  if (input) { input.disabled = false; input.style.opacity = '1'; }
+  btn.title = 'Marcar ausente';
+  btn.onclick = function() { marcarAusenteIcon(btn); };
+  btn.style.borderColor = 'var(--border)';
+  btn.style.background = 'var(--surface)';
+  btn.style.color = 'var(--text-light)';
+  btn.onmouseenter = function() { btn.style.borderColor='var(--error)'; btn.style.color='var(--error)'; };
+  btn.onmouseleave = function() { btn.style.borderColor='var(--border)'; btn.style.color='var(--text-light)'; };
+  btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4"/><line x1="17" y1="11" x2="23" y2="17"/><line x1="23" y1="11" x2="17" y2="17"/></svg>';
+}
+
+// ---- MODAL MATERIAIS ----
+function openModalMateriais(id) {
+  var isV1 = id === 'v1';
+  var content = isV1
+    ? '<div style="display:flex;flex-direction:column;gap:8px;">' +
+      '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border:1px solid var(--border);border-radius:var(--radius-md);background:var(--bg);"><div><div style="font-size:13px;font-weight:600;color:var(--text);">Provas nominais (Tipo A, B e C)</div><div style="font-size:12px;color:var(--text-secondary);margin-top:2px;">32 provas · QR Code identifica o aluno e o tipo (A, B ou C) para correção automática</div></div><button class="btn btn-primary btn-sm" style="flex-shrink:0;margin-left:12px;">Baixar PDF</button></div>' +
+      '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border:1px solid var(--border);border-radius:var(--radius-md);background:var(--bg);"><div><div style="font-size:13px;font-weight:600;color:var(--text);">Cartões-resposta</div><div style="font-size:12px;color:var(--text-secondary);margin-top:2px;">32 cartões · nominais — QR Code com aluno, avaliação e tipo de prova (A, B ou C)</div></div><button class="btn btn-primary btn-sm" style="flex-shrink:0;margin-left:12px;">Baixar PDF</button></div>' +
+      '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border:1px solid var(--border);border-radius:var(--radius-md);background:var(--bg);"><div><div style="font-size:13px;font-weight:600;color:var(--text);">Prova avulsa de contingência</div><div style="font-size:12px;color:var(--text-secondary);margin-top:2px;">Versão genérica sem identificação · imprima quantas precisar</div></div><button class="btn btn-outline btn-sm" style="flex-shrink:0;margin-left:12px;">Baixar modelo</button></div>' +
+      '</div>'
+    : '<div style="display:flex;flex-direction:column;gap:8px;">' +
+      '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border:1px solid var(--border);border-radius:var(--radius-md);background:var(--bg);"><div><div style="font-size:13px;font-weight:600;color:var(--text);">Provas genéricas</div><div style="font-size:12px;color:var(--text-secondary);margin-top:2px;">Versão única sem identificação</div></div><button class="btn btn-primary btn-sm" style="flex-shrink:0;margin-left:12px;">Baixar PDF</button></div>' +
+      '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border:1px solid var(--border);border-radius:var(--radius-md);background:var(--bg);"><div><div style="font-size:13px;font-weight:600;color:var(--text);">Prova avulsa de contingência</div><div style="font-size:12px;color:var(--text-secondary);margin-top:2px;">Versão genérica sem identificação · imprima quantas precisar</div></div><button class="btn btn-outline btn-sm" style="flex-shrink:0;margin-left:12px;">Baixar modelo</button></div>' +
+      '</div>';
+  showSimpleModal('Materiais para impressão', content);
+}
+
+// ---- MODAL GABARITO ----
+function openModalGabarito(id) {
+  var isV1 = id === 'v1';
+  var content = isV1
+    ? '<div style="margin-bottom:8px;font-size:12px;color:var(--text-secondary);">Selecione o tipo para ver o gabarito correspondente.</div>' +
+      '<div style="display:flex;border:1px solid var(--border);border-radius:var(--radius-sm);overflow:hidden;margin-bottom:12px;">' +
+      '<button onclick="switchGabModal(this,\'gm-A\')" style="flex:1;padding:7px;font-size:12px;font-weight:600;background:var(--primary);color:white;border:none;cursor:pointer;font-family:Outfit,sans-serif;">A</button>' +
+      '<button onclick="switchGabModal(this,\'gm-B\')" style="flex:1;padding:7px;font-size:12px;font-weight:600;background:var(--surface);color:var(--text-secondary);border:none;border-left:1px solid var(--border);cursor:pointer;font-family:Outfit,sans-serif;">B</button>' +
+      '<button onclick="switchGabModal(this,\'gm-C\')" style="flex:1;padding:7px;font-size:12px;font-weight:600;background:var(--surface);color:var(--text-secondary);border:none;border-left:1px solid var(--border);cursor:pointer;font-family:Outfit,sans-serif;">C</button>' +
+      '</div>' +
+      '<div id="gm-A" class="gabarito-grid" style="display:grid;">' +
+      ['C','A','B','E','A','D','C','B','E','A','D','C','B','E','A','D','C','B','E','A','D','C','B','E','A','D','C','B'].map(function(a,i){return '<div class="gabarito-item"><span class="gabarito-q">Q'+(i+1)+'</span><span class="gabarito-a">'+a+'</span></div>';}).join('') + '</div>' +
+      '<div id="gm-B" class="gabarito-grid" style="display:none;">' +
+      ['B','D','A','C','E','B','A','D','C','E','B','A','D','C','E','B','A','D','C','E','B','A','D','C','E','B','A','D'].map(function(a,i){return '<div class="gabarito-item"><span class="gabarito-q">Q'+(i+1)+'</span><span class="gabarito-a">'+a+'</span></div>';}).join('') + '</div>' +
+      '<div id="gm-C" class="gabarito-grid" style="display:none;">' +
+      ['A','C','E','B','D','A','C','E','B','D','A','C','E','B','D','A','C','E','B','D','A','C','E','B','D','A','C','E'].map(function(a,i){return '<div class="gabarito-item"><span class="gabarito-q">Q'+(i+1)+'</span><span class="gabarito-a">'+a+'</span></div>';}).join('') + '</div>'
+    : '<div style="margin-bottom:8px;font-size:12px;color:var(--text-secondary);">Versão única — todos os alunos fizeram a mesma prova.</div>' +
+      '<div class="gabarito-grid">' +
+      ['B','A','C','E','D','A','B','C','A','D'].map(function(a,i){return '<div class="gabarito-item"><span class="gabarito-q">Q'+(i+1)+'</span><span class="gabarito-a">'+a+'</span></div>';}).join('') + '</div>';
+  showSimpleModal('Gabarito', content);
+}
+
+function switchGabModal(btn, gridId) {
+  var modal = btn.closest('.modal-body') || btn.closest('[id^="simple-modal"]') || document.getElementById('simple-modal-body');
+  var btns = btn.parentElement.querySelectorAll('button');
+  btns.forEach(function(b) { b.style.background='var(--surface)'; b.style.color='var(--text-secondary)'; });
+  btn.style.background = 'var(--primary)'; btn.style.color = 'white';
+  ['gm-A','gm-B','gm-C'].forEach(function(id) { var el=document.getElementById(id); if(el) el.style.display='none'; });
+  var grid = document.getElementById(gridId);
+  if (grid) grid.style.display = 'grid';
+}
+
+// ---- MODAL SIMPLES GENÉRICO ----
+function showSimpleModal(title, bodyHTML) {
+  var existing = document.getElementById('simple-modal-overlay');
+  if (existing) existing.remove();
+  var overlay = document.createElement('div');
+  overlay.id = 'simple-modal-overlay';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:2000;display:flex;align-items:center;justify-content:center;';
+  overlay.innerHTML =
+    '<div style="background:var(--surface);border-radius:var(--radius-xl);width:520px;max-height:80vh;overflow-y:auto;box-shadow:var(--shadow-md);">' +
+    '<div style="display:flex;align-items:center;padding:18px 22px 14px;border-bottom:1px solid var(--border);">' +
+    '<span style="font-size:16px;font-weight:700;color:var(--text);flex:1;">' + title + '</span>' +
+    '<button onclick="document.getElementById(\'simple-modal-overlay\').remove()" style="width:32px;height:32px;border:none;background:none;cursor:pointer;font-size:18px;color:var(--text-light);border-radius:var(--radius-sm);">✕</button>' +
+    '</div>' +
+    '<div id="simple-modal-body" style="padding:18px 22px;">' + bodyHTML + '</div>' +
+    '</div>';
+  overlay.addEventListener('click', function(e) { if (e.target === overlay) overlay.remove(); });
+  document.body.appendChild(overlay);
+}
+
+// ---- AMPLIAR CARTÃO DIGITALIZADO ----
+function ampliarCartao(id) {
+  var modal = document.getElementById('modal-cartao-' + id);
+  if (modal) {
+    modal.style.display = 'flex';
+  }
+}
+
+// ---- MARCAR COMO ERRADA (toggle nos cards de revisão) ----
+function toggleErrada(btnId, optsId) {
+  var btn  = document.getElementById(btnId);
+  var opts = document.getElementById(optsId);
+  var isErrada = btn.dataset.errada === '1';
+
+  if (!isErrada) {
+    btn.dataset.errada = '1';
+    btn.textContent = '✓ Marcada como errada · Desfazer';
+    btn.style.borderColor = 'var(--error)';
+    btn.style.color = 'var(--error)';
+    btn.style.background = 'var(--error-bg)';
+    btn.onmouseenter = null; btn.onmouseleave = null;
+    // Limpar seleção de alternativa
+    if (opts) opts.querySelectorAll('.opt-btn').forEach(function(b) { b.classList.remove('selected'); });
+  } else {
+    btn.dataset.errada = '0';
+    btn.textContent = 'Marcar como errada';
+    btn.style.borderColor = 'var(--border)';
+    btn.style.color = 'var(--text-secondary)';
+    btn.style.background = 'var(--surface)';
+    btn.onmouseenter = function() { btn.style.borderColor='var(--error)'; btn.style.color='var(--error)'; };
+    btn.onmouseleave = function() { btn.style.borderColor='var(--border)'; btn.style.color='var(--text-secondary)'; };
+  }
+}
+
+// ---- ANULAR QUESTÃO ----
+function toggleAnular(btnId, optsId, notaId) {
+  var btn  = document.getElementById(btnId);
+  var opts = document.getElementById(optsId);
+  var nota = document.getElementById(notaId);
+  var isAnulado = btn.dataset.anulado === '1';
+
+  if (!isAnulado) {
+    // Ativar anulação
+    btn.dataset.anulado = '1';
+    btn.style.background   = 'var(--error-bg)';
+    btn.style.borderColor  = 'var(--error)';
+    btn.innerHTML =
+      '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>' +
+      ' Questão anulada · Desfazer';
+    // Limpar seleção de alternativa
+    if (opts) opts.querySelectorAll('.opt-btn').forEach(function(b) { b.classList.remove('selected'); });
+    if (nota) nota.style.display = 'block';
+  } else {
+    // Desfazer anulação
+    btn.dataset.anulado = '0';
+    btn.style.background  = 'var(--surface)';
+    btn.style.borderColor = 'var(--error-border)';
+    btn.innerHTML =
+      '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>' +
+      ' Anular questão';
+    if (nota) nota.style.display = 'none';
+  }
+}
+
+// ---- SELECIONAR OPÇÃO NOS CARDS DE REVISÃO ----
+function selecionarOpcao(rowId, btn, anularBtnId) {
+  var row = document.getElementById(rowId);
+  if (!row) return;
+  row.querySelectorAll('.opt-btn').forEach(function(b) { b.classList.remove('selected'); });
+  btn.classList.add('selected');
+
+  // Desfaz anulação se estava ativa
+  if (anularBtnId) {
+    var anularBtn = document.getElementById(anularBtnId);
+    if (anularBtn && anularBtn.dataset.anulado === '1') {
+      var notaId = anularBtnId.replace('-anular', '-nota');
+      toggleAnular(anularBtnId, rowId, notaId);
+    }
+  }
+}
+
+// ---- CENÁRIO CARTÃO-RESPOSTA ----
+function setCenario(numQuestoes) {
+  var LIMITE = 30;
+  var dentroDoLimite = numQuestoes <= LIMITE;
+
+  // Botões de cenário
+  var btnOk  = document.getElementById('btn-cenario-ok');
+  var btnErr = document.getElementById('btn-cenario-err');
+  if (btnOk && btnErr) {
+    btnOk.style.background    = dentroDoLimite ? 'var(--success-bg)'  : 'var(--surface)';
+    btnOk.style.borderColor   = dentroDoLimite ? 'var(--success-border)' : 'var(--border)';
+    btnOk.style.color         = dentroDoLimite ? 'var(--success)'     : 'var(--text-secondary)';
+    btnOk.style.fontWeight    = dentroDoLimite ? '600' : '500';
+    btnErr.style.background   = !dentroDoLimite ? 'var(--error-bg)'   : 'var(--surface)';
+    btnErr.style.borderColor  = !dentroDoLimite ? 'var(--error-border)' : 'var(--border)';
+    btnErr.style.color        = !dentroDoLimite ? 'var(--error)'      : 'var(--text-secondary)';
+    btnErr.style.fontWeight   = !dentroDoLimite ? '600' : '500';
+  }
+
+  // Toggle: desabilitado e cinza quando fora do limite
+  var toggle      = document.getElementById('cartao-toggle');
+  var toggleLabel = document.getElementById('cartao-toggle-label');
+  if (toggle && toggleLabel) {
+    toggle.disabled       = !dentroDoLimite;
+    toggleLabel.style.opacity = dentroDoLimite ? '1' : '0.38';
+    toggleLabel.style.cursor  = dentroDoLimite ? 'pointer' : 'not-allowed';
+    if (!dentroDoLimite) toggle.checked = false; // desativa automaticamente
+    else toggle.checked = true;
+  }
+
+  // Borda do row do cartão
+  var row = document.getElementById('cartao-row');
+  if (row) {
+    row.style.borderColor = dentroDoLimite ? 'var(--border)' : 'var(--error-border)';
+    row.style.background  = dentroDoLimite ? '' : 'var(--error-bg)';
+  }
+
+  // Contador dinâmico
+  var contador  = document.getElementById('cartao-contador');
+  var icon      = document.getElementById('cartao-contador-icon');
+  var texto     = document.getElementById('cartao-contador-texto');
+  var detalhe   = document.getElementById('cartao-contador-detalhe');
+  if (contador && icon && texto) {
+    if (dentroDoLimite) {
+      contador.style.background   = 'var(--success-bg)';
+      contador.style.borderColor  = 'var(--success-border)';
+      icon.setAttribute('stroke', 'var(--success)');
+      icon.innerHTML = '<polyline points="20 6 9 17 4 12"/>';
+      texto.style.color = 'var(--success)';
+      texto.textContent = 'Correção automática disponível. Esta avaliação tem ' + numQuestoes + ' questões — dentro do limite de 30.';
+      if (detalhe) detalhe.style.display = 'none';
+    } else {
+      var excedeu = numQuestoes - LIMITE;
+      contador.style.background   = 'var(--error-bg)';
+      contador.style.borderColor  = 'var(--error-border)';
+      icon.setAttribute('stroke', 'var(--error)');
+      icon.innerHTML = '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>';
+      texto.style.color = 'var(--error)';
+      texto.textContent = 'Correção automática não disponível. Esta avaliação tem ' + numQuestoes + ' questões — a correção automática suporta até 30.';
+      if (detalhe) {
+        detalhe.style.display = 'none';
+      }
+    }
+  }
+}
+
+// ---- TOGGLE VÍNCULO (nova estrutura 2 linhas) ----
+function toggleVinculo(bottomRow) {
+  var vinculo = bottomRow.closest('.vinculo');
+  var body = vinculo.querySelector('.vinculo-body');
+  var chevron = bottomRow.querySelector('.vinculo-chevron');
+  if (body.classList.contains('open')) {
+    body.classList.remove('open');
+    chevron.classList.remove('open');
+  } else {
+    body.classList.add('open');
+    chevron.classList.add('open');
+  }
+}
+function marcarAusente(btn) {
+  var tr = btn.closest('tr');
+  tr.style.opacity = '0.6';
+  tr.style.fontStyle = 'italic';
+  var tdAusente = btn.closest('td');
+  tdAusente.innerHTML = '<span class="pill pill-gray" style="font-size:11px;">Ausente</span>&nbsp;<button class="btn btn-outline btn-sm" style="font-size:11px;" onclick="desmarcarAusente(this)">Desfazer</button>';
+  var input = tr.querySelector('.input-acertos');
+  if (input) { input.value = ''; input.disabled = true; input.style.opacity = '0.4'; }
+}
+function desmarcarAusente(btn) {
+  var tr = btn.closest('tr');
+  tr.style.opacity = '1';
+  tr.style.fontStyle = 'normal';
+  var tdAusente = btn.closest('td');
+  tdAusente.innerHTML = '<button class="btn btn-outline btn-sm" onclick="marcarAusente(this)">Marcar ausente</button>';
+  var input = tr.querySelector('.input-acertos');
+  if (input) { input.disabled = false; input.style.opacity = '1'; }
+}
+
+// ---- EDITAR DATA DE APLICAÇÃO (UC02) ----
+function editarData(e, spanId) {
+  e.stopPropagation();
+  var span = document.getElementById(spanId);
+  var atual = span.textContent.trim();
+  var novaData = prompt('Alterar data de aplicação (formato DD/MM):', atual);
+  if (novaData && novaData.trim()) span.textContent = novaData.trim();
+}
+
+// ---- PUBLICAR PROVA ----
+function publicarProva() {
+  var papelBtn = document.getElementById('seg-papel');
+  var isPapel = papelBtn && (papelBtn.style.background === 'var(--primary)' ||
+    papelBtn.style.background === 'rgb(33, 119, 255)' ||
+    papelBtn.style.background.indexOf('33') !== -1 && papelBtn.style.color === 'white');
+
+  // Detectar pelo texto: se seg-papel tem cor branca, está ativo
+  isPapel = papelBtn && papelBtn.style.color === 'white';
+
+  if (!isPapel) {
+    closeModal();
+    return;
+  }
+
+  var modalBody = document.querySelector('#modal-publicar .modal-body');
+  var footerForm = document.getElementById('modal-footer-form');
+  var confirmacao = document.getElementById('modal-confirmacao');
+  var loading = document.getElementById('conf-loading');
+  var success = document.getElementById('conf-success');
+  var title = document.querySelector('#modal-publicar .modal-title');
+
+  modalBody.style.display = 'none';
+  footerForm.style.display = 'none';
+  confirmacao.style.display = 'block';
+  loading.style.display = 'flex';
+  loading.style.flexDirection = 'column';
+  success.style.display = 'none';
+
+  setTimeout(function() {
+    loading.style.display = 'none';
+    success.style.display = 'block';
+    if (title) title.textContent = 'Publicação concluída';
+  }, 1800);
+}
+
+function resetModal() {
+  var modalBody = document.querySelector('#modal-publicar .modal-body');
+  var footerForm = document.getElementById('modal-footer-form');
+  var confirmacao = document.getElementById('modal-confirmacao');
+  var title = document.querySelector('#modal-publicar .modal-title');
+  if (modalBody) modalBody.style.display = '';
+  if (footerForm) { footerForm.style.display = 'flex'; footerForm.style.justifyContent = 'flex-end'; }
+  if (confirmacao) confirmacao.style.display = 'none';
+  if (title) title.textContent = 'Publicar';
+  // Resetar para App como padrão
+  switchModalMode('app');
+}
+
+// ---- FILTRO DE VÍNCULOS ----
+function filterVinculos(tipo) {
+  var wrapperApp = document.getElementById('wrapper-app');
+  var wrapperPapel = document.getElementById('wrapper-papel');
+  var cardParticipacao = document.getElementById('card-participacao');
+  var cardCorrecao = document.getElementById('card-correcao');
+
+  document.querySelectorAll('.filter-btn').forEach(function(btn) {
+    var isActive = btn.getAttribute('data-filter') === tipo;
+    btn.style.background = isActive ? 'var(--primary)' : 'var(--surface)';
+    btn.style.color = isActive ? 'white' : 'var(--text-secondary)';
+    btn.style.borderColor = isActive ? 'var(--primary)' : 'var(--border)';
+    btn.style.fontWeight = isActive ? '600' : '500';
+  });
+
+  if (tipo === 'todos') {
+    wrapperApp.style.display = 'block';
+    wrapperPapel.style.display = 'block';
+    cardParticipacao.style.display = 'inline-flex';
+    cardCorrecao.style.display = 'inline-flex';
+  } else if (tipo === 'app') {
+    wrapperApp.style.display = 'block';
+    wrapperPapel.style.display = 'none';
+    cardParticipacao.style.display = 'inline-flex';
+    cardCorrecao.style.display = 'none';
+  } else {
+    wrapperApp.style.display = 'none';
+    wrapperPapel.style.display = 'block';
+    cardParticipacao.style.display = 'none';
+    cardCorrecao.style.display = 'inline-flex';
+  }
+}
+function switchTab(el) {
+  document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
+  document.querySelectorAll('.tab-content').forEach(function(c) { c.classList.remove('active'); });
+  el.classList.add('active');
+  var id = el.getAttribute('data-tab');
+  var content = document.getElementById('tab-' + id);
+  if (content) content.classList.add('active');
+}
+
+// ---- SIDEBAR NAV GROUP ----
+function toggleNavGroup(header) {
+  var sub = header.nextElementSibling;
+  header.classList.toggle('open');
+  sub.style.display = header.classList.contains('open') ? 'flex' : 'none';
+}
+
+// ---- SUBSECTION ACCORDION ----
+function toggleSubsec(header) {
+  var body = header.nextElementSibling;
+  var chevron = header.querySelector('.subsec-chevron');
+  var isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  if (chevron) chevron.classList.toggle('open', !isOpen);
+}
+
+// ---- GABARITO V1 TOGGLE ----
+function toggleGabaritoV1() {
+  var panel = document.getElementById('gabarito-v1');
+  var btn = document.getElementById('btn-gabarito-v1');
+  if (panel.style.display === 'none') {
+    panel.style.display = 'block';
+    btn.textContent = '✕ Fechar gabarito';
+  } else {
+    panel.style.display = 'none';
+    btn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> Ver gabarito';
+  }
+}
+
+// ---- GABARITO TABS ----
+function switchGabTab(tabEl, gridId) {
+  var panel = tabEl.closest('.gabarito-panel');
+  panel.querySelectorAll('.gabarito-tab').forEach(function(t) { t.classList.remove('active'); });
+  panel.querySelectorAll('.gabarito-grid').forEach(function(g) { g.style.display = 'none'; });
+  tabEl.classList.add('active');
+  var grid = document.getElementById(gridId);
+  if (grid) grid.style.display = 'grid';
+}
+
+// ---- MODAL ----
+function openModal() {
+  document.getElementById('modal-overlay').classList.add('open');
+}
+function closeModal() {
+  resetModal();
+  document.getElementById('modal-overlay').classList.remove('open');
+}
+function handleOverlayClick(e) {
+  if (e.target === document.getElementById('modal-overlay')) closeModal();
+}
+
+// ---- MODAL SEGMENTED (tipo de aplicação) ----
+function switchModalMode(mode) {
+  var appBtn = document.getElementById('seg-app');
+  var papelBtn = document.getElementById('seg-papel');
+  var appFields = document.getElementById('modal-fields-app');
+  var papelFields = document.getElementById('modal-fields-papel');
+  var vigenciaTitle = document.getElementById('vigencia-title');
+  var vigenciaDesc = document.getElementById('vigencia-desc');
+  var vigenciaApp = document.getElementById('vigencia-app-fields');
+  var vigenciaPapel = document.getElementById('vigencia-papel-fields');
+
+  if (mode === 'app') {
+    appBtn.style.background = 'var(--primary)';
+    appBtn.style.color = 'white';
+    appBtn.style.fontWeight = '600';
+    papelBtn.style.background = 'var(--surface)';
+    papelBtn.style.color = 'var(--text-secondary)';
+    papelBtn.style.fontWeight = '500';
+    appFields.style.display = 'flex';
+    papelFields.style.display = 'none';
+    vigenciaTitle.textContent = 'Vigência';
+    vigenciaDesc.textContent = 'Defina a janela de tempo em que os estudantes poderão acessar e responder.';
+    vigenciaApp.style.display = 'grid';
+    vigenciaPapel.style.display = 'none';
+  } else {
+    papelBtn.style.background = 'var(--primary)';
+    papelBtn.style.color = 'white';
+    papelBtn.style.fontWeight = '600';
+    appBtn.style.background = 'var(--surface)';
+    appBtn.style.color = 'var(--text-secondary)';
+    appBtn.style.fontWeight = '500';
+    papelFields.style.display = 'flex';
+    appFields.style.display = 'none';
+    vigenciaTitle.textContent = 'Data de aplicação';
+    vigenciaDesc.textContent = 'Informe a data em que a prova será aplicada. Orienta os status exibidos ao aluno no app.';
+    vigenciaApp.style.display = 'none';
+    vigenciaPapel.style.display = 'block';
+  }
+}
+
+// ---- OPT BUTTONS ----
+document.querySelectorAll('.options-row').forEach(function(row) {
+  row.querySelectorAll('.opt-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      row.querySelectorAll('.opt-btn').forEach(function(b) { b.classList.remove('selected'); });
+      btn.classList.add('selected');
+    });
+  });
+});
+</script>
+<!-- ===== MODAIS DE CONFIGURAÇÕES ===== -->
+
+<!-- Modal configs App -->
+<div id="modal-configs-app" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:2000;align-items:center;justify-content:center;" onclick="closeModalConfigs('app')">
+  <div style="background:var(--surface);border-radius:var(--radius-xl);width:480px;box-shadow:var(--shadow-md);" onclick="event.stopPropagation()">
+    <div style="display:flex;align-items:center;padding:18px 22px 14px;border-bottom:1px solid var(--border);">
+      <div style="flex:1;">
+        <div style="font-size:16px;font-weight:700;color:var(--text);">Configurações da publicação</div>
+        <div style="font-size:12px;color:var(--text-secondary);margin-top:2px;">6ºC — Manhã · App</div>
+      </div>
+      <button onclick="closeModalConfigs('app')" style="border:none;background:none;cursor:pointer;font-size:18px;color:var(--text-light);padding:4px;">✕</button>
+    </div>
+    <div style="padding:18px 22px;display:flex;flex-direction:column;gap:10px;">
+      <!-- Tempo de Resposta -->
+      <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--border);border-radius:var(--radius-lg);">
+        <div style="width:36px;height:36px;border-radius:var(--radius-sm);background:var(--bg);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-secondary)" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <div style="flex:1;">
+          <div style="font-size:13px;font-weight:600;color:var(--text);">Tempo de Resposta</div>
+          <div style="font-size:12px;color:var(--text-secondary);margin-top:2px;">Tempo total após iniciar a atividade</div>
+        </div>
+        <div style="font-size:15px;font-weight:700;color:var(--primary);">120 min</div>
+      </div>
+      <!-- Ordem Aleatória -->
+      <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--border);border-radius:var(--radius-lg);">
+        <div style="width:36px;height:36px;border-radius:var(--radius-sm);background:var(--bg);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-secondary)" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+        </div>
+        <div style="flex:1;">
+          <div style="font-size:13px;font-weight:600;color:var(--text);">Ordem Aleatória de Questões</div>
+          <div style="font-size:12px;color:var(--text-secondary);margin-top:2px;">Cada estudante vê as questões em ordem diferente</div>
+        </div>
+        <span style="padding:3px 10px;border-radius:1000px;background:var(--success-bg);color:var(--success);border:1px solid var(--success-border);font-size:12px;font-weight:600;">Ativado</span>
+      </div>
+      <!-- Feedback após vigência -->
+      <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--border);border-radius:var(--radius-lg);">
+        <div style="width:36px;height:36px;border-radius:var(--radius-sm);background:var(--bg);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-secondary)" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </div>
+        <div style="flex:1;">
+          <div style="font-size:13px;font-weight:600;color:var(--text);">Mostrar Feedback Somente Após Vigência</div>
+          <div style="font-size:12px;color:var(--text-secondary);margin-top:2px;">Libera feedback e justificativas apenas após o fim do prazo</div>
+        </div>
+        <span style="padding:3px 10px;border-radius:1000px;background:var(--success-bg);color:var(--success);border:1px solid var(--success-border);font-size:12px;font-weight:600;">Ativado</span>
+      </div>
+      <!-- Permitir Pular -->
+      <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--border);border-radius:var(--radius-lg);">
+        <div style="width:36px;height:36px;border-radius:var(--radius-sm);background:var(--bg);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-secondary)" stroke-width="2"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
+        </div>
+        <div style="flex:1;">
+          <div style="font-size:13px;font-weight:600;color:var(--text);">Permitir Pular Questões</div>
+          <div style="font-size:12px;color:var(--text-secondary);margin-top:2px;">O estudante pode avançar sem responder</div>
+        </div>
+        <span style="padding:3px 10px;border-radius:1000px;background:var(--bg);color:var(--text-secondary);border:1px solid var(--border);font-size:12px;font-weight:600;">Desativado</span>
+      </div>
+    </div>
+    <div style="padding:12px 22px 18px;border-top:1px solid var(--border);display:flex;align-items:center;gap:6px;">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--text-light)" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      <span style="font-size:11px;color:var(--text-light);">Configurações definidas na publicação — não editáveis.</span>
+    </div>
+  </div>
+</div>
+
+<!-- Modal configs Papel V1 -->
+<div id="modal-configs-papel-v1" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:2000;align-items:center;justify-content:center;" onclick="closeModalConfigs('papel-v1')">
+  <div style="background:var(--surface);border-radius:var(--radius-xl);width:480px;box-shadow:var(--shadow-md);" onclick="event.stopPropagation()">
+    <div style="display:flex;align-items:center;padding:18px 22px 14px;border-bottom:1px solid var(--border);">
+      <div style="flex:1;">
+        <div style="font-size:16px;font-weight:700;color:var(--text);">Configurações da publicação</div>
+        <div style="font-size:12px;color:var(--text-secondary);margin-top:2px;">7ºA — Manhã · Papel</div>
+      </div>
+      <button onclick="closeModalConfigs('papel-v1')" style="border:none;background:none;cursor:pointer;font-size:18px;color:var(--text-light);padding:4px;">✕</button>
+    </div>
+    <div style="padding:18px 22px;display:flex;flex-direction:column;gap:10px;">
+      <!-- Aleatoriedade -->
+      <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--border);border-radius:var(--radius-lg);">
+        <div style="width:36px;height:36px;border-radius:var(--radius-sm);background:var(--bg);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-secondary)" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+        </div>
+        <div style="flex:1;">
+          <div style="font-size:13px;font-weight:600;color:var(--text);">Forma de Aleatoriedade</div>
+          <div style="font-size:12px;color:var(--text-secondary);margin-top:2px;">Três versões com ordens distintas — o sistema define o tipo de cada aluno</div>
+        </div>
+        <span style="padding:3px 10px;border-radius:1000px;background:var(--primary-light);color:var(--primary);border:1px solid #c4deff;font-size:12px;font-weight:600;white-space:nowrap;">Tipos A, B, C</span>
+      </div>
+      <!-- Correção automática -->
+      <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--border);border-radius:var(--radius-lg);">
+        <div style="width:36px;height:36px;border-radius:var(--radius-sm);background:var(--bg);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-secondary)" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+        </div>
+        <div style="flex:1;">
+          <div style="font-size:13px;font-weight:600;color:var(--text);">Correção Automática por Cartão-resposta</div>
+          <div style="font-size:12px;color:var(--text-secondary);margin-top:2px;">Os alunos marcam as respostas em uma folha separada. Você digitaliza e o sistema corrige automaticamente.</div>
+        </div>
+        <span style="padding:3px 10px;border-radius:1000px;background:var(--success-bg);color:var(--success);border:1px solid var(--success-border);font-size:12px;font-weight:600;white-space:nowrap;">Com cartão</span>
+      </div>
+    </div>
+    <div style="padding:12px 22px 18px;border-top:1px solid var(--border);display:flex;align-items:center;gap:6px;">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--text-light)" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      <span style="font-size:11px;color:var(--text-light);">Configurações definidas na publicação — não editáveis.</span>
+    </div>
+  </div>
+</div>
+
+<!-- Modal configs Papel V2 -->
+<div id="modal-configs-papel-v2" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:2000;align-items:center;justify-content:center;" onclick="closeModalConfigs('papel-v2')">
+  <div style="background:var(--surface);border-radius:var(--radius-xl);width:480px;box-shadow:var(--shadow-md);" onclick="event.stopPropagation()">
+    <div style="display:flex;align-items:center;padding:18px 22px 14px;border-bottom:1px solid var(--border);">
+      <div style="flex:1;">
+        <div style="font-size:16px;font-weight:700;color:var(--text);">Configurações da publicação</div>
+        <div style="font-size:12px;color:var(--text-secondary);margin-top:2px;">8ºB — Tarde · Papel</div>
+      </div>
+      <button onclick="closeModalConfigs('papel-v2')" style="border:none;background:none;cursor:pointer;font-size:18px;color:var(--text-light);padding:4px;">✕</button>
+    </div>
+    <div style="padding:18px 22px;display:flex;flex-direction:column;gap:10px;">
+      <!-- Aleatoriedade -->
+      <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--border);border-radius:var(--radius-lg);">
+        <div style="width:36px;height:36px;border-radius:var(--radius-sm);background:var(--bg);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-secondary)" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+        </div>
+        <div style="flex:1;">
+          <div style="font-size:13px;font-weight:600;color:var(--text);">Forma de Aleatoriedade</div>
+          <div style="font-size:12px;color:var(--text-secondary);margin-top:2px;">Uma única versão da prova aplicada a todos os alunos</div>
+        </div>
+        <span style="padding:3px 10px;border-radius:1000px;background:var(--warning-bg);color:var(--warning);border:1px solid var(--warning-border);font-size:12px;font-weight:600;white-space:nowrap;">Todas iguais</span>
+      </div>
+      <!-- Sem correção automática -->
+      <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--border);border-radius:var(--radius-lg);">
+        <div style="width:36px;height:36px;border-radius:var(--radius-sm);background:var(--bg);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text-secondary)" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+        </div>
+        <div style="flex:1;">
+          <div style="font-size:13px;font-weight:600;color:var(--text);">Correção Automática por Cartão-resposta</div>
+          <div style="font-size:12px;color:var(--text-secondary);margin-top:2px;">Sem cartão-resposta — você lança os acertos manualmente consultando o gabarito.</div>
+        </div>
+        <span style="padding:3px 10px;border-radius:1000px;background:var(--bg);color:var(--text-secondary);border:1px solid var(--border);font-size:12px;font-weight:600;white-space:nowrap;">Sem cartão</span>
+      </div>
+    </div>
+    <div style="padding:12px 22px 18px;border-top:1px solid var(--border);display:flex;align-items:center;gap:6px;">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="var(--text-light)" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      <span style="font-size:11px;color:var(--text-light);">Configurações definidas na publicação — não editáveis.</span>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
+
+
+

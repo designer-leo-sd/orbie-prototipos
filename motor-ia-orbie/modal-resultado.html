@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orbie App - Resultado da Trilha</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Orbitron:wght@700&family=Inter:wght@400&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="modal-page">
+        <div class="modal-background" onclick="closeModal()"></div>
+        
+        <div class="result-modal">
+            <div class="result-content">
+                <!-- Success Icon -->
+                <div class="success-icon-large">
+                    <span class="check-mark">✓</span>
+                </div>
+                
+                <!-- Title and Subtitle -->
+                <h2 class="result-title">Parabéns!</h2>
+                <p class="result-subtitle">Você concluiu a trilha com sucesso</p>
+                
+                <!-- Results Bar -->
+                <div class="results-bar">
+                    <div class="result-item">
+                        <span class="result-value">8/10</span>
+                        <span class="result-label">Acertos</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-value">80%</span>
+                        <span class="result-label">Performance</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-value xp-value">+160</span>
+                        <span class="result-label">XP Ganho</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Action Buttons -->
+            <div class="result-actions">
+                <button class="result-button primary" onclick="continueLearning()">
+                    Continuar Aprendendo
+                </button>
+                <button class="result-button secondary" onclick="reviewTrilha()">
+                    Revisar Trilha
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function closeModal() {
+            // Fechar modal e voltar para a home
+            window.location.href = 'index.html';
+        }
+
+        function continueLearning() {
+            // Ir para página principal para escolher nova trilha
+            window.location.href = 'index.html';
+        }
+
+        function reviewTrilha() {
+            // Ir para trilha concluída em modo revisão
+            window.location.href = 'trilha-concluida.html';
+        }
+
+        // Animações de entrada
+        document.addEventListener('DOMContentLoaded', function() {
+            const modal = document.querySelector('.result-modal');
+            modal.style.opacity = '0';
+            modal.style.transform = 'scale(0.8) translateY(20px)';
+            
+            setTimeout(() => {
+                modal.style.transition = 'all 0.4s ease';
+                modal.style.opacity = '1';
+                modal.style.transform = 'scale(1) translateY(0)';
+            }, 100);
+            
+            // Animar elementos internos
+            setTimeout(() => {
+                document.querySelector('.success-icon-large').style.animation = 'bounce 0.6s ease';
+            }, 300);
+        });
+
+        // Fechar modal com ESC
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>

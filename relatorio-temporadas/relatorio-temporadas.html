@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Relatório de Temporadas — Orbie Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700&family=Orbitron:wght@400;700&display=swap" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+  <style>
+    /* ── Design Tokens ── */
+    :root {
+      --brand-500: #2177FF;
+      --brand-600: #0059E7;
+      --brand-50:  #E6EEFF;
+      --neutral-0:   #FFFFFF;
+      --neutral-50:  #F8F9FC;
+      --neutral-100: #F1F4F9;
+      --neutral-200: #E1E8EF;
+      --neutral-300: #C5D0DE;
+      --neutral-400: #8A95B2;
+      --neutral-500: #52607A;
+      --neutral-600: #344054;
+      --neutral-700: #1D2939;
+      --success-light: #ECFDF3;
+      --success-base:  #12B76A;
+      --success-dark:  #027A48;
+      --warning-light: #FFFAEB;
+      --warning-base:  #F79009;
+      --warning-dark:  #B54708;
+      --error-light: #FEF3F2;
+      --error-base:  #F04438;
+      --info-light:  #EFF8FF;
+      --info-base:   #2E90FA;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,.12);
+      --shadow-md: 0 1px 3px 1px rgba(0,0,0,.12);
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-full: 1000px;
+      --sidebar-w: 240px;
+      --font-body: 'Outfit', sans-serif;
+      --font-display: 'Orbitron', sans-serif;
+    }
+
+    /* ── Reset / Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-body);
+      background: var(--neutral-100);
+      color: var(--neutral-600);
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      width: var(--sidebar-w);
+      min-height: 100vh;
+      background: #1A2035;
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      position: fixed;
+      top: 0; left: 0;
+    }
+    .sidebar-logo {
+      padding: 20px 24px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .sidebar-logo .logo-text {
+      font-family: var(--font-display);
+      color: #fff;
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+    .sidebar-logo .logo-icon {
+      width: 32px; height: 32px;
+      background: var(--brand-500);
+      border-radius: var(--radius-md);
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-size: 16px;
+    }
+    .sidebar nav { padding: 16px 0; flex: 1; overflow-y: auto; }
+    .nav-section-title {
+      font-size: 11px; font-weight: 500; color: var(--neutral-400);
+      text-transform: uppercase; letter-spacing: .8px;
+      padding: 12px 20px 4px;
+    }
+    .nav-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 20px;
+      color: #99C0FF;
+      font-size: 13.5px; font-weight: 400;
+      cursor: pointer;
+      border-radius: 0;
+      transition: background .15s;
+      text-decoration: none;
+    }
+    .nav-item:hover { background: rgba(255,255,255,.06); }
+    .nav-item.active {
+      background: rgba(33,119,255,.18);
+      color: #fff;
+      font-weight: 500;
+      border-left: 3px solid var(--brand-500);
+    }
+    .nav-item i { width: 18px; text-align: center; font-size: 14px; }
+    .nav-group-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 9px 20px;
+      color: #99C0FF; font-size: 13.5px; cursor: pointer;
+    }
+    .nav-group-header:hover { background: rgba(255,255,255,.06); }
+    .nav-group-header.open { color: #fff; }
+    .nav-sub { padding-left: 16px; }
+
+    /* ── Top Bar ── */
+    .topbar {
+      position: fixed; top: 0;
+      left: var(--sidebar-w); right: 0;
+      height: 56px;
+      background: var(--neutral-0);
+      border-bottom: 1px solid var(--neutral-200);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 32px;
+      z-index: 100;
+      box-shadow: var(--shadow-sm);
+    }
+    .topbar-left { display: flex; align-items: center; gap: 12px; }
+    .topbar-title {
+      font-size: 20px; font-weight: 700; color: var(--neutral-700);
+    }
+    .topbar-breadcrumb {
+      font-size: 13px; color: var(--neutral-400);
+      display: flex; align-items: center; gap: 6px;
+    }
+    .topbar-breadcrumb span { color: var(--neutral-500); }
+    .topbar-breadcrumb .sep { color: var(--neutral-300); }
+    .topbar-right { display: flex; align-items: center; gap: 16px; }
+    .topbar-profile {
+      display: flex; align-items: center; gap: 8px; cursor: pointer;
+    }
+    .topbar-profile .avatar {
+      width: 36px; height: 36px;
+      background: var(--brand-500);
+      border-radius: var(--radius-full);
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-weight: 700; font-size: 14px;
+    }
+    .topbar-profile .profile-info { line-height: 1.3; }
+    .topbar-profile .profile-name { font-size: 13px; font-weight: 500; color: var(--neutral-700); }
+    .topbar-profile .profile-role { font-size: 11px; color: var(--neutral-400); }
+    .perfil-select {
+      display: flex; align-items: center; gap: 6px;
+      padding: 5px 10px; border: 1px solid var(--neutral-200);
+      border-radius: var(--radius-sm); background: var(--neutral-0);
+      font-family: var(--font-body); font-size: 12px; color: var(--neutral-600);
+      cursor: pointer;
+    }
+
+    /* ── Main Layout ── */
+    .main {
+      margin-left: var(--sidebar-w);
+      padding-top: 56px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .page-content {
+      padding: 28px 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* ── Page Header ── */
+    .page-header {
+      display: flex; align-items: flex-start; justify-content: space-between;
+    }
+    .page-header-title h1 {
+      font-size: 22px; font-weight: 700; color: var(--neutral-700);
+    }
+    .page-header-title p {
+      font-size: 13px; color: var(--neutral-400); margin-top: 2px;
+    }
+
+    /* ── Filter Card ── */
+    .filter-card {
+      background: var(--neutral-0);
+      border: 1px solid var(--neutral-200);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
+      padding: 20px 24px;
+    }
+    .filter-card-title {
+      font-size: 13px; font-weight: 600; color: var(--neutral-500);
+      text-transform: uppercase; letter-spacing: .5px;
+      margin-bottom: 14px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .filter-cascade {
+      display: flex; align-items: flex-end; gap: 12px; flex-wrap: wrap;
+    }
+    .filter-group { display: flex; flex-direction: column; gap: 5px; flex: 1; min-width: 160px; }
+    .filter-group label {
+      font-size: 12px; font-weight: 500; color: var(--neutral-500);
+    }
+    .filter-group select, .filter-group input {
+      height: 36px;
+      border: 1px solid var(--neutral-200);
+      border-radius: var(--radius-sm);
+      padding: 0 10px;
+      font-family: var(--font-body);
+      font-size: 13px;
+      color: var(--neutral-600);
+      background: var(--neutral-0);
+      transition: border-color .15s;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238A95B2' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      padding-right: 28px;
+      cursor: pointer;
+    }
+    .filter-group select:focus, .filter-group input:focus {
+      outline: none; border-color: var(--brand-500);
+    }
+    .filter-group select:disabled {
+      background-color: var(--neutral-50);
+      color: var(--neutral-300);
+      cursor: not-allowed;
+    }
+    .filter-arrow {
+      color: var(--neutral-300);
+      font-size: 12px;
+      padding-bottom: 10px;
+      flex-shrink: 0;
+    }
+    .temporada-select-wrapper { position: relative; flex: 2; min-width: 260px; }
+    .temporada-select-wrapper .chips-count {
+      position: absolute; right: 32px; top: 50%; transform: translateY(-50%);
+      background: var(--brand-500); color: #fff;
+      border-radius: var(--radius-full);
+      font-size: 10px; font-weight: 700;
+      padding: 1px 6px; pointer-events: none;
+    }
+    .btn-search {
+      height: 36px; padding: 0 20px;
+      background: var(--brand-500);
+      color: #fff;
+      border: none; border-radius: var(--radius-md);
+      font-family: var(--font-body); font-size: 13px; font-weight: 500;
+      cursor: pointer; display: flex; align-items: center; gap: 6px;
+      flex-shrink: 0;
+      transition: background .15s;
+    }
+    .btn-search:hover { background: var(--brand-600); }
+    .cascade-hint {
+      font-size: 11px; color: var(--neutral-400);
+      margin-top: 8px; display: flex; align-items: center; gap: 4px;
+    }
+
+    /* ── Section Card ── */
+    .section-card {
+      background: var(--neutral-0);
+      border: 1px solid var(--neutral-200);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+    }
+    .section-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--neutral-200);
+      background: var(--neutral-50);
+      cursor: pointer; user-select: none;
+    }
+    .section-header-left { display: flex; align-items: center; gap: 10px; }
+    .section-icon {
+      width: 30px; height: 30px;
+      border-radius: var(--radius-sm);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px;
+    }
+    .section-icon.blue { background: var(--brand-50); color: var(--brand-500); }
+    .section-icon.green { background: var(--success-light); color: var(--success-dark); }
+    .section-title { font-size: 14px; font-weight: 600; color: var(--neutral-700); }
+    .section-count {
+      background: var(--neutral-100);
+      border: 1px solid var(--neutral-200);
+      border-radius: var(--radius-full);
+      font-size: 11px; font-weight: 600; color: var(--neutral-500);
+      padding: 1px 8px;
+    }
+    .section-chevron { color: var(--neutral-400); transition: transform .2s; }
+    .section-chevron.open { transform: rotate(180deg); }
+    .section-body { padding: 0; }
+
+    /* ── Breadcrumb trail ── */
+    .drill-breadcrumb {
+      display: flex; align-items: center; gap: 6px;
+      padding: 12px 20px;
+      background: var(--info-light);
+      border-bottom: 1px solid #D0E8FF;
+      font-size: 12px; flex-wrap: wrap;
+    }
+    .drill-breadcrumb .crumb {
+      color: var(--brand-500); cursor: pointer; font-weight: 500;
+    }
+    .drill-breadcrumb .crumb:hover { text-decoration: underline; }
+    .drill-breadcrumb .crumb.current { color: var(--neutral-600); font-weight: 600; cursor: default; }
+    .drill-breadcrumb .crumb.current:hover { text-decoration: none; }
+    .drill-breadcrumb .sep { color: var(--neutral-300); }
+
+    /* ── Data Table ── */
+    .data-table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    thead th {
+      padding: 10px 16px;
+      text-align: left;
+      font-size: 11px; font-weight: 600;
+      color: var(--neutral-500);
+      text-transform: uppercase; letter-spacing: .4px;
+      border-bottom: 1px solid var(--neutral-200);
+      background: var(--neutral-50);
+      white-space: nowrap;
+    }
+    thead th.center { text-align: center; }
+    tbody tr { transition: background .1s; }
+    tbody tr:hover { background: var(--neutral-50); }
+    tbody td {
+      padding: 11px 16px;
+      border-bottom: 1px solid var(--neutral-100);
+      color: var(--neutral-600);
+    }
+    tbody td.center { text-align: center; }
+    tbody tr:last-child td { border-bottom: none; }
+    .col-check { width: 40px; }
+    .col-code { width: 90px; }
+    .col-status { width: 120px; }
+    .link-cell { color: var(--brand-500); cursor: pointer; font-weight: 500; }
+    .link-cell:hover { text-decoration: underline; }
+    input[type="checkbox"] { width: 15px; height: 15px; cursor: pointer; accent-color: var(--brand-500); }
+
+    /* ── Status Badge ── */
+    .badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      border-radius: var(--radius-full);
+      padding: 3px 10px;
+      font-size: 11px; font-weight: 600;
+      white-space: nowrap;
+    }
+    .badge-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+    .badge.explorado   { background: var(--success-light); color: var(--success-dark); }
+    .badge.explorado .badge-dot   { background: var(--success-base); }
+    .badge.vigente     { background: var(--info-light);    color: var(--info-base); }
+    .badge.vigente .badge-dot     { background: var(--info-base); }
+    .badge.finalizado  { background: var(--neutral-100);   color: var(--neutral-500); }
+    .badge.finalizado .badge-dot  { background: var(--neutral-400); }
+    .badge.iniciar     { background: var(--warning-light); color: var(--warning-dark); }
+    .badge.iniciar .badge-dot     { background: var(--warning-base); }
+
+    /* ── Table Footer ── */
+    .table-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 20px;
+      border-top: 1px solid var(--neutral-200);
+      background: var(--neutral-50);
+      gap: 12px;
+    }
+    .table-footer-info { font-size: 12px; color: var(--neutral-400); white-space: nowrap; }
+    .table-footer-right { display: flex; align-items: center; gap: 10px; }
+    .paginator { display: flex; align-items: center; gap: 4px; }
+    .pag-btn {
+      width: 28px; height: 28px;
+      display: flex; align-items: center; justify-content: center;
+      border: 1px solid var(--neutral-200);
+      border-radius: var(--radius-sm);
+      background: var(--neutral-0);
+      cursor: pointer; font-size: 12px; color: var(--neutral-500);
+      transition: all .15s;
+    }
+    .pag-btn:hover { border-color: var(--brand-500); color: var(--brand-500); }
+    .pag-btn.active { background: var(--brand-500); border-color: var(--brand-500); color: #fff; font-weight: 600; }
+    .btn-download {
+      height: 32px; padding: 0 14px;
+      background: var(--neutral-0);
+      color: var(--brand-500);
+      border: 1px solid var(--brand-500);
+      border-radius: var(--radius-md);
+      font-family: var(--font-body); font-size: 12px; font-weight: 500;
+      cursor: pointer; display: flex; align-items: center; gap: 6px;
+      transition: all .15s;
+    }
+    .btn-download:hover { background: var(--brand-50); }
+    .btn-download:disabled { opacity: .4; cursor: not-allowed; }
+    .download-hint { font-size: 11px; color: var(--neutral-400); font-style: italic; }
+
+    /* ── Insight Cards ── */
+    .insights-section { padding: 20px; border-top: 1px solid var(--neutral-200); }
+    .insights-title { font-size: 12px; font-weight: 600; color: var(--neutral-500); text-transform: uppercase; letter-spacing: .4px; margin-bottom: 14px; }
+    .insights-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .insight-card {
+      background: var(--neutral-50);
+      border: 1px solid var(--neutral-200);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+      display: flex; flex-direction: column; gap: 6px;
+      border-left: 4px solid var(--brand-500);
+    }
+    .insight-card.green { border-left-color: var(--success-base); }
+    .insight-card.orange { border-left-color: var(--warning-base); }
+    .insight-number {
+      font-size: 32px; font-weight: 700; line-height: 1;
+      color: var(--neutral-700);
+    }
+    .insight-number.green { color: var(--success-dark); }
+    .insight-number.red { color: var(--error-base); }
+    .insight-label { font-size: 12px; color: var(--neutral-400); }
+
+    /* ── Empty State ── */
+    .empty-state {
+      display: flex; flex-direction: column; align-items: center;
+      padding: 60px 20px;
+      color: var(--neutral-400);
+      gap: 10px;
+    }
+    .empty-state i { font-size: 40px; color: var(--neutral-300); }
+    .empty-state p { font-size: 14px; font-weight: 500; color: var(--neutral-500); }
+    .empty-state span { font-size: 12px; color: var(--neutral-400); }
+
+    /* ── Legend pill ── */
+    .legend-row {
+      display: flex; align-items: center; gap: 20px;
+      flex-wrap: wrap;
+    }
+    .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--neutral-500); }
+
+    /* ── Tooltip ── */
+    [data-tooltip] { position: relative; }
+    [data-tooltip]:hover::after {
+      content: attr(data-tooltip);
+      position: absolute; bottom: calc(100% + 6px); left: 50%;
+      transform: translateX(-50%);
+      background: var(--neutral-700); color: #fff;
+      font-size: 11px; padding: 4px 8px;
+      border-radius: 6px; white-space: nowrap; z-index: 200;
+      pointer-events: none;
+    }
+
+    /* ── Modal ── */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,.35); z-index: 500;
+      align-items: center; justify-content: center;
+    }
+    .modal-overlay.visible { display: flex; }
+    .modal {
+      background: var(--neutral-0);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-md);
+      width: 560px; max-width: 90vw;
+      max-height: 80vh;
+      display: flex; flex-direction: column;
+    }
+    .modal-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--neutral-200);
+    }
+    .modal-header h3 { font-size: 15px; font-weight: 700; color: var(--neutral-700); }
+    .modal-close {
+      width: 28px; height: 28px;
+      display: flex; align-items: center; justify-content: center;
+      border: none; background: none; cursor: pointer;
+      border-radius: var(--radius-sm); color: var(--neutral-400);
+    }
+    .modal-close:hover { background: var(--neutral-100); }
+    .modal-body { padding: 20px; overflow-y: auto; }
+
+    /* ── Custom Select (Temporada) ── */
+    .custom-select-trigger {
+      height: 36px;
+      border: 1px solid var(--neutral-200);
+      border-radius: var(--radius-sm);
+      padding: 0 10px;
+      display: flex; align-items: center; gap: 8px;
+      cursor: pointer;
+      background: var(--neutral-0);
+      transition: border-color .15s;
+      font-size: 13px;
+      user-select: none;
+    }
+    .custom-select-trigger:hover,
+    .custom-select-trigger.open { border-color: var(--brand-500); }
+    .temp-count-badge {
+      background: var(--brand-500); color: #fff;
+      border-radius: var(--radius-full);
+      font-size: 10px; font-weight: 700;
+      padding: 1px 6px; flex-shrink: 0;
+    }
+    .custom-select-panel {
+      position: absolute;
+      top: calc(100% + 4px); left: 0; right: 0;
+      background: var(--neutral-0);
+      border: 1px solid var(--neutral-200);
+      border-radius: var(--radius-md);
+      box-shadow: 0 4px 16px rgba(0,0,0,.12);
+      z-index: 300;
+      overflow: hidden;
+    }
+    .custom-select-search {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--neutral-100);
+    }
+    .custom-select-search input {
+      flex: 1; border: none; outline: none;
+      font-family: var(--font-body); font-size: 13px;
+      color: var(--neutral-600);
+      background: transparent;
+    }
+    .custom-select-list { max-height: 220px; overflow-y: auto; }
+    .custom-select-group {
+      padding: 6px 12px 3px;
+      font-size: 10px; font-weight: 700;
+      color: var(--neutral-400);
+      text-transform: uppercase; letter-spacing: .6px;
+      background: var(--neutral-50);
+      border-bottom: 1px solid var(--neutral-100);
+    }
+    .custom-select-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 12px;
+      cursor: pointer;
+      transition: background .1s;
+      border-bottom: 1px solid var(--neutral-100);
+    }
+    .custom-select-item:last-child { border-bottom: none; }
+    .custom-select-item:hover { background: var(--neutral-50); }
+    .custom-select-item.selected { background: var(--brand-50); }
+    .custom-select-item input[type="checkbox"] {
+      width: 14px; height: 14px; flex-shrink: 0;
+      accent-color: var(--brand-500); pointer-events: none;
+    }
+    .custom-select-item-text {
+      flex: 1; font-size: 13px; color: var(--neutral-600);
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .custom-select-footer {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 8px 12px;
+      border-top: 1px solid var(--neutral-100);
+      background: var(--neutral-50);
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- ══ Sidebar ══ -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon"><i class="fa-solid fa-orbit"></i>O</div>
+    <span class="logo-text">Orbie</span>
+  </div>
+  <nav>
+    <div class="nav-section-title">Principal</div>
+    <a class="nav-item" href="#"><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
+    <a class="nav-item" href="#"><i class="fa-solid fa-shield-halved"></i> Administração</a>
+    <a class="nav-item" href="#"><i class="fa-solid fa-users-gear"></i> Ger. de Perfis</a>
+    <a class="nav-item" href="#"><i class="fa-solid fa-book-open"></i> Conteúdos</a>
+    <a class="nav-item" href="#"><i class="fa-solid fa-bell"></i> Notificações</a>
+
+    <div class="nav-section-title" style="margin-top:8px;">Relatórios</div>
+    <a class="nav-item" href="#"><i class="fa-solid fa-chart-line"></i> Acompanhamento</a>
+    <a class="nav-item" href="#"><i class="fa-solid fa-gamepad"></i> Jogadores</a>
+    <a class="nav-item" href="#"><i class="fa-solid fa-trophy"></i> Desempenho</a>
+    <a class="nav-item" href="#"><i class="fa-solid fa-circle-check"></i> Status dos Jogadores</a>
+    <a class="nav-item active" href="#"><i class="fa-solid fa-calendar-days"></i> Temporadas</a>
+    <a class="nav-item" href="#"><i class="fa-solid fa-download"></i> Downloads</a>
+    <a class="nav-item" href="#"><i class="fa-solid fa-star"></i> Habilidades</a>
+    <a class="nav-item" href="#"><i class="fa-solid fa-comment-dots"></i> Feedback de Questões</a>
+
+    <div class="nav-section-title" style="margin-top:8px;">Outros</div>
+    <a class="nav-item" href="#"><i class="fa-solid fa-file-contract"></i> Termos e Condições</a>
+    <a class="nav-item" href="#"><i class="fa-solid fa-plug"></i> Integração</a>
+    <a class="nav-item" href="#"><i class="fa-solid fa-circle-question"></i> Ajuda</a>
+  </nav>
+</aside>
+
+<!-- ══ Top Bar ══ -->
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="topbar-breadcrumb">
+      <span>Relatórios</span>
+      <span class="sep"><i class="fa-solid fa-chevron-right" style="font-size:9px;"></i></span>
+      <span style="color:var(--neutral-700); font-weight:600;">Temporadas</span>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <div class="perfil-select">
+      <i class="fa-solid fa-user-shield" style="font-size:11px;"></i>
+      Super Administrador
+      <i class="fa-solid fa-chevron-down" style="font-size:9px;"></i>
+    </div>
+    <div class="topbar-profile">
+      <div class="avatar">P</div>
+      <div class="profile-info">
+        <div class="profile-name">Professor SD</div>
+        <div class="profile-role">Super Administrador</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ Main ══ -->
+<main class="main">
+  <div class="page-content">
+
+    <!-- Page Header -->
+    <div class="page-header">
+      <div class="page-header-title">
+        <h1><i class="fa-solid fa-calendar-days" style="color:var(--brand-500); margin-right:8px; font-size:18px;"></i>Temporadas</h1>
+        <p>Visualize o progresso e o desempenho dos jogadores por temporada</p>
+      </div>
+    </div>
+
+    <!-- Filter Card -->
+    <div class="filter-card">
+      <div class="filter-card-title">
+        <i class="fa-solid fa-filter"></i> Filtros
+      </div>
+      <div class="filter-cascade">
+        <div class="filter-group">
+          <label for="etapa">Etapa de Ensino</label>
+          <select id="etapa" onchange="onEtapaChange()">
+            <option value="">Selecione</option>
+            <option value="ef" selected>Ensino Fundamental</option>
+            <option value="em">Ensino Médio</option>
+          </select>
+        </div>
+        <div class="filter-arrow"><i class="fa-solid fa-chevron-right"></i></div>
+        <div class="filter-group">
+          <label for="aplicacao">Aplicação</label>
+          <select id="aplicacao" onchange="onAplicacaoChange()">
+            <option value="">Selecione</option>
+            <option value="1" selected>1 - Orbie</option>
+            <option value="2">2 - Orbie Plus</option>
+          </select>
+        </div>
+        <div class="filter-arrow"><i class="fa-solid fa-chevron-right"></i></div>
+        <div class="filter-group">
+          <label for="publico">Público Alvo</label>
+          <select id="publico" onchange="onPublicoChange()">
+            <option value="">Selecione</option>
+            <option value="6ef" selected>6º ano - Ensino Fundamental</option>
+            <option value="7ef">7º ano - Ensino Fundamental</option>
+          </select>
+        </div>
+        <div class="filter-arrow"><i class="fa-solid fa-chevron-right"></i></div>
+        <div class="filter-group" style="flex:2; min-width:280px; position:relative;">
+          <label>Temporada <span style="font-size:10px; color:var(--neutral-400); font-weight:400;">(múltipla seleção)</span></label>
+          <!-- Trigger -->
+          <div id="tempTrigger" class="custom-select-trigger" onclick="toggleTempDropdown()">
+            <span id="tempTriggerText" style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--neutral-600);">Selecione a temporada</span>
+            <span id="tempBadgeCount" class="temp-count-badge" style="display:none;"></span>
+            <i class="fa-solid fa-chevron-down" style="font-size:10px; color:var(--neutral-400); flex-shrink:0; transition:transform .2s;" id="tempChevron"></i>
+          </div>
+          <!-- Panel -->
+          <div id="tempDropdown" class="custom-select-panel" style="display:none;">
+            <div class="custom-select-search">
+              <i class="fa-solid fa-magnifying-glass" style="color:var(--neutral-400); font-size:12px;"></i>
+              <input type="text" id="tempSearch" placeholder="Buscar temporada..." oninput="filterTemporadas(this.value)" />
+            </div>
+            <div class="custom-select-list" id="tempList">
+              <!-- Vigentes -->
+              <div class="custom-select-group">Vigentes</div>
+              <div class="custom-select-item" data-value="150" data-label="150 — PONTE SERRADA · ACE 2026 · EF6" data-status="vigente" onclick="toggleTemporada(this)">
+                <input type="checkbox" class="temp-cb" />
+                <span class="custom-select-item-text">150 — PONTE SERRADA · ACE 2026 · EF6</span>
+                <span class="badge vigente" style="font-size:10px; padding:2px 7px;"><span class="badge-dot"></span>Vigente</span>
+              </div>
+              <div class="custom-select-item" data-value="151" data-label="151 — CHAPECÓ · ACE 2026 · EF6" data-status="vigente" onclick="toggleTemporada(this)">
+                <input type="checkbox" class="temp-cb" />
+                <span class="custom-select-item-text">151 — CHAPECÓ · ACE 2026 · EF6</span>
+                <span class="badge vigente" style="font-size:10px; padding:2px 7px;"><span class="badge-dot"></span>Vigente</span>
+              </div>
+              <!-- Finalizadas -->
+              <div class="custom-select-group">Finalizadas</div>
+              <div class="custom-select-item" data-value="142" data-label="142 — JOAÇABA · ACE 2026 · EF6" data-status="finalizado" onclick="toggleTemporada(this)">
+                <input type="checkbox" class="temp-cb" />
+                <span class="custom-select-item-text">142 — JOAÇABA · ACE 2026 · EF6</span>
+                <span class="badge finalizado" style="font-size:10px; padding:2px 7px;"><span class="badge-dot"></span>Finalizada</span>
+              </div>
+              <div class="custom-select-item" data-value="130" data-label="130 — TEMPORADA EF6/2025 (Videira)" data-status="finalizado" onclick="toggleTemporada(this)">
+                <input type="checkbox" class="temp-cb" />
+                <span class="custom-select-item-text">130 — TEMPORADA EF6/2025 (Videira)</span>
+                <span class="badge finalizado" style="font-size:10px; padding:2px 7px;"><span class="badge-dot"></span>Finalizada</span>
+              </div>
+              <!-- A começar -->
+              <div class="custom-select-group">A começar</div>
+              <div class="custom-select-item" data-value="160" data-label="160 — XANXERÊ · ACE 2027 · EF6" data-status="iniciar" onclick="toggleTemporada(this)">
+                <input type="checkbox" class="temp-cb" />
+                <span class="custom-select-item-text">160 — XANXERÊ · ACE 2027 · EF6</span>
+                <span class="badge iniciar" style="font-size:10px; padding:2px 7px;"><span class="badge-dot"></span>A começar</span>
+              </div>
+            </div>
+            <div class="custom-select-footer">
+              <span id="tempSelCount" style="font-size:11px; color:var(--neutral-400);">Nenhuma selecionada</span>
+              <button onclick="clearTemporadas(); event.stopPropagation();" style="font-size:11px; color:var(--error-base); background:none; border:none; cursor:pointer; font-family:var(--font-body);">Limpar</button>
+            </div>
+          </div>
+        </div>
+        <button class="btn-search" onclick="showResults()">
+          <i class="fa-solid fa-magnifying-glass"></i> Buscar
+        </button>
+      </div>
+      <div class="cascade-hint">
+        <i class="fa-solid fa-circle-info"></i>
+        Preencha os filtros da esquerda para a direita — cada seleção carrega as opções do próximo campo.
+      </div>
+    </div>
+
+    <!-- Empty State (shown before search) -->
+    <div id="emptyState" class="section-card">
+      <div class="empty-state">
+        <i class="fa-solid fa-calendar-xmark"></i>
+        <p>Nenhuma temporada selecionada</p>
+        <span>Aplique os filtros acima e clique em Buscar para visualizar o relatório.</span>
+      </div>
+    </div>
+
+    <!-- Results (hidden until search) -->
+    <div id="resultsArea" style="display:none; flex-direction:column; gap:20px;">
+
+      <!-- Temporada ativa: banner de contexto -->
+      <div style="background:var(--brand-50); border:1px solid #C0D4FF; border-radius:var(--radius-md); padding:12px 20px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span style="background:var(--brand-500); color:#fff; border-radius:var(--radius-full); font-size:10px; font-weight:700; padding:2px 8px;">TEMPORADA</span>
+          <span style="font-size:14px; font-weight:600; color:var(--neutral-700);">150 — PONTE SERRADA · ACE 2026 · EF6</span>
+          <span class="badge vigente"><span class="badge-dot"></span>Vigente</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:20px; font-size:12px; color:var(--neutral-500);">
+          <span><i class="fa-solid fa-calendar-days" style="margin-right:5px; color:var(--neutral-400);"></i>09/03/2026 → 18/12/2026</span>
+          <span><i class="fa-solid fa-users" style="margin-right:5px; color:var(--neutral-400);"></i>6º ano — Ensino Fundamental</span>
+          <span><i class="fa-solid fa-globe" style="margin-right:5px; color:var(--neutral-400);"></i>3 planetas</span>
+          <span><i class="fa-solid fa-school" style="margin-right:5px; color:var(--neutral-400);"></i>1 escola</span>
+        </div>
+      </div>
+
+      <!-- Status Legend (compacta — mantida apenas como referência rápida para status nas tabelas) -->
+      <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+        <span style="font-size:12px; color:var(--neutral-400); font-weight:500;">Status nas tabelas:</span>
+        <span class="badge explorado"><span class="badge-dot"></span> Explorado</span>
+        <span class="badge vigente"><span class="badge-dot"></span> Em andamento</span>
+        <span class="badge iniciar"><span class="badge-dot"></span> A iniciar</span>
+        <span class="badge finalizado"><span class="badge-dot"></span> Finalizado</span>
+      </div>
+
+      <!-- ── Planetas Section ── -->
+      <div class="section-card">
+        <div class="section-header" onclick="toggleSection('planetas')">
+          <div class="section-header-left">
+            <div class="section-icon blue"><i class="fa-solid fa-globe"></i></div>
+            <span class="section-title">Planetas</span>
+            <span class="section-count" id="planetCount">3 planetas</span>
+          </div>
+          <i class="fa-solid fa-chevron-down section-chevron open" id="planetChevron"></i>
+        </div>
+
+        <div class="section-body" id="planetasBody">
+
+          <!-- Level 1: Planetas Table -->
+          <div id="level1" class="data-table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th class="col-check"><input type="checkbox" id="checkAll" onchange="toggleAllChecks(this)" /></th>
+                  <th class="col-code center">Código</th>
+                  <th>Nome do Planeta</th>
+                  <th class="center">Data de Início</th>
+                  <th class="center">Data de Término</th>
+                  <th class="col-status center">Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><input type="checkbox" class="row-check" onchange="updateDownloadBtn()" /></td>
+                  <td class="center">463</td>
+                  <td><span class="link-cell" onclick="drillTo(2, 'Onboarding 6')">Onboarding 6</span></td>
+                  <td class="center">09/03/2026</td>
+                  <td class="center">18/12/2026</td>
+                  <td class="center"><span class="badge explorado"><span class="badge-dot"></span>Explorado</span></td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox" class="row-check" onchange="updateDownloadBtn()" /></td>
+                  <td class="center">481</td>
+                  <td><span class="link-cell" onclick="drillTo(2, 'Tropeiro 6')">Tropeiro 6</span></td>
+                  <td class="center">09/03/2026</td>
+                  <td class="center">18/12/2026</td>
+                  <td class="center"><span class="badge explorado"><span class="badge-dot"></span>Explorado</span></td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox" class="row-check" onchange="updateDownloadBtn()" /></td>
+                  <td class="center">480</td>
+                  <td><span class="link-cell" onclick="drillTo(2, 'Travessia 5')">Travessia 5</span></td>
+                  <td class="center">09/03/2026</td>
+                  <td class="center">18/12/2026</td>
+                  <td class="center"><span class="badge explorado"><span class="badge-dot"></span>Explorado</span></td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="table-footer">
+              <span class="table-footer-info">1–3 de 3 registros</span>
+              <div class="paginator">
+                <div class="pag-btn"><i class="fa-solid fa-angles-left" style="font-size:9px;"></i></div>
+                <div class="pag-btn"><i class="fa-solid fa-angle-left" style="font-size:9px;"></i></div>
+                <div class="pag-btn active">1</div>
+                <div class="pag-btn"><i class="fa-solid fa-angle-right" style="font-size:9px;"></i></div>
+                <div class="pag-btn"><i class="fa-solid fa-angles-right" style="font-size:9px;"></i></div>
+              </div>
+              <div class="table-footer-right">
+                <span class="download-hint" id="downloadHint">Selecione planetas para baixar</span>
+                <button class="btn-download" id="btnDownload" disabled onclick="alert('Gerando relatório...')">
+                  <i class="fa-solid fa-download"></i> Download do Relatório
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Level 2: Subníveis (hidden) -->
+          <div id="level2" style="display:none;">
+            <div class="drill-breadcrumb">
+              <span class="crumb" onclick="drillTo(1, '')"><i class="fa-solid fa-globe" style="font-size:10px;"></i> Planetas</span>
+              <span class="sep"><i class="fa-solid fa-chevron-right" style="font-size:9px;"></i></span>
+              <span class="crumb current" id="level2Title">—</span>
+            </div>
+            <div class="data-table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th class="col-check"><input type="checkbox" /></th>
+                    <th>Etapa</th>
+                    <th class="center">Pontuação</th>
+                    <th class="center">Questões</th>
+                    <th class="center">Informativos</th>
+                    <th class="col-status center">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><input type="checkbox" /></td>
+                    <td><span class="link-cell" onclick="drillTo(3, 'Fase 1')">Fase 1 — Introdução</span></td>
+                    <td class="center">100</td>
+                    <td class="center">8</td>
+                    <td class="center">2</td>
+                    <td class="center"><span class="badge explorado"><span class="badge-dot"></span>Explorado</span></td>
+                  </tr>
+                  <tr>
+                    <td><input type="checkbox" /></td>
+                    <td><span class="link-cell" onclick="drillTo(3, 'Fase 2')">Fase 2 — Desenvolvimento</span></td>
+                    <td class="center">150</td>
+                    <td class="center">12</td>
+                    <td class="center">3</td>
+                    <td class="center"><span class="badge explorado"><span class="badge-dot"></span>Explorado</span></td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="table-footer">
+                <span class="table-footer-info">1–2 de 2 registros</span>
+                <div class="paginator">
+                  <div class="pag-btn"><i class="fa-solid fa-angles-left" style="font-size:9px;"></i></div>
+                  <div class="pag-btn"><i class="fa-solid fa-angle-left" style="font-size:9px;"></i></div>
+                  <div class="pag-btn active">1</div>
+                  <div class="pag-btn"><i class="fa-solid fa-angle-right" style="font-size:9px;"></i></div>
+                  <div class="pag-btn"><i class="fa-solid fa-angles-right" style="font-size:9px;"></i></div>
+                </div>
+                <div class="table-footer-right">
+                  <button class="btn-download">
+                    <i class="fa-solid fa-download"></i> Download do Relatório
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Level 3: Conteúdos (hidden) -->
+          <div id="level3" style="display:none;">
+            <div class="drill-breadcrumb">
+              <span class="crumb" onclick="drillTo(1, '')"><i class="fa-solid fa-globe" style="font-size:10px;"></i> Planetas</span>
+              <span class="sep"><i class="fa-solid fa-chevron-right" style="font-size:9px;"></i></span>
+              <span class="crumb" onclick="drillTo(2, currentPlanet)" id="level3Planet">—</span>
+              <span class="sep"><i class="fa-solid fa-chevron-right" style="font-size:9px;"></i></span>
+              <span class="crumb current" id="level3Title">—</span>
+            </div>
+            <div class="data-table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th class="col-check"><input type="checkbox" /></th>
+                    <th>Fase</th>
+                    <th class="center">Versão</th>
+                    <th class="center">Tipo</th>
+                    <th class="center">Componente</th>
+                    <th class="col-status center">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><input type="checkbox" /></td>
+                    <td><span class="link-cell" onclick="drillTo(4, 'Questão 01')">Questão 01 — Introdução</span></td>
+                    <td class="center">v1</td>
+                    <td class="center">Múltipla escolha</td>
+                    <td class="center">Quiz</td>
+                    <td class="center"><span class="badge explorado"><span class="badge-dot"></span>Explorado</span></td>
+                  </tr>
+                  <tr>
+                    <td><input type="checkbox" /></td>
+                    <td><span class="link-cell" onclick="drillTo(4, 'Questão 02')">Questão 02 — Sequência</span></td>
+                    <td class="center">v2</td>
+                    <td class="center">Arrastar e soltar</td>
+                    <td class="center">DragDrop</td>
+                    <td class="center"><span class="badge explorado"><span class="badge-dot"></span>Explorado</span></td>
+                  </tr>
+                </tbody>
+              </table>
+              <div class="table-footer">
+                <span class="table-footer-info">1–2 de 2 registros</span>
+                <div class="paginator">
+                  <div class="pag-btn"><i class="fa-solid fa-angles-left" style="font-size:9px;"></i></div>
+                  <div class="pag-btn"><i class="fa-solid fa-angle-left" style="font-size:9px;"></i></div>
+                  <div class="pag-btn active">1</div>
+                  <div class="pag-btn"><i class="fa-solid fa-angle-right" style="font-size:9px;"></i></div>
+                  <div class="pag-btn"><i class="fa-solid fa-angles-right" style="font-size:9px;"></i></div>
+                </div>
+                <div class="table-footer-right">
+                  <button class="btn-download">
+                    <i class="fa-solid fa-download"></i> Download do Relatório
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Level 4: Detalhes (hidden) -->
+          <div id="level4" style="display:none;">
+            <div class="drill-breadcrumb">
+              <span class="crumb" onclick="drillTo(1, '')"><i class="fa-solid fa-globe" style="font-size:10px;"></i> Planetas</span>
+              <span class="sep"><i class="fa-solid fa-chevron-right" style="font-size:9px;"></i></span>
+              <span class="crumb" onclick="drillTo(2, currentPlanet)" id="level4Planet">—</span>
+              <span class="sep"><i class="fa-solid fa-chevron-right" style="font-size:9px;"></i></span>
+              <span class="crumb" onclick="drillTo(3, currentPhase)" id="level4Phase">—</span>
+              <span class="sep"><i class="fa-solid fa-chevron-right" style="font-size:9px;"></i></span>
+              <span class="crumb current" id="level4Title">—</span>
+            </div>
+            <div class="insights-section">
+              <div class="insights-title"><i class="fa-solid fa-chart-bar"></i> Insights da Questão</div>
+              <div class="insights-grid">
+                <div class="insight-card">
+                  <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+                    <i class="fa-solid fa-users" style="color:var(--brand-500); font-size:14px;"></i>
+                    <span style="font-size:11px; font-weight:600; color:var(--neutral-400); text-transform:uppercase; letter-spacing:.4px;">Participação</span>
+                  </div>
+                  <div class="insight-number">74<span style="font-size:18px;">%</span></div>
+                  <div class="insight-label">dos jogadores já passaram por esta questão</div>
+                </div>
+                <div class="insight-card green">
+                  <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+                    <i class="fa-solid fa-chart-pie" style="color:var(--success-base); font-size:14px;"></i>
+                    <span style="font-size:11px; font-weight:600; color:var(--neutral-400); text-transform:uppercase; letter-spacing:.4px;">Acertos vs. Erros</span>
+                  </div>
+                  <div style="display:flex; align-items:baseline; gap:16px; margin-top:4px;">
+                    <div>
+                      <div class="insight-number green" style="font-size:28px;">62<span style="font-size:14px;">%</span></div>
+                      <div class="insight-label" style="color:var(--success-dark); font-weight:500;">acertaram</div>
+                    </div>
+                    <div style="width:1px; height:40px; background:var(--neutral-200); align-self:center;"></div>
+                    <div>
+                      <div class="insight-number red" style="font-size:28px;">38<span style="font-size:14px;">%</span></div>
+                      <div class="insight-label" style="color:var(--error-base); font-weight:500;">erraram</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="insight-card orange">
+                  <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+                    <i class="fa-solid fa-clock" style="color:var(--warning-base); font-size:14px;"></i>
+                    <span style="font-size:11px; font-weight:600; color:var(--neutral-400); text-transform:uppercase; letter-spacing:.4px;">Tempo Médio</span>
+                  </div>
+                  <div class="insight-number" style="font-size:26px;">1m 42s</div>
+                  <div class="insight-label">tempo médio de conclusão da questão</div>
+                </div>
+              </div>
+            </div>
+            <div class="table-footer" style="border-top: 1px solid var(--neutral-200);">
+              <span></span>
+              <button class="btn-download" onclick="alert('Gerando relatório...')">
+                <i class="fa-solid fa-download"></i> Download do Relatório
+              </button>
+            </div>
+          </div>
+
+        </div><!-- /section-body -->
+      </div><!-- /section-card planetas -->
+
+      <!-- ── Escolas Section ── -->
+      <div class="section-card">
+        <div class="section-header" onclick="toggleSection('escolas')">
+          <div class="section-header-left">
+            <div class="section-icon green"><i class="fa-solid fa-school"></i></div>
+            <span class="section-title">Escolas Participantes</span>
+            <span class="section-count">1 escola</span>
+          </div>
+          <i class="fa-solid fa-chevron-down section-chevron open" id="escolasChevron"></i>
+        </div>
+        <div class="section-body" id="escolasBody">
+          <div class="data-table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th class="center" style="width:90px;">Código <i class="fa-solid fa-sort" style="font-size:9px; color:var(--neutral-300);"></i></th>
+                  <th>Nome da Escola <i class="fa-solid fa-sort" style="font-size:9px; color:var(--neutral-300);"></i></th>
+                  <th class="center">Tipo da Escola <i class="fa-solid fa-sort" style="font-size:9px; color:var(--neutral-300);"></i></th>
+                  <th class="center" style="width:100px;">Turmas <i class="fa-solid fa-sort" style="font-size:9px; color:var(--neutral-300);"></i></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="center">60</td>
+                  <td>EBM Antônio Paglia (Ponte Serrada)</td>
+                  <td class="center"><span style="color:var(--neutral-600);">Escola Pública</span></td>
+                  <td class="center">
+                    <div style="display:flex; align-items:center; justify-content:center; gap:8px;">
+                      <span style="font-weight:600; color:var(--neutral-700);">2</span>
+                      <button onclick="openModal()" data-tooltip="Ver turmas"
+                        style="height:26px; padding:0 10px; background:var(--neutral-0); border:1px solid var(--neutral-200); border-radius:var(--radius-sm); font-family:var(--font-body); font-size:11px; color:var(--brand-500); cursor:pointer; display:flex; align-items:center; gap:5px; transition:all .15s;"
+                        onmouseover="this.style.borderColor='var(--brand-500)'; this.style.background='var(--brand-50)'"
+                        onmouseout="this.style.borderColor='var(--neutral-200)'; this.style.background='var(--neutral-0)'">
+                        <i class="fa-solid fa-eye"></i> Ver turmas
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="table-footer">
+              <span class="table-footer-info">1–1 de 1 registro</span>
+              <div class="paginator">
+                <div class="pag-btn"><i class="fa-solid fa-angles-left" style="font-size:9px;"></i></div>
+                <div class="pag-btn"><i class="fa-solid fa-angle-left" style="font-size:9px;"></i></div>
+                <div class="pag-btn active">1</div>
+                <div class="pag-btn"><i class="fa-solid fa-angle-right" style="font-size:9px;"></i></div>
+                <div class="pag-btn"><i class="fa-solid fa-angles-right" style="font-size:9px;"></i></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /resultsArea -->
+  </div><!-- /page-content -->
+</main>
+
+<!-- Modal Turmas -->
+<div class="modal-overlay" id="turmasModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3><i class="fa-solid fa-users" style="color:var(--brand-500); margin-right:6px;"></i>Turmas — EBM Antônio Paglia</h3>
+      <button class="modal-close" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="modal-body">
+      <table>
+        <thead>
+          <tr>
+            <th class="center" style="width:120px;">Código da Turma</th>
+            <th>Apelido</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="center">T001</td>
+            <td>Turma A — Manhã</td>
+          </tr>
+          <tr>
+            <td class="center">T002</td>
+            <td>Turma B — Tarde</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+  let currentPlanet = '';
+  let currentPhase  = '';
+
+  /* ── Custom Temporada Dropdown ── */
+  let selectedTemporadas = [];
+
+  function toggleTempDropdown() {
+    const panel   = document.getElementById('tempDropdown');
+    const trigger = document.getElementById('tempTrigger');
+    const chevron = document.getElementById('tempChevron');
+    const open    = panel.style.display === 'none';
+    panel.style.display = open ? '' : 'none';
+    trigger.classList.toggle('open', open);
+    chevron.style.transform = open ? 'rotate(180deg)' : '';
+    if (open) document.getElementById('tempSearch').focus();
+  }
+
+  function toggleTemporada(el) {
+    const val   = el.dataset.value;
+    const label = el.dataset.label;
+    const cb    = el.querySelector('input[type="checkbox"]');
+    const idx   = selectedTemporadas.findIndex(t => t.value === val);
+
+    if (idx > -1) {
+      selectedTemporadas.splice(idx, 1);
+      el.classList.remove('selected');
+      cb.checked = false;
+    } else {
+      selectedTemporadas.push({ value: val, label, status: el.dataset.status });
+      el.classList.add('selected');
+      cb.checked = true;
+    }
+    updateTempTrigger();
+  }
+
+  function updateTempTrigger() {
+    const txt    = document.getElementById('tempTriggerText');
+    const badge  = document.getElementById('tempBadgeCount');
+    const count  = document.getElementById('tempSelCount');
+    const n      = selectedTemporadas.length;
+
+    if (n === 0) {
+      txt.textContent  = 'Selecione a temporada';
+      txt.style.color  = 'var(--neutral-400)';
+      badge.style.display = 'none';
+      count.textContent = 'Nenhuma selecionada';
+    } else if (n === 1) {
+      txt.textContent  = selectedTemporadas[0].label;
+      txt.style.color  = 'var(--neutral-600)';
+      badge.style.display = 'none';
+      count.textContent = '1 selecionada';
+    } else {
+      txt.textContent  = n + ' temporadas selecionadas';
+      txt.style.color  = 'var(--neutral-700)';
+      badge.textContent   = n;
+      badge.style.display = '';
+      count.textContent   = n + ' selecionadas';
+    }
+  }
+
+  function filterTemporadas(query) {
+    const q     = query.toLowerCase();
+    const items = document.querySelectorAll('.custom-select-item');
+    const groups = document.querySelectorAll('.custom-select-group');
+
+    items.forEach(item => {
+      const match = item.dataset.label.toLowerCase().includes(q);
+      item.style.display = match ? '' : 'none';
+    });
+
+    groups.forEach(group => {
+      const next = group.nextElementSibling;
+      const hasVisible = [...group.parentElement.querySelectorAll('.custom-select-item')]
+        .filter(i => i.previousElementSibling === group || (i.closest('.custom-select-list') && group.nextElementSibling === i))
+        .some(i => i.style.display !== 'none');
+      group.style.display = '';
+    });
+  }
+
+  function clearTemporadas() {
+    selectedTemporadas = [];
+    document.querySelectorAll('.custom-select-item').forEach(el => {
+      el.classList.remove('selected');
+      el.querySelector('input[type="checkbox"]').checked = false;
+    });
+    updateTempTrigger();
+  }
+
+  // Fecha dropdown ao clicar fora
+  document.addEventListener('click', function(e) {
+    const panel   = document.getElementById('tempDropdown');
+    const trigger = document.getElementById('tempTrigger');
+    if (!trigger.contains(e.target) && !panel.contains(e.target)) {
+      panel.style.display = 'none';
+      trigger.classList.remove('open');
+      document.getElementById('tempChevron').style.transform = '';
+    }
+  });
+
+  function showResults() {
+    document.getElementById('emptyState').style.display  = 'none';
+    document.getElementById('resultsArea').style.display = 'flex';
+  }
+
+  function toggleSection(id) {
+    const body    = document.getElementById(id + 'Body');
+    const chevron = document.getElementById(id + 'Chevron');
+    const hidden  = body.style.display === 'none';
+    body.style.display = hidden ? '' : 'none';
+    chevron.classList.toggle('open', hidden);
+  }
+
+  function drillTo(level, label) {
+    [1,2,3,4].forEach(n => {
+      document.getElementById('level' + n).style.display = n === level ? '' : 'none';
+    });
+
+    if (level === 2) {
+      currentPlanet = label;
+      document.getElementById('level2Title').textContent   = label;
+    }
+    if (level === 3) {
+      currentPhase = label;
+      document.getElementById('level3Planet').textContent  = currentPlanet;
+      document.getElementById('level3Title').textContent   = label;
+    }
+    if (level === 4) {
+      document.getElementById('level4Planet').textContent  = currentPlanet;
+      document.getElementById('level4Phase').textContent   = currentPhase;
+      document.getElementById('level4Title').textContent   = label;
+    }
+  }
+
+  function toggleAllChecks(source) {
+    document.querySelectorAll('.row-check').forEach(cb => cb.checked = source.checked);
+    updateDownloadBtn();
+  }
+
+  function updateDownloadBtn() {
+    const anyChecked = [...document.querySelectorAll('.row-check')].some(cb => cb.checked);
+    const btn  = document.getElementById('btnDownload');
+    const hint = document.getElementById('downloadHint');
+    btn.disabled       = !anyChecked;
+    hint.style.display = anyChecked ? 'none' : '';
+  }
+
+  function openModal()  { document.getElementById('turmasModal').classList.add('visible'); }
+  function closeModal() { document.getElementById('turmasModal').classList.remove('visible'); }
+
+  document.getElementById('turmasModal').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+  });
+</script>
+</body>
+</html>

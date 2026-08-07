@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Criando Trilha — Orbie</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: #0d1a32;
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── MAIN ── */
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      padding: 0 24px;
+    }
+
+    /* ── SPINNER ── */
+    .spinner {
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      border: 4px solid rgba(255,255,255,0.1);
+      border-top-color: #37ec65;
+      animation: spin 0.9s linear infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* ── TEXT ── */
+    .loading-title {
+      font-weight: 700;
+      font-size: 16px;
+      line-height: 24px;
+      text-align: center;
+    }
+    .loading-desc {
+      font-weight: 400;
+      font-size: 13px;
+      line-height: 20px;
+      color: rgba(255,255,255,0.6);
+      text-align: center;
+      max-width: 375px;
+    }
+
+    /* ── BOTTOM ── */
+    .bottom {
+      padding: 24px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .btn-cancelar {
+      background: transparent;
+      border: 2px solid #1d3258;
+      border-radius: 16px;
+      height: 48px;
+      width: 628px;
+      max-width: 100%;
+      font-family: 'Roboto', sans-serif;
+      font-weight: 700;
+      font-size: 16px;
+      color: #fff;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .btn-cancelar:hover { background: rgba(255,255,255,0.06); border-color: #526d98; }
+  </style>
+</head>
+<body>
+
+  <div class="main">
+    <div class="spinner"></div>
+    <p class="loading-title">Criando sua trilha...</p>
+    <p class="loading-desc">Estamos selecionando as melhores questões para você.</p>
+  </div>
+
+  <div class="bottom">
+    <button class="btn-cancelar" onclick="cancelar()">Cancelar</button>
+  </div>
+
+<script>
+  // Redireciona para a trilha não iniciada após 2,5s simulando o carregamento
+  const timer = setTimeout(() => {
+    location.href = 'trilha-nao-iniciada.html';
+  }, 2500);
+
+  function cancelar() {
+    clearTimeout(timer);
+    location.href = 'index.html';
+  }
+</script>
+</body>
+</html>

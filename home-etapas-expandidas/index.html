@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home — Etapas Expandidas — Orbie App</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Outfit:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-top:        #06015D;
+      --bg-bottom:     #790097;
+      --surface:       #142A51;
+      --surface-2:     #1A1650;
+      --border:        #2A1B6A;
+      --primary:       #0059E7;
+      --primary-h:     #3F84F3;
+      --primary-400:   #0040A7;
+      --green-400:     #12B76A;
+      --green-300:     #2ABC4E;
+      --yellow:        #FFEA24;
+      --star-off:      #526D98;
+      --orange:        #F79009;
+      --text:          #FFFFFF;
+      --text-2:        #99C0FF;
+      --text-3:        rgba(255,255,255,0.5);
+      --nav-h:         64px;
+      --nav-m:         24px;
+      --nav-r:         12px;
+      --max-w:         928px;
+      /* etapa status colors */
+      --done-bg:       rgba(18,183,106,0.12);
+      --done-border:   rgba(18,183,106,0.35);
+      --done-text:     #12B76A;
+      --active-bg:     rgba(0,89,231,0.15);
+      --active-border: rgba(0,89,231,0.45);
+      --active-text:   #3F84F3;
+      --locked-bg:     rgba(82,109,152,0.12);
+      --locked-border: rgba(82,109,152,0.25);
+      --locked-text:   #526D98;
+    }
+
+    html, body { height: 100%; }
+    body {
+      font-family: 'Outfit', sans-serif;
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+      background: var(--bg-top);
+    }
+
+    /* ── BACKGROUND ── */
+    .bg { position: fixed; inset: 0; z-index: 0;
+      background: linear-gradient(180deg, #06015D 0%, #790097 86%, #790097 100%); }
+    .bg-stars { position: fixed; inset: 0; z-index: 1; pointer-events: none;
+      background-image:
+        radial-gradient(1.5px 1.5px at  8%  6%, rgba(255,255,255,.85) 0%, transparent 100%),
+        radial-gradient(1px   1px   at 18% 14%, rgba(255,255,255,.6)  0%, transparent 100%),
+        radial-gradient(2px   2px   at 55%  3%, rgba(255,255,255,.9)  0%, transparent 100%),
+        radial-gradient(1px   1px   at 78%  8%, rgba(255,255,255,.7)  0%, transparent 100%),
+        radial-gradient(1px   1px   at 42% 22%, rgba(255,255,255,.5)  0%, transparent 100%),
+        radial-gradient(1px   1px   at 91% 25%, rgba(255,255,255,.55) 0%, transparent 100%),
+        radial-gradient(1px   1px   at 30% 45%, rgba(255,255,255,.35) 0%, transparent 100%),
+        radial-gradient(1px   1px   at 65% 50%, rgba(255,255,255,.4)  0%, transparent 100%),
+        radial-gradient(1px   1px   at 82% 60%, rgba(255,255,255,.35) 0%, transparent 100%); }
+
+    /* ── METEORS ── */
+    .meteors { position: fixed; top: 0; left: 0; right: 0; height: 260px;
+      z-index: 2; pointer-events: none; overflow: hidden; }
+    @keyframes mh { 0%{transform:translateX(110vw);opacity:0} 5%{opacity:1} 95%{opacity:.7} 100%{transform:translateX(-15vw);opacity:0} }
+    .rock { position: absolute; border-radius: 40%;
+      background: radial-gradient(ellipse at 35% 35%, #C0CADB 0%, #7187A9 50%, #31558A 100%);
+      box-shadow: inset -2px -2px 4px rgba(0,0,0,.4); animation: mh linear infinite; }
+    .r1{width:9px;height:11px;top:22px;animation-duration:20s;animation-delay:0s}
+    .r2{width:9px;height:12px;top:185px;animation-duration:20s;animation-delay:5s;opacity:.7}
+    .r3{width:24px;height:30px;top:140px;animation-duration:20s;animation-delay:10s;opacity:.75}
+    .r4{width:43px;height:44px;top:99px;animation-duration:20s;animation-delay:15s;opacity:.85}
+    .r5{width:53px;height:53px;top:22px;animation-duration:20s;animation-delay:18s}
+
+    /* ── APP SHELL ── */
+    .app { position: relative; z-index: 3; min-height: 100vh;
+      padding-bottom: calc(var(--nav-h) + var(--nav-m)*2 + 16px); }
+
+    /* ── LOGO BAR ── */
+    .logo-bar { width: 100%; max-width: var(--max-w); margin: 0 auto;
+      padding: 28px 24px 42px;
+      display: flex; align-items: center; justify-content: space-between; }
+    .logo-spacer { width: 40px; }
+    .orbie-logo { display: flex; align-items: center; gap: 10px; cursor: pointer;
+      filter: drop-shadow(0 0 16px rgba(255,255,255,.55)) drop-shadow(0 0 6px rgba(255,255,255,.4)); }
+    .orbie-logo-text { height: 23px; width: auto; overflow: visible; }
+    .notif-btn { width: 40px; height: 40px; border-radius: 50%;
+      background: rgba(255,255,255,.08); border: 1.5px solid rgba(255,255,255,.15);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: background .2s; position: relative; }
+    .notif-btn:hover { background: rgba(255,255,255,.15); }
+    .notif-dot { position: absolute; top: 6px; right: 7px; width: 9px; height: 9px;
+      background: var(--orange); border-radius: 50%; }
+
+    /* ══════════════════════════════════════════════
+       PLANET ROW — estrutura principal
+       Cada planeta ocupa a largura toda.
+       Globo alternado esq/dir, etapas no lado oposto.
+    ══════════════════════════════════════════════ */
+    .planets-list { width: 100%; max-width: var(--max-w); margin: 0 auto; padding: 0; }
+
+    .planet-block {
+      display: flex;
+      align-items: flex-start;
+      padding: 0 24px 72px;
+      gap: 32px;
+    }
+    /* index par → globo esquerda */
+    .planet-block.left  { flex-direction: row; }
+    /* index ímpar → globo direita */
+    .planet-block.right { flex-direction: row-reverse; }
+
+    /* ── Globo ── */
+    .globe-col { flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+    .globe-wrap {
+      position: relative;
+      width: min(280px, 30vw);
+      height: min(280px, 30vw);
+      cursor: pointer;
+    }
+    @keyframes pulse { 0%{transform:scale(1);opacity:.45} 70%{transform:scale(1.22);opacity:0} 100%{transform:scale(1.22);opacity:0} }
+    .pulse { position: absolute; inset: -8%; border-radius: 50%;
+      border: 2px solid rgba(255,255,255,.3); animation: pulse 2s ease-out infinite; pointer-events: none; }
+    .pulse-2 { animation-delay: 1s; }
+    .planet-svg { width: 100%; height: 100%; border-radius: 50%; display: block;
+      transition: transform .3s ease; }
+    .globe-wrap:hover .planet-svg { transform: scale(1.04); }
+    .sig-overlay { position: absolute; inset: 0; display: flex;
+      align-items: center; justify-content: center; pointer-events: none; z-index: 2; }
+    .sig-face { width: 33.3%; }
+    @keyframes sig-float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-4px)} }
+    .sig-face { animation: sig-float 2.5s ease-in-out infinite; }
+
+    /* Planet identity below globe */
+    .planet-identity { text-align: center; }
+    .planet-name {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 700; font-size: clamp(14px,2vw,20px);
+      color: #fff; letter-spacing: 1px; margin-bottom: 4px;
+    }
+    .stars-row { display: flex; align-items: center; justify-content: center; gap: 4px; margin-bottom: 2px; }
+    .star-on  { color: var(--yellow); font-size: 15px; }
+    .star-off { color: var(--star-off); font-size: 15px; }
+    .planet-status-text { font-size: 11px; color: var(--text-3); }
+
+    /* ══════════════════════════════════════════════
+       ETAPAS COLUMN — lista de etapas ao lado do globo
+    ══════════════════════════════════════════════ */
+    .etapas-col {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding-top: 16px; /* alinha visualmente com o centro do globo */
+    }
+
+    .etapas-header {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 10px; font-weight: 700;
+      color: rgba(255,255,255,.35);
+      text-transform: uppercase; letter-spacing: 2px;
+      margin-bottom: 4px;
+    }
+
+    /* ── Etapa card ── */
+    .etapa-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-radius: 12px;
+      padding: 12px 14px;
+      cursor: pointer;
+      transition: background .15s, transform .1s;
+      position: relative;
+      overflow: hidden;
+    }
+    .etapa-card:hover { transform: translateX(3px); }
+    .etapa-card.done    { background: var(--done-bg);   border: 1px solid var(--done-border); }
+    .etapa-card.active  { background: var(--active-bg); border: 1px solid var(--active-border); }
+    .etapa-card.locked  { background: var(--locked-bg); border: 1px solid var(--locked-border); cursor: default; opacity: .65; }
+    .etapa-card:hover:not(.locked) { background-color: rgba(255,255,255,.06); }
+
+    /* Número da etapa */
+    .etapa-num {
+      width: 32px; height: 32px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Orbitron', sans-serif; font-weight: 700; font-size: 12px;
+      flex-shrink: 0;
+    }
+    .done   .etapa-num { background: var(--green-400); color: #fff; }
+    .active .etapa-num { background: var(--primary);   color: #fff; }
+    .locked .etapa-num { background: rgba(82,109,152,.25); color: var(--locked-text); }
+
+    /* Info */
+    .etapa-info { flex: 1; min-width: 0; }
+    .etapa-title {
+      font-weight: 700; font-size: 13px; color: #fff;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      margin-bottom: 5px;
+    }
+    .locked .etapa-title { color: var(--locked-text); }
+
+    /* Mini progress bar */
+    .etapa-bar-wrap { display: flex; align-items: center; gap: 8px; }
+    .etapa-bar {
+      flex: 1; height: 4px; border-radius: 100px;
+      background: rgba(255,255,255,.12); overflow: hidden;
+    }
+    .etapa-bar-fill {
+      height: 100%; border-radius: 100px;
+      transition: width .6s ease-out;
+    }
+    .done   .etapa-bar-fill { background: var(--green-400); }
+    .active .etapa-bar-fill { background: var(--primary); }
+    .locked .etapa-bar-fill { background: var(--locked-text); }
+
+    .etapa-bar-pct { font-size: 10px; font-weight: 700; color: var(--text-3); white-space: nowrap; }
+
+    /* Status badge */
+    .etapa-badge {
+      font-size: 10px; font-weight: 700;
+      padding: 3px 8px; border-radius: 100px;
+      white-space: nowrap; flex-shrink: 0;
+    }
+    .done   .etapa-badge { background: rgba(18,183,106,.2); color: var(--done-text); }
+    .active .etapa-badge { background: rgba(0,89,231,.25);  color: var(--active-text); }
+    .locked .etapa-badge { background: rgba(82,109,152,.2); color: var(--locked-text); }
+
+    /* Chevron arrow for done/active */
+    .etapa-chevron { font-size: 16px; color: rgba(255,255,255,.3); flex-shrink: 0; }
+    .active .etapa-chevron { color: var(--primary-h); }
+    .done   .etapa-chevron { color: var(--green-400); }
+
+    /* ── CONTINUE CARD ── */
+    .continue-wrap {
+      position: fixed;
+      bottom: calc(var(--nav-h) + var(--nav-m)*2 + 8px);
+      left: 50%; transform: translateX(-50%);
+      width: calc(100% - 48px); max-width: var(--max-w);
+      z-index: 99; pointer-events: none;
+    }
+    .continue-card {
+      background: rgba(0,0,0,.6);
+      backdrop-filter: blur(57.7px); -webkit-backdrop-filter: blur(57.7px);
+      border-radius: 12px; padding: 16px;
+      display: flex; align-items: center; gap: 16px;
+      cursor: pointer; transition: background .2s; pointer-events: all;
+    }
+    .continue-card:hover { background: rgba(0,0,0,.72); }
+    .continue-thumb { height: 44px; width: auto; flex-shrink: 0;
+      filter: drop-shadow(0 0 10px rgba(255,255,255,.7)); }
+    .continue-thumb svg { height: 44px; width: auto; }
+    .continue-info { flex: 1; min-width: 0; }
+    .continue-title { font-weight: 700; font-size: 14px; color: #fff; margin-bottom: 8px; }
+    .continue-bc { font-size: 12px; color: var(--text-3);
+      display: flex; align-items: center; gap: 4px; white-space: nowrap;
+      overflow: hidden; text-overflow: ellipsis; }
+    .continue-bc .arr { font-size: 10px; opacity: .6; }
+    .btn-fab {
+      background: var(--primary); border: 1px solid var(--primary-400);
+      border-bottom-width: 4px; border-radius: 12px; padding: 10px 20px;
+      font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 14px;
+      color: #fff; cursor: pointer; white-space: nowrap; flex-shrink: 0;
+      transition: background .2s, transform .1s;
+    }
+    .btn-fab:hover { background: var(--primary-h); transform: translateY(-1px); }
+
+    /* ── BOTTOM NAV ── */
+    .bottom-nav {
+      position: fixed; bottom: var(--nav-m); left: 50%; transform: translateX(-50%);
+      width: calc(100% - var(--nav-m)*2); max-width: var(--max-w);
+      height: var(--nav-h); background: #142A51; border-radius: var(--nav-r);
+      padding: 4px; display: flex; align-items: stretch; z-index: 100;
+    }
+    .nav-item {
+      flex: 1; display: flex; align-items: center; justify-content: center;
+      border-radius: var(--nav-r); cursor: pointer;
+      border: none; background: transparent; padding: 8px 12px;
+      transition: background .2s; gap: 0;
+    }
+    .nav-item.active { background: var(--primary); }
+    .nav-item:hover:not(.active) { background: rgba(255,255,255,.06); }
+    .nav-icon { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; }
+    @media (min-width: 600px) {
+      .nav-label { font-family: 'Orbitron', sans-serif; font-size: 11px;
+        font-weight: 700; color: #fff; margin-left: 16px; white-space: nowrap; }
+    }
+    @media (max-width: 599px) { .nav-label { display: none; } }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .planet-block { padding: 0 16px 56px; gap: 20px; }
+      .globe-wrap { width: min(220px, 38vw); height: min(220px, 38vw); }
+      .etapa-badge { display: none; }
+    }
+    @media (max-width: 540px) {
+      .planet-block, .planet-block.right { flex-direction: column; align-items: center; }
+      .globe-wrap { width: min(200px, 60vw); height: min(200px, 60vw); }
+      .etapas-col { width: 100%; padding-top: 4px; }
+      .etapa-card:hover { transform: none; }
+      .continue-wrap { width: calc(100% - 32px); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="bg"></div>
+<div class="bg-stars"></div>
+<div class="meteors">
+  <div class="rock r1"></div><div class="rock r2"></div><div class="rock r3"></div>
+  <div class="rock r4"></div><div class="rock r5"></div>
+</div>
+
+<div class="app">
+
+  <!-- LOGO BAR -->
+  <div class="logo-bar">
+    <div class="logo-spacer"></div>
+    <div class="orbie-logo">
+      <svg class="orbie-logo-text" width="191" height="58" fill="none" xmlns="http://www.w3.org/2000/svg"><g><path d="M41.7627 56C56.5363 56 67.7506 45.0144 67.7506 30.4669C67.7506 15.9194 56.5389 4.9364 41.7627 4.9364C26.9865 4.9364 15.7773 15.922 15.7773 30.4669C15.7773 45.0119 26.9154 56 41.7652 56M41.7652 52.1357C29.4153 52.1357 20.0964 42.893 20.0964 30.4669C20.0964 18.0408 29.4153 8.79812 41.7652 8.79812C54.1151 8.79812 63.4341 18.0408 63.4341 30.4669C63.4341 42.893 54.1151 52.1357 41.7652 52.1357Z" fill="white"/><path d="M92.7695 16.8315C91.4814 16.453 90.4957 16.3005 88.9815 16.3005C84.134 16.3005 80.4958 19.0291 78.4506 23.4219V18.5718C78.4506 17.5861 77.9197 16.9814 76.9364 16.9814H76.0269C75.1174 16.9814 74.5127 17.5886 74.5127 18.5718V53.4238C74.5127 54.4096 75.1199 55.0905 76.0269 55.0905H77.1625C78.0721 55.0905 78.6768 54.4096 78.6768 53.4238V33.1956C78.6768 25.5433 82.8433 20.0124 88.6029 20.0124C89.5124 20.0124 90.3458 20.1648 91.4052 20.4671C92.3147 20.7695 93.1481 20.6932 93.5266 19.5576L93.679 18.9504C94.1338 17.6623 93.5266 17.0551 92.7695 16.829" fill="white"/><path d="M116.487 16.3006C110.046 16.3006 104.82 19.1028 101.408 23.5743V2.58637C101.408 1.45072 100.954 0.767295 99.6655 1.14584L98.7559 1.37196C97.694 1.67429 97.3154 2.20528 97.3154 3.0386V53.4213C97.3154 54.4071 97.8464 55.088 98.8296 55.088H99.8916C100.877 55.088 101.406 54.4071 101.406 53.4213V48.4976C104.663 53.0428 109.891 55.9975 116.484 55.9975C127.699 55.9975 135.577 47.2095 135.577 36.1478C135.577 25.086 127.699 16.298 116.484 16.298M116.106 52.2095C107.696 52.2095 101.18 46.3 101.027 36.1478C100.875 25.9955 107.77 20.0861 116.106 20.0861C125.272 20.0861 131.334 27.2836 131.334 36.1478C131.334 45.0119 125.272 52.2095 116.106 52.2095Z" fill="white"/><path d="M143.848 55.0905H144.984C145.97 55.0905 146.498 54.4096 146.498 53.4239V18.5719C146.498 17.5861 145.967 16.9814 144.984 16.9814H143.848C142.939 16.9814 142.334 17.5887 142.334 18.5719V53.4239C142.334 54.4096 142.941 55.0905 143.848 55.0905Z" fill="white"/><path d="M157.566 37.4384H188.477C189.765 37.4384 190.522 36.605 190.522 35.3932C190.522 30.6194 188.856 25.998 185.749 22.5123C182.642 18.6481 177.944 16.3005 172.111 16.3005C161.125 16.3005 153.244 24.8624 153.244 36.2265C153.244 48.6526 162.639 56 172.944 56C178.096 56 184.384 53.9548 188.703 49.4071C189.234 48.7999 189.613 47.8929 188.78 47.0596L188.325 46.6811C187.644 46.0002 186.811 45.8478 185.825 46.6811C181.961 50.5453 177.037 52.212 172.794 52.212C164.989 52.212 158.097 46.7573 157.566 37.4384ZM172.113 20.0886C176.963 20.0886 180.751 22.0575 183.099 25.3934C184.842 27.591 185.901 30.3933 186.28 33.6529H157.566C158.399 25.5458 164.082 20.0911 172.113 20.0911" fill="white"/><path d="M140.645 6.44547C141.212 8.48558 143.361 9.68982 145.442 9.13343C147.522 8.57704 148.75 6.47088 148.183 4.43077C147.616 2.39067 145.467 1.18642 143.386 1.74535C141.306 2.30175 140.078 4.40791 140.645 6.44801" fill="#29B84C"/><path d="M79.9758 3.57717C79.8513 2.26876 78.863 1.32111 78.1465 0.846021C77.547 0.447146 76.203 0 74.6812 0C70.8017 0 64.3155 1.94102 56.6276 5.38608C56.3913 5.49279 54.1327 6.6259 52.9081 7.24072C53.777 7.62689 54.618 8.05626 55.4259 8.52881L57.842 7.26359C65.5299 3.81091 71.6883 1.96897 75.4306 1.96897C76.1776 1.96897 76.9652 2.07059 77.3056 2.2027C77.6486 2.33482 78.0297 2.51266 78.0449 3.22911C78.0881 5.35559 75.4306 9.25542 70.634 14.0292C64.3688 20.2639 55.0677 27.4004 44.4428 34.1203C25.3603 46.1907 10.6528 51.5946 4.54515 51.5946C1.02132 51.5946 2.0274 49.4605 1.96643 49.9457C2.27384 47.489 5.47247 42.6466 13.9911 35.2179L15.9474 33.4979C15.8458 32.5655 15.7873 31.6178 15.7797 30.6498L12.6497 33.3937C4.4486 40.4921 0 46.2644 0 49.6815C0 50.1261 0.193086 52.2856 2.77942 53.2002C3.46031 53.4416 4.30125 53.5636 5.29717 53.5636C12.9266 53.5636 28.8232 46.6277 45.797 35.8911C56.3837 29.1966 65.6849 22.088 71.9881 15.8813C75.9616 11.9662 80.2883 6.88758 79.9758 3.57971" fill="#F79750"/></g></svg>
+    </div>
+    <button class="notif-btn" aria-label="Notificações">
+      <div class="notif-dot"></div>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M13.73 21a2 2 0 0 1-3.46 0" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </div>
+
+  <!-- PLANETS LIST -->
+  <div class="planets-list">
+
+    <!-- ═══════════════════════════════════
+         PLANETA 0 — Arithmos (Matemática)
+         pos: LEFT (globo esq, etapas dir)
+         status: inProgress — pulse + SIG
+    ════════════════════════════════════ -->
+    <div class="planet-block left">
+
+      <!-- GLOBO -->
+      <div class="globe-col">
+        <div class="globe-wrap" title="Arithmos — Matemática">
+          <div class="pulse"></div><div class="pulse pulse-2"></div>
+          <svg class="planet-svg" viewBox="0 0 280 280">
+            <defs>
+              <radialGradient id="g0" cx="36%" cy="30%" r="65%">
+                <stop offset="0%"  stop-color="#EAB880"/><stop offset="30%" stop-color="#CB7A3A"/>
+                <stop offset="60%" stop-color="#8B4010"/><stop offset="100%" stop-color="#381500"/>
+              </radialGradient>
+              <radialGradient id="s0" cx="68%" cy="68%" r="50%">
+                <stop offset="0%" stop-color="rgba(0,0,0,.5)"/><stop offset="100%" stop-color="rgba(0,0,0,0)"/>
+              </radialGradient>
+              <radialGradient id="h0" cx="28%" cy="24%" r="36%">
+                <stop offset="0%" stop-color="rgba(255,200,130,.6)"/><stop offset="100%" stop-color="rgba(255,200,130,0)"/>
+              </radialGradient>
+              <clipPath id="c0"><circle cx="140" cy="140" r="136"/></clipPath>
+            </defs>
+            <circle cx="140" cy="140" r="136" fill="url(#g0)"/>
+            <ellipse cx="100" cy="92" rx="22" ry="14" fill="rgba(0,0,0,.12)" transform="rotate(-20,100,92)" clip-path="url(#c0)"/>
+            <ellipse cx="180" cy="118" rx="15" ry="9" fill="rgba(0,0,0,.1)" transform="rotate(12,180,118)" clip-path="url(#c0)"/>
+            <ellipse cx="85" cy="172" rx="26" ry="16" fill="rgba(0,0,0,.09)" transform="rotate(-30,85,172)" clip-path="url(#c0)"/>
+            <path d="M50 115 Q90 108 135 118 Q168 126 210 112" stroke="rgba(0,0,0,.13)" stroke-width="3" fill="none" clip-path="url(#c0)"/>
+            <circle cx="140" cy="140" r="136" fill="url(#s0)"/>
+            <circle cx="140" cy="140" r="136" fill="url(#h0)"/>
+            <ellipse cx="140" cy="158" rx="178" ry="32" fill="none" stroke="rgba(180,110,50,.38)" stroke-width="7" transform="rotate(-16,140,158)"/>
+          </svg>
+          <div class="sig-overlay">
+            <div class="sig-face">
+              <svg viewBox="0 0 90 90">
+                <circle cx="45" cy="45" r="44" fill="rgba(0,89,231,.82)"/>
+                <circle cx="45" cy="45" r="38" fill="rgba(0,89,231,.65)"/>
+                <ellipse cx="33" cy="40" rx="6" ry="7.5" fill="white"/>
+                <ellipse cx="57" cy="40" rx="6" ry="7.5" fill="white"/>
+                <circle cx="34.5" cy="41" r="3.8" fill="#002868"/>
+                <circle cx="58.5" cy="41" r="3.8" fill="#002868"/>
+                <circle cx="35.5" cy="39.5" r="1.5" fill="white"/>
+                <circle cx="59.5" cy="39.5" r="1.5" fill="white"/>
+                <path d="M33 52 Q45 60 57 52" stroke="white" stroke-width="3" fill="none" stroke-linecap="round"/>
+                <line x1="38" y1="10" x2="30" y2="3" stroke="#99C0FF" stroke-width="2.5" stroke-linecap="round"/>
+                <circle cx="30" cy="3" r="3.5" fill="#FFEA24"/>
+                <line x1="52" y1="10" x2="60" y2="3" stroke="#99C0FF" stroke-width="2.5" stroke-linecap="round"/>
+                <circle cx="60" cy="3" r="3.5" fill="#FFEA24"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+        <div class="planet-identity">
+          <div class="planet-name">Arithmos</div>
+          <div class="stars-row">
+            <span class="star-on">★</span><span class="star-on">★</span><span class="star-off">★</span>
+          </div>
+          <div class="planet-status-text">Em andamento: 42%</div>
+        </div>
+      </div>
+
+      <!-- ETAPAS -->
+      <div class="etapas-col">
+        <div class="etapas-header">Etapas do planeta</div>
+
+        <div class="etapa-card done">
+          <div class="etapa-num">1</div>
+          <div class="etapa-info">
+            <div class="etapa-title">Números Naturais</div>
+            <div class="etapa-bar-wrap">
+              <div class="etapa-bar"><div class="etapa-bar-fill" style="width:100%"></div></div>
+              <span class="etapa-bar-pct">8/8 fases</span>
+            </div>
+          </div>
+          <span class="etapa-badge">Concluída</span>
+          <span class="etapa-chevron">✓</span>
+        </div>
+
+        <div class="etapa-card done">
+          <div class="etapa-num">2</div>
+          <div class="etapa-info">
+            <div class="etapa-title">Operações Básicas</div>
+            <div class="etapa-bar-wrap">
+              <div class="etapa-bar"><div class="etapa-bar-fill" style="width:100%"></div></div>
+              <span class="etapa-bar-pct">6/6 fases</span>
+            </div>
+          </div>
+          <span class="etapa-badge">Concluída</span>
+          <span class="etapa-chevron">✓</span>
+        </div>
+
+        <div class="etapa-card active">
+          <div class="etapa-num">3</div>
+          <div class="etapa-info">
+            <div class="etapa-title">Frações e Proporções</div>
+            <div class="etapa-bar-wrap">
+              <div class="etapa-bar"><div class="etapa-bar-fill" style="width:58%"></div></div>
+              <span class="etapa-bar-pct">4/7 fases</span>
+            </div>
+          </div>
+          <span class="etapa-badge">Em andamento</span>
+          <span class="etapa-chevron">›</span>
+        </div>
+
+        <div class="etapa-card locked">
+          <div class="etapa-num">4</div>
+          <div class="etapa-info">
+            <div class="etapa-title">Geometria Plana</div>
+            <div class="etapa-bar-wrap">
+              <div class="etapa-bar"><div class="etapa-bar-fill" style="width:0%"></div></div>
+              <span class="etapa-bar-pct">0/8 fases</span>
+            </div>
+          </div>
+          <span class="etapa-badge">Bloqueada</span>
+          <span class="etapa-chevron">🔒</span>
+        </div>
+
+        <div class="etapa-card locked">
+          <div class="etapa-num">5</div>
+          <div class="etapa-info">
+            <div class="etapa-title">Álgebra Fundamental</div>
+            <div class="etapa-bar-wrap">
+              <div class="etapa-bar"><div class="etapa-bar-fill" style="width:0%"></div></div>
+              <span class="etapa-bar-pct">0/6 fases</span>
+            </div>
+          </div>
+          <span class="etapa-badge">Bloqueada</span>
+          <span class="etapa-chevron">🔒</span>
+        </div>
+      </div><!-- /etapas-col -->
+
+    </div><!-- /planet-block Arithmos -->
+
+    <!-- ═══════════════════════════════════
+         PLANETA 1 — Bios (Ciências)
+         pos: RIGHT (etapas esq, globo dir)
+         status: open — sem pulse, sem SIG
+    ════════════════════════════════════ -->
+    <div class="planet-block right">
+
+      <!-- GLOBO -->
+      <div class="globe-col">
+        <div class="globe-wrap" title="Bios — Ciências">
+          <svg class="planet-svg" viewBox="0 0 280 280">
+            <defs>
+              <radialGradient id="g1" cx="36%" cy="30%" r="65%">
+                <stop offset="0%"  stop-color="#72D0EA"/><stop offset="28%" stop-color="#2A9DBF"/>
+                <stop offset="60%" stop-color="#0D5E80"/><stop offset="100%" stop-color="#022840"/>
+              </radialGradient>
+              <radialGradient id="s1" cx="68%" cy="68%" r="50%">
+                <stop offset="0%" stop-color="rgba(0,0,0,.42)"/><stop offset="100%" stop-color="rgba(0,0,0,0)"/>
+              </radialGradient>
+              <radialGradient id="h1" cx="28%" cy="24%" r="36%">
+                <stop offset="0%" stop-color="rgba(180,240,255,.55)"/><stop offset="100%" stop-color="rgba(180,240,255,0)"/>
+              </radialGradient>
+              <clipPath id="c1"><circle cx="140" cy="140" r="136"/></clipPath>
+            </defs>
+            <circle cx="140" cy="140" r="136" fill="url(#g1)"/>
+            <path d="M88 76 Q107 64 132 74 Q150 82 144 102 Q136 120 114 122 Q90 124 80 106 Q72 90 88 76Z" fill="rgba(40,155,60,.72)" clip-path="url(#c1)"/>
+            <path d="M160 94 Q182 87 196 102 Q205 116 198 134 Q188 148 172 146 Q154 142 148 124 Q142 108 160 94Z" fill="rgba(40,155,60,.66)" clip-path="url(#c1)"/>
+            <path d="M98 158 Q116 150 132 159 Q144 168 140 185 Q132 198 116 197 Q100 195 92 180 Q86 167 98 158Z" fill="rgba(40,155,60,.62)" clip-path="url(#c1)"/>
+            <ellipse cx="112" cy="108" rx="34" ry="9" fill="rgba(255,255,255,.2)" transform="rotate(-18,112,108)" clip-path="url(#c1)"/>
+            <ellipse cx="140" cy="20" rx="36" ry="16" fill="rgba(215,240,255,.6)" clip-path="url(#c1)"/>
+            <circle cx="140" cy="140" r="136" fill="url(#s1)"/>
+            <circle cx="140" cy="140" r="136" fill="url(#h1)"/>
+            <circle cx="140" cy="140" r="138" fill="none" stroke="rgba(100,200,230,.28)" stroke-width="5"/>
+          </svg>
+        </div>
+        <div class="planet-identity">
+          <div class="planet-name">Bios</div>
+          <div class="stars-row">
+            <span class="star-on">★</span><span class="star-off">★</span><span class="star-off">★</span>
+          </div>
+          <div class="planet-status-text">Em andamento: 12%</div>
+        </div>
+      </div>
+
+      <!-- ETAPAS -->
+      <div class="etapas-col">
+        <div class="etapas-header">Etapas do planeta</div>
+
+        <div class="etapa-card done">
+          <div class="etapa-num">1</div>
+          <div class="etapa-info">
+            <div class="etapa-title">Seres Vivos</div>
+            <div class="etapa-bar-wrap">
+              <div class="etapa-bar"><div class="etapa-bar-fill" style="width:100%"></div></div>
+              <span class="etapa-bar-pct">5/5 fases</span>
+            </div>
+          </div>
+          <span class="etapa-badge">Concluída</span>
+          <span class="etapa-chevron">✓</span>
+        </div>
+
+        <div class="etapa-card active">
+          <div class="etapa-num">2</div>
+          <div class="etapa-info">
+            <div class="etapa-title">Cadeia Alimentar</div>
+            <div class="etapa-bar-wrap">
+              <div class="etapa-bar"><div class="etapa-bar-fill" style="width:20%"></div></div>
+              <span class="etapa-bar-pct">1/5 fases</span>
+            </div>
+          </div>
+          <span class="etapa-badge">Em andamento</span>
+          <span class="etapa-chevron">›</span>
+        </div>
+
+        <div class="etapa-card locked">
+          <div class="etapa-num">3</div>
+          <div class="etapa-info">
+            <div class="etapa-title">Ecossistemas</div>
+            <div class="etapa-bar-wrap">
+              <div class="etapa-bar"><div class="etapa-bar-fill" style="width:0%"></div></div>
+              <span class="etapa-bar-pct">0/6 fases</span>
+            </div>
+          </div>
+          <span class="etapa-badge">Bloqueada</span>
+          <span class="etapa-chevron">🔒</span>
+        </div>
+
+        <div class="etapa-card locked">
+          <div class="etapa-num">4</div>
+          <div class="etapa-info">
+            <div class="etapa-title">Corpo Humano</div>
+            <div class="etapa-bar-wrap">
+              <div class="etapa-bar"><div class="etapa-bar-fill" style="width:0%"></div></div>
+              <span class="etapa-bar-pct">0/7 fases</span>
+            </div>
+          </div>
+          <span class="etapa-badge">Bloqueada</span>
+          <span class="etapa-chevron">🔒</span>
+        </div>
+
+      </div><!-- /etapas-col -->
+
+    </div><!-- /planet-block Bios -->
+
+    <div style="height:40px"></div>
+  </div><!-- /planets-list -->
+</div><!-- /app -->
+
+<!-- CONTINUE CARD -->
+<div class="continue-wrap">
+  <div class="continue-card" role="button" aria-label="Continuar de onde parei">
+    <div class="continue-thumb">
+      <svg viewBox="0 0 80 96" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="cg" cx="38%" cy="32%" r="65%">
+            <stop offset="0%" stop-color="#E8A87C"/>
+            <stop offset="40%" stop-color="#B8682A"/>
+            <stop offset="100%" stop-color="#3D1A05"/>
+          </radialGradient>
+          <radialGradient id="cs" cx="65%" cy="65%" r="50%">
+            <stop offset="0%" stop-color="rgba(0,0,0,.45)"/>
+            <stop offset="100%" stop-color="rgba(0,0,0,0)"/>
+          </radialGradient>
+          <clipPath id="cc"><ellipse cx="40" cy="44" rx="38" ry="44"/></clipPath>
+        </defs>
+        <ellipse cx="40" cy="44" rx="38" ry="44" fill="url(#cg)"/>
+        <ellipse cx="28" cy="34" rx="10" ry="6" fill="rgba(0,0,0,.1)" transform="rotate(-20,28,34)" clip-path="url(#cc)"/>
+        <ellipse cx="40" cy="44" rx="38" ry="44" fill="url(#cs)"/>
+        <ellipse cx="40" cy="52" rx="58" ry="12" fill="none" stroke="rgba(180,120,60,.4)" stroke-width="3" transform="rotate(-15,40,52)"/>
+      </svg>
+    </div>
+    <div class="continue-info">
+      <div class="continue-title">Continuar de onde parei</div>
+      <div class="continue-bc">
+        <span>Arithmos</span>
+        <span class="arr">›</span>
+        <span>Etapa 3 — Frações</span>
+        <span class="arr">›</span>
+        <span>Fase 4</span>
+      </div>
+    </div>
+    <button class="btn-fab">Continuar</button>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <button class="nav-item active" aria-label="Início" aria-current="page">
+    <div class="nav-icon">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <path d="M3 9.5L12 3L21 9.5V20C21 20.55 20.55 21 20 21H15V15H9V21H4C3.45 21 3 20.55 3 20V9.5Z" fill="white"/>
+      </svg>
+    </div>
+    <span class="nav-label">Início</span>
+  </button>
+  <button class="nav-item" aria-label="Ranking">
+    <div class="nav-icon">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <path d="M6 3H18V13C18 16.31 15.31 19 12 19C8.69 19 6 16.31 6 13V3Z" stroke="#99C0FF" stroke-width="1.8" stroke-linejoin="round"/>
+        <path d="M6 5H3C3 7.76 4.69 10.12 7 11.17" stroke="#99C0FF" stroke-width="1.8" stroke-linecap="round"/>
+        <path d="M18 5H21C21 7.76 19.31 10.12 17 11.17" stroke="#99C0FF" stroke-width="1.8" stroke-linecap="round"/>
+        <path d="M12 19V22M8 22H16" stroke="#99C0FF" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <span class="nav-label">Ranking</span>
+  </button>
+  <button class="nav-item" aria-label="Perfil">
+    <div class="nav-icon">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <circle cx="12" cy="8" r="3.5" stroke="#99C0FF" stroke-width="1.8"/>
+        <path d="M5 20C5 16.69 8.13 14 12 14C15.87 14 19 16.69 19 20" stroke="#99C0FF" stroke-width="1.8" stroke-linecap="round"/>
+        <circle cx="12" cy="12" r="10" stroke="#99C0FF" stroke-width="1.8"/>
+      </svg>
+    </div>
+    <span class="nav-label">Perfil</span>
+  </button>
+</nav>
+
+<script>
+  /* Nav switching */
+  document.querySelectorAll('.nav-item').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.nav-item').forEach(b => {
+        b.classList.remove('active');
+        b.removeAttribute('aria-current');
+      });
+      btn.classList.add('active');
+      btn.setAttribute('aria-current', 'page');
+    });
+  });
+
+  /* Animate progress bars on load */
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      document.querySelectorAll('.etapa-bar-fill').forEach(el => {
+        const w = el.style.width;
+        el.style.width = '0%';
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => { el.style.width = w; });
+        });
+      });
+    }, 200);
+  });
+
+  /* Etapa card click feedback */
+  document.querySelectorAll('.etapa-card:not(.locked)').forEach(card => {
+    card.addEventListener('click', () => {
+      card.style.transition = 'transform .08s';
+      card.style.transform = 'scale(0.98) translateX(2px)';
+      setTimeout(() => { card.style.transform = ''; }, 120);
+    });
+  });
+
+  /* Scroll parallax on bg stars */
+  window.addEventListener('scroll', () => {
+    document.querySelector('.bg-stars').style.transform =
+      `translateY(${window.scrollY * 0.3}px)`;
+  }, { passive: true });
+</script>
+</body>
+</html>

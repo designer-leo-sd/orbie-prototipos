@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home — Orbie App</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Outfit:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ─────────────── TOKENS (design_orbie_app.md) ─────────────── */
+    :root {
+      --bg-home:          #3A00A8;   /* semantic/background-home   */
+      --bg-dark:          #0D1A32;   /* semantic/background-splash */
+      --surface-card:     #142A51;   /* semantic/surface-card      */
+      --surface-dark:     #10203D;   /* semantic/surface-card-dark */
+      --border:           #224476;   /* semantic/border-default    */
+      --primary:          #0059E7;   /* semantic/cta-primary       */
+      --primary-100:      #99C0FF;   /* brand-blue-100             */
+      --primary-200:      #3F84F3;   /* brand-blue-200             */
+      --primary-hover:    #3F84F3;
+      --primary-400:      #0040A7;
+      --green-300:        #2ABC4E;
+      --green-400:        #12B76A;
+      --yellow-100:       #FFEA24;   /* semantic/star-active       */
+      --star-inactive:    #526D98;   /* semantic/star-inactive     */
+      --locked-icon:      #526D98;
+      --text-primary:     #FFFFFF;
+      --text-secondary:   #99C0FF;
+      --text-label:       #C0CADB;
+      --orange-400:       #F79009;
+      --nav-height:       64px;
+      --nav-margin:       24px;
+      --nav-radius:       12px;
+      --max-content:      928px;     /* maxWidthContent Flutter */
+    }
+
+    /* ─────────────── BASE ─────────────── */
+    html, body { height: 100%; }
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: var(--bg-home);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* ─────────────── BACKGROUND LAYER ─────────────── */
+    /*
+     * Flutter: GradientBackground(type: home)
+     * colors: [palletsBackgroundTop, palletsBackgroundBottom]
+     *   _OrbieColors: palletsBackgroundTop  = 0xff06015D  →  #06015D
+     *                 palletsBackgroundBottom = 0xff790097 →  #790097
+     * stops: [0.0, 0.86]
+     * begin: Alignment.topCenter, end: FractionalOffset.bottomCenter
+     * O último 14% (0.86→1.0) continua na cor final sem novo stop.
+     */
+    .bg-layer {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      background: linear-gradient(
+        180deg,
+        #06015D  0%,    /* palletsBackgroundTop  */
+        #790097 86%,    /* palletsBackgroundBottom (stop = 0.86) */
+        #790097 100%    /* mantém a cor final no restante */
+      );
+    }
+
+    /* Stars overlay (details_home.svg — small bright dots) */
+    .bg-stars {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      background-image:
+        radial-gradient(1.5px 1.5px at  8% 6%,  rgba(255,255,255,0.85) 0%, transparent 100%),
+        radial-gradient(1px   1px   at 18% 14%, rgba(255,255,255,0.6)  0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 30% 4%,  rgba(255,255,255,0.75) 0%, transparent 100%),
+        radial-gradient(1px   1px   at 42% 10%, rgba(255,255,255,0.5)  0%, transparent 100%),
+        radial-gradient(2px   2px   at 55% 3%,  rgba(255,255,255,0.9)  0%, transparent 100%),
+        radial-gradient(1px   1px   at 65% 18%, rgba(255,255,255,0.55) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 78% 8%,  rgba(255,255,255,0.7)  0%, transparent 100%),
+        radial-gradient(1px   1px   at 88% 15%, rgba(255,255,255,0.5)  0%, transparent 100%),
+        radial-gradient(1px   1px   at 95% 5%,  rgba(255,255,255,0.65) 0%, transparent 100%),
+        radial-gradient(1px   1px   at  5% 28%, rgba(255,255,255,0.45) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 22% 35%, rgba(255,255,255,0.6)  0%, transparent 100%),
+        radial-gradient(1px   1px   at 48% 22%, rgba(255,255,255,0.5)  0%, transparent 100%),
+        radial-gradient(1px   1px   at 72% 32%, rgba(255,255,255,0.45) 0%, transparent 100%),
+        radial-gradient(1px   1px   at 91% 25%, rgba(255,255,255,0.55) 0%, transparent 100%),
+        radial-gradient(1px   1px   at 12% 50%, rgba(255,255,255,0.35) 0%, transparent 100%),
+        radial-gradient(1.5px 1.5px at 36% 55%, rgba(255,255,255,0.4)  0%, transparent 100%),
+        radial-gradient(1px   1px   at 58% 48%, rgba(255,255,255,0.45) 0%, transparent 100%),
+        radial-gradient(1px   1px   at 82% 58%, rgba(255,255,255,0.35) 0%, transparent 100%);
+    }
+
+    /* ─────────────── METEORS HORIZONTAL (MeteorsHorizontal Flutter) ─────────────── */
+    /*
+     * 5 rocks (SVG): traverse right→left across screen in 20s (duration: 20000ms Flutter)
+     * Sizes real: rock1=9×11, rock2=9×12, rock3=24×30, rock4=43×44, rock5=53×54
+     * Here represented as SVG ellipses with varying sizes, staggered
+     */
+    .meteors-layer {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 320px;
+      z-index: 2;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    @keyframes meteor-h {
+      0%   { transform: translateX(110vw); opacity: 0; }
+      5%   { opacity: 1; }
+      95%  { opacity: 0.7; }
+      100% { transform: translateX(-15vw); opacity: 0; }
+    }
+    .meteor-rock {
+      position: absolute;
+      border-radius: 40%;
+      background: radial-gradient(ellipse at 35% 35%, #C0CADB 0%, #7187A9 50%, #31558A 100%);
+      box-shadow: inset -2px -2px 4px rgba(0,0,0,0.4);
+      animation: meteor-h linear infinite;
+    }
+    /* Rock 5 — largest (53px) */
+    .rock-5 { width: 53px; height: 53px; top: 22px;  animation-duration: 20s; animation-delay: 0s; }
+    /* Rock 4 — large (43px) */
+    .rock-4 { width: 43px; height: 44px; top: 99px;  animation-duration: 20s; animation-delay: 4s; opacity: 0.85; }
+    /* Rock 3 — medium (24px) */
+    .rock-3 { width: 24px; height: 30px; top: 175px; animation-duration: 20s; animation-delay: 8s; opacity: 0.75; }
+    /* Rock 2 — small (9×12) */
+    .rock-2 { width: 9px;  height: 12px; top: 185px; animation-duration: 20s; animation-delay: 12s; opacity: 0.7; }
+    /* Rock 1 — tiny (9×11) */
+    .rock-1 { width: 9px;  height: 11px; top: 22px;  animation-duration: 20s; animation-delay: 16s; opacity: 0.65; }
+
+    /* ─────────────── ROCKS oscillating (MeteorsRocks — bottom area) ─────────────── */
+    /*
+     * Flutter: Padding top:300, 19 rocks oscillate vertically (reverse:true, 3s)
+     * Simplified: a cluster of rocks floating at the bottom of the screen
+     */
+    .rocks-bottom {
+      position: fixed;
+      bottom: calc(var(--nav-height) + var(--nav-margin) * 2);
+      left: 0; right: 0;
+      height: 180px;
+      z-index: 2;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    @keyframes rock-float {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(-18px); }
+    }
+    .rock-dot {
+      position: absolute;
+      border-radius: 40%;
+      background: radial-gradient(ellipse at 35% 30%, #4A3070 0%, #250050 60%, #120028 100%);
+      box-shadow: inset -3px -3px 6px rgba(0,0,0,0.5);
+      animation: rock-float ease-in-out infinite;
+    }
+
+    /* ─────────────── APP LAYOUT ─────────────── */
+    .app {
+      position: relative;
+      z-index: 3;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding-bottom: calc(var(--nav-height) + var(--nav-margin) * 2 + 12px);
+    }
+
+    /* ─────────────── ORBIE LOGO (top center) ─────────────── */
+    /*
+     * Flutter: OrbieLogo(size: small, glow: enabled, type: logo)
+     * Row(spaceBetween): hidden-NotifButton | Logo | NotifButton
+     * Logo = orbie_shining.svg (icon) + orbie_text.svg (wordmark)
+     */
+    .logo-bar {
+      width: 100%;
+      max-width: var(--max-content);
+      margin: 0 auto;
+      padding: 28px 24px 42px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo-spacer { width: 40px; }
+    .orbie-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      /* glow effect (OrbieLogoGlow.enabled) */
+      filter: drop-shadow(0 0 16px rgba(255,255,255,0.55)) drop-shadow(0 0 6px rgba(255,255,255,0.4));
+    }
+    .orbie-logo-icon  { height: 40px; width: auto; overflow: visible; }
+    .orbie-logo-text  { height: 23px; width: auto; overflow: visible; }
+
+    .notif-btn {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.08);
+      border: 1.5px solid rgba(255,255,255,0.15);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      transition: background 0.2s;
+      position: relative;
+      flex-shrink: 0;
+    }
+    .notif-btn:hover { background: rgba(255,255,255,0.15); }
+    .notif-dot {
+      position: absolute;
+      top: 6px; right: 7px;
+      width: 9px; height: 9px;
+      background: var(--orange-400);
+      border-radius: 50%;
+      border: 2px solid transparent;
+    }
+
+    /* ─────────────── CONTINUE CARD (CardJumpToChallenge) ─────────────── */
+    /*
+     * Flutter: colocado em _AnimationBackground bottomCenter
+     * Fica fixo na parte inferior, logo ACIMA da bottom nav
+     * padding: 16, background: transparenceBlack60 + backdrop blur
+     */
+    .continue-wrap {
+      position: fixed;
+      bottom: calc(var(--nav-height) + var(--nav-margin) * 2 + 8px);
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(100% - 48px);
+      max-width: var(--max-content);
+      z-index: 99;
+      pointer-events: none;
+    }
+    .continue-card {
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(57.7px);
+      -webkit-backdrop-filter: blur(57.7px);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      cursor: pointer;
+      transition: background 0.2s;
+      pointer-events: all;
+    }
+    .continue-card:hover { background: rgba(0,0,0,0.72); }
+
+    .continue-planet-thumb {
+      height: 44px;
+      width: auto;
+      flex-shrink: 0;
+      filter: drop-shadow(0 0 10px rgba(255,255,255,0.7));
+    }
+    .continue-planet-thumb svg { height: 44px; width: auto; }
+
+    .continue-info { flex: 1; min-width: 0; overflow: hidden; }
+    .continue-title {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      color: #fff;
+      margin-bottom: 8px;
+      white-space: nowrap;
+    }
+    .continue-breadcrumb {
+      font-size: 12px;
+      color: rgba(255,255,255,0.55);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .continue-breadcrumb .arrow {
+      font-size: 10px;
+      opacity: 0.6;
+    }
+
+    /* ButtonFab — "Continuar" */
+    .btn-fab {
+      background: var(--primary);
+      border: 1px solid var(--primary-400);
+      border-bottom-width: 4px;
+      border-radius: 12px;
+      padding: 10px 20px;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      color: #fff;
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: background 0.2s, transform 0.1s;
+    }
+    .btn-fab:hover  { background: var(--primary-hover); transform: translateY(-1px); }
+    .btn-fab:active { transform: scale(0.98); }
+
+    /* ─────────────── PLANET LIST ─────────────── */
+    /*
+     * Flutter: Column of _CardPlaneta widgets, paddingBottom: 64 each
+     * Each card: Row(mainAxis: end/start based on index)
+     * index 0 → position RIGHT (planeta à dir, info à esq) — mainAxis: end
+     * index 1 → position LEFT  (info à dir, planeta à esq) — mainAxis: start
+     *
+     * Planet constrained: maxWidth = min(screenWidth, maxWidthContent) / 2.5
+     * = 928 / 2.5 ≈ 371px on desktop
+     */
+    .planets-list {
+      width: 100%;
+      max-width: var(--max-content);
+      margin: 0 auto;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .planet-row {
+      display: flex;
+      align-items: center;
+      padding-bottom: 64px;  /* Flutter: paddingBottom: 64 */
+      width: 100%;
+      /* paddingInside from position: right→ paddingRight:24, left→ paddingLeft:24 */
+    }
+    /* index 0 → position RIGHT → mainAxis: end (planet on right, info on left) */
+    .planet-row.pos-right {
+      justify-content: flex-end;
+      padding-right: 24px;
+    }
+    /* index 1 → position LEFT → mainAxis: start (planet on left, info on right) */
+    .planet-row.pos-left {
+      justify-content: flex-start;
+      padding-left: 24px;
+    }
+
+    .planet-row-inner {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      border-radius: 12px;
+      transition: background 0.2s;
+      padding: 8px;
+    }
+    .planet-row-inner:hover { background: rgba(255,255,255,0.04); }
+    .planet-row-inner:active { transform: scale(0.99); }
+
+    /* ── Planet Globe + animations ── */
+    .planet-globe-wrap {
+      position: relative;
+      /* maxWidth/height: min(928, screenW) / 2.5 ≈ 371px on desktop, constrained */
+      width: min(371px, 38vw);
+      height: min(371px, 38vw);
+      flex-shrink: 0;
+    }
+
+    /* PulseTwoAnimation — only on active planet */
+    @keyframes pulse-ring {
+      0%   { transform: scale(1);    opacity: 0.45; }
+      70%  { transform: scale(1.25); opacity: 0;    }
+      100% { transform: scale(1.25); opacity: 0;    }
+    }
+    .pulse-ring {
+      position: absolute;
+      inset: -8%;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.3);
+      animation: pulse-ring 2s ease-out infinite;
+      pointer-events: none;
+    }
+    .pulse-ring-2 { animation-delay: 1s; }
+
+    .planet-svg {
+      width: 100%; height: 100%;
+      border-radius: 50%;
+      display: block;
+      transition: transform 0.3s ease;
+      /* ZoomOnHover in Flutter */
+    }
+    .planet-row-inner:hover .planet-svg { transform: scale(1.03); }
+
+    /* SIG mascot overlay — RoboFaceTwoAnimation: centered on planet, size = planetW/3 */
+    .sig-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      z-index: 2;
+    }
+    .sig-face {
+      width: 33.3%;  /* planetW / 3 */
+      height: auto;
+      position: relative;
+    }
+    @keyframes sig-blink {
+      0%, 45%, 55%, 100% { opacity: 1; }
+      48%, 52%           { opacity: 0.1; }
+    }
+    @keyframes sig-float {
+      0%, 100% { transform: translateY(0); }
+      50%       { transform: translateY(-4px); }
+    }
+    .sig-face { animation: sig-float 2.5s ease-in-out infinite; }
+
+    /* Lock animation — LockAnimation for locked planets */
+    .lock-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    /* ── Planet Identification widget ── */
+    .planet-info {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    /* index 0 → pos LEFT  → info aligns right (planet left, info right) */
+    .pos-left  .planet-info { align-items: flex-end;   text-align: right; }
+    /* index 1 → pos RIGHT → info aligns left  (info left, planet right) */
+    .pos-right .planet-info { align-items: flex-start; text-align: left; }
+
+    .planet-name {
+      /* OrbieStyles.bodyRobotoSubtituloorbitron → Orbitron, tracked */
+      font-family: 'Orbitron', sans-serif;
+      font-size: clamp(14px, 2.2vw, 22px);
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 1px;
+      margin-bottom: 4px;
+    }
+
+    /* Stars 0-3 (StarsPerformancePlanet) */
+    .stars-row {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-bottom: 8px;
+    }
+    .pos-left  .stars-row { justify-content: flex-end; }
+    .pos-right .stars-row { justify-content: flex-start; }
+    .star { font-size: 16px; line-height: 1; }
+    .star-on  { color: var(--yellow-100); }
+    .star-off { color: var(--star-inactive); }
+
+    /* Horizontal divider line with arrow (planet_row.svg) */
+    .planet-divider {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      margin-bottom: 8px;
+    }
+    .planet-divider-line {
+      flex: 1;
+      height: 1px;
+      background: #fff;
+      box-shadow: 0 0 3px #fff;
+    }
+    .planet-divider-arrow {
+      /* planet_row.svg: a small chevron/arrow */
+      width: 8px; height: 8px;
+      border-top: 1.5px solid #fff;
+      border-right: 1.5px solid #fff;
+      flex-shrink: 0;
+    }
+    .pos-right .planet-divider-arrow { transform: rotate(45deg);  margin-right: -2px; order: -1; transform: rotate(-135deg); }
+    .pos-left  .planet-divider-arrow { transform: rotate(45deg);  margin-left: -2px; }
+
+    .planet-status {
+      /* bodyRobotoSmallRegular.tint(contentParagraphySmall1) */
+      font-size: clamp(11px, 1.2vw, 13px);
+      color: rgba(255,255,255,0.75);
+      max-width: 170px;
+    }
+    .pos-left .planet-status { text-align: right; }
+
+    /* ─────────────── BOTTOM NAV (NavBottom Flutter) ─────────────── */
+    /*
+     * Container: margin(left:24,right:24,bottom:24), padding:4, height:64
+     * BorderRadius:12, color: surfacesSolidDark300 = #142A51
+     * 3 tabs: season(Início), rank(Ranking), profile(Perfil)
+     * Selected: surfacesSolidPrimary300 = #0059E7, borderRadius:12, padding(h:12,v:8)
+     */
+    .bottom-nav {
+      position: fixed;
+      bottom: var(--nav-margin);
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(100% - var(--nav-margin) * 2);
+      max-width: var(--max-content);
+      height: var(--nav-height);
+      background: #142A51;          /* surfacesSolidDark300 */
+      border-radius: var(--nav-radius);
+      padding: 4px;
+      display: flex;
+      align-items: stretch;
+      z-index: 100;
+    }
+    .nav-item {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: var(--nav-radius);
+      cursor: pointer;
+      transition: background 0.2s;
+      border: none;
+      background: transparent;
+      gap: 0;
+      padding: 8px 12px;
+    }
+    .nav-item.active { background: var(--primary); }
+    .nav-item:hover:not(.active) { background: rgba(255,255,255,0.06); }
+
+    .nav-icon {
+      width: 24px; height: 24px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    /* On desktop (wider than max-content / 2) show label next to icon */
+    @media (min-width: 600px) {
+      .nav-label {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 11px;
+        font-weight: 700;
+        color: #fff;
+        margin-left: 16px;
+        white-space: nowrap;
+      }
+    }
+    @media (max-width: 599px) {
+      .nav-label { display: none; }
+    }
+
+    /* ─────────────── RESPONSIVE BREAKPOINTS ─────────────── */
+    /* Tablet ≤ 768px */
+    @media (max-width: 768px) {
+      .planet-globe-wrap {
+        width: min(260px, 45vw);
+        height: min(260px, 45vw);
+      }
+      .planet-row { padding-bottom: 48px; }
+      .logo-bar   { padding: 20px 16px 32px; }
+      .continue-wrap { padding: 0 16px; }
+      .planets-list  { padding: 0; }
+      .planet-row.pos-right { padding-right: 16px; }
+      .planet-row.pos-left  { padding-left:  16px; }
+    }
+
+    /* Mobile ≤ 480px: stack planet + info vertically */
+    @media (max-width: 480px) {
+      .planet-row, .planet-row.pos-right, .planet-row.pos-left {
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 0 16px 48px;
+      }
+      .planet-globe-wrap {
+        width: min(220px, 70vw);
+        height: min(220px, 70vw);
+      }
+      .pos-right .planet-info,
+      .pos-left  .planet-info {
+        align-items: center;
+        text-align: center;
+      }
+      .pos-left  .stars-row { justify-content: center; }
+      .pos-left  .planet-status { text-align: center; }
+      .bottom-nav {
+        border-radius: var(--nav-radius) var(--nav-radius) 0 0;
+        bottom: 0;
+        width: 100%;
+        max-width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background layers -->
+  <div class="bg-layer"></div>
+  <div class="bg-stars"></div>
+
+  <!-- Meteors horizontal (MeteorsHorizontal — 5 rocks traversing right→left) -->
+  <div class="meteors-layer">
+    <div class="meteor-rock rock-5"></div>
+    <div class="meteor-rock rock-4"></div>
+    <div class="meteor-rock rock-3"></div>
+    <div class="meteor-rock rock-2"></div>
+    <div class="meteor-rock rock-1"></div>
+  </div>
+
+  <!-- Rocks oscillating at bottom (MeteorsRocks — 19 rocks, simplified) -->
+  <div class="rocks-bottom" id="rocksBottom"></div>
+
+  <div class="app">
+
+    <!-- ══ LOGO BAR (Row: hidden-notif | Logo | NotifButton) ══ -->
+    <div class="logo-bar">
+      <div class="logo-spacer"></div>
+      <!-- Logo original: orbie_shining.svg (ícone orbital laranja) + orbie_text.svg (wordmark branco) -->
+      <div class="orbie-logo" title="Orbie">
+        <!-- orbie_text.svg — já contém o "O" com anel orbital, sem necessidade do ícone separado -->
+        <svg class="orbie-logo-text" width="191" height="58" fill="none" xmlns="http://www.w3.org/2000/svg"><g><path d="M41.7627 56C56.5363 56 67.7506 45.0144 67.7506 30.4669C67.7506 15.9194 56.5389 4.9364 41.7627 4.9364C26.9865 4.9364 15.7773 15.922 15.7773 30.4669C15.7773 45.0119 26.9154 56 41.7652 56M41.7652 52.1357C29.4153 52.1357 20.0964 42.893 20.0964 30.4669C20.0964 18.0408 29.4153 8.79812 41.7652 8.79812C54.1151 8.79812 63.4341 18.0408 63.4341 30.4669C63.4341 42.893 54.1151 52.1357 41.7652 52.1357Z" fill="white"/><path d="M92.7695 16.8315C91.4814 16.453 90.4957 16.3005 88.9815 16.3005C84.134 16.3005 80.4958 19.0291 78.4506 23.4219V18.5718C78.4506 17.5861 77.9197 16.9814 76.9364 16.9814H76.0269C75.1174 16.9814 74.5127 17.5886 74.5127 18.5718V53.4238C74.5127 54.4096 75.1199 55.0905 76.0269 55.0905H77.1625C78.0721 55.0905 78.6768 54.4096 78.6768 53.4238V33.1956C78.6768 25.5433 82.8433 20.0124 88.6029 20.0124C89.5124 20.0124 90.3458 20.1648 91.4052 20.4671C92.3147 20.7695 93.1481 20.6932 93.5266 19.5576L93.679 18.9504C94.1338 17.6623 93.5266 17.0551 92.7695 16.829" fill="white"/><path d="M116.487 16.3006C110.046 16.3006 104.82 19.1028 101.408 23.5743V2.58637C101.408 1.45072 100.954 0.767295 99.6655 1.14584L98.7559 1.37196C97.694 1.67429 97.3154 2.20528 97.3154 3.0386V53.4213C97.3154 54.4071 97.8464 55.088 98.8296 55.088H99.8916C100.877 55.088 101.406 54.4071 101.406 53.4213V48.4976C104.663 53.0428 109.891 55.9975 116.484 55.9975C127.699 55.9975 135.577 47.2095 135.577 36.1478C135.577 25.086 127.699 16.298 116.484 16.298M116.106 52.2095C107.696 52.2095 101.18 46.3 101.027 36.1478C100.875 25.9955 107.77 20.0861 116.106 20.0861C125.272 20.0861 131.334 27.2836 131.334 36.1478C131.334 45.0119 125.272 52.2095 116.106 52.2095Z" fill="white"/><path d="M143.848 55.0905H144.984C145.97 55.0905 146.498 54.4096 146.498 53.4239V18.5719C146.498 17.5861 145.967 16.9814 144.984 16.9814H143.848C142.939 16.9814 142.334 17.5887 142.334 18.5719V53.4239C142.334 54.4096 142.941 55.0905 143.848 55.0905Z" fill="white"/><path d="M157.566 37.4384H188.477C189.765 37.4384 190.522 36.605 190.522 35.3932C190.522 30.6194 188.856 25.998 185.749 22.5123C182.642 18.6481 177.944 16.3005 172.111 16.3005C161.125 16.3005 153.244 24.8624 153.244 36.2265C153.244 48.6526 162.639 56 172.944 56C178.096 56 184.384 53.9548 188.703 49.4071C189.234 48.7999 189.613 47.8929 188.78 47.0596L188.325 46.6811C187.644 46.0002 186.811 45.8478 185.825 46.6811C181.961 50.5453 177.037 52.212 172.794 52.212C164.989 52.212 158.097 46.7573 157.566 37.4384ZM172.113 20.0886C176.963 20.0886 180.751 22.0575 183.099 25.3934C184.842 27.591 185.901 30.3933 186.28 33.6529H157.566C158.399 25.5458 164.082 20.0911 172.113 20.0911" fill="white"/><path d="M140.645 6.44547C141.212 8.48558 143.361 9.68982 145.442 9.13343C147.522 8.57704 148.75 6.47088 148.183 4.43077C147.616 2.39067 145.467 1.18642 143.386 1.74535C141.306 2.30175 140.078 4.40791 140.645 6.44801" fill="#29B84C"/><path d="M79.9758 3.57717C79.8513 2.26876 78.863 1.32111 78.1465 0.846021C77.547 0.447146 76.203 0 74.6812 0C70.8017 0 64.3155 1.94102 56.6276 5.38608C56.3913 5.49279 54.1327 6.6259 52.9081 7.24072C53.777 7.62689 54.618 8.05626 55.4259 8.52881L57.842 7.26359C65.5299 3.81091 71.6883 1.96897 75.4306 1.96897C76.1776 1.96897 76.9652 2.07059 77.3056 2.2027C77.6486 2.33482 78.0297 2.51266 78.0449 3.22911C78.0881 5.35559 75.4306 9.25542 70.634 14.0292C64.3688 20.2639 55.0677 27.4004 44.4428 34.1203C25.3603 46.1907 10.6528 51.5946 4.54515 51.5946C1.02132 51.5946 2.0274 49.4605 1.96643 49.9457C2.27384 47.489 5.47247 42.6466 13.9911 35.2179L15.9474 33.4979C15.8458 32.5655 15.7873 31.6178 15.7797 30.6498L12.6497 33.3937C4.4486 40.4921 0 46.2644 0 49.6815C0 50.1261 0.193086 52.2856 2.77942 53.2002C3.46031 53.4416 4.30125 53.5636 5.29717 53.5636C12.9266 53.5636 28.8232 46.6277 45.797 35.8911C56.3837 29.1966 65.6849 22.088 71.9881 15.8813C75.9616 11.9662 80.2883 6.88758 79.9758 3.57971" fill="#F79750"/></g></svg>
+      </div>
+      <button class="notif-btn" title="Notificações" aria-label="Notificações">
+        <div class="notif-dot"></div>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M13.73 21a2 2 0 0 1-3.46 0" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- ══ CONTINUE CARD (CardJumpToChallenge — fixed acima da navbar) ══ -->
+    <div class="continue-wrap">
+      <div class="continue-card" role="button" aria-label="Continuar de onde parei Arithmos Etapa 2 Fase 4">
+        <!-- Planet thumb SVG (44px height, glow shadow) -->
+        <div class="continue-planet-thumb">
+          <svg viewBox="0 0 80 96" height="44" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <radialGradient id="cg1" cx="38%" cy="32%" r="65%">
+                <stop offset="0%"   stop-color="#E8A87C"/>
+                <stop offset="40%"  stop-color="#B8682A"/>
+                <stop offset="100%" stop-color="#3D1A05"/>
+              </radialGradient>
+              <radialGradient id="cg-shad" cx="65%" cy="65%" r="50%">
+                <stop offset="0%"   stop-color="rgba(0,0,0,0.45)"/>
+                <stop offset="100%" stop-color="rgba(0,0,0,0)"/>
+              </radialGradient>
+              <clipPath id="cg-clip"><ellipse cx="40" cy="44" rx="38" ry="44"/></clipPath>
+            </defs>
+            <ellipse cx="40" cy="44" rx="38" ry="44" fill="url(#cg1)"/>
+            <ellipse cx="28" cy="34" rx="10" ry="6" fill="rgba(0,0,0,0.1)" transform="rotate(-20,28,34)" clip-path="url(#cg-clip)"/>
+            <ellipse cx="52" cy="55" rx="8"  ry="5" fill="rgba(0,0,0,0.09)" clip-path="url(#cg-clip)"/>
+            <ellipse cx="40" cy="44" rx="38" ry="44" fill="url(#cg-shad)"/>
+            <!-- ring -->
+            <ellipse cx="40" cy="52" rx="58" ry="12" fill="none" stroke="rgba(180,120,60,0.4)" stroke-width="3" transform="rotate(-15,40,52)"/>
+          </svg>
+        </div>
+
+        <div class="continue-info">
+          <div class="continue-title">Continuar de onde parei</div>
+          <div class="continue-breadcrumb">
+            <span>Arithmos</span>
+            <span class="arrow">›</span>
+            <span>Etapa 2 — Proporções</span>
+            <span class="arrow">›</span>
+            <span>Fase 4</span>
+          </div>
+        </div>
+
+        <button class="btn-fab">Continuar</button>
+      </div>
+    </div>
+
+    <!-- ══ PLANET LIST ══ -->
+    <!--
+      index 0 → PlanetIdentificationPosition.right (fromIndex: 0%2!=0 → false → right)
+                 planet on RIGHT, info on LEFT, mainAxis:end → justify-content:flex-end
+      index 1 → PlanetIdentificationPosition.left  (fromIndex: 1%2!=0 → true → left)
+                 planet on LEFT,  info on RIGHT, mainAxis:start → justify-content:flex-start
+    -->
+    <div class="planets-list">
+
+      <!-- ──────────────────────────────────────────────────
+           PLANETA 0 — Arithmos (Matemática, inProgress)
+           position: RIGHT — planet on right, info on left
+           Pulse rings ON (é o planeta ativo)
+           SIG mascot ON (planeta inProgress)
+           Stars: 2 (pontuacao = 2)
+      ────────────────────────────────────────────────── -->
+      <div class="planet-row pos-left">
+        <div class="planet-row-inner" role="button" aria-label="Planeta Arithmos. Em andamento: 42%">
+
+          <!-- Planet Globe LEFT — first child so it renders on the left -->
+          <!-- Planet Globe LEFT (pulse + SIG active) -->
+          <div class="planet-globe-wrap">
+            <!-- Pulse rings (PulseTwoAnimation — inProgress) -->
+            <div class="pulse-ring"></div>
+            <div class="pulse-ring pulse-ring-2"></div>
+
+            <!-- Planet SVG — rocky brown / math -->
+            <svg class="planet-svg" viewBox="0 0 280 280" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <radialGradient id="p0g" cx="36%" cy="30%" r="65%">
+                  <stop offset="0%"   stop-color="#EAB880"/>
+                  <stop offset="30%"  stop-color="#CB7A3A"/>
+                  <stop offset="60%"  stop-color="#8B4010"/>
+                  <stop offset="100%" stop-color="#381500"/>
+                </radialGradient>
+                <radialGradient id="p0s" cx="68%" cy="68%" r="50%">
+                  <stop offset="0%"   stop-color="rgba(0,0,0,0.5)"/>
+                  <stop offset="100%" stop-color="rgba(0,0,0,0)"/>
+                </radialGradient>
+                <radialGradient id="p0h" cx="28%" cy="24%" r="36%">
+                  <stop offset="0%"   stop-color="rgba(255,200,130,0.6)"/>
+                  <stop offset="100%" stop-color="rgba(255,200,130,0)"/>
+                </radialGradient>
+                <clipPath id="p0clip"><circle cx="140" cy="140" r="136"/></clipPath>
+              </defs>
+              <circle cx="140" cy="140" r="136" fill="url(#p0g)"/>
+              <!-- surface detail - craters/canyons -->
+              <ellipse cx="100" cy="92" rx="22" ry="14" fill="rgba(0,0,0,0.12)" transform="rotate(-20,100,92)"  clip-path="url(#p0clip)"/>
+              <ellipse cx="180" cy="118" rx="15" ry="9"  fill="rgba(0,0,0,0.1)"  transform="rotate(12,180,118)"  clip-path="url(#p0clip)"/>
+              <ellipse cx="85"  cy="172" rx="26" ry="16" fill="rgba(0,0,0,0.09)" transform="rotate(-30,85,172)"  clip-path="url(#p0clip)"/>
+              <ellipse cx="198" cy="185" rx="12" ry="7"  fill="rgba(0,0,0,0.1)"  clip-path="url(#p0clip)"/>
+              <path d="M50 115 Q90 108 135 118 Q168 126 210 112" stroke="rgba(0,0,0,0.13)" stroke-width="3" fill="none" clip-path="url(#p0clip)"/>
+              <path d="M60 162 Q105 168 150 160 Q180 155 215 163" stroke="rgba(0,0,0,0.09)" stroke-width="2" fill="none" clip-path="url(#p0clip)"/>
+              <!-- lighter band highlight -->
+              <path d="M55 105 Q140 90 230 110 Q240 118 235 125 Q140 105 48 122 Z" fill="rgba(255,200,100,0.1)" clip-path="url(#p0clip)"/>
+              <circle cx="140" cy="140" r="136" fill="url(#p0s)"/>
+              <circle cx="140" cy="140" r="136" fill="url(#p0h)"/>
+              <!-- ring belt -->
+              <ellipse cx="140" cy="158" rx="178" ry="32" fill="none" stroke="rgba(180,110,50,0.38)" stroke-width="7" transform="rotate(-16,140,158)"/>
+              <ellipse cx="140" cy="160" rx="195" ry="38" fill="none" stroke="rgba(160,95,40,0.2)"  stroke-width="4" transform="rotate(-16,140,160)"/>
+            </svg>
+
+            <!-- SIG face overlay (RoboFaceTwoAnimation — only on active planet) -->
+            <div class="sig-overlay">
+              <div class="sig-face">
+                <svg viewBox="0 0 90 90" xmlns="http://www.w3.org/2000/svg">
+                  <!-- Body/helmet base -->
+                  <circle cx="45" cy="45" r="44" fill="rgba(0,89,231,0.82)"/>
+                  <circle cx="45" cy="45" r="38" fill="rgba(0,89,231,0.65)"/>
+                  <!-- Visor glare -->
+                  <ellipse cx="34" cy="32" rx="12" ry="8" fill="rgba(255,255,255,0.08)" transform="rotate(-15,34,32)"/>
+                  <!-- Eyes (frame_smile) -->
+                  <ellipse cx="33" cy="40" rx="6" ry="7.5" fill="white"/>
+                  <ellipse cx="57" cy="40" rx="6" ry="7.5" fill="white"/>
+                  <circle  cx="34.5" cy="41"  r="3.8" fill="#002868"/>
+                  <circle  cx="58.5" cy="41"  r="3.8" fill="#002868"/>
+                  <circle  cx="35.5" cy="39.5" r="1.5" fill="white"/>
+                  <circle  cx="59.5" cy="39.5" r="1.5" fill="white"/>
+                  <!-- Smile -->
+                  <path d="M33 52 Q45 60 57 52" stroke="white" stroke-width="3" fill="none" stroke-linecap="round"/>
+                  <!-- Antennae -->
+                  <line x1="38" y1="10" x2="30" y2="3" stroke="#99C0FF" stroke-width="2.5" stroke-linecap="round"/>
+                  <circle cx="30" cy="3" r="3.5" fill="#FFEA24"/>
+                  <line x1="52" y1="10" x2="60" y2="3" stroke="#99C0FF" stroke-width="2.5" stroke-linecap="round"/>
+                  <circle cx="60" cy="3" r="3.5" fill="#FFEA24"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- Info RIGHT of globe for pos-left planet (aligns right) -->
+          <div class="planet-info">
+            <div class="planet-name">Arithmos</div>
+            <div class="stars-row" aria-label="2 estrelas">
+              <span class="star star-on">★</span>
+              <span class="star star-on">★</span>
+              <span class="star star-off">★</span>
+            </div>
+            <div class="planet-divider" style="flex-direction:row-reverse;">
+              <div class="planet-divider-arrow" style="transform:rotate(225deg);margin-left:-2px;margin-right:0;"></div>
+              <div class="planet-divider-line"></div>
+            </div>
+            <div class="planet-status">Em andamento: 42%</div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ──────────────────────────────────────────────────
+           PLANETA 1 — Bios (Ciências, open)
+           position: RIGHT — planet on right, info on left
+           Pulse rings OFF
+           SIG mascot OFF
+           Stars: 1 (pontuacao = 1)
+      ────────────────────────────────────────────────── -->
+      <div class="planet-row pos-right">
+        <div class="planet-row-inner" role="button" aria-label="Planeta Bios. Em andamento: 12%">
+
+          <!-- Info LEFT of globe for pos-right planet (aligns left) -->
+          <div class="planet-info">
+            <div class="planet-name">Bios</div>
+            <div class="stars-row" aria-label="1 estrela">
+              <span class="star star-on">★</span>
+              <span class="star star-off">★</span>
+              <span class="star star-off">★</span>
+            </div>
+            <div class="planet-divider">
+              <div class="planet-divider-arrow"></div>
+              <div class="planet-divider-line"></div>
+            </div>
+            <div class="planet-status">Em andamento: 12%</div>
+          </div>
+
+          <!-- Planet Globe RIGHT (no pulse, no SIG) -->
+          <div class="planet-globe-wrap">
+            <!-- Planet SVG — blue/teal, Earth-like (Ciências) -->
+            <svg class="planet-svg" viewBox="0 0 280 280" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <radialGradient id="p1g" cx="36%" cy="30%" r="65%">
+                  <stop offset="0%"   stop-color="#72D0EA"/>
+                  <stop offset="28%"  stop-color="#2A9DBF"/>
+                  <stop offset="60%"  stop-color="#0D5E80"/>
+                  <stop offset="100%" stop-color="#022840"/>
+                </radialGradient>
+                <radialGradient id="p1s" cx="68%" cy="68%" r="50%">
+                  <stop offset="0%"   stop-color="rgba(0,0,0,0.42)"/>
+                  <stop offset="100%" stop-color="rgba(0,0,0,0)"/>
+                </radialGradient>
+                <radialGradient id="p1h" cx="28%" cy="24%" r="36%">
+                  <stop offset="0%"   stop-color="rgba(180,240,255,0.55)"/>
+                  <stop offset="100%" stop-color="rgba(180,240,255,0)"/>
+                </radialGradient>
+                <clipPath id="p1clip"><circle cx="140" cy="140" r="136"/></clipPath>
+              </defs>
+              <circle cx="140" cy="140" r="136" fill="url(#p1g)"/>
+              <!-- Continents -->
+              <path d="M88 76 Q107 64 132 74 Q150 82 144 102 Q136 120 114 122 Q90 124 80 106 Q72 90 88 76Z" fill="rgba(40,155,60,0.72)" clip-path="url(#p1clip)"/>
+              <path d="M160 94 Q182 87 196 102 Q205 116 198 134 Q188 148 172 146 Q154 142 148 124 Q142 108 160 94Z" fill="rgba(40,155,60,0.66)" clip-path="url(#p1clip)"/>
+              <path d="M98 158 Q116 150 132 159 Q144 168 140 185 Q132 198 116 197 Q100 195 92 180 Q86 167 98 158Z" fill="rgba(40,155,60,0.62)" clip-path="url(#p1clip)"/>
+              <!-- Cloud wisps -->
+              <ellipse cx="112" cy="108" rx="34" ry="9"  fill="rgba(255,255,255,0.2)"  transform="rotate(-18,112,108)" clip-path="url(#p1clip)"/>
+              <ellipse cx="175" cy="158" rx="28" ry="7"  fill="rgba(255,255,255,0.15)" transform="rotate( 12,175,158)" clip-path="url(#p1clip)"/>
+              <ellipse cx="80"  cy="145" rx="20" ry="6"  fill="rgba(255,255,255,0.12)" clip-path="url(#p1clip)"/>
+              <!-- Polar icecap -->
+              <ellipse cx="140" cy="20"  rx="36" ry="16" fill="rgba(215,240,255,0.6)"  clip-path="url(#p1clip)"/>
+              <circle  cx="140" cy="140" r="136" fill="url(#p1s)"/>
+              <circle  cx="140" cy="140" r="136" fill="url(#p1h)"/>
+              <!-- Atmosphere halo -->
+              <circle  cx="140" cy="140" r="138" fill="none" stroke="rgba(100,200,230,0.28)" stroke-width="5"/>
+            </svg>
+            <!-- No SIG, no pulse for non-active planet -->
+          </div>
+
+        </div>
+      </div>
+
+    </div><!-- /planets-list -->
+
+    <!-- Spacer so rocks don't overlap last planet -->
+    <div style="height: 80px;"></div>
+
+  </div><!-- /app -->
+
+  <!-- ══ BOTTOM NAV (NavBottom — 3 tabs: Início, Ranking, Perfil) ══ -->
+  <nav class="bottom-nav" role="navigation" aria-label="Navegação principal">
+
+    <!-- Tab: season (Início) — ACTIVE -->
+    <button class="nav-item active" aria-label="Início" aria-current="page">
+      <div class="nav-icon">
+        <!-- house icon (OrbieIconSvg.house) -->
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M3 9.5L12 3L21 9.5V20C21 20.55 20.55 21 20 21H15V15H9V21H4C3.45 21 3 20.55 3 20V9.5Z" fill="white" stroke="white" stroke-width="0.5"/>
+        </svg>
+      </div>
+      <span class="nav-label">Início</span>
+    </button>
+
+    <!-- Tab: rank (Ranking) -->
+    <button class="nav-item" aria-label="Ranking">
+      <div class="nav-icon">
+        <!-- trophy icon (OrbieIconSvg.trophy) -->
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M6 3H18V13C18 16.31 15.31 19 12 19C8.69 19 6 16.31 6 13V3Z" stroke="#99C0FF" stroke-width="1.8" stroke-linejoin="round"/>
+          <path d="M6 5H3C3 7.76 4.69 10.12 7 11.17" stroke="#99C0FF" stroke-width="1.8" stroke-linecap="round"/>
+          <path d="M18 5H21C21 7.76 19.31 10.12 17 11.17" stroke="#99C0FF" stroke-width="1.8" stroke-linecap="round"/>
+          <path d="M12 19V22M8 22H16" stroke="#99C0FF" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <span class="nav-label">Ranking</span>
+    </button>
+
+    <!-- Tab: profile (Perfil) -->
+    <button class="nav-item" aria-label="Perfil">
+      <div class="nav-icon">
+        <!-- account_circle icon (OrbieIconSvg.account_circle) -->
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <circle cx="12" cy="8" r="3.5" stroke="#99C0FF" stroke-width="1.8"/>
+          <path d="M5 20C5 16.69 8.13 14 12 14C15.87 14 19 16.69 19 20" stroke="#99C0FF" stroke-width="1.8" stroke-linecap="round"/>
+          <circle cx="12" cy="12" r="10" stroke="#99C0FF" stroke-width="1.8"/>
+        </svg>
+      </div>
+      <span class="nav-label">Perfil</span>
+    </button>
+
+  </nav>
+
+  <script>
+    /* ── NAV TAB SWITCHING ── */
+    document.querySelectorAll('.nav-item').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.nav-item').forEach(b => {
+          b.classList.remove('active');
+          b.removeAttribute('aria-current');
+        });
+        btn.classList.add('active');
+        btn.setAttribute('aria-current', 'page');
+      });
+    });
+
+    /* ── ROCKS BOTTOM (MeteorsRocks — 19 oscillating dots) ── */
+    (function buildRocks() {
+      const container = document.getElementById('rocksBottom');
+      // Positions roughly mirror the Flutter Rocks enum offsets (scaled to %)
+      // Original canvas: ~1280px wide, rocks from x:0 to x:1055, y:0 to y:826
+      const rocks = [
+        { x: 37.3, y: 47, w: 22, h: 22, dur: 3.0, delay: 0    },
+        { x: 77.6, y: 11, w: 16, h: 16, dur: 3.2, delay: 0.3  },
+        { x: 40.6, y: 23, w: 26, h: 26, dur: 2.8, delay: 0.6  },
+        { x: 33.8, y: 46, w: 20, h: 20, dur: 3.1, delay: 0.9  },
+        { x: 82.4, y: 5,  w: 14, h: 14, dur: 2.9, delay: 1.2  },
+        { x: 38.7, y: 31, w: 18, h: 18, dur: 3.3, delay: 1.5  },
+        { x: 38.7, y: 58, w: 14, h: 14, dur: 2.7, delay: 1.8  },
+        { x: 40.5, y: 35, w: 16, h: 16, dur: 3.0, delay: 0.4  },
+        { x:  0,   y: 83, w: 24, h: 24, dur: 2.6, delay: 0.7  },
+        { x: 71.4, y: 61, w: 20, h: 20, dur: 3.4, delay: 1.0  },
+        { x: 53.4, y: 93, w: 18, h: 18, dur: 2.9, delay: 1.3  },
+        { x: 49.9, y: 93, w: 16, h: 16, dur: 3.1, delay: 1.6  },
+        { x: 57.9, y: 18, w: 22, h: 22, dur: 2.8, delay: 1.9  },
+        { x: 47.0, y: 69, w: 18, h: 18, dur: 3.2, delay: 0.2  },
+        { x: 24.0, y: 54, w: 20, h: 20, dur: 2.7, delay: 0.5  },
+        { x: 36.0, y: 100, w: 14, h: 14, dur: 3.0, delay: 0.8 },
+        { x: 36.2, y: 64, w: 16, h: 16, dur: 2.9, delay: 1.1  },
+        { x: 40.3, y: 46, w: 18, h: 18, dur: 3.1, delay: 1.4  },
+        { x: 65.7, y: 0,  w: 20, h: 20, dur: 2.8, delay: 1.7  },
+      ];
+
+      rocks.forEach(r => {
+        const el = document.createElement('div');
+        el.className = 'rock-dot';
+        el.style.cssText = `
+          left: ${r.x}%;
+          bottom: ${Math.max(0, 100 - r.y)}%;
+          width: ${r.w}px;
+          height: ${r.h}px;
+          animation-duration: ${r.dur}s;
+          animation-delay: -${r.delay}s;
+          border-radius: ${30 + Math.random() * 20}%;
+          opacity: ${0.6 + Math.random() * 0.35};
+        `;
+        container.appendChild(el);
+      });
+    })();
+
+    /* ── SCROLL: parallax-like background shift ── */
+    window.addEventListener('scroll', () => {
+      const y = window.scrollY;
+      document.querySelector('.bg-stars').style.transform = `translateY(${y * 0.3}px)`;
+    }, { passive: true });
+  </script>
+</body>
+</html>

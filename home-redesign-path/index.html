@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Orbie — Home Redesign Desktop</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg:            #0B1120;
+  --bg-surface:    #111827;
+  --card:          #141E2E;
+  --card-2:        #1A2540;
+  --border:        #1D3258;
+  --border-light:  #253C66;
+
+  --blue-600:  #0044B3;
+  --blue-500:  #0059E7;
+  --blue-400:  #3F84F3;
+  --blue-100:  #99C0FF;
+
+  --green-500: #12B76A;
+  --green-400: #34D399;
+
+  --yellow:    #FFEA24;
+  --orange:    #F79009;
+  --red:       #F04438;
+  --purple:    #591FC7;
+
+  --text:      #FFFFFF;
+  --text-2:    #99C0FF;
+  --text-3:    #526D98;
+
+  --sidebar-w: 280px;
+  --right-w:   320px;
+  --path-w:    600px;
+}
+
+html, body {
+  min-height: 100vh;
+  background: var(--bg);
+  font-family: 'Outfit', sans-serif;
+  color: var(--text);
+}
+
+/* ─── LAYOUT SHELL ─── */
+.layout {
+  display: grid;
+  grid-template-columns: var(--sidebar-w) 1fr var(--right-w);
+  min-height: 100vh;
+}
+
+/* ─── LEFT SIDEBAR ─── */
+.sidebar {
+  position: sticky; top: 0; height: 100vh;
+  overflow-y: auto; overflow-x: hidden;
+  background: var(--bg-surface);
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  padding: 24px 16px;
+  gap: 4px;
+  scrollbar-width: none;
+}
+.sidebar::-webkit-scrollbar { display: none; }
+
+.logo {
+  padding: 8px 12px 20px;
+  display: block;
+  line-height: 0;
+}
+
+.nav-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 11px 14px; border-radius: 12px;
+  font-size: 14px; font-weight: 600; color: var(--text-2);
+  cursor: pointer; transition: all 0.15s;
+  text-decoration: none;
+}
+.nav-item:hover { background: var(--card); color: #fff; }
+.nav-item.active { background: rgba(0,89,231,0.15); color: var(--blue-400); border: 1px solid rgba(0,89,231,0.25); }
+.nav-item svg { flex-shrink: 0; opacity: 0.8; }
+.nav-item.active svg { opacity: 1; }
+
+.nav-divider { height: 1px; background: var(--border); margin: 12px 0; }
+
+/* XP card na sidebar */
+.xp-card {
+  margin-top: auto; padding: 14px;
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 14px;
+}
+.xp-avatar {
+  width: 44px; height: 44px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--blue-500), var(--purple));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; margin-bottom: 10px;
+}
+.xp-name { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+.xp-level { font-size: 11px; color: var(--text-2); margin-bottom: 10px; }
+.xp-bar { height: 6px; background: var(--border); border-radius: 100px; overflow: hidden; margin-bottom: 6px; }
+.xp-fill { height: 100%; width: 38%; background: linear-gradient(90deg, var(--blue-500), var(--blue-400)); border-radius: 100px; }
+.xp-nums { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-3); }
+
+/* ─── CENTER PATH ─── */
+.center {
+  overflow-y: auto; overflow-x: hidden;
+  scrollbar-width: thin; scrollbar-color: var(--border) transparent;
+  padding-bottom: 80px;
+  position: relative;
+  background: var(--bg);
+}
+
+/* Canvas de estrelas — montado via JS na body */
+
+/* Planet sticky header — igual ao Duolingo */
+.planet-banner {
+  position: sticky; top: 0; z-index: 20;
+  padding: 14px 40px;
+  background: linear-gradient(180deg, var(--bg) 75%, transparent);
+}
+.planet-banner-inner {
+  max-width: var(--path-w);
+  margin: 0 auto;
+  background: var(--card-2);
+  border: 1px solid var(--border-light);
+  border-radius: 16px;
+  padding: 12px 16px;
+  display: flex; align-items: center; gap: 14px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+}
+.planet-thumb {
+  width: 48px; height: 48px; border-radius: 50%;
+  flex-shrink: 0; overflow: hidden; position: relative;
+}
+.planet-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.planet-thumb-locked {
+  background: var(--card); border: 2px dashed var(--border-light);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text-3); font-size: 18px;
+}
+.planet-info { flex: 1; min-width: 0; }
+.planet-eyebrow {
+  font-size: 10px; font-weight: 700; letter-spacing: 1px;
+  text-transform: uppercase; color: var(--text-3); margin-bottom: 2px;
+}
+.planet-name {
+  font-family: 'Orbitron', sans-serif; font-size: 16px; font-weight: 700; color: #fff;
+}
+.planet-sub { font-size: 12px; color: var(--text-2); margin-top: 2px; }
+.planet-pct {
+  font-family: 'Orbitron', sans-serif; font-size: 13px; font-weight: 700;
+  color: var(--green-500); background: rgba(18,183,106,0.12);
+  border: 1px solid rgba(18,183,106,0.25);
+  padding: 5px 12px; border-radius: 100px; white-space: nowrap; flex-shrink: 0;
+}
+.planet-locked-badge {
+  font-size: 12px; color: var(--text-3);
+  background: rgba(42,58,92,0.5); border: 1px solid var(--border-light);
+  padding: 5px 12px; border-radius: 100px; white-space: nowrap; flex-shrink: 0;
+}
+.planet-guide-btn {
+  display: flex; align-items: center; gap: 8px;
+  background: rgba(0,89,231,0.15); border: 1px solid rgba(0,89,231,0.3);
+  color: var(--blue-400); border-radius: 10px; padding: 7px 14px;
+  font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap;
+  transition: background 0.15s; flex-shrink: 0;
+}
+.planet-guide-btn:hover { background: rgba(0,89,231,0.25); }
+
+/* PATH TRACK */
+.path-track {
+  max-width: var(--path-w);
+  margin: 0 auto;
+  padding: 0 40px;
+  position: relative;
+  display: flex; flex-direction: column; align-items: center;
+  gap: 0;
+}
+
+/* linha pontilhada central */
+.path-track::before {
+  content: '';
+  position: absolute; left: 50%; top: 0; bottom: 0;
+  width: 2px;
+  background: repeating-linear-gradient(180deg, var(--border) 0px, var(--border) 8px, transparent 8px, transparent 16px);
+  transform: translateX(-50%);
+  z-index: 0;
+}
+
+/* Cada nó do caminho */
+.path-node {
+  position: relative; z-index: 1;
+  display: flex; flex-direction: column; align-items: center;
+  width: 100%;
+  margin: 0;
+}
+
+/* TOOLTIP de ação (estilo Duolingo) */
+.node-tooltip {
+  background: var(--card-2);
+  border: 2px solid var(--blue-500);
+  border-radius: 12px;
+  padding: 8px 16px;
+  font-size: 13px; font-weight: 700;
+  color: var(--blue-400); letter-spacing: 0.5px;
+  text-transform: uppercase; margin-bottom: 8px;
+  white-space: nowrap;
+  box-shadow: 0 4px 20px rgba(0,89,231,0.3);
+  animation: float 2.5s ease-in-out infinite;
+}
+.node-tooltip.green {
+  border-color: var(--green-500); color: var(--green-500);
+  box-shadow: 0 4px 20px rgba(18,183,106,0.3);
+}
+@keyframes float {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+/* ── WRAPPER com ring SVG de progresso ── */
+.node-ring-wrap {
+  position: relative;
+  display: flex; align-items: center; justify-content: center;
+  margin: 12px 0;
+}
+.node-ring-wrap svg.ring {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  pointer-events: none; overflow: visible;
+  transform: rotate(-90deg); /* começa do topo */
+}
+.ring-track { fill: none; }
+.ring-fill  { fill: none; transition: stroke-dashoffset 0.6s ease; }
+
+/* BOTÃO nó — círculo */
+.node-btn {
+  width: 72px; height: 72px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px; cursor: pointer; position: relative;
+  transition: transform 0.15s;
+  border: none; outline: none;
+  flex-shrink: 0;
+}
+.node-btn:hover { transform: scale(1.06); }
+
+/* ── ESTADO: DONE (concluído) ──
+   Verde sólido, sombra inferior (#027A48), ícone de check/star branco */
+.node-btn.done {
+  background: linear-gradient(180deg, #17C97E 0%, #12B76A 50%, #0EA063 100%);
+  box-shadow:
+    0 6px 0 0 #027A48,                        /* sombra inferior estilo 3D */
+    0 10px 28px rgba(18,183,106,0.40);
+}
+.node-btn.done:hover { transform: translateY(-2px); }
+.node-btn.done:active { transform: translateY(3px); box-shadow: 0 3px 0 0 #027A48, 0 6px 16px rgba(18,183,106,0.30); }
+
+/* ── ESTADO: ACTIVE (em andamento) ──
+   Azul primário Orbie, sombra inferior (#0044B3), pulso suave */
+.node-btn.active {
+  background: linear-gradient(180deg, #3F84F3 0%, #0059E7 50%, #004DCF 100%);
+  box-shadow:
+    0 6px 0 0 #0044B3,
+    0 10px 32px rgba(0,89,231,0.55);
+  animation: pulse-active 2.2s ease-in-out infinite;
+}
+.node-btn.active:hover { transform: translateY(-2px); }
+.node-btn.active:active { transform: translateY(3px); box-shadow: 0 3px 0 0 #0044B3, 0 6px 16px rgba(0,89,231,0.30); }
+@keyframes pulse-active {
+  0%,100% { box-shadow: 0 6px 0 0 #0044B3, 0 10px 32px rgba(0,89,231,0.55); }
+  50%      { box-shadow: 0 6px 0 0 #0044B3, 0 14px 42px rgba(0,89,231,0.75); }
+}
+
+/* ── ESTADO: LOCKED (bloqueado) ──
+   Superfície escura, borda tracejada, sem sombra inferior, cadeado acinzentado */
+.node-btn.locked {
+  background: linear-gradient(180deg, #1F2E48 0%, #17213A 100%);
+  border: 2.5px dashed #2F4470;
+  box-shadow: 0 4px 0 0 #0D1629, 0 6px 16px rgba(0,0,0,0.35);
+  cursor: not-allowed;
+  color: #3A5080;
+}
+.node-btn.locked:hover { transform: none; }
+
+/* ── CHEST (recompensa) ── */
+.node-btn.chest {
+  background: transparent; border: none; box-shadow: none;
+  font-size: 50px; width: 76px; height: 76px; cursor: pointer;
+  filter: drop-shadow(0 4px 12px rgba(255,234,36,0.3));
+}
+.node-btn.chest:hover { transform: scale(1.08); filter: drop-shadow(0 6px 18px rgba(255,234,36,0.5)); }
+
+/* Popup ao hover do nó ativo */
+.node-popup {
+  display: none; position: absolute;
+  left: calc(100% + 20px); top: 50%; transform: translateY(-50%);
+  background: var(--card-2); border: 1px solid var(--border-light);
+  border-radius: 14px; padding: 16px 18px; width: 240px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5); z-index: 50;
+}
+.node-btn-wrap:hover .node-popup { display: block; }
+.node-btn-wrap { position: relative; display: flex; flex-direction: column; align-items: center; }
+.popup-title { font-family: 'Orbitron', sans-serif; font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+.popup-desc { font-size: 12px; color: var(--text-2); margin-bottom: 12px; line-height: 1.5; }
+.popup-progress { height: 5px; background: var(--border); border-radius: 100px; overflow: hidden; margin-bottom: 8px; }
+.popup-fill { height: 100%; border-radius: 100px; background: linear-gradient(90deg,var(--blue-500),var(--blue-400)); }
+.popup-meta { display: flex; justify-content: space-between; font-size: 11px; color: var(--text-3); margin-bottom: 14px; }
+.popup-cta {
+  width: 100%; padding: 9px; border-radius: 10px;
+  background: var(--blue-500); color: #fff; font-family: 'Outfit'; font-size: 13px; font-weight: 700;
+  border: none; cursor: pointer; transition: background 0.15s;
+}
+.popup-cta:hover { background: var(--blue-400); }
+
+/* Layout esquerda/direita nos nós */
+.path-node.right .node-btn-wrap .node-popup { left: calc(100% + 20px); right: auto; }
+.path-node.left .node-btn-wrap .node-popup { right: calc(100% + 20px); left: auto; }
+
+/* Offset zigue-zague */
+.path-node.left { align-items: flex-start; padding-left: 80px; }
+.path-node.right { align-items: flex-end; padding-right: 80px; }
+.path-node.center { align-items: center; }
+
+/* Separador entre planetas */
+.planet-divider {
+  display: flex; align-items: center; gap: 16px;
+  width: 100%; max-width: var(--path-w);
+  margin: 16px auto 0; padding: 0 40px;
+}
+.divider-line { flex: 1; height: 1px; background: var(--border); }
+.divider-label { font-size: 11px; color: var(--text-3); display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+
+/* ─── RIGHT PANEL ─── */
+.right-panel {
+  position: sticky; top: 0; height: 100vh;
+  overflow-y: auto; overflow-x: hidden;
+  border-left: 1px solid var(--border);
+  padding: 28px 20px;
+  display: flex; flex-direction: column; gap: 20px;
+  scrollbar-width: none;
+}
+.right-panel::-webkit-scrollbar { display: none; }
+
+.panel-title { font-family: 'Orbitron', sans-serif; font-size: 12px; font-weight: 700; color: var(--text-3); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
+
+/* Stats */
+.stats-row { display: flex; gap: 10px; }
+.stat-box {
+  flex: 1; background: var(--card); border: 1px solid var(--border);
+  border-radius: 12px; padding: 12px; text-align: center;
+}
+.stat-num { font-family: 'Orbitron', sans-serif; font-size: 18px; font-weight: 700; color: #fff; }
+.stat-label { font-size: 10px; color: var(--text-3); margin-top: 2px; }
+
+/* Streak */
+.streak-card {
+  background: linear-gradient(135deg, rgba(247,144,9,0.12), rgba(247,144,9,0.04));
+  border: 1px solid rgba(247,144,9,0.25); border-radius: 14px; padding: 16px;
+  display: flex; align-items: center; gap: 14px;
+}
+.streak-fire { font-size: 32px; }
+.streak-info { flex: 1; }
+.streak-num { font-family: 'Orbitron', sans-serif; font-size: 22px; font-weight: 700; color: var(--orange); }
+.streak-label { font-size: 12px; color: var(--text-2); }
+.streak-days { display: flex; gap: 6px; margin-top: 8px; }
+.streak-day { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; }
+.streak-day.done { background: rgba(247,144,9,0.2); color: var(--orange); }
+.streak-day.today { background: var(--orange); color: #fff; }
+.streak-day.miss { background: var(--card); color: var(--text-3); }
+
+/* Ranking preview */
+.ranking-list { display: flex; flex-direction: column; gap: 8px; }
+.rank-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 12px; border-radius: 10px; background: var(--card); border: 1px solid var(--border);
+}
+.rank-item.you { border-color: rgba(0,89,231,0.35); background: rgba(0,89,231,0.08); }
+.rank-pos { font-family: 'Orbitron', sans-serif; font-size: 13px; font-weight: 700; width: 20px; color: var(--text-3); }
+.rank-pos.gold { color: var(--yellow); }
+.rank-pos.silver { color: #C0C0C0; }
+.rank-pos.bronze { color: #CD7F32; }
+.rank-avatar { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; background: var(--card-2); flex-shrink: 0; }
+.rank-name { flex: 1; font-size: 13px; font-weight: 500; }
+.rank-xp { font-family: 'Orbitron', sans-serif; font-size: 11px; font-weight: 700; color: var(--blue-100); }
+</style>
+</head>
+
+<body>
+<div class="layout">
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- SIDEBAR ESQUERDA -->
+  <!-- ══════════════════════════════════════════ -->
+  <nav class="sidebar">
+    <span class="logo">
+      <!-- Logo Orbie inline — apenas os paths, sem fundo nem glow -->
+      <svg width="109" height="38" viewBox="29 22 130 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- O -->
+        <path d="M43.8644 52C52.3064 52 58.7146 45.7225 58.7146 37.4097C58.7146 29.0968 52.3079 22.8208 43.8644 22.8208C35.4209 22.8208 29.0156 29.0983 29.0156 37.4097C29.0156 45.7211 35.3802 52 43.8658 52ZM43.8658 49.7919C36.8087 49.7919 31.4836 44.5103 31.4836 37.4097C31.4836 30.3091 36.8087 25.0275 43.8658 25.0275C50.9229 25.0275 56.248 30.3091 56.248 37.4097C56.248 44.5103 50.9229 49.7919 43.8658 49.7919Z" fill="white"/>
+        <!-- traço diagonal laranja (acento) -->
+        <path d="M65.7004 22.0441L62.0547 25.5215L67.2637 30.9258L70.9094 27.4484L65.7004 22.0441Z" fill="#F79009"/>
+        <!-- r -->
+        <path d="M73.0101 29.618V51.5948H75.4467V38.4805C75.4467 34.3814 77.8833 31.6887 81.8154 31.6887C82.4392 31.6887 83.0957 31.7544 83.6867 31.9186V29.5508C83.1286 29.4194 82.5705 29.3537 81.9795 29.3537C79.0849 29.3537 76.7468 30.7291 75.4467 33.2247V29.618H73.0101Z" fill="white"/>
+        <!-- b -->
+        <path d="M86.5637 29.3145V51.5948H88.9675V47.7915C90.2347 49.988 92.5729 51.8945 96.1858 51.8945C101.439 51.8945 105.339 47.8901 105.339 40.5735C105.339 33.2897 101.439 29.2853 96.1858 29.2853C92.5729 29.2853 90.2347 31.1589 88.9675 33.3554V29.3145H86.5637ZM95.8935 49.6591C91.3353 49.6591 88.9675 45.9215 88.9675 40.5735C88.9675 35.2255 91.3353 31.5208 95.8935 31.5208C100.484 31.5208 102.936 35.2255 102.936 40.5735C102.936 45.9215 100.484 49.6591 95.8935 49.6591Z" fill="white"/>
+        <!-- dot verde -->
+        <path d="M100.369 23.6832C100.369 25.4583 101.835 26.9017 103.638 26.9017C105.441 26.9017 106.907 25.4583 106.907 23.6832C106.907 21.9081 105.441 20.4648 103.638 20.4648C101.835 20.4648 100.369 21.9081 100.369 23.6832Z" fill="#2ABC4E"/>
+        <!-- i -->
+        <path d="M110.038 41.3933V51.5948H112.441V29.618H110.038V41.3933ZM110.038 25.9133H112.441V23.0234H110.038V25.9133Z" fill="white"/>
+        <!-- e -->
+        <path d="M127.199 49.6919C123.062 49.6919 120.333 46.7363 120.005 42.4072H138.128C138.128 34.894 134.228 29.2853 127.723 29.2853C121.251 29.2853 117.483 34.3607 117.483 40.6064C117.483 47.3163 121.448 51.8945 127.494 51.8945C132.08 51.8945 135.648 49.2018 137.275 45.1974L135.067 44.2107C133.769 47.2835 131.2 49.6919 127.199 49.6919ZM127.723 31.4879C131.759 31.4879 135.166 34.4107 135.659 39.2232H120.038C120.661 34.4107 123.752 31.4879 127.723 31.4879Z" fill="white"/>
+      </svg>
+    </span>
+
+    <a class="nav-item active" href="#">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M3 12L12 3l9 9v9a1 1 0 0 1-1 1H15v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg>
+      Aprender
+    </a>
+    <a class="nav-item" href="#">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+      Missões
+    </a>
+    <a class="nav-item" href="#">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="18 15 12 9 6 15"/></svg>
+      Ranking
+    </a>
+    <a class="nav-item" href="#">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Perfil
+    </a>
+
+    <div class="nav-divider"></div>
+
+    <a class="nav-item" href="#">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      Ajuda
+    </a>
+    <a class="nav-item" href="#">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v4m0 14v4M4.22 4.22l2.83 2.83m9.9 9.9 2.83 2.83M1 12h4m14 0h4M4.22 19.78l2.83-2.83m9.9-9.9 2.83-2.83"/></svg>
+      Configurações
+    </a>
+
+    <!-- XP CARD -->
+    <div class="xp-card" style="margin-top: auto;">
+      <div class="xp-avatar">🧑‍🚀</div>
+      <div class="xp-name">Ana Silva</div>
+      <div class="xp-level">Exploradora Avançada</div>
+      <div class="xp-bar"><div class="xp-fill"></div></div>
+      <div class="xp-nums"><span>1.250 XP</span><span>Nível 8</span></div>
+    </div>
+  </nav>
+
+  <!-- CENTRO — PATH DE APRENDIZADO -->
+  <main class="center" id="centerMain">
+
+    <!-- ─── PLANETA 1: TUTORIAL ─── -->
+    <div class="planet-banner">
+      <div class="planet-banner-inner">
+        <div class="planet-thumb">
+          <img src="https://www.figma.com/api/mcp/asset/f3ba30da-8a66-4eb6-82e7-a6c0714e37b6" alt="Tutorial">
+        </div>
+        <div class="planet-info">
+          <div class="planet-eyebrow">Planeta 1</div>
+          <div class="planet-name">Tutorial</div>
+          <div class="planet-sub">3 de 5 etapas concluídas</div>
+        </div>
+        <div class="planet-pct">60%</div>
+        <div class="planet-guide-btn">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M4 6h16M4 10h16M4 14h10"/></svg>
+          Guia
+        </div>
+      </div>
+    </div>
+
+    <div class="path-track">
+
+      <!-- NÓ 1 — CONCLUÍDO 100% -->
+      <div class="path-node center">
+        <div class="node-btn-wrap">
+          <div class="node-ring-wrap" style="width:88px;height:88px;">
+            <svg class="ring" viewBox="0 0 88 88">
+              <circle class="ring-track" cx="44" cy="44" r="40" stroke="#1D3258" stroke-width="4"/>
+              <circle class="ring-fill"  cx="44" cy="44" r="40" stroke="#12B76A" stroke-width="4"
+                stroke-dasharray="251.2" stroke-dashoffset="0" stroke-linecap="round"/>
+            </svg>
+            <div class="node-btn done">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+          </div>
+          <div class="node-popup" style="left: calc(100% + 24px);">
+            <div class="popup-title">Primeiros Passos</div>
+            <div class="popup-desc">Introdução ao universo Orbie. Todos os fundamentos dominados.</div>
+            <div class="popup-progress"><div class="popup-fill" style="width:100%;background:linear-gradient(90deg,var(--green-500),var(--green-400))"></div></div>
+            <div class="popup-meta"><span>8/8 fases</span><span>⭐⭐⭐ 3 estrelas</span></div>
+            <button class="popup-cta" style="background:var(--green-500)" onclick="alert('Revisão da Etapa 1')">Revisar</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- NÓ 2 — CONCLUÍDO 100% (esquerda) -->
+      <div class="path-node left">
+        <div class="node-btn-wrap">
+          <div class="node-ring-wrap" style="width:88px;height:88px;">
+            <svg class="ring" viewBox="0 0 88 88">
+              <circle class="ring-track" cx="44" cy="44" r="40" stroke="#1D3258" stroke-width="4"/>
+              <circle class="ring-fill"  cx="44" cy="44" r="40" stroke="#12B76A" stroke-width="4"
+                stroke-dasharray="251.2" stroke-dashoffset="0" stroke-linecap="round"/>
+            </svg>
+            <div class="node-btn done">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+          </div>
+          <div class="node-popup" style="left: calc(100% + 24px);">
+            <div class="popup-title">Explorando o Sistema</div>
+            <div class="popup-desc">Conceitos intermediários concluídos com sucesso.</div>
+            <div class="popup-progress"><div class="popup-fill" style="width:100%;background:linear-gradient(90deg,var(--green-500),var(--green-400))"></div></div>
+            <div class="popup-meta"><span>10/10 fases</span><span>⭐⭐ 2 estrelas</span></div>
+            <button class="popup-cta" style="background:var(--green-500)" onclick="alert('Revisão da Etapa 2')">Revisar</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- BAUZINHO — recompensa -->
+      <div class="path-node center">
+        <div class="node-btn-wrap">
+          <div class="node-btn chest" title="Recompensa desbloqueada! +50 XP">🎁</div>
+        </div>
+      </div>
+
+      <!-- NÓ 3 — CONCLUÍDO 100% (direita) -->
+      <div class="path-node right">
+        <div class="node-btn-wrap">
+          <div class="node-ring-wrap" style="width:88px;height:88px;">
+            <svg class="ring" viewBox="0 0 88 88">
+              <circle class="ring-track" cx="44" cy="44" r="40" stroke="#1D3258" stroke-width="4"/>
+              <circle class="ring-fill"  cx="44" cy="44" r="40" stroke="#12B76A" stroke-width="4"
+                stroke-dasharray="251.2" stroke-dashoffset="0" stroke-linecap="round"/>
+            </svg>
+            <div class="node-btn done">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+          </div>
+          <div class="node-popup" style="right: calc(100% + 24px); left:auto;">
+            <div class="popup-title">Missão Orbital</div>
+            <div class="popup-desc">Etapa de desafio avançado. Concluída com excelência.</div>
+            <div class="popup-progress"><div class="popup-fill" style="width:100%;background:linear-gradient(90deg,var(--green-500),var(--green-400))"></div></div>
+            <div class="popup-meta"><span>8/8 fases</span><span>⭐⭐⭐ 3 estrelas</span></div>
+            <button class="popup-cta" style="background:var(--green-500)" onclick="alert('Revisão da Etapa 3')">Revisar</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- NÓ 4 — ATIVO 40% (com tooltip "Continuar") -->
+      <div class="path-node center">
+        <div class="node-tooltip">▶ Continuar</div>
+        <div class="node-btn-wrap">
+          <div class="node-ring-wrap" style="width:96px;height:96px;">
+            <!-- ring ativo: 40% = 251.2 * 0.6 = 150.7 dashoffset -->
+            <svg class="ring" viewBox="0 0 96 96">
+              <circle class="ring-track" cx="48" cy="48" r="44" stroke="#1D3258" stroke-width="5"/>
+              <circle class="ring-fill"  cx="48" cy="48" r="44" stroke="#3F84F3" stroke-width="5"
+                stroke-dasharray="276.46" stroke-dashoffset="165.9" stroke-linecap="round"/>
+            </svg>
+            <div class="node-btn active" style="width:80px;height:80px;font-size:32px;">
+              <svg width="30" height="30" viewBox="0 0 24 24" fill="white"><polygon points="5,3 19,12 5,21"/></svg>
+            </div>
+          </div>
+          <div class="node-popup" style="left: calc(100% + 24px);">
+            <div class="popup-title">Desafio Estelar</div>
+            <div class="popup-desc">Você está na Fase 5 de 12. Continue para dominar esta etapa.</div>
+            <div class="popup-progress"><div class="popup-fill" style="width:40%;background:linear-gradient(90deg,var(--blue-500),var(--blue-400))"></div></div>
+            <div class="popup-meta"><span>Fase 5 de 12</span><span>40% completo</span></div>
+            <button class="popup-cta" onclick="alert('Iniciando Fase 5 — Desafio Estelar!')">Continuar fase 5</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- NÓ 5 — BLOQUEADO 0% (esquerda) -->
+      <div class="path-node left">
+        <div class="node-btn-wrap">
+          <div class="node-ring-wrap" style="width:88px;height:88px;">
+            <svg class="ring" viewBox="0 0 88 88">
+              <circle class="ring-track" cx="44" cy="44" r="40" stroke="#1A2236" stroke-width="4"/>
+            </svg>
+            <div class="node-btn locked">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#3A5080" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- NÓ 6 — BLOQUEADO 0% (direita) -->
+      <div class="path-node right">
+        <div class="node-btn-wrap">
+          <div class="node-ring-wrap" style="width:88px;height:88px;">
+            <svg class="ring" viewBox="0 0 88 88">
+              <circle class="ring-track" cx="44" cy="44" r="40" stroke="#1A2236" stroke-width="4"/>
+            </svg>
+            <div class="node-btn locked">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#3A5080" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /path-track -->
+
+    <!-- SEPARADOR entre planetas -->
+    <div class="planet-divider">
+      <div class="divider-line"></div>
+      <div class="divider-label">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        Próximos planetas — bloqueados
+      </div>
+      <div class="divider-line"></div>
+    </div>
+
+    <!-- ─── PLANETA 2: BLOQUEADO ─── -->
+    <div class="planet-banner">
+      <div class="planet-banner-inner">
+        <div class="planet-thumb planet-thumb-locked">🔒</div>
+        <div class="planet-info">
+          <div class="planet-eyebrow">Planeta 2</div>
+          <div class="planet-name">Desconhecido</div>
+          <div class="planet-sub">Complete o Tutorial para revelar</div>
+        </div>
+        <div class="planet-locked-badge">🔒 Bloqueado</div>
+      </div>
+    </div>
+
+    <div class="path-track" style="margin-bottom: 24px;">
+      <div class="path-node center" style="opacity:0.45;">
+        <div class="node-btn-wrap">
+          <div class="node-ring-wrap" style="width:88px;height:88px;">
+            <svg class="ring" viewBox="0 0 88 88"><circle class="ring-track" cx="44" cy="44" r="40" stroke="#1A2236" stroke-width="4"/></svg>
+            <div class="node-btn locked"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#3A5080" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+          </div>
+        </div>
+      </div>
+      <div class="path-node left" style="opacity:0.35;">
+        <div class="node-btn-wrap">
+          <div class="node-ring-wrap" style="width:88px;height:88px;">
+            <svg class="ring" viewBox="0 0 88 88"><circle class="ring-track" cx="44" cy="44" r="40" stroke="#1A2236" stroke-width="4"/></svg>
+            <div class="node-btn locked"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#3A5080" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+          </div>
+        </div>
+      </div>
+      <div class="path-node right" style="opacity:0.25;">
+        <div class="node-btn-wrap">
+          <div class="node-ring-wrap" style="width:88px;height:88px;">
+            <svg class="ring" viewBox="0 0 88 88"><circle class="ring-track" cx="44" cy="44" r="40" stroke="#1A2236" stroke-width="4"/></svg>
+            <div class="node-btn locked"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#3A5080" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ─── PLANETA 3: BLOQUEADO ─── -->
+    <div class="planet-banner">
+      <div class="planet-banner-inner">
+        <div class="planet-thumb planet-thumb-locked">🔒</div>
+        <div class="planet-info">
+          <div class="planet-eyebrow">Planeta 3</div>
+          <div class="planet-name">Desconhecido</div>
+          <div class="planet-sub">Bloqueado</div>
+        </div>
+        <div class="planet-locked-badge">🔒 Bloqueado</div>
+      </div>
+    </div>
+    <div class="path-track" style="margin-bottom: 48px;">
+      <div class="path-node center" style="opacity:0.3;">
+        <div class="node-btn-wrap">
+          <div class="node-ring-wrap" style="width:88px;height:88px;">
+            <svg class="ring" viewBox="0 0 88 88"><circle class="ring-track" cx="44" cy="44" r="40" stroke="#1A2236" stroke-width="4"/></svg>
+            <div class="node-btn locked"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#3A5080" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ══════════════════════════════════════════ -->
+  <!-- PAINEL DIREITO -->
+  <!-- ══════════════════════════════════════════ -->
+  <aside class="right-panel">
+
+    <!-- Streak -->
+    <div>
+      <div class="panel-title">Sequência</div>
+      <div class="streak-card">
+        <div class="streak-fire">🔥</div>
+        <div class="streak-info">
+          <div class="streak-num">7 dias</div>
+          <div class="streak-label">Sequência ativa</div>
+          <div class="streak-days">
+            <div class="streak-day done">S</div>
+            <div class="streak-day done">T</div>
+            <div class="streak-day done">Q</div>
+            <div class="streak-day done">Q</div>
+            <div class="streak-day done">S</div>
+            <div class="streak-day done">S</div>
+            <div class="streak-day today">D</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div>
+      <div class="panel-title">Esta semana</div>
+      <div class="stats-row">
+        <div class="stat-box">
+          <div class="stat-num" style="color:var(--blue-400);">340</div>
+          <div class="stat-label">XP ganhos</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num" style="color:var(--green-500);">12</div>
+          <div class="stat-label">Fases</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num" style="color:var(--yellow);">94%</div>
+          <div class="stat-label">Acertos</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ranking -->
+    <div>
+      <div class="panel-title">Ranking — Liga Prata</div>
+      <div class="ranking-list">
+        <div class="rank-item">
+          <div class="rank-pos gold">1</div>
+          <div class="rank-avatar">👾</div>
+          <div class="rank-name">Marcos L.</div>
+          <div class="rank-xp">2.840 XP</div>
+        </div>
+        <div class="rank-item">
+          <div class="rank-pos silver">2</div>
+          <div class="rank-avatar">🤖</div>
+          <div class="rank-name">Julia F.</div>
+          <div class="rank-xp">2.610 XP</div>
+        </div>
+        <div class="rank-item">
+          <div class="rank-pos bronze">3</div>
+          <div class="rank-avatar">🦊</div>
+          <div class="rank-name">Pedro K.</div>
+          <div class="rank-xp">2.190 XP</div>
+        </div>
+        <div class="rank-item you">
+          <div class="rank-pos" style="color:var(--blue-400);">5</div>
+          <div class="rank-avatar">🧑‍🚀</div>
+          <div class="rank-name">Ana Silva <span style="font-size:10px;color:var(--text-3);">(você)</span></div>
+          <div class="rank-xp">1.250 XP</div>
+        </div>
+        <div class="rank-item">
+          <div class="rank-pos">6</div>
+          <div class="rank-avatar">🐉</div>
+          <div class="rank-name">Camila R.</div>
+          <div class="rank-xp">1.180 XP</div>
+        </div>
+      </div>
+    </div>
+
+  </aside>
+
+</div><!-- /layout -->
+
+<script>
+// ── CANVAS DE ESTRELAS — montado na body, position:fixed ──
+// Cobre apenas a coluna central (entre sidebar e painel direito)
+(function () {
+  const SIDEBAR_W = 280;
+  const RIGHT_W   = 320;
+
+  const canvas = document.createElement('canvas');
+  Object.assign(canvas.style, {
+    position:      'fixed',
+    top:           '0',
+    left:          SIDEBAR_W + 'px',
+    width:         'calc(100vw - ' + (SIDEBAR_W + RIGHT_W) + 'px)',
+    height:        '100vh',
+    pointerEvents: 'none',
+    zIndex:        '0',
+    display:       'block',
+  });
+  document.body.appendChild(canvas);
+
+  // Garante que elementos do centro fiquem acima do canvas
+  const center = document.getElementById('centerMain');
+  center.style.position = 'relative';
+  center.style.zIndex   = '1';
+
+  function draw() {
+    const W = canvas.offsetWidth  || (window.innerWidth - SIDEBAR_W - RIGHT_W);
+    const H = canvas.offsetHeight || window.innerHeight;
+    const DPR = window.devicePixelRatio || 1;
+    canvas.width  = W * DPR;
+    canvas.height = H * DPR;
+    const ctx = canvas.getContext('2d');
+    ctx.scale(DPR, DPR);
+    ctx.clearRect(0, 0, W, H);
+
+    // Nebulosa — gradientes suaves, sem borda visível
+    const addNeb = (cx, cy, rx, ry, color) => {
+      const g = ctx.createRadialGradient(cx * W, cy * H, 0, cx * W, cy * H, Math.max(rx * W, ry * H));
+      g.addColorStop(0,   color);
+      g.addColorStop(1,   'rgba(0,0,0,0)');
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, W, H);
+    };
+    addNeb(0.5,  0.0,  0.55, 0.45, 'rgba(0,89,231,0.07)');
+    addNeb(0.15, 0.55, 0.40, 0.38, 'rgba(89,31,199,0.055)');
+    addNeb(0.85, 0.78, 0.38, 0.32, 'rgba(0,89,231,0.045)');
+    addNeb(0.5,  1.0,  0.50, 0.40, 'rgba(89,31,199,0.04)');
+
+    // Função hash determinística — sem Math.random → sem tiles
+    const h = (n) => { let x = Math.sin(n * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); };
+
+    // Estrelas pequenas
+    for (let i = 0; i < 260; i++) {
+      const x = h(i * 3 + 0) * W;
+      const y = h(i * 3 + 1) * H;
+      const r = h(i * 3 + 2) * 0.65 + 0.2;
+      const a = h(i * 5 + 7) * 0.40 + 0.12;
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(255,255,255,${a.toFixed(2)})`;
+      ctx.fill();
+    }
+
+    // Estrelas médias com micro-brilho
+    for (let i = 0; i < 22; i++) {
+      const x = h(i * 7 + 50) * W;
+      const y = h(i * 7 + 51) * H;
+      const r = h(i * 7 + 52) * 0.45 + 0.75;
+      // halo
+      const grd = ctx.createRadialGradient(x, y, 0, x, y, r * 5);
+      grd.addColorStop(0, 'rgba(255,255,255,0.15)');
+      grd.addColorStop(1, 'rgba(255,255,255,0)');
+      ctx.beginPath(); ctx.arc(x, y, r * 5, 0, Math.PI * 2);
+      ctx.fillStyle = grd; ctx.fill();
+      // núcleo
+      ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255,255,255,0.80)';
+      ctx.fill();
+    }
+  }
+
+  draw();
+  window.addEventListener('resize', draw);
+})();
+</script>
+</body>
+</html>

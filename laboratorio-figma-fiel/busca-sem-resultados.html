@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lab / Busca — Vazia — Orbie</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: #0d1a32;
+      color: #fff;
+      min-height: 100vh;
+    }
+
+    .page {
+      max-width: 1024px;
+      margin: 0 auto;
+    }
+
+    /* ── TOP BAR ── */
+    .topbar {
+      width: 100%;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 32px 24px 0;
+    }
+
+    /* Botão voltar */
+    .btn-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      border: none;
+      background: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      margin-top: 4px;
+      transition: background 0.15s;
+    }
+    .btn-icon:hover { background: rgba(255,255,255,0.08); }
+    .btn-icon img { width: 24px; height: 24px; }
+
+    /* Search input */
+    .search-wrap {
+      flex: 1;
+    }
+    .search-field {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      height: 48px;
+      border: 2px solid #0059e7;
+      border-radius: 12px;
+      padding: 0 12px;
+      background: transparent;
+      width: 100%;
+    }
+    .search-field img { width: 18px; height: 18px; min-width: 18px; min-height: 18px; flex-shrink: 0; object-fit: contain; opacity: 0.7; }
+    .search-field input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      font-family: 'Roboto', sans-serif;
+      font-size: 16px;
+      font-weight: 400;
+      color: rgba(255,255,255,0.6);
+      min-width: 0;
+    }
+    .search-field input::placeholder { color: rgba(255,255,255,0.6); }
+    .search-field:focus-within input { color: #fff; }
+
+    /* ── SUGGESTIONS LIST ── */
+    .suggestions {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 8px 24px;
+    }
+
+    .suggestion-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      height: 48px;
+      padding: 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .suggestion-item:hover { background: rgba(255,255,255,0.05); }
+
+    .suggestion-item img {
+      width: 18px;
+      height: 18px;
+      min-width: 18px;
+      min-height: 18px;
+      flex-shrink: 0;
+      object-fit: contain;
+      opacity: 0.6;
+    }
+    .suggestion-item span {
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 24px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOP BAR: fora do container centralizado -->
+  <div class="topbar">
+    <button class="btn-icon" onclick="location.href='index-v3.html'" title="Voltar">
+      <img src="https://www.figma.com/api/mcp/asset/a36287be-bc05-438a-b0e6-732e3c0d5b98" alt="Voltar">
+    </button>
+
+    <div class="search-wrap">
+      <div class="search-field">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;opacity:0.7;">
+          <circle cx="8" cy="8" r="5.5" stroke="white" stroke-width="1.5"/>
+          <path d="M12.5 12.5L16 16" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+        <input
+          type="text"
+          id="searchInput"
+          placeholder="O que você quer aprender?"
+          autofocus
+        >
+      </div>
+    </div>
+
+    <button class="btn-icon" title="Filtrar" onclick="openFilters()">
+      <img src="https://www.figma.com/api/mcp/asset/97da944d-adbd-4550-9209-d5000a4e72c7" alt="filtro" style="margin-top:4px">
+    </button>
+  </div>
+
+<div class="page">
+
+  <!-- SUGESTÕES DE BUSCA RECENTES -->
+  <div class="suggestions" id="suggestionsList">
+
+    <div class="suggestion-item" onclick="fillSearch('Cadeias Alimentares Segunda Guerra Mundial')">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;opacity:0.6;">
+        <circle cx="8" cy="8" r="5.5" stroke="white" stroke-width="1.5"/>
+        <path d="M12.5 12.5L16 16" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      <span>Cadeias Alimentares Segunda Guerra Mundial</span>
+    </div>
+
+    <div class="suggestion-item" onclick="fillSearch('Verbos')">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;opacity:0.6;">
+        <circle cx="8" cy="8" r="5.5" stroke="white" stroke-width="1.5"/>
+        <path d="M12.5 12.5L16 16" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      <span>Verbos</span>
+    </div>
+
+    <div class="suggestion-item" onclick="fillSearch('Equações')">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0;opacity:0.6;">
+        <circle cx="8" cy="8" r="5.5" stroke="white" stroke-width="1.5"/>
+        <path d="M12.5 12.5L16 16" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      <span>Equações</span>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+  const input = document.getElementById('searchInput');
+  const suggestions = document.getElementById('suggestionsList');
+
+  // Ao digitar, esconde sugestões e mostra resultados (placeholder — estado "digitando")
+  input.addEventListener('input', () => {
+    const val = input.value.trim();
+    suggestions.style.opacity = val.length > 0 ? '0.4' : '1';
+    suggestions.style.pointerEvents = val.length > 0 ? 'none' : 'auto';
+  });
+
+  // Clique numa sugestão preenche o campo
+  function fillSearch(text) {
+    input.value = text;
+    location.href = 'busca-com-resultados.html';
+  }
+
+  // Enter navega para resultados
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && input.value.trim()) {
+      location.href = 'busca-com-resultados.html';
+    }
+  });
+
+  // Foco automático no input
+  window.addEventListener('DOMContentLoaded', () => input.focus());
+</script>
+
+<!-- ── BOTTOM SHEET FILTROS ── -->
+<style>
+  .bs-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 100;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.25s;
+  }
+  .bs-overlay.open { opacity: 1; pointer-events: all; }
+
+  .bs-sheet {
+    position: fixed; left: 0; right: 0; bottom: 0;
+    background: #0d1a32;
+    border-radius: 24px 24px 0 0;
+    padding: 12px 24px 32px;
+    z-index: 101;
+    transform: translateY(100%);
+    transition: transform 0.3s cubic-bezier(0.32,0.72,0,1);
+    max-height: 90vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    max-width: 1024px;
+    margin: 0 auto;
+  }
+  .bs-sheet.open { transform: translateY(0); }
+
+  .bs-handle {
+    width: 36px; height: 4px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 2px;
+    margin: 0 auto 4px;
+  }
+
+  .bs-header {
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .bs-title {
+    font-family: 'Orbitron', monospace;
+    font-weight: 700; font-size: 16px; line-height: 24px;
+  }
+  .bs-close {
+    width: 32px; height: 32px;
+    border-radius: 50%; border: none; background: transparent;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: background 0.15s;
+    color: #fff;
+  }
+  .bs-close:hover { background: rgba(255,255,255,0.1); }
+
+  .bs-field { display: flex; flex-direction: column; gap: 4px; }
+  .bs-label { font-size: 16px; font-weight: 400; line-height: 24px; }
+
+  .bs-input-row {
+    display: flex; align-items: center; gap: 6px;
+    height: 48px;
+    border: 2px solid #0059e7; border-radius: 12px;
+    padding: 0 8px 0 12px; background: transparent;
+  }
+  .bs-input-row input {
+    flex: 1; background: transparent; border: none; outline: none;
+    font-family: 'Roboto', sans-serif; font-size: 16px; color: #fff;
+  }
+  .bs-input-row input::placeholder { color: rgba(255,255,255,0.4); }
+
+  .bs-select {
+    display: flex; align-items: center; justify-content: space-between;
+    height: 48px;
+    background: #142a51; border: 2px solid #1d3258; border-radius: 12px;
+    padding: 0 8px 0 12px; cursor: pointer;
+    font-size: 16px; color: #fff;
+    transition: border-color 0.15s;
+  }
+  .bs-select:hover { border-color: #0059e7; }
+
+  .bs-chips {
+    display: flex; flex-wrap: wrap; gap: 4px;
+    background: #142a51; border: 2px solid #1d3258; border-radius: 12px;
+    padding: 8px 12px; min-height: 48px; align-items: center;
+  }
+  .bs-chip {
+    display: flex; align-items: center; gap: 4px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 1000px; padding: 6px 8px;
+    font-size: 13px; color: #fff;
+  }
+  .bs-chip button {
+    background: transparent; border: none; color: rgba(255,255,255,0.6);
+    cursor: pointer; font-size: 14px; line-height: 1; padding: 0;
+  }
+
+  .bs-toggle-card {
+    background: #142a51; border: 2px solid #1d3258; border-radius: 16px;
+    padding: 16px; display: flex; flex-direction: column; gap: 4px;
+  }
+  .bs-toggle-row {
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .bs-toggle-label { font-size: 16px; font-weight: 700; }
+  .bs-toggle-desc { font-size: 13px; color: rgba(255,255,255,0.6); line-height: 20px; }
+
+  .bs-switch {
+    position: relative; width: 52px; height: 32px; flex-shrink: 0;
+  }
+  .bs-switch input { opacity: 0; width: 0; height: 0; }
+  .bs-switch .slider {
+    position: absolute; inset: 0;
+    background: rgba(255,255,255,0.08); border-radius: 1000px; cursor: pointer;
+    transition: background 0.2s;
+  }
+  .bs-switch .slider::before {
+    content: ''; position: absolute;
+    width: 24px; height: 24px; left: 4px; top: 4px;
+    background: rgba(255,255,255,0.2); border-radius: 50%;
+    transition: transform 0.2s, background 0.2s;
+  }
+  .bs-switch input:checked + .slider { background: #0059e7; }
+  .bs-switch input:checked + .slider::before { transform: translateX(20px); background: #fff; }
+
+  .bs-actions { display: flex; flex-direction: column; gap: 12px; }
+  .bs-btn-primary {
+    height: 52px; width: 100%;
+    background: #0059e7; border: 1px solid #0040a7; border-bottom-width: 5px;
+    border-radius: 16px; font-family: 'Roboto', sans-serif;
+    font-weight: 700; font-size: 16px; color: #fff; cursor: pointer;
+    transition: background 0.15s;
+  }
+  .bs-btn-primary:hover { background: #0066ff; }
+  .bs-btn-ghost {
+    height: 52px; width: 100%;
+    background: transparent; border: none;
+    font-family: 'Roboto', sans-serif; font-weight: 700;
+    font-size: 16px; color: #fff; cursor: pointer;
+    border-radius: 16px; transition: background 0.15s;
+  }
+  .bs-btn-ghost:hover { background: rgba(255,255,255,0.06); }
+</style>
+
+<div class="bs-overlay" id="bsOverlay" onclick="closeFilters()"></div>
+<div class="bs-sheet" id="bsSheet">
+  <div class="bs-handle"></div>
+
+  <div class="bs-header">
+    <span class="bs-title">Filtros</span>
+    <button class="bs-close" onclick="closeFilters()">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M12 4L4 12M4 4L12 12" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </button>
+  </div>
+
+  <div class="bs-field">
+    <label class="bs-label">Assuntos</label>
+    <div class="bs-input-row">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none" style="flex-shrink:0;opacity:0.7;">
+        <circle cx="8" cy="8" r="5.5" stroke="white" stroke-width="1.5"/>
+        <path d="M12.5 12.5L16 16" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      <input type="text" placeholder="Cadeias Alimentares e Ecossistemas" value="Cadeias Alimentares e Ecossistemas">
+      <button style="background:transparent;border:none;color:rgba(255,255,255,0.6);cursor:pointer;font-size:18px;line-height:1;">×</button>
+    </div>
+  </div>
+
+  <div class="bs-field">
+    <label class="bs-label">Ano Escolar</label>
+    <div class="bs-select">
+      <span>8º Ano - Ensino Fundamental</span>
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style="flex-shrink:0;opacity:0.6;">
+        <path d="M6 9L12 15L18 9" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </div>
+  </div>
+
+  <div class="bs-field">
+    <label class="bs-label">Componente Curricular *</label>
+    <div class="bs-chips">
+      <div class="bs-chip">Língua Portuguesa <button>×</button></div>
+      <div class="bs-chip">Arte <button>×</button></div>
+      <div class="bs-chip">Matemática <button>×</button></div>
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style="margin-left:auto;flex-shrink:0;opacity:0.6;">
+        <path d="M6 9L12 15L18 9" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </div>
+  </div>
+
+  <div class="bs-field">
+    <label class="bs-label">Dificuldade</label>
+    <div class="bs-select">
+      <span>Padrão</span>
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style="flex-shrink:0;opacity:0.6;">
+        <path d="M6 9L12 15L18 9" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </div>
+  </div>
+
+  <div class="bs-toggle-card">
+    <div class="bs-toggle-row">
+      <span class="bs-toggle-label">Simulado</span>
+      <label class="bs-switch">
+        <input type="checkbox" id="bsSimulado">
+        <span class="slider"></span>
+      </label>
+    </div>
+    <span class="bs-toggle-desc">Ative para gerar uma prova de múltipla escolha com até 40 questões.</span>
+  </div>
+
+  <div class="bs-actions">
+    <button class="bs-btn-primary" onclick="applyFilters()">Buscar</button>
+    <button class="bs-btn-ghost" onclick="clearFilters()">Limpar</button>
+  </div>
+</div>
+
+<script>
+  function openFilters() {
+    document.getElementById('bsOverlay').classList.add('open');
+    document.getElementById('bsSheet').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeFilters() {
+    document.getElementById('bsOverlay').classList.remove('open');
+    document.getElementById('bsSheet').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  function applyFilters() {
+    closeFilters();
+    location.href = 'busca-com-resultados.html';
+  }
+  function clearFilters() {
+    document.getElementById('bsSimulado').checked = false;
+  }
+</script>
+</body>
+</html>

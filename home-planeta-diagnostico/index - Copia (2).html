@@ -1,0 +1,2762 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Orbie – Home / Planeta Diagnóstico #1</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Outfit:wght@300;400;500;700&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    /* ── Reset & Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { width: 100%; min-height: 100%; background: #0d1a32; color: #fff; font-family: 'Outfit', sans-serif; }
+
+    /* Browser chrome removido */
+
+    /* ── App Shell ── */
+    .app-shell {
+      display: flex; width: 100%;
+      height: 100vh;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* ── Background ── */
+    .bg-layer {
+      position: absolute; inset: 0; background: #0d1a32; z-index: 0;
+      overflow: hidden;
+    }
+    .bg-layer::after {
+      content: ''; position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 60% 40% at 50% 20%, rgba(58,0,168,0.25) 0%, transparent 70%),
+        radial-gradient(ellipse 80% 60% at 30% 60%, rgba(13,26,50,0.9) 0%, transparent 80%);
+    }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      width: 280px; height: 100vh; background: #0d1a32;
+      border-right: 2px solid rgba(255,255,255,0.3);
+      display: flex; flex-direction: column;
+      padding: 32px 16px 32px 0;
+      gap: 32px;
+      position: sticky; top: 0;
+      z-index: 10; flex-shrink: 0;
+      overflow: hidden;
+    }
+    .sidebar-logo {
+      position: relative;
+      width: 109px; height: 32px;
+      flex-shrink: 0;
+    }
+    .sidebar-nav { display: flex; flex-direction: column; gap: 8px; }
+    .nav-item {
+      display: flex; align-items: center; gap: 16px;
+      padding: 16px 16px 16px 32px; border-radius: 12px;
+      font-family: 'Orbitron', sans-serif; font-size: 16px; font-weight: 700;
+      color: #fff; cursor: pointer; transition: background 0.2s;
+      text-decoration: none;
+    }
+    .nav-item:hover { background: rgba(255,255,255,0.08); }
+    .nav-item.active { background: rgba(255,255,255,0.1); }
+    .nav-icon { width: 24px; height: 24px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+    .nav-icon svg { width: 20px; height: 20px; fill: #fff; }
+
+    /* ── Main Content ── */
+    .main-content {
+      flex: 1; position: relative; z-index: 5;
+      display: flex; flex-direction: column; align-items: center;
+      padding: 32px 32px;
+      overflow-y: auto;
+      height: 100vh;
+    }
+    .content-column {
+      width: 100%; max-width: 676px; display: flex; flex-direction: column; gap: 80px;
+    }
+
+    /* ── Planet Card (glassmorphism) ── */
+    .planet-section { display: flex; flex-direction: column; gap: 24px; position: relative; }
+    .planet-card {
+      background: rgba(255,255,255,0.08);
+      border: 2px solid rgba(255,255,255,0.3);
+      border-radius: 32px;
+      backdrop-filter: blur(50px);
+      -webkit-backdrop-filter: blur(50px);
+      overflow: hidden;
+    }
+    .planet-card-inner {
+      display: flex; align-items: center; gap: 12px;
+      padding: 16px 24px;
+    }
+    .planet-card.locked { background: rgba(255,255,255,0.04); }
+    .planet-image {
+      width: 100px; height: 100px; border-radius: 50%; flex-shrink: 0;
+      overflow: hidden; position: relative;
+    }
+    .planet-image img { width: 100%; height: 100%; object-fit: cover; }
+    .planet-locked-wrap {
+      width: 100px; height: 100px; flex-shrink: 0; position: relative;
+      display: flex; align-items: center; justify-content: center;
+      overflow: visible;
+    }
+    .planet-locked-circle {
+      width: 100px; height: 100px; border-radius: 50%; overflow: hidden;
+      filter: grayscale(1) brightness(0.5); position: relative;
+    }
+    .planet-locked-circle img { width: 100%; height: 100%; object-fit: cover; }
+    .planet-locked-border {
+      position: absolute; inset: 0; border-radius: 50%;
+      width: 114px; height: 114px;
+      border: 4px dashed rgba(255,255,255,0.08);
+      top: 50%; left: 50%; transform: translate(-50%,-50%);
+    }
+    .planet-lock-icon {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 24px; height: 24px;
+    }
+    .planet-info { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+    .planet-stars { display: flex; gap: 4px; }
+    .star { width: 20px; height: 20px; }
+    .star svg { width: 20px; height: 20px; fill: #526D98; }
+    .planet-name {
+      font-family: 'Orbitron', sans-serif; font-size: 20px; font-weight: 700;
+      color: #fff; white-space: nowrap;
+    }
+    .planet-desc {
+      font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 400;
+      color: rgba(255,255,255,0.8); line-height: 24px;
+    }
+
+    /* ── Phase Path ── */
+    .phase-path {
+      display: flex; flex-direction: column; gap: 24px;
+      align-items: flex-start; position: relative;
+    }
+    .phase-row {
+      display: flex; align-items: center;
+    }
+    /* Path connector lines */
+    .phase-path::before {
+      content: ''; display: none;
+    }
+
+    /* Phase node */
+    .phase-node {
+      width: 90px; height: 90px; border-radius: 50%;
+      position: relative; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      overflow: visible;
+    }
+    .phase-node-bg {
+      width: 77px; height: 77px; border-radius: 50%;
+      background: radial-gradient(circle at 40% 35%, rgba(255,255,255,0.12) 0%, rgba(30,50,88,0.9) 60%, rgba(16,32,61,1) 100%);
+      border: 1.5px solid rgba(255,255,255,0.15);
+      position: relative;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    /* Pulse ring for active node */
+    .phase-node.active .phase-node-bg {
+      box-shadow: 0 0 0 8px rgba(255,255,255,0.06), 0 0 0 16px rgba(255,255,255,0.03);
+    }
+
+    /* Progress ring wrapper — posicionado no phase-node, não no bg */
+    .progress-ring-wrap {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      display: flex; align-items: center; justify-content: center;
+      pointer-events: none;
+    }
+    .progress-ring-svg { transform: rotate(-90deg); overflow: visible; }
+    .progress-ring-track { fill: none; stroke: rgba(255,255,255,0.1); stroke-width: 5; }
+    .progress-ring-fill  { fill: none; stroke: #37ec65; stroke-width: 5; stroke-linecap: round; transition: stroke-dashoffset 0.5s ease; }
+    /* Play button */
+    .play-btn {
+      width: 52px; height: 52px; border-radius: 50%;
+      background: #FFEA24;
+      border-bottom: 8px solid #E5B400;
+      border-top: 2px solid #E5B400;
+      border-left: 2px solid #E5B400;
+      border-right: 2px solid #E5B400;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; box-shadow: 0 0 5px rgba(0,0,0,0.3);
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .play-btn svg { width: 22px; height: 22px; fill: #fff; margin-left: 3px; }
+    /* Lock button */
+    .lock-btn {
+      width: 52px; height: 52px; border-radius: 50%;
+      background: rgba(255,255,255,0.2);
+      border-bottom: 8px solid rgba(255,255,255,0.08);
+      border-top: 2px solid rgba(255,255,255,0.08);
+      border-left: 2px solid rgba(255,255,255,0.08);
+      border-right: 2px solid rgba(255,255,255,0.08);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    }
+    .lock-btn svg { width: 22px; height: 22px; fill: #fff; opacity: 0.8; }
+
+    /* Phase node — estado DONE (concluído) */
+    .phase-node.done .phase-node-bg {
+      background: radial-gradient(circle at 40% 35%, rgba(55,236,101,0.15) 0%, rgba(16,32,61,1) 100%);
+      border: 1.5px solid rgba(255,255,255,0.15);
+    }
+    /* Ring de progresso completo no estado done */
+    .phase-node.done .progress-ring-fill {
+      stroke-dashoffset: 0 !important;
+      display: block !important;
+    }
+    .phase-node.done .progress-ring-track { stroke: rgba(55,236,101,0.15); }
+    /* Oculta play/lock no estado done */
+    .phase-node.done .lock-btn,
+    .phase-node.done .play-btn,
+    .phase-node.done .phase-node-bg .lock-btn { display: none !important; }
+    /* Mostra o botão verde done */
+    .phase-node.done .done-btn { display: flex !important; }
+
+    /* Botão verde done — mesmo tamanho/forma do play/lock */
+    .done-btn {
+      display: none;
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 52px; height: 52px; border-radius: 50%;
+      background: #37ec65;
+      border-bottom: 8px solid #2abc4e;
+      border-top: 2px solid #2abc4e;
+      border-left: 2px solid #2abc4e;
+      border-right: 2px solid #2abc4e;
+      align-items: center; justify-content: center;
+      box-shadow: 0 0 5px rgba(0,0,0,0.3);
+      flex-shrink: 0;
+    }
+    .done-btn svg { width: 24px; height: 24px; }
+
+    /* Modo revisão — cursor pointer no botão done */
+    .phase-node.done .done-btn {
+      cursor: pointer;
+    }
+    /* Banner de revisão na tela de questão */
+    .quest-review-banner {
+      display: none;
+      background: rgba(55,236,101,0.12);
+      border: 1px solid #37ec65;
+      border-radius: 12px;
+      padding: 8px 16px;
+      font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 500;
+      color: #37ec65; text-align: center; flex-shrink: 0;
+    }
+    .quest-review-banner.show { display: block; }
+    /* Nav de revisão entre questões */
+    .quest-review-nav {
+      display: none; gap: 8px; align-items: center; justify-content: center;
+    }
+    .quest-review-nav.show { display: flex; }
+    .btn-nav-prev, .btn-nav-next {
+      width: 120px; height: 44px; border-radius: 12px;
+      border: 1px solid #233d6b; border-bottom-width: 4px;
+      background: rgba(255,255,255,0.06); color: #fff;
+      font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-nav-label {
+      font-family: 'Outfit', sans-serif; font-size: 13px; color: rgba(255,255,255,0.5);
+      white-space: nowrap;
+    }
+    .tooltip-wrap {
+      position: absolute; left: 137px; top: -60px;
+      display: flex; flex-direction: column; align-items: flex-end;
+      pointer-events: none;
+    }
+    .tooltip-box {
+      background: #0059e7; border-radius: 16px;
+      padding: 12px 24px; height: 48px;
+      display: flex; align-items: center; justify-content: center;
+      white-space: nowrap;
+    }
+    .tooltip-box span {
+      font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 500;
+      color: #fff;
+    }
+    .tooltip-arrow {
+      width: 21px; height: 21px; position: absolute; bottom: -8px; right: 10px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .tooltip-arrow-inner {
+      width: 15px; height: 15px; background: #0059e7; border-radius: 2px;
+      transform: rotate(45deg);
+    }
+
+    /* ── Right Sidebar – Ranking ── */
+    .ranking-sidebar {
+      width: 327px; flex-shrink: 0;
+      height: 100vh;
+      position: sticky; top: 0;
+      z-index: 10;
+      padding: 32px 0 32px 0;
+      overflow: hidden;
+    }
+    .ranking-card {
+      background: #0d1a32;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-radius: 24px;
+      padding: 24px;
+      display: flex; flex-direction: column; gap: 16px;
+    }
+    .ranking-header {
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .ranking-title {
+      font-family: 'Orbitron', sans-serif; font-size: 20px; font-weight: 700; color: #fff;
+    }
+    .info-btn {
+      width: 32px; height: 32px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; cursor: pointer;
+    }
+    .info-btn svg { width: 16px; height: 16px; fill: rgba(255,255,255,0.6); }
+    .ranking-list { display: flex; flex-direction: column; gap: 8px; }
+    .ranking-item {
+      background: rgba(255,255,255,0.08); border-radius: 12px;
+      padding: 12px 16px; display: flex; align-items: center; gap: 8px;
+    }
+    .ranking-item.me {
+      border: 2px solid #0059e7;
+    }
+    .rank-avatar { width: 30px; height: 30px; border-radius: 50%; overflow: hidden; flex-shrink: 0; }
+    .rank-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .rank-avatar-fallback {
+      width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 700; color: #fff;
+    }
+    .rank-name {
+      flex: 1; font-family: 'Outfit', sans-serif; font-size: 16px;
+      color: #fff; font-weight: 400;
+    }
+    .rank-xp {
+      font-family: 'Orbitron', sans-serif; font-size: 16px; color: #fff;
+      white-space: nowrap;
+    }
+
+    /* ── Rocky terrain at bottom ── */
+    .terrain-bg {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      height: 420px; overflow: hidden; pointer-events: none; z-index: 1;
+      mix-blend-mode: luminosity;
+    }
+    .terrain-bg img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+
+    /* ── Floating meteors ── */
+    .meteors-layer {
+      position: absolute; top: 1760px; left: 0; width: 100%;
+      height: 1070px; overflow: hidden; pointer-events: none;
+      mix-blend-mode: luminosity; z-index: 2;
+    }
+
+    /* ── Animations ── */
+    @keyframes pulse-ring {
+      0%   { box-shadow: 0 0 0 0 rgba(255,255,255,0.25); }
+      70%  { box-shadow: 0 0 0 16px rgba(255,255,255,0); }
+      100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); }
+    }
+    .phase-node.active .phase-node-bg {
+      animation: pulse-ring 2s ease-in-out infinite;
+    }
+
+    /* ── Utility ── */
+    .flex { display: flex; }
+    .items-center { align-items: center; }
+    .w-full { width: 100%; }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 3px; }
+
+    /* ── Modal Overlay ── */
+    .modal-overlay {
+      display: none;
+      position: fixed; inset: 0; z-index: 1000;
+      background: rgba(0,0,0,0.7);
+      align-items: center; justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+
+    .modal-box {
+      background: #0d1a32;
+      border-radius: 24px;
+      width: 480px;
+      padding: 32px 24px;
+      position: relative;
+      display: flex; flex-direction: column;
+      align-items: center; gap: 32px;
+      animation: modal-in 0.25s ease-out;
+    }
+    @keyframes modal-in {
+      from { opacity: 0; transform: scale(0.92) translateY(12px); }
+      to   { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .modal-close {
+      position: absolute; top: 8px; right: 8px;
+      width: 48px; height: 48px; border-radius: 50%;
+      background: none; border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .modal-close img { width: 24px; height: 24px; }
+
+    .modal-illustration {
+      width: 426px; height: 329px; object-fit: cover;
+      pointer-events: none; flex-shrink: 0;
+    }
+
+    .modal-text {
+      display: flex; flex-direction: column; gap: 12px;
+      align-items: center; text-align: center; width: 376px;
+    }
+    .modal-title {
+      font-family: 'Orbitron', sans-serif; font-size: 25px; font-weight: 700;
+      color: #fff; line-height: 30px; letter-spacing: 0;
+    }
+    .modal-desc {
+      font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 400;
+      color: #fff; line-height: 24px;
+    }
+
+    .modal-btn {
+      width: 279px; height: 52px;
+      background: #0059e7;
+      border-bottom: 5px solid #0040a7;
+      border-top: 1px solid #0040a7;
+      border-left: 1px solid #0040a7;
+      border-right: 1px solid #0040a7;
+      border-radius: 16px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; text-decoration: none;
+      font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 700;
+      color: #fff; transition: filter 0.15s;
+    }
+    .modal-btn:hover { filter: brightness(1.1); }
+
+    /* ══════════════════════════════════════
+       TELA DE QUESTÃO (fullscreen overlay)
+    ══════════════════════════════════════ */
+    .quest-screen {
+      display: none;
+      position: fixed; inset: 0; z-index: 2000;
+      background: #0d1a32;
+      flex-direction: column;
+      font-family: 'Outfit', sans-serif;
+    }
+    .quest-screen.open { display: flex; }
+
+    /* Header */
+    .quest-header {
+      background: #0d1a32;
+      padding: 8px 0 0 0;
+      display: flex; flex-direction: column;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .quest-header-inner {
+      width: 1040px; max-width: 100%;
+      display: flex; align-items: center; gap: 16px;
+      padding: 0 24px;
+    }
+    .quest-close-btn {
+      background: none; border: none; cursor: pointer;
+      padding: 13px; border-radius: 13px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .quest-close-btn img { width: 27px; height: 27px; }
+    .quest-progress-track {
+      flex: 1; height: 13px; background: rgba(255,255,255,0.08);
+      border-radius: 999px; overflow: hidden;
+    }
+    .quest-progress-bar {
+      height: 100%; background: #37ec65;
+      border-radius: 999px;
+      transition: width 0.4s ease;
+    }
+    .quest-header-right {
+      display: flex; align-items: center; gap: 12px; flex-shrink: 0;
+    }
+    .quest-hint-icon { width: 24px; height: 24px; opacity: 0.7; }
+    .quest-points {
+      display: flex; align-items: center; gap: 4px;
+    }
+    .quest-points-icon { width: 21px; height: 36px; }
+    .quest-points-val {
+      font-family: 'Orbitron', sans-serif; font-size: 18px; font-weight: 700;
+      color: rgba(255,255,255,0.3);
+    }
+    .quest-separator {
+      width: 100%; height: 2px; margin-top: 12px;
+      background: linear-gradient(to right, transparent, #233d6b 50%, transparent);
+    }
+
+    /* Body */
+    .quest-body {
+      flex: 1; overflow-y: auto;
+      display: flex; align-items: flex-start; justify-content: center;
+      padding: 24px;
+    }
+    .quest-card {
+      width: 100%; max-width: 1040px;
+      border: none;
+      border-radius: 24px;
+      display: flex; gap: 40px;
+      padding: 27px;
+      min-height: 500px;
+    }
+
+    /* Coluna esquerda — enunciado */
+    .quest-statement { width: 500px; flex-shrink: 0; display: flex; flex-direction: column; gap: 16px; }
+
+    .quest-card--info > div:last-of-type {
+      display: none;
+    }
+    .quest-card--info {
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      max-width: 680px;
+      margin: 0 auto;
+    }
+    .quest-card--info .quest-statement {
+      width: 100%;
+      max-width: 640px;
+    }
+    .quest-card--info .quest-title {
+      font-size: 20px;
+      font-weight: 700;
+      text-align: center;
+    }
+    .quest-card--info .quest-text {
+      font-size: 16px;
+      line-height: 28px;
+      color: rgba(255,255,255,0.9);
+      text-align: left;
+    }
+    .quest-title {
+      font-family: 'Orbitron', sans-serif; font-size: 20px; font-weight: 700;
+      color: #fff; line-height: 28px;
+    }
+    .quest-text {
+      font-family: 'Inter', sans-serif; font-size: 18px; color: #fff; line-height: 28px;
+    }
+    .quest-comando {
+      font-family: 'Inter', sans-serif; font-size: 18px; font-weight: 400;
+      color: #fff; line-height: 28px;
+      padding-top: 4px;
+    }
+    .quest-image-wrap {
+      width: 200px; height: 200px; border-radius: 16px; overflow: hidden;
+      border: 4px solid #233d6b; position: relative; flex-shrink: 0;
+    }
+    .quest-image-wrap img { width: 100%; height: 100%; object-fit: cover; }
+    .quest-expand-btn {
+      position: absolute; bottom: 8px; right: 8px;
+      width: 40px; height: 40px; border-radius: 12px;
+      background: #34994d; border-bottom: 3px solid #0e511f;
+      border-top: 1px solid #0e511f; border-left: 1px solid #0e511f; border-right: 1px solid #0e511f;
+      display: flex; align-items: center; justify-content: center; cursor: pointer;
+    }
+    .quest-expand-btn img { width: 24px; height: 24px; }
+
+    /* Coluna direita — opções */
+    .quest-options { flex: 1; display: flex; flex-direction: column; gap: 8px; }
+    .quest-option {
+      border: 2px solid #233d6b;
+      border-bottom-width: 4px;
+      border-radius: 24px;
+      padding: 16px;
+      display: flex; gap: 12px; align-items: flex-start;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+      background: transparent;
+      text-align: left; width: 100%;
+      color: #fff; font-family: 'Inter', sans-serif; font-size: 18px; line-height: 28px;
+    }
+    .quest-option:hover { background: rgba(255,255,255,0.04); }
+    .quest-option.selected {
+      border-color: #0059e7; background: rgba(0,89,231,0.12);
+    }
+    .quest-option.correct {
+      border-color: #37ec65; background: rgba(55,236,101,0.12);
+    }
+    .quest-option.wrong {
+      border-color: #f97066; background: rgba(249,112,102,0.12);
+    }
+    .quest-option.disabled { pointer-events: none; }
+    .opt-num {
+      width: 32px; height: 32px; border-radius: 12px;
+      border: 2px solid #233d6b;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Orbitron', sans-serif; font-size: 16px; font-weight: 700;
+      color: rgba(255,255,255,0.6); flex-shrink: 0;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .quest-option.selected .opt-num { border-color: #0059e7; color: #fff; }
+    .quest-option.correct .opt-num  { border-color: #37ec65; color: #fff; }
+    .quest-option.wrong .opt-num    { border-color: #f97066; color: #fff; }
+
+    /* Feedback box */
+    .quest-feedback {
+      display: none;
+      background: rgba(255,255,255,0.04);
+      border-radius: 27px; padding: 18px;
+      flex-direction: column; gap: 15px; margin-top: 8px;
+    }
+    .quest-feedback.show { display: flex; }
+    .feedback-header { display: flex; align-items: center; gap: 15px; }
+    .feedback-icon {
+      width: 45px; height: 45px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .feedback-icon.error { background: #f97066; }
+    .feedback-icon.success { background: #37ec65; }
+    .feedback-icon img { width: 24px; height: 24px; }
+    .feedback-label {
+      font-family: 'Outfit', sans-serif; font-size: 18px; font-weight: 700;
+      color: #fff;
+    }
+    .feedback-text {
+      font-size: 18px; color: #fff; line-height: 27px;
+    }
+
+    /* Button bar */
+    .quest-button-bar {
+      background: #0d1a32;
+      padding: 0 0 24px 0;
+      display: flex; flex-direction: column; align-items: center; gap: 0;
+      flex-shrink: 0;
+    }
+    .quest-button-bar .quest-separator {
+      margin-top: 0;
+      margin-bottom: 0;
+    }
+    .quest-btn-group { display: flex; gap: 12px; align-items: center; }
+    .btn-voltar { display: none; }
+    .btn-responder {
+      width: 160px; height: 52px; border-radius: 16px;
+      border: 1px solid #0040a7; border-bottom-width: 5px;
+      background: #0059e7; color: #fff;
+      font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 700;
+      cursor: pointer; opacity: 0.4; transition: opacity 0.2s;
+    }
+    .btn-responder.enabled { opacity: 1; }
+    .btn-continuar {
+      width: 160px; height: 52px; border-radius: 16px;
+      border: 1px solid #0e511f; border-bottom-width: 5px;
+      background: #34994d; color: #fff;
+      font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 700;
+      cursor: pointer;
+    }
+    .btn-hidden { display: none; }
+
+    /* ══════════════════════════════════════
+       TELA ETAPA CONCLUÍDA — Análise
+    ══════════════════════════════════════ */
+    .conclusion-screen {
+      display: none;
+      position: fixed; inset: 0; z-index: 2000;
+      background: #0d1a32;
+      flex-direction: column; align-items: center; justify-content: center;
+      gap: 0;
+    }
+    .conclusion-screen.open { display: flex; }
+
+    .analysis-container {
+      display: flex; flex-direction: column;
+      align-items: center; gap: 32px;
+      width: 376px;
+    }
+
+    .analysis-title {
+      font-family: 'Orbitron', sans-serif; font-size: 25px; font-weight: 700;
+      color: #fff; line-height: 30px; text-align: center; letter-spacing: 0;
+    }
+
+    .analysis-list {
+      display: flex; flex-direction: column; gap: 16px;
+      width: 100%;
+    }
+
+    .analysis-item {
+      display: flex; gap: 8px; align-items: center;
+    }
+
+    .analysis-icon {
+      width: 20px; flex-shrink: 0;
+      font-size: 14px; font-weight: 700; font-family: 'Outfit', sans-serif;
+      text-align: center; line-height: 24px;
+      color: rgba(255,255,255,0.4);
+      transition: color 0.3s;
+    }
+    .analysis-icon.done  { color: #32d582; }
+    .analysis-icon.loading {
+      color: rgba(255,255,255,0.5);
+      animation: ellipsis-pulse 1s ease-in-out infinite;
+    }
+    @keyframes ellipsis-pulse {
+      0%, 100% { opacity: 0.4; }
+      50%       { opacity: 1; }
+    }
+
+    .analysis-label {
+      font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 400;
+      color: #fff; line-height: 24px;
+      opacity: 0.4; transition: opacity 0.3s;
+    }
+    .analysis-label.active { opacity: 1; }
+    .analysis-label.done   { opacity: 1; }
+
+    .conclusion-footer {
+      margin-top: 48px; display: flex; justify-content: center;
+    }
+
+    /* ══════════════════════════════════════
+       TELA DE RESULTADO
+    ══════════════════════════════════════ */
+    .result-screen {
+      display: none;
+      position: fixed; inset: 0; z-index: 2000;
+      background: #0d1a32;
+      flex-direction: column; align-items: center; justify-content: space-between;
+      padding: 32px 24px;
+    }
+    .result-screen.open { display: flex; }
+
+    .result-content {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 12px; width: 400px;
+    }
+    .result-title {
+      font-family: 'Orbitron', sans-serif; font-size: 25px; font-weight: 700;
+      color: #fff; line-height: 30px; text-align: center; width: 100%;
+    }
+    .result-subtitle {
+      font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 400;
+      color: #fff; line-height: 24px; text-align: center; width: 100%;
+      margin-bottom: 20px;
+    }
+    .result-bars { display: flex; flex-direction: column; gap: 24px; width: 100%; }
+    .result-bar-item { display: flex; flex-direction: column; gap: 4px; }
+    .result-bar-label {
+      font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 700;
+      color: #fff; line-height: 24px;
+    }
+    .result-bar-track {
+      width: 100%; height: 12px; background: rgba(255,255,255,0.08);
+      border-radius: 1000px; overflow: hidden;
+    }
+    .result-bar-fill {
+      height: 100%; border-radius: 1000px; width: 0;
+      transition: width 1s ease-out;
+    }
+
+    .result-footer {
+      flex-shrink: 0; display: flex; justify-content: center; padding-top: 24px;
+    }
+    .btn-resultado {
+      width: 279px; height: 52px; border-radius: 16px;
+      background: #0059e7;
+      border-top: 1px solid #0040a7; border-left: 1px solid #0040a7;
+      border-right: 1px solid #0040a7; border-bottom: 5px solid #0040a7;
+      font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 700;
+      color: #fff; cursor: pointer; transition: filter 0.15s;
+    }
+    .btn-resultado:hover { filter: brightness(1.1); }
+
+    /* ══════════════════════════════════════
+       TELA DE MISSÃO ESPECIAL
+    ══════════════════════════════════════ */
+    .mission-screen {
+      display: none;
+      position: fixed; inset: 0; z-index: 2000;
+      background: #0d1a32;
+      flex-direction: column; align-items: center; justify-content: space-between;
+      padding: 32px 24px;
+    }
+    .mission-screen.open { display: flex; }
+
+    .mission-close {
+      position: absolute; top: 16px; right: 16px;
+      width: 48px; height: 48px; border-radius: 50%;
+      background: none; border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .mission-close img { width: 24px; height: 24px; }
+
+    .mission-content {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 12px; width: 376px; text-align: center;
+    }
+    .mission-emoji {
+      font-size: 120px; line-height: 1;
+      margin-bottom: 8px;
+    }
+    .mission-title {
+      font-family: 'Orbitron', sans-serif; font-size: 25px; font-weight: 700;
+      color: #fff; line-height: 30px; letter-spacing: 0;
+    }
+    .mission-desc {
+      font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 400;
+      color: #fff; line-height: 24px;
+    }
+
+    .mission-footer {
+      flex-shrink: 0; display: flex; justify-content: center; padding-top: 24px;
+    }
+    .btn-mission {
+      width: 279px; height: 52px; border-radius: 16px;
+      background: #0059e7;
+      border-top: 1px solid #0040a7; border-left: 1px solid #0040a7;
+      border-right: 1px solid #0040a7; border-bottom: 5px solid #0040a7;
+      font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 700;
+      color: #fff; cursor: pointer; transition: filter 0.15s;
+    }
+    .btn-mission:hover { filter: brightness(1.1); }
+
+    /* ══════════════════════════════════════
+       TELA DE COMPARAÇÃO FINAL
+    ══════════════════════════════════════ */
+    .comparison-screen {
+      display: none;
+      position: fixed; inset: 0; z-index: 2000;
+      background: #0d1a32;
+      flex-direction: column; align-items: center; justify-content: space-between;
+      padding: 32px 24px;
+    }
+    .comparison-screen.open { display: flex; }
+
+    .comparison-close {
+      position: absolute; top: 16px; right: 16px;
+      width: 48px; height: 48px; border-radius: 50%;
+      background: none; border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .comparison-close img { width: 24px; height: 24px; }
+
+    .comparison-content {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 12px; width: 400px; text-align: center;
+    }
+    /* Ícone de check verde (DoneAnimation) */
+    .comparison-icon {
+      width: 100px; height: 100px; border-radius: 50%;
+      background: #32d583;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 4px;
+      box-shadow: 0 0 0 10px rgba(50,213,131,0.15), 0 0 0 20px rgba(50,213,131,0.07);
+      animation: comp-pop 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
+    }
+    @keyframes comp-pop {
+      from { transform: scale(0.3); opacity: 0; }
+      to   { transform: scale(1);   opacity: 1; }
+    }
+    .comparison-icon svg { width: 48px; height: 48px; }
+
+    .comparison-title {
+      font-family: 'Orbitron', sans-serif; font-size: 25px; font-weight: 700;
+      color: #fff; line-height: 30px;
+    }
+    .comparison-subtitle {
+      font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 400;
+      color: #fff; line-height: 24px; margin-bottom: 8px;
+    }
+
+    .comparison-bars { display: flex; flex-direction: column; gap: 20px; width: 100%; }
+    .comparison-bar-item { display: flex; flex-direction: column; gap: 5px; }
+    .comparison-bar-label {
+      font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 700;
+      color: #fff; line-height: 24px; text-align: left;
+    }
+    .comparison-bar-track {
+      width: 100%; height: 12px; background: rgba(255,255,255,0.08);
+      border-radius: 1000px; overflow: hidden; position: relative;
+    }
+    /* Linha de diagnóstico (amarelo/vermelho — cor original) */
+    .cbar-diag {
+      height: 12px; border-radius: 1000px; width: 0;
+      position: absolute; top: 0; left: 0;
+      transition: width 1s ease-out;
+    }
+    /* Linha de revisão (verde — melhora) */
+    .cbar-rev {
+      height: 12px; border-radius: 1000px; width: 0;
+      position: absolute; top: 0; left: 0;
+      background: #32d583;
+      transition: width 1.2s ease-out 0.3s;
+    }
+
+    .comparison-footer {
+      flex-shrink: 0; display: flex; justify-content: center; padding-top: 24px;
+    }
+    .btn-comparison {
+      width: 279px; height: 52px; border-radius: 16px;
+      background: #0059e7;
+      border-top: 1px solid #0040a7; border-left: 1px solid #0040a7;
+      border-right: 1px solid #0040a7; border-bottom: 5px solid #0040a7;
+      font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 700;
+      color: #fff; cursor: pointer; transition: filter 0.15s;
+    }
+    .btn-comparison:hover { filter: brightness(1.1); }
+  </style>
+</head>
+<body>
+
+<!-- ══ APP SHELL ══ -->
+<div style="width:100%; max-width:calc(100vw - 64px); margin:0 32px; position:relative; height:100vh; overflow:hidden;">
+  <div class="bg-layer"></div>
+
+  <!-- Rocky terrain background -->
+  <div class="terrain-bg">
+    <img src="https://www.figma.com/api/mcp/asset/b1152441-ab07-4fc9-9e4b-4b3966b8f0aa" alt="" style="position:absolute;bottom:0;left:0;width:100%;height:100%;object-fit:cover;object-position:top;opacity:0.8;">
+    <img src="https://www.figma.com/api/mcp/asset/e8d93f58-7f9f-4e5d-a765-f8c138947995" alt="" style="position:absolute;bottom:0;right:0;width:60%;object-fit:cover;opacity:0.7;">
+  </div>
+
+  <div class="app-shell">
+
+    <!-- ══ SIDEBAR ══ -->
+    <aside class="sidebar">
+      <!-- Logo — SVG original exportado do Figma -->
+      <div class="sidebar-logo" style="padding-left:32px;">
+        <img src="https://www.figma.com/api/mcp/asset/2007d688-021c-4a78-9f3f-34f829b81fb4" alt="Orbie" style="height:32px; width:auto; display:block;">
+      </div>
+
+      <!-- Nav -->
+      <nav class="sidebar-nav">
+        <a class="nav-item active" href="#">
+          <div class="nav-icon">
+            <img src="https://www.figma.com/api/mcp/asset/323e6f87-f5b8-4fb4-9f06-0787ed95883b" alt="Início" style="width:24px;height:24px;object-fit:contain;">
+          </div>
+          Início
+        </a>
+        <a class="nav-item" href="#">
+          <div class="nav-icon">
+            <img src="https://www.figma.com/api/mcp/asset/f6cadc17-a630-4d2e-86ee-0d67f055d84e" alt="Portal" style="width:24px;height:24px;object-fit:contain;">
+          </div>
+          Portal
+        </a>
+        <a class="nav-item" href="#">
+          <div class="nav-icon">
+            <img src="https://www.figma.com/api/mcp/asset/fb529532-ae1d-4613-a469-4ce45e450fe3" alt="Ranking" style="width:24px;height:24px;object-fit:contain;">
+          </div>
+          Ranking
+        </a>
+        <a class="nav-item" href="#">
+          <div class="nav-icon">
+            <img src="https://www.figma.com/api/mcp/asset/f4c232e5-929d-4375-ae86-b4772438712a" alt="Perfil" style="width:24px;height:24px;object-fit:contain;">
+          </div>
+          Perfil
+        </a>
+        <a class="nav-item" href="#">
+          <div class="nav-icon">
+            <!-- Notificações: mask + fill color (padrão do Figma) -->
+            <div style="position:relative;width:24px;height:24px;">
+              <div style="position:absolute;
+                          top:50%;left:calc(50% - 0.06px);
+                          transform:translate(-50%,-50%);
+                          width:18px;height:20.571px;
+                          -webkit-mask-image:url('https://www.figma.com/api/mcp/asset/b66c8a8b-4a91-4246-845c-583493cbaa18');
+                          mask-image:url('https://www.figma.com/api/mcp/asset/b66c8a8b-4a91-4246-845c-583493cbaa18');
+                          -webkit-mask-size:24px 24px;
+                          mask-size:24px 24px;
+                          -webkit-mask-position:-2.944px -1.5px;
+                          mask-position:-2.944px -1.5px;
+                          -webkit-mask-repeat:no-repeat;
+                          mask-repeat:no-repeat;">
+                <img src="https://www.figma.com/api/mcp/asset/6ed7bdc3-336f-4764-abe2-2a12a642e334"
+                     alt="Notificações"
+                     style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;">
+              </div>
+            </div>
+          </div>
+          Notificações
+        </a>
+      </nav>
+    </aside>
+
+    <!-- ══ MAIN CONTENT ══ -->
+    <main class="main-content">
+      <div class="content-column">
+
+        <!-- ── PLANET SECTION 1: Planeta Diagnóstico ── -->
+        <div class="planet-section">
+
+          <!-- Planet Card -->
+          <div class="planet-card">
+            <div class="planet-card-inner">
+              <!-- Planet illustration -->
+              <div class="planet-image">
+                <img src="https://www.figma.com/api/mcp/asset/da6745bb-1e5e-488d-ab72-34980ba41170" alt="Planeta Diagnóstico">
+              </div>
+              <!-- Info -->
+              <div class="planet-info">
+                <div class="planet-stars">
+                  <div class="star" id="star-0"><svg viewBox="0 0 20 20"><path d="M10 1l2.4 6.5H19l-5.3 4 2 6.4L10 14l-5.7 4 2-6.4L1 8.5h6.6z" fill="#526D98"/></svg></div>
+                  <div class="star" id="star-1"><svg viewBox="0 0 20 20"><path d="M10 1l2.4 6.5H19l-5.3 4 2 6.4L10 14l-5.7 4 2-6.4L1 8.5h6.6z" fill="#526D98"/></svg></div>
+                  <div class="star" id="star-2"><svg viewBox="0 0 20 20"><path d="M10 1l2.4 6.5H19l-5.3 4 2 6.4L10 14l-5.7 4 2-6.4L1 8.5h6.6z" fill="#526D98"/></svg></div>
+                </div>
+                <div class="planet-name">Planeta Diagnóstico #1</div>
+                <div class="planet-desc">Teste seus conhecimentos antes de conquistar o universo!</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Phase Path 1 -->
+          <div class="phase-path" style="position:relative;">
+            <!-- Tooltip -->
+            <div class="tooltip-wrap" style="position:absolute; left:137px; top:-50px;">
+              <div class="tooltip-box"><span>Comece aqui</span></div>
+              <div class="tooltip-arrow"><div class="tooltip-arrow-inner"></div></div>
+            </div>
+
+            <!-- Row 1 – offset 220px (active) -->
+            <div class="phase-row" style="padding-left:220px;">
+              <div class="phase-node active" id="phase-node-active">
+                <div class="phase-node-bg"></div>
+                <!-- Ring de progresso SVG -->
+                <div class="progress-ring-wrap">
+                  <svg class="progress-ring-svg" width="90" height="90" id="progress-ring-svg">
+                    <circle class="progress-ring-track" cx="45" cy="45" r="42"/>
+                    <circle class="progress-ring-fill"  cx="45" cy="45" r="42"
+                      id="progress-ring-fill"
+                      stroke-dasharray="264"
+                      stroke-dashoffset="264"/>
+                  </svg>
+                </div>
+                <div class="play-btn" id="play-btn" style="cursor:pointer;">
+                  <svg viewBox="0 0 24 24"><polygon points="6,4 20,12 6,20"/></svg>
+                </div>
+                <div class="done-btn">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><polyline points="4,13 9,18 20,7" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+              </div>
+            </div>
+
+            <!-- Row 2 – offset 300px (locked) -->
+            <div class="phase-row" style="padding-left:300px;">
+              <div class="phase-node" id="diag-node-1">
+                <div class="phase-node-bg">
+                  <div class="lock-btn">
+                    <img src="https://www.figma.com/api/mcp/asset/bca8cadb-6d74-4ec3-a558-74fe9061f8f5" alt="locked" style="width:22px;height:22px;object-fit:contain;opacity:0.9;">
+                  </div>
+                </div>
+                <div class="done-btn"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><polyline points="4,13 9,18 20,7" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              </div>
+            </div>
+
+            <!-- Row 3 – offset 370px -->
+            <div class="phase-row" style="padding-left:370px;">
+              <div class="phase-node" id="diag-node-2">
+                <div class="phase-node-bg">
+                  <div class="lock-btn">
+                    <img src="https://www.figma.com/api/mcp/asset/bca8cadb-6d74-4ec3-a558-74fe9061f8f5" alt="locked" style="width:22px;height:22px;object-fit:contain;opacity:0.9;">
+                  </div>
+                </div>
+                <div class="done-btn"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><polyline points="4,13 9,18 20,7" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              </div>
+            </div>
+
+            <!-- Row 4 – offset 300px (etapa 4: Linguagens) -->
+            <div class="phase-row" style="padding-left:300px;">
+              <div class="phase-node" id="diag-node-3">
+                <div class="phase-node-bg">
+                  <div class="lock-btn">
+                    <img src="https://www.figma.com/api/mcp/asset/bca8cadb-6d74-4ec3-a558-74fe9061f8f5" alt="locked" style="width:22px;height:22px;object-fit:contain;opacity:0.9;">
+                  </div>
+                </div>
+                <div class="done-btn"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><polyline points="4,13 9,18 20,7" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── PLANET SECTION 2: Revisão de Conteúdos (locked) ── -->
+        <div class="planet-section" id="planet-section-revisao">
+
+          <!-- Planet Card – locked -->
+          <div class="planet-card locked" id="planet-card-revisao">
+            <div class="planet-card-inner">
+              <!-- Locked planet illustration — fiel ao Figma -->
+              <div class="planet-locked-wrap" id="planet-locked-wrap">
+                <!-- Planeta com mix-blend-mode: luminosity (Figma exato) — estado bloqueado -->
+                <img id="planet-revisao-locked"
+                     src="https://www.figma.com/api/mcp/asset/5f9ce34f-bdb8-4c59-ada8-58ef7ee01b3b"
+                     alt="Planeta bloqueado"
+                     style="position:absolute; top:50%; left:calc(50% + 0.5px); transform:translate(-50%,-50%);
+                            width:100px; height:100px; border-radius:50%;
+                            mix-blend-mode:luminosity; object-fit:cover;">
+                <!-- Planeta colorido — aparece após missão aceita -->
+                <img id="planet-revisao-color"
+                     src="https://www.figma.com/api/mcp/asset/6fc766dd-a0c0-48f1-8d7c-032b1f562909"
+                     alt="Planeta Revisão"
+                     style="position:absolute; top:50%; left:calc(50% + 0.5px); transform:translate(-50%,-50%);
+                            width:100px; height:100px; border-radius:50%;
+                            object-fit:cover; display:none;">
+                <!-- Cadeado centralizado sobre o planeta -->
+                <img id="planet-revisao-lock-icon"
+                     src="https://www.figma.com/api/mcp/asset/f252051f-d560-4cd1-8353-30420bfd76fa"
+                     alt="locked"
+                     style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:24px; height:24px; object-fit:contain;">
+                <!-- Borda dashed removida -->
+              </div>
+              <!-- Info -->
+              <div class="planet-info">
+                <div class="planet-stars">
+                  <div class="star" style="width:24px;height:24px;"><svg viewBox="0 0 24 24"><path d="M12 1l3 8h8l-6.5 4.8 2.5 7.8L12 17l-7 4.6 2.5-7.8L2 9h8z" fill="#526D98"/></svg></div>
+                  <div class="star" style="width:24px;height:24px;"><svg viewBox="0 0 24 24"><path d="M12 1l3 8h8l-6.5 4.8 2.5 7.8L12 17l-7 4.6 2.5-7.8L2 9h8z" fill="#526D98"/></svg></div>
+                  <div class="star" style="width:24px;height:24px;"><svg viewBox="0 0 24 24"><path d="M12 1l3 8h8l-6.5 4.8 2.5 7.8L12 17l-7 4.6 2.5-7.8L2 9h8z" fill="#526D98"/></svg></div>
+                </div>
+                <div class="planet-name">Revisão de Conteúdos</div>
+                <div class="planet-desc">Revise os conteúdos que precisa melhorar</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Phase Path 2 – all locked -->
+          <div class="phase-path" id="phase-path-revisao" style="position:relative;">
+            <!-- Tooltip "Continue" (oculto até missão aceita) -->
+            <div class="tooltip-wrap" id="tooltip-revisao" style="position:absolute; left:137px; top:-50px; display:none;">
+              <div class="tooltip-box"><span>Continue</span></div>
+              <div class="tooltip-arrow"><div class="tooltip-arrow-inner"></div></div>
+            </div>
+
+            <!-- Row 1 — Etapa 1: Matemática -->
+            <div class="phase-row" style="padding-left:220px;">
+              <div class="phase-node" id="revisao-node-0">
+                <div class="phase-node-bg">
+                  <div class="lock-btn" id="revisao-lock-0"><img src="https://www.figma.com/api/mcp/asset/bca8cadb-6d74-4ec3-a558-74fe9061f8f5" alt="locked" style="width:22px;height:22px;object-fit:contain;opacity:0.9;"></div>
+                  <div class="progress-ring-wrap" id="revisao-ring-0" style="display:none;">
+                    <svg class="progress-ring-svg" width="90" height="90">
+                      <circle class="progress-ring-track" cx="45" cy="45" r="42"/>
+                      <circle class="progress-ring-fill" cx="45" cy="45" r="42" stroke-dasharray="264" stroke-dashoffset="264"/>
+                    </svg>
+                  </div>
+                </div>
+                <div class="play-btn" id="revisao-play-0" style="display:none; cursor:pointer;">
+                  <svg viewBox="0 0 24 24"><polygon points="6,4 20,12 6,20"/></svg>
+                </div>
+                <div class="done-btn" id="revisao-done-0">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><polyline points="4,13 9,18 20,7" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+              </div>
+            </div>
+
+            <!-- Row 2 — Etapa 2: Linguagens (bloqueada inicialmente) -->
+            <div class="phase-row" style="padding-left:300px;">
+              <div class="phase-node" id="revisao-node-1">
+                <div class="phase-node-bg">
+                  <div class="lock-btn" id="revisao-lock-1"><img src="https://www.figma.com/api/mcp/asset/bca8cadb-6d74-4ec3-a558-74fe9061f8f5" alt="locked" style="width:22px;height:22px;object-fit:contain;opacity:0.9;"></div>
+                </div>
+                <div class="play-btn" id="revisao-play-1" style="display:none; cursor:pointer;">
+                  <svg viewBox="0 0 24 24"><polygon points="6,4 20,12 6,20"/></svg>
+                </div>
+                <div class="done-btn" id="revisao-done-1">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><polyline points="4,13 9,18 20,7" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Spacer so terrain is visible -->
+        <div style="height: 200px;"></div>
+
+      </div><!-- /content-column -->
+    </main><!-- /main-content -->
+
+    <!-- ══ RANKING SIDEBAR ══ -->
+    <aside class="ranking-sidebar">
+      <div class="ranking-card">
+        <div class="ranking-header">
+          <span class="ranking-title">Ranking</span>
+          <div class="info-btn">
+            <svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="7" stroke="rgba(255,255,255,0.6)" stroke-width="1.5" fill="none"/><path d="M8 7v5" stroke="rgba(255,255,255,0.6)" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="5" r="0.8" fill="rgba(255,255,255,0.6)"/></svg>
+          </div>
+        </div>
+        <div class="ranking-list">
+          <!-- 1 Cosmic -->
+          <div class="ranking-item">
+            <div class="rank-avatar">
+              <img src="https://www.figma.com/api/mcp/asset/d44c8a86-72c7-41fc-9812-a068200d4d26" alt="Cosmic">
+            </div>
+            <span class="rank-name">Cosmic</span>
+            <span class="rank-xp">1.340 XP</span>
+          </div>
+          <!-- 2 Starry -->
+          <div class="ranking-item">
+            <div class="rank-avatar">
+              <img src="https://www.figma.com/api/mcp/asset/6dde0669-806e-4ddc-936a-644f3235f704" alt="Starry">
+            </div>
+            <span class="rank-name">Starry</span>
+            <span class="rank-xp">1.004 XP</span>
+          </div>
+          <!-- 3 Galactic -->
+          <div class="ranking-item">
+            <div class="rank-avatar">
+              <img src="https://www.figma.com/api/mcp/asset/1077f1b0-2be4-4045-a595-30fad3aaa422" alt="Galactic">
+            </div>
+            <span class="rank-name">Galactic</span>
+            <span class="rank-xp">823 XP</span>
+          </div>
+          <!-- 4 AstroBoy -->
+          <div class="ranking-item">
+            <div class="rank-avatar">
+              <img src="https://www.figma.com/api/mcp/asset/8b500fd2-db58-4c1c-937d-c4d164da48df" alt="AstroBoy">
+            </div>
+            <span class="rank-name">AstroBoy</span>
+            <span class="rank-xp">689 XP</span>
+          </div>
+          <!-- 5 Você (highlighted) -->
+          <div class="ranking-item me">
+            <div class="rank-avatar">
+              <img src="https://www.figma.com/api/mcp/asset/26fec165-65de-4b2b-9ea8-37645a60d11e" alt="Você">
+            </div>
+            <span class="rank-name">Você</span>
+            <span class="rank-xp">560 XP</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+  </div><!-- /app-shell -->
+</div><!-- /1440px wrapper -->
+
+<!-- ══ MODAL: Trilha Diagnóstica ══ -->
+<div class="modal-overlay" id="modal-diagnostico">
+  <div class="modal-box" onclick="event.stopPropagation()">
+
+    <!-- Botão fechar -->
+    <button class="modal-close" onclick="fecharModal()" aria-label="Fechar">
+      <img src="https://www.figma.com/api/mcp/asset/9772cee0-15b7-437b-9dd6-745a5a50c1b9" alt="fechar">
+    </button>
+
+    <!-- Ilustração livro + globo -->
+    <img
+      class="modal-illustration"
+      src="https://www.figma.com/api/mcp/asset/59bd4f1d-bf56-474d-9cc0-d7d8bcbbf342"
+      alt="Livro e globo">
+
+    <!-- Texto -->
+    <div class="modal-text">
+      <div class="modal-title">Teste seus conhecimentos do ano anterior</div>
+      <div class="modal-desc">
+        Todo grande explorador precisa conhecer<br>
+        ses forças antes de conquistar o universo!
+      </div>
+    </div>
+
+    <!-- Botão Começar -->
+    <button class="modal-btn" onclick="event.stopPropagation(); iniciarFluxo()">Começar</button>
+
+  </div>
+</div>
+
+<!-- ══ TELA DE QUESTÃO ══ -->
+<div class="quest-screen" id="quest-screen">
+
+  <!-- Header -->
+  <div class="quest-header">
+    <div class="quest-header-inner">
+      <button class="quest-close-btn" onclick="fecharQuestao()" aria-label="Fechar">
+        <img src="https://www.figma.com/api/mcp/asset/80fe9896-51b7-440f-a971-0f34aa1452d3" alt="fechar">
+      </button>
+      <div class="quest-progress-track">
+        <div class="quest-progress-bar" id="quest-progress-bar" style="width:10%"></div>
+      </div>
+      <div class="quest-header-right">
+        <div class="quest-points">
+          <img class="quest-points-icon" src="https://www.figma.com/api/mcp/asset/7d41bc11-4236-4c48-a229-a5a13fe54721" alt="pontos">
+          <span class="quest-points-val" id="quest-points-val">100</span>
+        </div>
+      </div>
+    </div>
+    <div class="quest-separator"></div>
+  </div>
+
+  <!-- Body -->
+  <div class="quest-body">
+    <div class="quest-card">
+      <!-- Coluna esquerda: enunciado -->
+      <div class="quest-statement">
+        <div class="quest-title" id="quest-title">Impacto das Redes Sociais na Sociedade</div>
+        <div class="quest-text" id="quest-text">
+          As redes sociais desempenham um papel crucial na formação da opinião pública, permitindo que informações se espalhem rapidamente. Um exemplo claro é a propagação de fake news durante as eleições, que pode distorcer a percepção dos eleitores e influenciar resultados. Outro caso é a desinformação sobre vacinas, que gera hesitação e pode afetar a saúde pública.
+        </div>
+        <div class="quest-comando" id="quest-comando"></div>
+        <div class="quest-image-wrap" style="display:none;">
+          <img src="https://www.figma.com/api/mcp/asset/6adad363-5332-4e68-9e84-fb9cf79f099c" alt="imagem da questão" id="quest-img">
+          <div class="quest-expand-btn">
+            <img src="https://www.figma.com/api/mcp/asset/f626ee12-450e-4f5d-8c4b-3a64cf42ba64" alt="expandir">
+          </div>
+        </div>
+      </div>
+
+      <!-- Coluna direita: opções -->
+      <div style="flex:1; display:flex; flex-direction:column; gap:8px;">
+        <div class="quest-options" id="quest-options">
+          <!-- geradas via JS -->
+        </div>
+        <!-- Feedback -->
+        <div class="quest-feedback" id="quest-feedback">
+          <div class="feedback-header">
+            <div class="feedback-icon" id="feedback-icon">
+              <!-- Ícone positivo (check verde) -->
+              <img id="feedback-icon-positive"
+                   src="https://www.figma.com/api/mcp/asset/784bd528-0b6f-42b9-b237-1f37d1cfb03a"
+                   alt="correto"
+                   style="width:45px;height:45px;object-fit:contain;display:none;">
+              <!-- Ícone negativo (X vermelho) -->
+              <div id="feedback-icon-negative"
+                   style="width:45px;height:45px;border-radius:50%;background:#f97066;
+                          display:none;align-items:center;justify-content:center;flex-shrink:0;position:relative;overflow:hidden;">
+                <div style="position:relative;width:27px;height:27px;">
+                  <img src="https://www.figma.com/api/mcp/asset/891f2be2-469b-49a7-8b32-33ddeb9f3410"
+                       alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;">
+                  <img src="https://www.figma.com/api/mcp/asset/50d276ca-16f3-4a3c-a883-273def1d00a6"
+                       alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;">
+                </div>
+              </div>
+            </div>
+            <span class="feedback-label" id="feedback-label">Resposta incorreta.</span>
+          </div>
+          <div class="feedback-text" id="feedback-text"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Button bar -->
+  <div class="quest-button-bar">
+    <div class="quest-separator"></div>
+    <div class="quest-btn-group" style="margin-top:12px;">
+      <div class="quest-review-banner" id="quest-review-banner">Modo revisão — visualizando etapa concluída</div>
+      <button class="btn-responder" id="btn-responder" onclick="responderQuestao()" disabled>Responder</button>
+      <button class="btn-continuar btn-hidden" id="btn-continuar" onclick="continuarQuestao()">Continuar</button>
+      <div class="quest-review-nav" id="quest-review-nav">
+        <button class="btn-nav-prev" id="btn-nav-prev" onclick="revisaoNavegar(-1)">← Anterior</button>
+        <span class="btn-nav-label" id="btn-nav-label">1 / 3</span>
+        <button class="btn-nav-next" id="btn-nav-next" onclick="revisaoNavegar(1)">Próxima →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ TELA ANÁLISE / ETAPA CONCLUÍDA ══ -->
+<div class="conclusion-screen" id="conclusion-screen">
+  <div class="analysis-container">
+
+    <div class="analysis-title">Analisando seu<br>desempenho...</div>
+
+    <div class="analysis-list" id="analysis-list">
+      <div class="analysis-item" id="item-0">
+        <span class="analysis-icon" id="icon-0">···</span>
+        <span class="analysis-label" id="label-0">Corrigindo respostas</span>
+      </div>
+      <div class="analysis-item" id="item-1">
+        <span class="analysis-icon" id="icon-1">···</span>
+        <span class="analysis-label" id="label-1">Comparando com a matriz curricular</span>
+      </div>
+      <div class="analysis-item" id="item-2">
+        <span class="analysis-icon" id="icon-2">···</span>
+        <span class="analysis-label" id="label-2">Identificando gaps de aprendizado</span>
+      </div>
+      <div class="analysis-item" id="item-3">
+        <span class="analysis-icon" id="icon-3">···</span>
+        <span class="analysis-label" id="label-3">Montando seu perfil de conhecimento</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ TELA DE RESULTADO ══ -->
+<div class="result-screen" id="result-screen">
+  <div class="result-content">
+    <div class="result-title">Resultado</div>
+    <div class="result-subtitle">Veja seus pontos fortes e o que podemos melhorar.</div>
+    <div class="result-bars">
+
+      <div class="result-bar-item">
+        <div class="result-bar-label">Ciências Humanas</div>
+        <div class="result-bar-track">
+          <div class="result-bar-fill" id="bar-0" style="background:#32d583;" data-width="94%"></div>
+        </div>
+      </div>
+
+      <div class="result-bar-item">
+        <div class="result-bar-label">Ciências da Natureza</div>
+        <div class="result-bar-track">
+          <div class="result-bar-fill" id="bar-1" style="background:#32d583;" data-width="69%"></div>
+        </div>
+      </div>
+
+      <div class="result-bar-item">
+        <div class="result-bar-label">Matemática</div>
+        <div class="result-bar-track">
+          <div class="result-bar-fill" id="bar-2" style="background:#fdb022;" data-width="34%"></div>
+        </div>
+      </div>
+
+      <div class="result-bar-item">
+        <div class="result-bar-label">Linguagens</div>
+        <div class="result-bar-track">
+          <div class="result-bar-fill" id="bar-3" style="background:#f97066;" data-width="19%"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <div class="result-footer">
+    <button class="btn-resultado" onclick="fecharResultado()">Continuar</button>
+  </div>
+</div>
+
+<!-- ══ TELA DE MISSÃO ESPECIAL ══ -->
+<div class="mission-screen" id="mission-screen">
+  <button class="mission-close" onclick="fecharMissao()" aria-label="Fechar">
+    <img src="https://www.figma.com/api/mcp/asset/cba309a5-0b35-4ac8-b43b-8b4cdb4d6f0e" alt="fechar">
+  </button>
+
+  <div class="mission-content">
+    <div class="mission-emoji">🚀</div>
+    <div class="mission-title">Temos uma missão especial pra você</div>
+    <div class="mission-desc">
+      Criamos uma trilha exclusiva<br>
+      para você superar esses desafios!
+    </div>
+  </div>
+
+  <div class="mission-footer">
+    <button class="btn-mission" onclick="fecharMissao()">Aceitar missão</button>
+  </div>
+</div>
+
+<!-- ══ TELA DE COMPARAÇÃO FINAL ══ -->
+<div class="comparison-screen" id="comparison-screen">
+  <button class="comparison-close" onclick="fecharComparacao()" aria-label="Fechar">
+    <img src="https://www.figma.com/api/mcp/asset/cba309a5-0b35-4ac8-b43b-8b4cdb4d6f0e" alt="fechar">
+  </button>
+
+  <div class="comparison-content">
+    <!-- Ícone check verde animado -->
+    <div class="comparison-icon">
+      <svg viewBox="0 0 48 48" fill="none">
+        <polyline points="8,26 18,36 40,14" stroke="#fff" stroke-width="5"
+                  stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+
+    <div class="comparison-title">Revisão de conteúdos concluída!</div>
+    <div class="comparison-subtitle">Você superou seus desafios e evoluiu, veja sua evolução:</div>
+
+    <div class="comparison-bars">
+
+      <!-- Matemática -->
+      <div class="comparison-bar-item">
+        <div class="comparison-bar-label">Matemática</div>
+        <div class="comparison-bar-track">
+          <div class="cbar-diag" id="cbar-mat-diag" style="background:#fdb022;"></div>
+          <div class="cbar-rev"  id="cbar-mat-rev"></div>
+        </div>
+      </div>
+
+      <!-- Linguagens -->
+      <div class="comparison-bar-item">
+        <div class="comparison-bar-label">Linguagens</div>
+        <div class="comparison-bar-track">
+          <div class="cbar-diag" id="cbar-ling-diag" style="background:#f97066;"></div>
+          <div class="cbar-rev"  id="cbar-ling-rev"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="comparison-footer">
+    <button class="btn-comparison" onclick="fecharComparacao()">Concluir</button>
+  </div>
+</div>
+
+<script>
+// ── Estrutura de etapas (4 etapas × 3 questões) ──
+const ETAPAS = [
+  {
+    nome: "Ciências Humanas",
+    questoes: [
+      {
+        titulo: "História (Geopolítica)",
+        comando: "O fim da Segunda Guerra Mundial marcou o início de uma ordem mundial bipolar, caracterizada pela forte disputa entre Estados Unidos e União Soviética. Esse período ficou conhecido como:",
+        texto: "O fim da Segunda Guerra Mundial, em 1945, reconfigurou radicalmente o mapa geopolítico mundial. As duas superpotências vencedoras — Estados Unidos e União Soviética — passaram a disputar influência global por meio de alianças militares, corrida armamentista e conflitos indiretos em países periféricos, sem confronto direto entre si.",
+        opcoes: [
+          "Primeira Guerra Mundial, marcada pelas trincheiras.",
+          "Guerra Fria, com disputa ideológica e armamentista.",
+          "Neocolonialismo, focado na partilha da África.",
+          "Era Multipolar, com o livre mercado globalizado."
+        ],
+        correta: 1,
+        feedbackAcerto: "Avalia se o estudante reconhece a Guerra Fria, que é o principal contexto geopolítico e histórico ensinado no 9º ano para entender o mundo contemporâneo.",
+        feedbackErro: "Avalia se o estudante reconhece a Guerra Fria, que é o principal contexto geopolítico e histórico ensinado no 9º ano para entender o mundo contemporâneo."
+      },
+      {
+        titulo: "Geografia (Globalização)",
+        comando: "A globalização transformou as relações econômicas, integrando mercados e acelerando o fluxo de informações e capitais. Uma característica marcante desse processo é:",
+        texto: "A globalização é um processo de integração econômica, cultural e política entre os países, impulsionado pelos avanços tecnológicos e pela liberalização do comércio. Nesse contexto, grandes corporações passaram a operar em múltiplos países, aproveitando mão de obra, recursos e mercados consumidores espalhados pelo mundo.",
+        opcoes: [
+          "O fechamento das fronteiras comerciais.",
+          "O fim das desigualdades sociais no mundo.",
+          "A expansão de empresas transnacionais.",
+          "A redução do uso de tecnologias na indústria."
+        ],
+        correta: 2,
+        feedbackAcerto: "Identifica a compreensão básica do estudante sobre o fenômeno da globalização, pilar da Geografia para o Ensino Médio.",
+        feedbackErro: "Identifica a compreensão básica do estudante sobre o fenômeno da globalização, pilar da Geografia para o Ensino Médio."
+      },
+      {
+        titulo: "História do Brasil (Era Vargas)",
+        comando: "Entre 1930 e 1945, o Brasil viveu um período de grandes transformações políticas e econômicas, incluindo o início da industrialização e a criação de leis trabalhistas. Esse período é a:",
+        texto: "A chegada de Getúlio Vargas ao poder, em 1930, marcou uma ruptura com a chamada República Velha, dominada pelas oligarquias agrárias. O novo governo promoveu a industrialização, criou a CLT (Consolidação das Leis do Trabalho) e implantou um estado centralizado, culminando no Estado Novo (1937–1945), período de caráter ditatorial.",
+        opcoes: [
+          "República Velha.",
+          "Ditadura Militar.",
+          "Era Vargas.",
+          "Nova República."
+        ],
+        correta: 2,
+        feedbackAcerto: "Verifica se o aluno consegue localizar e identificar um dos períodos mais impactantes da história nacional estudados no 9º ano.",
+        feedbackErro: "Verifica se o aluno consegue localizar e identificar um dos períodos mais impactantes da história nacional estudados no 9º ano."
+      }
+    ]
+  },
+  {
+    nome: "Ciências da Natureza",
+    questoes: [
+      {
+        titulo: "Química (Estrutura Atômica)",
+        comando: "O modelo atômico moderno descreve o átomo com um núcleo denso central e uma região periférica chamada eletrosfera. Segundo esse modelo, o que encontramos no núcleo do átomo?",
+        texto: "O modelo atômico atual, desenvolvido a partir dos trabalhos de Rutherford, Bohr e outros cientistas, descreve o átomo como uma estrutura com núcleo central extremamente denso e pequeno, rodeado por uma vasta região chamada eletrosfera, onde os elétrons se movem em níveis de energia definidos.",
+        opcoes: [
+          "Apenas elétrons de carga negativa.",
+          "Prótons (carga positiva) e nêutrons (sem carga).",
+          "Prótons e elétrons misturados uniformemente.",
+          "Apenas nêutrons de carga elétrica neutra."
+        ],
+        correta: 1,
+        feedbackAcerto: "Confere se o aluno compreendeu o modelo atômico básico, pré-requisito absoluto para iniciar as aulas de Química no 1º ano.",
+        feedbackErro: "Confere se o aluno compreendeu o modelo atômico básico, pré-requisito absoluto para iniciar as aulas de Química no 1º ano."
+      },
+      {
+        titulo: "Física (Leis de Newton)",
+        comando: "Segundo a Primeira Lei de Newton (Inércia), um corpo em repouso tende a ficar em repouso, e um em movimento tende a manter-se em movimento. Esse estado só se altera se:",
+        texto: "Isaac Newton formulou três leis fundamentais da mecânica que descrevem o comportamento dos corpos em relação ao movimento. A Primeira Lei, conhecida como Lei da Inércia, estabelece que todo corpo mantém seu estado de repouso ou de movimento uniforme em linha reta, a menos que uma força externa atue sobre ele.",
+        opcoes: [
+          "Sua massa aumentar repentinamente.",
+          "Uma força resultante agir sobre ele.",
+          "O corpo perder calor para o ambiente.",
+          "A gravidade da Terra deixar de existir."
+        ],
+        correta: 1,
+        feedbackAcerto: "Testa o entendimento conceitual sobre mecânica e forças (Inércia), base para os cálculos físicos que virão no Ensino Médio.",
+        feedbackErro: "Testa o entendimento conceitual sobre mecânica e forças (Inércia), base para os cálculos físicos que virão no Ensino Médio."
+      },
+      {
+        titulo: "Biologia (Evolução)",
+        comando: "Charles Darwin propôs que os seres vivos se modificam ao longo do tempo. O mecanismo pelo qual o ambiente favorece a sobrevivência e a reprodução dos seres mais bem adaptados é a:",
+        texto: "Em 1859, Charles Darwin publicou 'A Origem das Espécies', apresentando evidências de que as espécies se transformam ao longo do tempo. Segundo sua teoria, os indivíduos de uma população apresentam variações hereditárias, e aqueles com características mais adequadas ao ambiente têm maior chance de sobreviver e se reproduzir.",
+        opcoes: [
+          "Mutação Genética.",
+          "Geração Espontânea.",
+          "Clonagem Natural.",
+          "Seleção Natural."
+        ],
+        correta: 3,
+        feedbackAcerto: "Mede a fixação de um dos conceitos mais importantes e cobrados da biologia do 9º ano: a teoria evolutiva.",
+        feedbackErro: "Mede a fixação de um dos conceitos mais importantes e cobrados da biologia do 9º ano: a teoria evolutiva."
+      }
+    ]
+  },
+  {
+    nome: "Matemática",
+    questoes: [
+      {
+        titulo: "Geometria (Teorema de Pitágoras)",
+        comando: "O Teorema de Pitágoras é uma importante relação matemática aplicada a triângulos retângulos. Segundo o teorema, o quadrado da hipotenusa é igual à:",
+        texto: "O Teorema de Pitágoras é uma das ferramentas mais fundamentais da geometria plana. Ele se aplica exclusivamente a triângulos retângulos — aqueles que possuem um ângulo de 90°. Neles, o lado oposto ao ângulo reto é chamado de hipotenusa, e os outros dois lados são chamados de catetos.",
+        opcoes: [
+          "Soma das medidas dos catetos.",
+          "Diferença entre os quadrados dos catetos.",
+          "Soma dos quadrados dos catetos.",
+          "Metade do valor do maior cateto."
+        ],
+        correta: 2,
+        feedbackAcerto: "Checa a memória de uma das ferramentas geométricas mais utilizadas durante todo o Ensino Médio.",
+        feedbackErro: "Checa a memória de uma das ferramentas geométricas mais utilizadas durante todo o Ensino Médio."
+      },
+      {
+        titulo: "Álgebra (Equação do 2º Grau)",
+        comando: "A expressão 'x² - 5x + 6 = 0' é classificada como uma equação do segundo grau. Matematicamente, o que define essa equação como sendo 'do segundo grau'?",
+        texto: "Na álgebra, as equações são classificadas de acordo com o maior expoente da incógnita (variável desconhecida). Uma equação do segundo grau tem, obrigatoriamente, o maior expoente igual a 2, e pode ser escrita na forma geral: ax² + bx + c = 0, onde a ≠ 0. Ela pode ter duas raízes reais, uma raiz real dupla ou nenhuma raiz real.",
+        opcoes: [
+          "O fato de possuir duas letras diferentes.",
+          "O maior expoente da incógnita ser o número 2.",
+          "A presença de números com sinal negativo.",
+          "A possibilidade de ter resultados infinitos."
+        ],
+        correta: 1,
+        feedbackAcerto: "Avalia se o estudante reconhece a estrutura algébrica de uma função/equação quadrática, antes mesmo de pedir que ele calcule as raízes.",
+        feedbackErro: "Avalia se o estudante reconhece a estrutura algébrica de uma função/equação quadrática, antes mesmo de pedir que ele calcule as raízes."
+      },
+      {
+        titulo: "Estatística (Probabilidade)",
+        comando: "Uma urna opaca contém 10 bolas idênticas numeradas de 1 a 10. Se sortearmos uma bola ao acaso, qual é a probabilidade de o número sorteado ser par?",
+        texto: "A probabilidade de um evento é calculada pela razão entre o número de casos favoráveis e o número total de casos possíveis. Para que o resultado seja expresso em porcentagem, multiplica-se essa razão por 100. Neste problema, os números pares de 1 a 10 são: 2, 4, 6, 8 e 10.",
+        opcoes: [
+          "20%",
+          "30%",
+          "40%",
+          "50%"
+        ],
+        correta: 3,
+        feedbackAcerto: "Mede a capacidade lógica do aluno em resolver problemas práticos de probabilidade envolvendo razão básica e porcentagem.",
+        feedbackErro: "Mede a capacidade lógica do aluno em resolver problemas práticos de probabilidade envolvendo razão básica e porcentagem."
+      }
+    ]
+  },
+  {
+    nome: "Linguagens",
+    questoes: [
+      {
+        titulo: "Produção Textual (Gêneros)",
+        comando: "O 'Artigo de Opinião' é um texto classificado como dissertativo-argumentativo. Sua principal função ao ser publicado em um jornal ou revista é:",
+        texto: "Os gêneros textuais são formas de comunicação que se organizam de acordo com seus objetivos, linguagem e contexto de circulação. O artigo de opinião é um gênero jornalístico de caráter argumentativo, no qual o autor expõe sua perspectiva sobre um tema de relevância social, utilizando argumentos para convencer o leitor.",
+        opcoes: [
+          "Relatar acontecimentos diários de forma neutra.",
+          "Defender um ponto de vista com base em argumentos.",
+          "Ensinar o leitor o passo a passo de uma tarefa.",
+          "Descrever as emoções do autor em forma de versos."
+        ],
+        correta: 1,
+        feedbackAcerto: "É fundamental saber se o aluno reconhece o propósito dos textos argumentativos, já que esse será o modelo exigido no Enem e nos vestibulares.",
+        feedbackErro: "É fundamental saber se o aluno reconhece o propósito dos textos argumentativos, já que esse será o modelo exigido no Enem e nos vestibulares."
+      },
+      {
+        titulo: "Gramática (Sintaxe)",
+        comando: "Na frase 'É necessário que todos ajudem', a segunda oração depende estruturalmente da primeira para ter sentido completo. Na gramática, esse tipo de estrutura é chamado de:",
+        texto: "A sintaxe estuda a organização das orações e as relações de dependência ou independência entre elas. Um período composto pode ser formado por orações coordenadas — que têm sentido independente entre si — ou por orações subordinadas — em que uma oração depende estruturalmente da outra para fazer sentido.",
+        opcoes: [
+          "Período simples.",
+          "Subordinação.",
+          "Coordenação.",
+          "Frase nominal sem verbo."
+        ],
+        correta: 1,
+        feedbackAcerto: "Identifica se o aluno compreendeu a base da estruturação sintática, que é o foco da gramática do 9º ano.",
+        feedbackErro: "Identifica se o aluno compreendeu a base da estruturação sintática, que é o foco da gramática do 9º ano."
+      },
+      {
+        titulo: "Interpretação (Figuras de Linguagem)",
+        comando: "Quando alguém diz 'Meu coração é um balde vazio', ocorre uma comparação implícita, sem o uso de conectivos como a palavra 'como'. Qual o nome dessa figura de linguagem?",
+        texto: "A linguagem literária frequentemente utiliza recursos expressivos chamados figuras de linguagem para enriquecer o texto e provocar efeitos de sentido. Essas figuras podem criar imagens, exageros, contradições ou comparações que vão além do sentido literal das palavras, tornando a comunicação mais impactante e criativa.",
+        opcoes: [
+          "Ironia.",
+          "Paradoxo.",
+          "Pleonasmo.",
+          "Metáfora."
+        ],
+        correta: 3,
+        feedbackAcerto: "Testa o repertório literário básico do estudante e sua capacidade de interpretar a linguagem no sentido figurado.",
+        feedbackErro: "Testa o repertório literário básico do estudante e sua capacidade de interpretar a linguagem no sentido figurado."
+      }
+    ]
+  }
+];
+
+// Flat list de questões para compatibilidade com progresso (derivada de ETAPAS)
+// Índices: 0-2 = etapa 0, 3-5 = etapa 1, 6-8 = etapa 2, 9-11 = etapa 3
+const QUESTOES = ETAPAS.flatMap(e => e.questoes);
+const QUESTOES_POR_ETAPA = 3;
+const TOTAL_ETAPAS = ETAPAS.length; // 4
+// IDs dos nós de cada etapa (índice 0 = phase-node-active, 1-3 = diag-node-N)
+const NOS_ETAPAS = ['phase-node-active', 'diag-node-1', 'diag-node-2', 'diag-node-3'];
+
+// ── Revisão de Conteúdos — 2 etapas × (1 slide + 3 questões) ──
+const ETAPAS_REVISAO = [
+  {
+    nome: "Matemática",
+    questoes: [
+      // ── Slide de aquecimento (tipo revisao — sem alternativas) ──
+      {
+        tipo: 'revisao',
+        titulo: "Aquecimento — Matemática",
+        texto: "Antes de começarmos as próximas questões, vamos refrescar a memória!\n\nNa matemática, usamos a Álgebra (com letras como o x) para representar valores desconhecidos e criar fórmulas do dia a dia, como calcular taxas. Também usamos a Proporção para ajustar quantidades, como adaptar uma receita para mais pessoas mantendo a mesma razão. Por fim, na Geometria, calculamos o espaço tridimensional que os objetos ocupam, como o Volume de uma caixa, multiplicando comprimento, largura e altura."
+      },
+      {
+        titulo: "Álgebra (Função de 1º Grau)",
+        comando: "Um aplicativo de transporte cobra uma taxa fixa de R$ 4,00 por corrida, mais R$ 2,00 por quilômetro rodado. Qual expressão matemática representa o valor total (V) cobrado para uma corrida de (x) quilômetros?",
+        texto: "Em funções do 1º grau, expressamos relações lineares entre duas grandezas. A forma geral é f(x) = ax + b, onde 'a' é a taxa de variação (valor por unidade) e 'b' é o valor fixo inicial (independente de x). Para montar a expressão, identificamos o que é fixo e o que varia proporcionalmente.",
+        opcoes: ["V = 4x + 2", "V = 2x + 4", "V = 6x", "V = 4x - 2"],
+        correta: 1,
+        feedbackAcerto: "Verifica a capacidade de traduzir uma situação do cotidiano para a linguagem algébrica, o que é a base para o estudo das funções no 1º ano.",
+        feedbackErro: "Verifica a capacidade de traduzir uma situação do cotidiano para a linguagem algébrica, o que é a base para o estudo das funções no 1º ano."
+      },
+      {
+        titulo: "Grandezas (Proporcionalidade)",
+        comando: "Uma receita de massa de pizza que rende 2 porções exige 300 gramas de farinha. Se você quiser preparar a mesma receita para servir 8 pessoas, mantendo a proporção, qual a quantidade de farinha necessária?",
+        texto: "Grandezas diretamente proporcionais variam na mesma razão: quando uma aumenta, a outra aumenta na mesma proporção. A regra de três simples é a ferramenta para resolver esse tipo de problema: identificamos a razão entre as quantidades conhecidas e aplicamos ao valor desconhecido.",
+        opcoes: ["600 gramas.", "900 gramas.", "1200 gramas.", "1500 gramas."],
+        correta: 2,
+        feedbackAcerto: "Avalia o domínio de razão, proporção e regra de três simples, habilidades cruciais não só para a Matemática, mas também para o raciocínio em Física e Química.",
+        feedbackErro: "Avalia o domínio de razão, proporção e regra de três simples, habilidades cruciais não só para a Matemática, mas também para o raciocínio em Física e Química."
+      },
+      {
+        titulo: "Geometria (Volume)",
+        comando: "Para calcular o volume de um prisma de base retangular (como uma caixa de sapatos), multiplicamos suas três dimensões. Se uma caixa tem 10 cm de comprimento, 5 cm de largura e 4 cm de altura, seu volume é:",
+        texto: "O volume de um sólido geométrico mede a quantidade de espaço que ele ocupa. Para prismas de base retangular (paralelepípedos), o volume é calculado multiplicando as três dimensões: comprimento × largura × altura. O resultado é expresso em unidades cúbicas (cm³, m³ etc.).",
+        opcoes: ["200 cm³", "100 cm³", "50 cm³", "19 cm³"],
+        correta: 0,
+        feedbackAcerto: "Checa a compreensão de medidas de capacidade e volume no espaço 3D, essencial para a introdução à geometria espacial.",
+        feedbackErro: "Checa a compreensão de medidas de capacidade e volume no espaço 3D, essencial para a introdução à geometria espacial."
+      }
+    ]
+  },
+  {
+    nome: "Linguagens",
+    questoes: [
+      // ── Slide de aquecimento (tipo revisao — sem alternativas) ──
+      {
+        tipo: 'revisao',
+        titulo: "Aquecimento — Linguagens",
+        texto: "Antes de responder, lembre-se: a nossa língua é viva e se adapta à situação, o que chamamos de Adequação Linguística (como usar gírias com amigos ou linguagem formal no trabalho). Além disso, todo texto tem uma intenção: campanhas e propagandas usam verbos de ordem (como 'use' ou 'faça') para tentar convencer você. Por último, fique muito atento ao que não está escrito diretamente: a Informação Implícita exige que você leia nas entrelinhas para entender o sentido completo de uma frase."
+      },
+      {
+        titulo: "Análise Linguística (Variação)",
+        comando: "A língua portuguesa varia conforme a região, a idade e o contexto. Quando um jovem usa gírias com os amigos, mas adota a norma-padrão em uma entrevista de emprego, ele está demonstrando:",
+        texto: "A língua não é um sistema rígido e único — ela varia de acordo com fatores geográficos, sociais, etários e situacionais. A variação situacional (ou diafásica) refere-se à capacidade do falante de adaptar seu registro linguístico conforme o contexto comunicativo, alternando entre registros mais informais e formais.",
+        opcoes: ["Erro gramatical constante.", "Preconceito linguístico.", "Pobreza de vocabulário.", "Adequação linguística."],
+        correta: 3,
+        feedbackAcerto: "Avalia se o aluno entende que a língua é viva e se adapta à situação comunicativa, um dos eixos de linguagem mais exigidos no Ensino Médio e no Enem.",
+        feedbackErro: "Avalia se o aluno entende que a língua é viva e se adapta à situação comunicativa, um dos eixos de linguagem mais exigidos no Ensino Médio e no Enem."
+      },
+      {
+        titulo: "Tipologia Textual (Persuasão)",
+        comando: "Campanhas de conscientização no trânsito frequentemente usam verbos no imperativo, como 'Use o cinto' e 'Não beba'. O objetivo principal dessa escolha gramatical no texto é:",
+        texto: "Os gêneros textuais têm propósitos comunicativos distintos que determinam suas escolhas linguísticas. Textos com função prescritiva e persuasiva frequentemente utilizam o modo verbal imperativo para criar um efeito de orientação direta ao leitor, buscando influenciar comportamentos ou atitudes de forma incisiva.",
+        opcoes: ["Relatar um acontecimento no passado.", "Convencer e orientar o comportamento do leitor.", "Descrever o funcionamento do veículo.", "Expressar uma dúvida sobre as leis."],
+        correta: 1,
+        feedbackAcerto: "Verifica a capacidade de associar a estrutura gramatical à intenção do autor, habilidade chave para interpretar textos publicitários e argumentativos.",
+        feedbackErro: "Verifica a capacidade de associar a estrutura gramatical à intenção do autor, habilidade chave para interpretar textos publicitários e argumentativos."
+      },
+      {
+        titulo: "Interpretação (Informação Implícita)",
+        comando: "Leia a frase: 'Carlos deixou de fumar no ano passado'. A partir dessa afirmação, qual informação implícita (que não está escrita diretamente) o leitor pode afirmar com certeza?",
+        texto: "A linguagem nem sempre diz explicitamente tudo que comunica. Os pressupostos são informações que não estão declaradas, mas que precisam ser verdadeiras para que o enunciado faça sentido. Subentendidos e pressupostos são recursos de implicitude que exigem do leitor uma leitura crítica além do que está literalmente escrito.",
+        opcoes: ["Carlos nunca gostou de fumar.", "Carlos fumava antes do ano passado.", "Carlos começou a praticar esportes.", "Carlos voltou a fumar neste ano."],
+        correta: 1,
+        feedbackAcerto: "Testa a leitura crítica e a habilidade de identificar pressupostos lógicos. A leitura nas entrelinhas é a principal dificuldade de interpretação nessa faixa etária.",
+        feedbackErro: "Testa a leitura crítica e a habilidade de identificar pressupostos lógicos. A leitura nas entrelinhas é a principal dificuldade de interpretação nessa faixa etária."
+      }
+    ]
+  }
+];
+
+const QUESTOES_REVISAO    = ETAPAS_REVISAO.flatMap(e => e.questoes);
+// Cada etapa da revisão tem 1 slide de aquecimento + 3 questões = 4 itens
+const QUESTOES_POR_ETAPA_REVISAO = 4;
+const NOS_REVISAO         = ['revisao-node-0', 'revisao-node-1'];
+// Estado da revisão (separado do diagnóstico)
+let modoFluxo = 'diagnostico'; // 'diagnostico' | 'revisao'
+let etapaRevisaoAtual = 0;    // etapa dentro da revisão (0 ou 1)
+let questaoRevisaoAtual = 0;  // índice global nas QUESTOES_REVISAO (0-5)
+let pontosRevisao = 0;
+
+// ── Estado ──
+let questaoAtual = 0;       // índice global (0-11)
+let opcaoSelecionada = -1;
+let respondido = false;
+let pontosAcumulados = 0;
+const PONTOS_POR_ACERTO = 100;
+
+function etapaAtual()  { return Math.floor(questaoAtual / QUESTOES_POR_ETAPA); }
+function questaoNaEtapa() { return questaoAtual % QUESTOES_POR_ETAPA; }
+function totalQuestoes()  { return QUESTOES.length; }
+
+// ── Persistência sessionStorage (zera ao fechar a aba/arquivo) ──
+const STORAGE_KEY = 'orbie_diagnostico_progress';
+
+function salvarProgresso() {
+  sessionStorage.setItem(STORAGE_KEY, JSON.stringify({
+    questaoAtual,
+    pontosAcumulados
+  }));
+}
+
+function carregarProgresso() {
+  const raw = sessionStorage.getItem(STORAGE_KEY);
+  if (!raw) return null;
+  try { return JSON.parse(raw); } catch(e) { return null; }
+}
+
+function limparProgresso() {
+  sessionStorage.removeItem(STORAGE_KEY);
+}
+
+// ── Ring de progresso ──
+function atualizarRing(questaoIdx, total) {
+  const fill = document.getElementById('progress-ring-fill');
+  if (!fill) return;
+  const circunferencia = 264;
+  const progresso = questaoIdx / total;
+  const offset = circunferencia * (1 - progresso);
+  fill.style.strokeDashoffset = offset;
+  fill.style.display = progresso > 0 ? 'block' : 'none';
+}
+
+// ── Tooltip dinâmico ──
+function atualizarTooltip() {
+  const salvo = carregarProgresso();
+  const tooltipSpan = document.querySelector('.tooltip-box span');
+  if (!tooltipSpan) return;
+  const temProgresso = salvo && salvo.questaoAtual > 0 && salvo.questaoAtual < totalQuestoes();
+  tooltipSpan.textContent = temProgresso ? 'Continuar' : 'Comece aqui';
+}
+
+// ── Liberar próximo nó ──
+function liberarNó(etapaIdx) {
+  if (etapaIdx >= NOS_ETAPAS.length) return;
+  const nodeId = NOS_ETAPAS[etapaIdx];
+  const node   = document.getElementById(nodeId);
+  if (!node) return;
+
+  node.classList.remove('done');
+  node.classList.add('active');
+
+  // Oculta lock, mostra play
+  const lockBtn = node.querySelector('.lock-btn');
+  const playBtn = etapaIdx === 0
+    ? document.getElementById('play-btn')
+    : node.querySelector('.play-btn') || criarPlayBtn(node, etapaIdx);
+  if (lockBtn) lockBtn.style.display = 'none';
+  if (playBtn) { playBtn.style.display = 'flex'; playBtn.style.cursor = 'pointer'; }
+
+  // Move e mostra tooltip sobre o nó liberado
+  moverTooltipParaNó(node, etapaIdx);
+}
+
+function moverTooltipParaNó(node, etapaIdx) {
+  const tooltip = document.querySelector('.tooltip-wrap');
+  if (!tooltip) return;
+
+  // Move o tooltip para dentro do phase-row do nó alvo
+  const phaseRow = node.closest('.phase-row');
+  if (phaseRow) {
+    phaseRow.style.position = 'relative';
+    phaseRow.appendChild(tooltip);
+
+    // O nó fica no início do padding-left da row.
+    // Calculamos o offset para centralizar o tooltip sobre o nó (90px de largura)
+    const paddingLeft = parseInt(phaseRow.style.paddingLeft) || 0;
+    // Tooltip tem ~140px de largura; seta fica na direita
+    // Queremos que o centro do nó (~paddingLeft + 45px) fique sob a seta (~10px da direita do tooltip)
+    // leftPos = (paddingLeft + 45) - (tooltipWidth - 10)
+    const leftPos = paddingLeft + 45 - 130;
+    tooltip.style.left = Math.max(0, leftPos) + 'px';
+    tooltip.style.top  = '-58px';
+  }
+
+  tooltip.style.display = 'flex';
+  const span = tooltip.querySelector('span');
+  if (span) span.textContent = etapaIdx === 0 ? 'Comece aqui' : 'Continuar';
+}
+
+function criarPlayBtn(node, etapaIdx) {
+  // Nós 1-3 não têm play-btn por padrão — criamos dinamicamente
+  const btn = document.createElement('div');
+  btn.className = 'play-btn';
+  btn.id = 'play-btn-etapa-' + etapaIdx;
+  btn.style.cursor = 'pointer';
+  btn.innerHTML = '<svg viewBox="0 0 24 24"><polygon points="6,4 20,12 6,20"/></svg>';
+  btn.onclick = function() { iniciarEtapa(etapaIdx); };
+  node.appendChild(btn);
+  return btn;
+}
+
+// ── Marcar nó como done ──
+function marcarNóDone(etapaIdx) {
+  const nodeId = NOS_ETAPAS[etapaIdx];
+  const node   = document.getElementById(nodeId);
+  if (!node) return;
+
+  node.classList.remove('active');
+  node.classList.add('done');
+
+  // Ring completo
+  const ringFill = node.querySelector('.progress-ring-fill');
+  if (ringFill) {
+    ringFill.style.strokeDashoffset = '0';
+    ringFill.style.display = 'block';
+  }
+}
+
+// ── Abrir fluxo (a partir da modal ou do play-btn) ──
+function iniciarFluxo() {
+  const salvo = carregarProgresso();
+  if (salvo && salvo.questaoAtual > 0 && salvo.questaoAtual < totalQuestoes()) {
+    questaoAtual     = salvo.questaoAtual;
+    pontosAcumulados = salvo.pontosAcumulados || 0;
+  } else {
+    questaoAtual     = 0;
+    pontosAcumulados = 0;
+    limparProgresso();
+  }
+  opcaoSelecionada = -1;
+  respondido       = false;
+  document.getElementById('modal-diagnostico').classList.remove('open');
+  renderizarQuestao();
+  document.getElementById('quest-screen').classList.add('open');
+}
+
+// ── Iniciar uma etapa específica pelo nó ──
+function iniciarEtapa(etapaIdx) {
+  questaoAtual     = etapaIdx * QUESTOES_POR_ETAPA;
+  opcaoSelecionada = -1;
+  respondido       = false;
+  renderizarQuestao();
+  document.getElementById('quest-screen').classList.add('open');
+}
+
+function fecharQuestao() {
+  if (questaoAtual < totalQuestoes()) salvarProgresso();
+  atualizarTooltip();
+  document.getElementById('quest-screen').classList.remove('open');
+}
+
+function fecharConclusao() {
+  document.getElementById('conclusion-screen').classList.remove('open');
+  atualizarRing(0, totalQuestoes());
+  atualizarTooltip();
+}
+
+// ── Animação de análise sequencial ──
+function iniciarAnalise() {
+  const ITENS = 4;
+  const DELAY = 2000;
+
+  // Reseta todos para estado inativo
+  for (let i = 0; i < ITENS; i++) {
+    const icon  = document.getElementById('icon-'  + i);
+    const label = document.getElementById('label-' + i);
+    icon.className   = 'analysis-icon';
+    icon.textContent = '···';
+    label.className  = 'analysis-label';
+  }
+
+  function ativarItem(idx) {
+    if (idx >= ITENS) {
+      // Todos concluídos — aguarda 2s e abre tela de resultado
+      setTimeout(function() {
+        document.getElementById('conclusion-screen').classList.remove('open');
+        abrirResultado();
+      }, 2000);
+      return;
+    }
+
+    const icon  = document.getElementById('icon-'  + idx);
+    const label = document.getElementById('label-' + idx);
+
+    // Loading
+    icon.className   = 'analysis-icon loading';
+    label.className  = 'analysis-label active';
+
+    setTimeout(function() {
+      // Done
+      icon.className   = 'analysis-icon done';
+      icon.textContent = '✓';
+      label.className  = 'analysis-label done';
+      ativarItem(idx + 1);
+    }, DELAY);
+  }
+
+  ativarItem(0);
+}
+
+// ── Renderizar questão ──
+function renderizarQuestao() {
+  const q = QUESTOES[questaoAtual];
+  const etapa = etapaAtual();
+  const numNaEtapa = questaoNaEtapa(); // 0, 1 ou 2
+  opcaoSelecionada = -1;
+  respondido = false;
+
+  // Limpa estado de revisão
+  modoRevisao = false;
+  document.getElementById('quest-review-banner').classList.remove('show');
+  document.getElementById('quest-review-nav').classList.remove('show');
+
+  // Header — progresso dentro da etapa atual (0→1→2→3 questões)
+  const progressoEtapa = (numNaEtapa / QUESTOES_POR_ETAPA) * 100;
+  document.getElementById('quest-progress-bar').style.width = progressoEtapa + '%';
+  document.getElementById('quest-points-val').textContent = pontosAcumulados;
+
+  // Enunciado
+  document.getElementById('quest-title').textContent = q.titulo;
+  document.getElementById('quest-text').textContent = q.texto;
+  document.getElementById('quest-img').src = q.imagem || '';
+  document.getElementById('quest-comando').textContent = q.comando || '';
+
+  // Opções
+  const container = document.getElementById('quest-options');
+  container.innerHTML = '';
+  q.opcoes.forEach((texto, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'quest-option';
+    btn.innerHTML = `<div class="opt-num">${i + 1}</div><span>${texto}</span>`;
+    btn.onclick = () => selecionarOpcao(i);
+    container.appendChild(btn);
+  });
+
+  // Feedback oculto + reset ícones
+  document.getElementById('quest-feedback').classList.remove('show');
+  document.getElementById('feedback-icon-positive').style.display = 'none';
+  document.getElementById('feedback-icon-negative').style.display = 'none';
+
+  // Botões
+  document.getElementById('btn-continuar').classList.add('btn-hidden');
+  const btnResp = document.getElementById('btn-responder');
+  btnResp.classList.remove('btn-hidden');
+  btnResp.classList.remove('enabled');
+  btnResp.disabled = true;
+}
+
+// ── Selecionar opção ──
+function selecionarOpcao(idx) {
+  if (respondido) return;
+  opcaoSelecionada = idx;
+
+  const opts = document.querySelectorAll('.quest-option');
+  opts.forEach((el, i) => {
+    el.classList.toggle('selected', i === idx);
+  });
+
+  const btn = document.getElementById('btn-responder');
+  btn.classList.add('enabled');
+  btn.disabled = false;
+}
+
+// ── Responder ──
+function responderQuestao() {
+  if (opcaoSelecionada < 0) return;
+  respondido = true;
+
+  const q = QUESTOES[questaoAtual];
+  const acertou = opcaoSelecionada === q.correta;
+  const opts = document.querySelectorAll('.quest-option');
+
+  opts.forEach((el, i) => {
+    el.classList.add('disabled');
+    el.classList.remove('selected');
+    if (i === q.correta) el.classList.add('correct');
+    else if (i === opcaoSelecionada) el.classList.add('wrong');
+  });
+
+  // Feedback
+  const fb = document.getElementById('quest-feedback');
+  const icon = document.getElementById('feedback-icon');
+  const label = document.getElementById('feedback-label');
+  const fbText = document.getElementById('feedback-text');
+
+  if (acertou) {
+    pontosAcumulados += PONTOS_POR_ACERTO;
+    icon.className = 'feedback-icon';
+    document.getElementById('feedback-icon-positive').style.display = 'block';
+    document.getElementById('feedback-icon-negative').style.display = 'none';
+    label.textContent = 'Resposta correta!';
+    label.style.color = '#37ec65';
+  } else {
+    icon.className = 'feedback-icon';
+    document.getElementById('feedback-icon-positive').style.display = 'none';
+    document.getElementById('feedback-icon-negative').style.display = 'flex';
+    label.textContent = 'Resposta incorreta.';
+    label.style.color = '#fff';
+  }
+  fbText.textContent = acertou ? q.feedbackAcerto : q.feedbackErro;
+  fb.classList.add('show');
+
+  // Atualizar pontos no header
+  document.getElementById('quest-points-val').textContent = pontosAcumulados;
+
+  // Botões
+  document.getElementById('btn-responder').classList.add('btn-hidden');
+  document.getElementById('btn-continuar').classList.remove('btn-hidden');
+}
+
+// ── Continuar ──
+function continuarQuestao() {
+  const etapaAntes = etapaAtual();
+  questaoAtual++;
+
+  const ultimaQuestao = questaoAtual >= totalQuestoes();
+  const fimDeEtapa    = ultimaQuestao || etapaAtual() !== etapaAntes;
+
+  if (ultimaQuestao) {
+    // ── Fim de todas as etapas → análise ──
+    limparProgresso();
+    // Marca último nó como done
+    marcarNóDone(etapaAntes);
+    document.getElementById('quest-screen').classList.remove('open');
+    document.getElementById('quest-progress-bar').style.width = '100%';
+    document.getElementById('conclusion-screen').classList.add('open');
+    iniciarAnalise();
+  } else if (fimDeEtapa) {
+    // ── Fim de uma etapa, mas ainda há mais ──
+    limparProgresso();
+    // Marca nó atual como done
+    marcarNóDone(etapaAntes);
+    // Fecha tela de questão e volta para home
+    document.getElementById('quest-screen').classList.remove('open');
+    // Libera próximo nó
+    const proxEtapa = etapaAtual();
+    setTimeout(function() { liberarNó(proxEtapa); }, 200);
+  } else {
+    // ── Próxima questão da mesma etapa ──
+    salvarProgresso();
+    renderizarQuestao();
+  }
+}
+
+// ── Voltar (dentro do feedback — volta para início da mesma questão) ──
+function voltarQuestao() {
+  renderizarQuestao();
+}
+
+// ── Modo revisão de etapa concluída ──
+let modoRevisao = false;
+let revisaoEtapaIdx  = 0;
+let revisaoQuestaoIdx = 0; // 0-2 dentro da etapa
+
+function abrirRevisaoEtapa(etapaIdx) {
+  modoRevisao      = true;
+  revisaoEtapaIdx  = etapaIdx;
+  revisaoQuestaoIdx = 0;
+  renderizarRevisao();
+  document.getElementById('quest-screen').classList.add('open');
+}
+
+function renderizarRevisao() {
+  const globalIdx = revisaoEtapaIdx * QUESTOES_POR_ETAPA + revisaoQuestaoIdx;
+  const q = QUESTOES[globalIdx];
+
+  // Header
+  const progresso = ((revisaoQuestaoIdx + 1) / QUESTOES_POR_ETAPA) * 100;
+  document.getElementById('quest-progress-bar').style.width = progresso + '%';
+  document.getElementById('quest-points-val').textContent = pontosAcumulados;
+
+  // Enunciado
+  document.getElementById('quest-title').textContent   = q.titulo;
+  document.getElementById('quest-text').textContent    = q.texto;
+  document.getElementById('quest-img').src             = q.imagem || '';
+  document.getElementById('quest-comando').textContent = q.comando || '';
+
+  // Opções — mostra estado correto/errado baseado nas respostas salvas
+  const container = document.getElementById('quest-options');
+  container.innerHTML = '';
+  q.opcoes.forEach((texto, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'quest-option disabled';
+    if (i === q.correta) btn.classList.add('correct');
+    btn.innerHTML = `<div class="opt-num">${i + 1}</div><span>${texto}</span>`;
+    container.appendChild(btn);
+  });
+
+  // Feedback com justificativa — modo revisão sempre mostra ícone positivo
+  const fb    = document.getElementById('quest-feedback');
+  const icon  = document.getElementById('feedback-icon');
+  const label = document.getElementById('feedback-label');
+  const fbTxt = document.getElementById('feedback-text');
+  icon.className = 'feedback-icon';
+  document.getElementById('feedback-icon-positive').style.display = 'block';
+  document.getElementById('feedback-icon-negative').style.display = 'none';
+  label.textContent = 'Resposta correta';
+  label.style.color = '#37ec65';
+  fbTxt.textContent = q.feedbackAcerto;
+  fb.classList.add('show');
+
+  // Botões — modo revisão
+  document.getElementById('btn-responder').classList.add('btn-hidden');
+  document.getElementById('btn-continuar').classList.add('btn-hidden');
+  document.getElementById('quest-review-banner').classList.add('show');
+
+  const nav   = document.getElementById('quest-review-nav');
+  const label2 = document.getElementById('btn-nav-label');
+  nav.classList.add('show');
+  label2.textContent = (revisaoQuestaoIdx + 1) + ' / ' + QUESTOES_POR_ETAPA;
+
+  document.getElementById('btn-nav-prev').disabled = revisaoQuestaoIdx === 0;
+  document.getElementById('btn-nav-next').disabled = revisaoQuestaoIdx === QUESTOES_POR_ETAPA - 1;
+}
+
+function revisaoNavegar(dir) {
+  revisaoQuestaoIdx = Math.max(0, Math.min(QUESTOES_POR_ETAPA - 1, revisaoQuestaoIdx + dir));
+  renderizarRevisao();
+}
+
+// Fechar revisão volta ao modo normal
+const _fecharQuestaoOriginal = fecharQuestao;
+fecharQuestao = function() {
+  if (modoRevisao) {
+    modoRevisao = false;
+    // Esconde banner e nav
+    document.getElementById('quest-review-banner').classList.remove('show');
+    document.getElementById('quest-review-nav').classList.remove('show');
+    document.getElementById('quest-screen').classList.remove('open');
+    return;
+  }
+  _fecharQuestaoOriginal();
+};
+
+// ── Conectar done-btn de cada nó à revisão ──
+function conectarBotoesDone() {
+  NOS_ETAPAS.forEach(function(nodeId, etapaIdx) {
+    const node = document.getElementById(nodeId);
+    if (!node) return;
+    const doneBtn = node.querySelector('.done-btn');
+    if (!doneBtn) return;
+    doneBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      if (node.classList.contains('done')) {
+        abrirRevisaoEtapa(etapaIdx);
+      }
+    });
+  });
+}
+// Chama após o DOM estar pronto
+setTimeout(conectarBotoesDone, 100);
+
+// ── Botão play etapa 0: se tem progresso retoma, senão abre modal ──
+document.getElementById('play-btn').addEventListener('click', function() {
+  const salvo = carregarProgresso();
+  if (salvo && salvo.questaoAtual > 0 && salvo.questaoAtual < totalQuestoes()) {
+    // Retoma de onde parou
+    questaoAtual     = salvo.questaoAtual;
+    pontosAcumulados = salvo.pontosAcumulados || 0;
+    opcaoSelecionada = -1;
+    respondido       = false;
+    renderizarQuestao();
+    document.getElementById('quest-screen').classList.add('open');
+  } else {
+    abrirModal();
+  }
+});
+
+// ── Conectar nós 1-3 às suas etapas ──
+['diag-node-1','diag-node-2','diag-node-3'].forEach(function(nodeId, i) {
+  const node = document.getElementById(nodeId);
+  if (!node) return;
+  node.addEventListener('click', function() {
+    const etapaIdx = i + 1;
+    if (node.classList.contains('active')) {
+      iniciarEtapa(etapaIdx);
+    }
+  });
+});
+
+// ── Conectar nós da Revisão ──
+function conectarNosRevisao() {
+  NOS_REVISAO.forEach(function(nodeId, i) {
+    const node = document.getElementById(nodeId);
+    if (!node) return;
+    // Play btn
+    const playBtn = document.getElementById('revisao-play-' + i);
+    if (playBtn) {
+      playBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        if (node.classList.contains('active')) iniciarEtapaRevisao(i);
+      });
+    }
+    // Done btn — abre revisão
+    const doneBtn = document.getElementById('revisao-done-' + i);
+    if (doneBtn) {
+      doneBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        if (node.classList.contains('done')) abrirRevisaoEtapaRevisao(i);
+      });
+    }
+  });
+}
+setTimeout(conectarNosRevisao, 150);
+
+// ── Iniciar etapa da Revisão de Conteúdos ──
+function iniciarEtapaRevisao(etapaRevisaoIdx) {
+  modoFluxo             = 'revisao';
+  etapaRevisaoAtual     = etapaRevisaoIdx;
+  questaoRevisaoAtual   = etapaRevisaoIdx * QUESTOES_POR_ETAPA_REVISAO;
+  opcaoSelecionada = -1;
+  respondido       = false;
+  renderizarQuestaoRevisao();
+  document.getElementById('quest-screen').classList.add('open');
+}
+
+function renderizarQuestaoRevisao() {
+  const q          = QUESTOES_REVISAO[questaoRevisaoAtual];
+  const numNaEtapa = questaoRevisaoAtual % QUESTOES_POR_ETAPA_REVISAO;
+  opcaoSelecionada = -1;
+  respondido       = false;
+
+  // Limpa estado de revisão de conteúdo
+  modoRevisao = false;
+  document.getElementById('quest-review-banner').classList.remove('show');
+  document.getElementById('quest-review-nav').classList.remove('show');
+
+  // ── Slide de aquecimento (sem alternativas) ──
+  if (q.tipo === 'revisao') {
+    document.getElementById('quest-progress-bar').style.width = '0%';
+    document.getElementById('quest-points-val').textContent = pontosRevisao;
+    document.getElementById('quest-title').textContent   = q.titulo;
+    document.getElementById('quest-text').textContent    = q.texto;
+    document.getElementById('quest-img').src             = '';
+    document.getElementById('quest-comando').textContent = '';
+    document.getElementById('quest-options').innerHTML   = '';
+    document.getElementById('quest-feedback').classList.remove('show');
+    document.getElementById('feedback-icon-positive').style.display = 'none';
+    document.getElementById('feedback-icon-negative').style.display = 'none';
+    // Só botão Continuar
+    document.getElementById('btn-continuar').classList.remove('btn-hidden');
+    document.getElementById('btn-responder').classList.add('btn-hidden');
+    // Layout centralizado
+    document.querySelector('.quest-card').classList.add('quest-card--info');
+    return;
+  }
+
+  // ── Questão normal — remove classe de info se vier de slide ──
+  document.querySelector('.quest-card').classList.remove('quest-card--info');
+
+  // ── Questão normal ──
+  document.getElementById('quest-progress-bar').style.width = (numNaEtapa / QUESTOES_POR_ETAPA_REVISAO * 100) + '%';
+  document.getElementById('quest-points-val').textContent = pontosRevisao;
+  document.getElementById('quest-title').textContent   = q.titulo;
+  document.getElementById('quest-text').textContent    = q.texto;
+  document.getElementById('quest-img').src             = '';
+  document.getElementById('quest-comando').textContent = q.comando || '';
+
+  const container = document.getElementById('quest-options');
+  container.innerHTML = '';
+  q.opcoes.forEach(function(texto, i) {
+    const btn = document.createElement('button');
+    btn.className = 'quest-option';
+    btn.innerHTML = '<div class="opt-num">' + (i + 1) + '</div><span>' + texto + '</span>';
+    btn.onclick = function() { selecionarOpcao(i); };
+    container.appendChild(btn);
+  });
+
+  document.getElementById('quest-feedback').classList.remove('show');
+  document.getElementById('feedback-icon-positive').style.display = 'none';
+  document.getElementById('feedback-icon-negative').style.display = 'none';
+
+  document.getElementById('btn-continuar').classList.add('btn-hidden');
+  const btnResp = document.getElementById('btn-responder');
+  btnResp.classList.remove('btn-hidden');
+  btnResp.classList.remove('enabled');
+  btnResp.disabled = true;
+}
+
+// ── responderQuestao detecta o modo e usa questão correta ──
+// (a função selecionarOpcao e responderQuestao são reutilizadas)
+// Sobrescrevemos continuarQuestao para suportar revisão
+const _continuarQuestaoOriginal = continuarQuestao;
+continuarQuestao = function() {
+  if (modoFluxo !== 'revisao') { _continuarQuestaoOriginal(); return; }
+
+  const etapaAntes = etapaRevisaoAtual;
+  questaoRevisaoAtual++;
+  const fimDeEtapa    = questaoRevisaoAtual % QUESTOES_POR_ETAPA_REVISAO === 0;
+  const ultimaQuestao = questaoRevisaoAtual >= QUESTOES_REVISAO.length;
+
+  if (ultimaQuestao) {
+    // Última questão de todas → marca done + abre comparação
+    const nodeId = NOS_REVISAO[etapaAntes];
+    const node   = document.getElementById(nodeId);
+    if (node) {
+      node.classList.remove('active');
+      node.classList.add('done');
+      var lBtn = document.getElementById('revisao-lock-' + etapaAntes);
+      var pBtn = document.getElementById('revisao-play-' + etapaAntes);
+      if (lBtn) lBtn.style.display = 'none';
+      if (pBtn) pBtn.style.display = 'none';
+    }
+    document.getElementById('quest-screen').classList.remove('open');
+    modoFluxo = 'diagnostico';
+    setTimeout(function() { abrirComparacao(); }, 400);
+  } else if (fimDeEtapa) {
+    // Fim de etapa intermediária → marca done + libera próximo nó
+    const nodeId = NOS_REVISAO[etapaAntes];
+    const node   = document.getElementById(nodeId);
+    if (node) {
+      node.classList.remove('active');
+      node.classList.add('done');
+      var lBtn2 = document.getElementById('revisao-lock-' + etapaAntes);
+      var pBtn2 = document.getElementById('revisao-play-' + etapaAntes);
+      if (lBtn2) lBtn2.style.display = 'none';
+      if (pBtn2) pBtn2.style.display = 'none';
+    }
+    document.getElementById('quest-screen').classList.remove('open');
+    modoFluxo = 'diagnostico';
+    etapaRevisaoAtual++;
+    var proxNodeId = NOS_REVISAO[etapaRevisaoAtual];
+    var proxNode   = document.getElementById(proxNodeId);
+    if (proxNode) {
+      proxNode.classList.add('active');
+      var lockPrx = document.getElementById('revisao-lock-' + etapaRevisaoAtual);
+      var playPrx = document.getElementById('revisao-play-' + etapaRevisaoAtual);
+      if (lockPrx) lockPrx.style.display = 'none';
+      if (playPrx) { playPrx.style.display = 'flex'; playPrx.style.cursor = 'pointer'; }
+      var tooltipRev = document.getElementById('tooltip-revisao');
+      if (tooltipRev) {
+        var row = proxNode.closest('.phase-row');
+        if (row) {
+          row.style.position = 'relative';
+          row.appendChild(tooltipRev);
+          var padLeft = parseInt(row.style.paddingLeft) || 0;
+          tooltipRev.style.left  = Math.max(0, padLeft + 45 - 130) + 'px';
+          tooltipRev.style.top   = '-58px';
+          tooltipRev.style.display = 'flex';
+          var spanRev = tooltipRev.querySelector('span');
+          if (spanRev) spanRev.textContent = 'Continuar';
+        }
+      }
+    }
+  } else {
+    // Continua na mesma etapa
+    renderizarQuestaoRevisao();
+  }
+};
+
+// Sobrescreve responderQuestao para apontar para questão correta no modo revisão
+const _responderQuestaoOriginal = responderQuestao;
+responderQuestao = function() {
+  if (modoFluxo !== 'revisao') { _responderQuestaoOriginal(); return; }
+  const q = QUESTOES_REVISAO[questaoRevisaoAtual];
+  // Slide de aquecimento não tem opções — ignorar
+  if (q.tipo === 'revisao') return;
+  if (opcaoSelecionada < 0) return;
+  respondido = true;
+
+  const acertou = opcaoSelecionada === q.correta;
+  const opts    = document.querySelectorAll('.quest-option');
+
+  opts.forEach(function(el, i) {
+    el.classList.add('disabled');
+    el.classList.remove('selected');
+    if (i === q.correta)        el.classList.add('correct');
+    else if (i === opcaoSelecionada) el.classList.add('wrong');
+  });
+
+  const fb    = document.getElementById('quest-feedback');
+  const icon  = document.getElementById('feedback-icon');
+  const label = document.getElementById('feedback-label');
+  const fbTxt = document.getElementById('feedback-text');
+
+  if (acertou) {
+    pontosRevisao += PONTOS_POR_ACERTO;
+    icon.className = 'feedback-icon';
+    document.getElementById('feedback-icon-positive').style.display = 'block';
+    document.getElementById('feedback-icon-negative').style.display = 'none';
+    label.textContent = 'Resposta correta!';
+    label.style.color = '#37ec65';
+  } else {
+    icon.className = 'feedback-icon';
+    document.getElementById('feedback-icon-positive').style.display = 'none';
+    document.getElementById('feedback-icon-negative').style.display = 'flex';
+    label.textContent = 'Resposta incorreta.';
+    label.style.color = '#fff';
+  }
+  fbTxt.textContent = acertou ? q.feedbackAcerto : q.feedbackErro;
+  fb.classList.add('show');
+  document.getElementById('quest-points-val').textContent = pontosRevisao;
+  document.getElementById('btn-responder').classList.add('btn-hidden');
+  document.getElementById('btn-continuar').classList.remove('btn-hidden');
+};
+
+// Revisão de etapa concluída da Revisão de Conteúdos
+function abrirRevisaoEtapaRevisao(etapaIdx) {
+  modoRevisao       = true;
+  revisaoEtapaIdx   = etapaIdx;   // usa a var global do modo revisão de diagnóstico
+  revisaoQuestaoIdx = 0;
+  // Aponta para QUESTOES_REVISAO temporariamente
+  _renderizarRevisaoCustom(QUESTOES_REVISAO, etapaIdx);
+  document.getElementById('quest-screen').classList.add('open');
+}
+
+function _renderizarRevisaoCustom(questoesSource, etapaIdx) {
+  const globalIdx = etapaIdx * QUESTOES_POR_ETAPA + revisaoQuestaoIdx;
+  const q = questoesSource[globalIdx];
+
+  document.getElementById('quest-progress-bar').style.width = ((revisaoQuestaoIdx + 1) / QUESTOES_POR_ETAPA * 100) + '%';
+  document.getElementById('quest-points-val').textContent = pontosRevisao;
+  document.getElementById('quest-title').textContent   = q.titulo;
+  document.getElementById('quest-text').textContent    = q.texto;
+  document.getElementById('quest-img').src             = '';
+  document.getElementById('quest-comando').textContent = q.comando || '';
+
+  const container = document.getElementById('quest-options');
+  container.innerHTML = '';
+  q.opcoes.forEach(function(texto, i) {
+    const btn = document.createElement('button');
+    btn.className = 'quest-option disabled';
+    if (i === q.correta) btn.classList.add('correct');
+    btn.innerHTML = '<div class="opt-num">' + (i + 1) + '</div><span>' + texto + '</span>';
+    container.appendChild(btn);
+  });
+
+  const fb    = document.getElementById('quest-feedback');
+  const icon  = document.getElementById('feedback-icon');
+  const label = document.getElementById('feedback-label');
+  const fbTxt = document.getElementById('feedback-text');
+  icon.className = 'feedback-icon';
+  document.getElementById('feedback-icon-positive').style.display = 'block';
+  document.getElementById('feedback-icon-negative').style.display = 'none';
+  label.textContent = 'Resposta correta';
+  label.style.color = '#37ec65';
+  fbTxt.textContent = q.feedbackAcerto;
+  fb.classList.add('show');
+
+  document.getElementById('btn-responder').classList.add('btn-hidden');
+  document.getElementById('btn-continuar').classList.add('btn-hidden');
+  document.getElementById('quest-review-banner').classList.add('show');
+  const nav    = document.getElementById('quest-review-nav');
+  const label2 = document.getElementById('btn-nav-label');
+  nav.classList.add('show');
+  label2.textContent = (revisaoQuestaoIdx + 1) + ' / ' + QUESTOES_POR_ETAPA;
+  document.getElementById('btn-nav-prev').disabled = revisaoQuestaoIdx === 0;
+  document.getElementById('btn-nav-next').disabled = revisaoQuestaoIdx === QUESTOES_POR_ETAPA - 1;
+
+  // Sobrescreve navegação temporariamente
+  document.getElementById('btn-nav-prev').onclick = function() {
+    revisaoQuestaoIdx = Math.max(0, revisaoQuestaoIdx - 1);
+    _renderizarRevisaoCustom(questoesSource, etapaIdx);
+  };
+  document.getElementById('btn-nav-next').onclick = function() {
+    revisaoQuestaoIdx = Math.min(QUESTOES_POR_ETAPA - 1, revisaoQuestaoIdx + 1);
+    _renderizarRevisaoCustom(questoesSource, etapaIdx);
+  };
+}
+
+// ── Tela de Comparação Final ──
+function abrirComparacao() {
+  // Diagnóstico: Matemática (34% = idx 2) e Linguagens (19% = idx 3) — valores originais do resultado
+  // Revisão: calculamos com base nos pontos acumulados em cada etapa
+  const totalPorEtapa = QUESTOES_POR_ETAPA * PONTOS_POR_ACERTO; // 300 pts max por etapa
+
+  // Barras do diagnóstico (fixas — mesmos valores da tela de resultado)
+  const diagMat  = 34;  // % Matemática diagnóstico
+  const diagLing = 19;  // % Linguagens diagnóstico
+
+  // Barras de revisão (dinâmicas baseadas nos pontos)
+  // Pontos das primeiras 3 questões = etapa Matemática revisão
+  // Sem controle granular por etapa neste protótipo, usamos o total dividido igualmente
+  const revMat  = Math.min(95, diagMat  + 30 + Math.round(Math.random() * 15));
+  const revLing = Math.min(95, diagLing + 45 + Math.round(Math.random() * 20));
+
+  // Reseta barras
+  ['cbar-mat-diag','cbar-mat-rev','cbar-ling-diag','cbar-ling-rev'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) el.style.width = '0';
+  });
+
+  document.getElementById('comparison-screen').classList.add('open');
+
+  // Anima barras
+  setTimeout(function() {
+    var d1 = document.getElementById('cbar-mat-diag');
+    var r1 = document.getElementById('cbar-mat-rev');
+    var d2 = document.getElementById('cbar-ling-diag');
+    var r2 = document.getElementById('cbar-ling-rev');
+    if (d1) d1.style.width = diagMat  + '%';
+    if (r1) r1.style.width = revMat   + '%';
+    if (d2) d2.style.width = diagLing + '%';
+    if (r2) r2.style.width = revLing  + '%';
+  }, 80);
+}
+
+function fecharComparacao() {
+  document.getElementById('comparison-screen').classList.remove('open');
+  // Marca os dois nós da revisão como done e vai para home
+  NOS_REVISAO.forEach(function(nodeId, i) {
+    var node = document.getElementById(nodeId);
+    if (node) {
+      node.classList.add('done');
+      node.classList.remove('active');
+    }
+  });
+}
+function abrirResultado() {
+  // Reseta barras para 0 antes de animar
+  [0, 1, 2, 3].forEach(function(i) {
+    var bar = document.getElementById('bar-' + i);
+    if (bar) bar.style.width = '0';
+  });
+
+  document.getElementById('result-screen').classList.add('open');
+
+  // Anima barras com pequeno delay para o browser aplicar width:0 primeiro
+  setTimeout(function() {
+    [0, 1, 2, 3].forEach(function(i) {
+      var bar = document.getElementById('bar-' + i);
+      if (bar) bar.style.width = bar.dataset.width;
+    });
+  }, 80);
+}
+
+function fecharResultado() {
+  document.getElementById('result-screen').classList.remove('open');
+  document.getElementById('mission-screen').classList.add('open');
+}
+
+function fecharMissao() {
+  document.getElementById('mission-screen').classList.remove('open');
+  marcarEtapasConcluidas();
+  fecharConclusao();
+  // Aguarda 2s e então rola devagar até a seção de revisão
+  setTimeout(function() {
+    var revisao = document.getElementById('planet-section-revisao');
+    var mainContent = document.querySelector('.main-content');
+    if (!revisao || !mainContent) return;
+    var targetTop = revisao.offsetTop - 32;
+    var startTop  = mainContent.scrollTop;
+    var distance  = targetTop - startTop;
+    var duration  = 600; // ms — duração do scroll (Figma: 600ms)
+    var startTime = null;
+
+    function easeInOut(t) {
+      return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+    }
+
+    function step(timestamp) {
+      if (!startTime) startTime = timestamp;
+      var elapsed  = timestamp - startTime;
+      var progress = Math.min(elapsed / duration, 1);
+      mainContent.scrollTop = startTop + distance * easeInOut(progress);
+      if (progress < 1) requestAnimationFrame(step);
+    }
+
+    requestAnimationFrame(step);
+  }, 2000); // atraso de 2000ms
+}
+
+// ── Marcar todas as etapas do Planeta Diagnóstico como concluídas ──
+function marcarEtapasConcluidas() {
+  // Nó 0 (active com play) — vira done
+  var nodeAtivo = document.getElementById('phase-node-active');
+  if (nodeAtivo) {
+    nodeAtivo.classList.remove('active');
+    nodeAtivo.classList.add('done');
+    // Ring: completo (stroke-dashoffset = 0)
+    var ringFill = document.getElementById('progress-ring-fill');
+    if (ringFill) {
+      ringFill.style.strokeDashoffset = '0';
+      ringFill.style.display = 'block';
+    }
+  }
+  // Nós 1–3 — vira done (4 nós total, sem diag-node-4 que foi removido)
+  ['diag-node-1', 'diag-node-2', 'diag-node-3'].forEach(function(id) {
+    var node = document.getElementById(id);
+    if (node) {
+      node.classList.add('done');
+      if (!node.querySelector('.progress-ring-wrap')) {
+        var ringWrap = document.createElement('div');
+        ringWrap.className = 'progress-ring-wrap';
+        ringWrap.innerHTML = '<svg class="progress-ring-svg" width="90" height="90"><circle class="progress-ring-track" cx="45" cy="45" r="42"/><circle class="progress-ring-fill" cx="45" cy="45" r="42" stroke-dasharray="264" stroke-dashoffset="0"/></svg>';
+        node.appendChild(ringWrap);
+      }
+    }
+  });
+
+  // Oculta tooltip e play-btn
+  var tooltip = document.querySelector('.tooltip-wrap');
+  if (tooltip) tooltip.style.display = 'none';
+  var playBtn = document.getElementById('play-btn');
+  if (playBtn) playBtn.style.display = 'none';
+
+  // Limpa ring do estado de progresso parcial
+  atualizarRing(0, QUESTOES.length);
+
+  // Colorir 2 estrelas de amarelo (star-0 e star-1)
+  ['star-0', 'star-1'].forEach(function(id) {
+    var star = document.getElementById(id);
+    if (star) {
+      var path = star.querySelector('path');
+      if (path) path.setAttribute('fill', '#FFEA24');
+    }
+  });
+
+  // Liberar primeiro nó do planeta Revisão de Conteúdos
+  var revisaoNode = document.getElementById('revisao-node-0');
+  if (revisaoNode) {
+    revisaoNode.classList.add('active');
+    // Oculta lock, mostra play e ring
+    var lockBtn = document.getElementById('revisao-lock-0');
+    var playBtn = document.getElementById('revisao-play-0');
+    var ring    = document.getElementById('revisao-ring-0');
+    if (lockBtn) lockBtn.style.display = 'none';
+    if (playBtn) playBtn.style.display = 'flex';
+    if (ring)    ring.style.display    = 'flex';
+  }
+  // Mostra tooltip "Continue" da revisão
+  var tooltipRevisao = document.getElementById('tooltip-revisao');
+  if (tooltipRevisao) tooltipRevisao.style.display = 'flex';
+  // Remove cadeado do planet card de revisão (desbloqueado visualmente)
+  var cardRevisao = document.getElementById('planet-card-revisao');
+  if (cardRevisao) {
+    cardRevisao.classList.remove('locked');
+  }
+  // Troca planeta locked pelo colorido
+  var planetLocked = document.getElementById('planet-revisao-locked');
+  var planetColor  = document.getElementById('planet-revisao-color');
+  var lockIcon     = document.getElementById('planet-revisao-lock-icon');
+  var border       = document.getElementById('planet-revisao-border');
+  if (planetLocked) planetLocked.style.display = 'none';
+  if (planetColor)  planetColor.style.display  = 'block';
+  if (lockIcon)     lockIcon.style.display      = 'none';
+  if (border)       border.style.display        = 'none';
+}
+
+// ── Funções da modal ──
+function abrirModal() {
+  document.getElementById('modal-diagnostico').classList.add('open');
+}
+function fecharModal() {
+  document.getElementById('modal-diagnostico').classList.remove('open');
+}
+document.getElementById('modal-diagnostico').addEventListener('click', function(e) {
+  if (e.target === this) fecharModal();
+});
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    fecharModal();
+    fecharQuestao();
+    fecharConclusao();
+  }
+});
+
+// ── Init: restaurar ring e tooltip se houver progresso salvo ──
+(function() {
+  const salvo = carregarProgresso();
+  if (salvo && salvo.questaoAtual > 0) {
+    atualizarRing(salvo.questaoAtual, QUESTOES.length);
+  }
+  atualizarTooltip();
+})();
+</script>
+
+</body>
+</html>

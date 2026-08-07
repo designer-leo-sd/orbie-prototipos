@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orbie App - Desempenho Vazio</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Orbitron:wght@700&family=Inter:wght@400&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="performance-page">
+        <!-- Header -->
+        <div class="performance-header">
+            <button class="back-button" onclick="goBack()">
+                <img src="https://www.figma.com/api/mcp/asset/c6dc80a9-7029-4783-897f-7f19919ca816" alt="Voltar">
+                <span>Voltar</span>
+            </button>
+            <h1 class="performance-title">Desempenho</h1>
+        </div>
+
+        <!-- Estado vazio -->
+        <div class="performance-empty">
+            <div class="empty-content">
+                <div class="empty-illustration">
+                    <svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="100" cy="100" r="80" stroke="#1d3258" stroke-width="2" fill="none" stroke-dasharray="10,5"/>
+                        <circle cx="100" cy="100" r="50" stroke="#1d3258" stroke-width="1" fill="none"/>
+                        <circle cx="100" cy="100" r="20" fill="#1d3258" opacity="0.3"/>
+                        <path d="M70 85L90 105L130 65" stroke="#32d583" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                    </svg>
+                </div>
+                
+                <h2 class="empty-title">Você ainda não realizou nenhuma trilha.</h2>
+                <p class="empty-description">Explore o Laboratório para começar!</p>
+                
+                <button class="explore-button" onclick="exploreLab()">Explorar Laboratório</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function goBack() {
+            window.location.href = 'index.html';
+        }
+
+        function exploreLab() {
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,526 @@
+/* ====================================================================
+   ORBIE APP - DESIGN TOKENS
+   Extracted from design.md - Complete design system variables
+   ==================================================================== */
+
+:root {
+  /* ================================================================
+     COLOR TOKENS
+     ================================================================ */
+  
+  /* Brand Blue - Primary interactive color, buttons, active states, links */
+  --brand-blue-100: #99C0FF;   /* inactive icons, secondary text on dark bg */
+  --brand-blue-200: #3F84F3;   /* hover states */
+  --brand-blue-300: #0059E7;   /* primary CTA buttons, active nav */
+  --brand-blue-400: #0040A7;   /* pressed state */
+  --brand-blue-500: #002868;   /* deep brand */
+  --brand-blue-600: #0D1A32;   /* darkest brand navy */
+  --brand-blue-700: #000F28;   /* near-black navy */
+
+  /* Brand Green - Success, completion, positive feedback */
+  --brand-green-100: #99FFB3;
+  --brand-green-200: #37EC65;
+  --brand-green-300: #2ABC4E;   /* correct answer highlight */
+  --brand-green-400: #34994D;
+  --brand-green-500: #0E511F;
+  --brand-green-600: #001D07;
+
+  /* Purple - Planet backgrounds, gamified surfaces, locked states */
+  --purple-100: #C1A6F2;
+  --purple-200: #8455DD;
+  --purple-300: #591FC7;   /* island/planet map background */
+  --purple-400: #3A00A8;
+  --purple-500: #230066;
+  --purple-600: #0E0029;
+
+  /* Green - Semantic success */
+  --green-100: #A6F4C5;
+  --green-200: #6CE9A6;
+  --green-300: #32D583;
+  --green-400: #12B76A;   /* success state, correct answer */
+  --green-500: #039855;
+  --green-600: #027A48;
+
+  /* Orange - Warnings, in-progress, SigCoins */
+  --orange-100: #FEDF89;
+  --orange-200: #FEC84B;
+  --orange-300: #FDB022;
+  --orange-400: #F79009;   /* warning, in-progress */
+  --orange-500: #DC6803;
+  --orange-600: #B54708;
+
+  /* Red - Errors, wrong answers, destructive */
+  --red-100: #FECDCA;
+  --red-200: #FDA29B;
+  --red-300: #F97066;
+  --red-400: #F04438;   /* error, wrong answer */
+  --red-500: #D92D20;
+  --red-600: #B42318;   /* destructive action */
+
+  /* Gray Blue - Dark surfaces, cards, nav bar */
+  --gray-blue-100: #C0CADB;
+  --gray-blue-200: #98A8C2;
+  --gray-blue-300: #7187A9;
+  --gray-blue-400: #526D98;
+  --gray-blue-500: #31558A;
+  --gray-blue-600: #2A4E81;
+  --gray-blue-700: #224476;
+  --gray-blue-800: #1D3258;
+  --gray-blue-900: #142A51;   /* nav bar background */
+  --gray-blue-1000: #10203D;  /* deepest card surface */
+
+  /* Cyan - Island/satellite map background, water */
+  --cyan-100: #A5D7E7;
+  --cyan-200: #5BD3FF;
+  --cyan-300: #00C1FE;
+  --cyan-400: #00B4FD;
+  --cyan-500: #00A6FB;   /* island map sky/water background */
+  --cyan-600: #0098EC;
+
+  /* Yellow - Stars, achievements, SigCoins */
+  --yellow-100: #FFEA24;   /* star rating active */
+  --yellow-200: #E5B400;
+  --yellow-300: #CD7900;
+
+  /* Transparent overlays (white/black with opacity) */
+  --transparent-white-5: rgba(255, 255, 255, 0.05);
+  --transparent-white-10: rgba(255, 255, 255, 0.10);
+  --transparent-white-20: rgba(255, 255, 255, 0.20);
+  --transparent-white-30: rgba(255, 255, 255, 0.30);
+  --transparent-white-40: rgba(255, 255, 255, 0.40);
+  --transparent-white-50: rgba(255, 255, 255, 0.50);
+  --transparent-white-60: rgba(255, 255, 255, 0.60);
+  --transparent-white-70: rgba(255, 255, 255, 0.70);
+  --transparent-white-80: rgba(255, 255, 255, 0.80);
+  --transparent-white-90: rgba(255, 255, 255, 0.90);
+
+  --transparent-black-10: rgba(0, 0, 0, 0.10);
+  --transparent-black-20: rgba(0, 0, 0, 0.20);
+  --transparent-black-30: rgba(0, 0, 0, 0.30);
+  --transparent-black-40: rgba(0, 0, 0, 0.40);
+  --transparent-black-50: rgba(0, 0, 0, 0.50);
+  --transparent-black-60: rgba(0, 0, 0, 0.60);
+  --transparent-black-70: rgba(0, 0, 0, 0.70);
+  --transparent-black-80: rgba(0, 0, 0, 0.80);
+  --transparent-black-90: rgba(0, 0, 0, 0.90);
+
+  --transparent-green-10: rgba(18, 183, 106, 0.10);
+  --transparent-green-20: rgba(18, 183, 106, 0.20);
+  --transparent-green-40: rgba(18, 183, 106, 0.40);
+  --transparent-green-60: rgba(18, 183, 106, 0.60);
+  --transparent-green-80: rgba(18, 183, 106, 0.80);
+
+  --transparent-red-10: rgba(240, 68, 56, 0.10);
+  --transparent-red-20: rgba(240, 68, 56, 0.20);
+  --transparent-red-40: rgba(240, 68, 56, 0.40);
+  --transparent-red-60: rgba(240, 68, 56, 0.60);
+  --transparent-red-80: rgba(240, 68, 56, 0.80);
+
+  /* Semantic color aliases */
+  --background-splash: #0D1A32;   /* deep navy — splash screen */
+  --background-login: #0D2B6B;    /* dark blue — login/auth screens */
+  --background-home: #3A00A8;     /* deep purple — home/planet screen */
+  --background-island: #00A6FB;   /* cyan — island map screen */
+  --background-phase: #0D1A32;    /* dark navy — question screens */
+  --surface-card: #142A51;        /* nav bar, phase list cards */
+  --surface-card-dark: #10203D;   /* deeper card variant */
+  --text-primary: #FFFFFF;        /* all primary text on dark bg */
+  --text-secondary: #99C0FF;      /* secondary/muted text on dark bg */
+  --text-label: #C0CADB;          /* labels, captions */
+  --border-default: #224476;      /* card borders on dark bg */
+  --nav-bg: #142A51;              /* bottom navigation bar */
+  --nav-active: #0059E7;          /* active nav button fill */
+  --nav-icon-inactive: #99C0FF;   /* inactive nav icons */
+  --cta-primary: #0059E7;         /* primary CTA button */
+  --answer-correct: #12B76A;      /* correct answer highlight */
+  --answer-wrong: #F04438;        /* wrong answer highlight */
+  --answer-selected: #0059E7;     /* selected but unconfirmed */
+  --star-active: #FFEA24;         /* star rating filled */
+  --star-inactive: #526D98;       /* star rating empty */
+  --progress-fill: #0059E7;       /* progress bar fill */
+  --progress-track: #224476;      /* progress bar track */
+  --locked-icon: #526D98;         /* locked phase/planet icon */
+
+  /* ================================================================
+     TYPOGRAPHY TOKENS
+     ================================================================ */
+
+  /* Font families */
+  --font-display: "Orbitron", monospace;  /* sci-fi display — planet names, scores, mission titles */
+  --font-body: "Outfit", sans-serif;      /* geometric sans — all UI text, labels, body copy */
+
+  /* Display scale — Orbitron, gamified hero text */
+  --display-xxl-size: 48px;
+  --display-xxl-height: 48px;
+  --display-xl-size: 40px;
+  --display-xl-height: 48px;
+  --display-lg-size: 32px;
+  --display-lg-height: 38px;
+  --display-md-size: 22px;
+  --display-md-height: 33px;
+  --display-sm-size: 18px;
+  --display-sm-height: 27px;
+
+  /* Header scale — Outfit, screen titles and section headers */
+  --header-xl-size: 40px;
+  --header-xl-height: 48px;
+  --header-lg-size: 32px;
+  --header-lg-height: 38px;
+  --header-md-size: 28px;
+  --header-md-height: 33px;
+  --header-sm-size: 22px;
+  --header-sm-height: 33px;
+
+  /* Body scale — Outfit, all UI copy */
+  --body-xl-size: 18px;
+  --body-xl-height: 27px;
+  --body-lg-size: 16px;
+  --body-lg-height: 24px;
+  --body-md-size: 14px;
+  --body-md-height: 21px;
+  --body-sm-size: 12px;
+  --body-sm-height: 16px;
+
+  /* Button scale — Outfit */
+  --button-lg-size: 16px;
+  --button-lg-height: 24px;
+  --button-md-size: 14px;
+  --button-md-height: 21px;
+  --button-sm-size: 12px;
+  --button-sm-height: 16px;
+
+  /* Letter spacing */
+  --letter-spacing: 0px;
+
+  /* ================================================================
+     SPACING TOKENS
+     ================================================================ */
+
+  /* Gap values */
+  --gap-2: 2px;
+  --gap-4: 4px;
+  --gap-6: 6px;
+  --gap-8: 8px;
+  --gap-12: 12px;
+  --gap-16: 16px;
+  --gap-24: 24px;
+  --gap-32: 32px;
+  --gap-36: 36px;
+  --gap-40: 40px;
+
+  /* Padding values */
+  --padding-2: 2px;
+  --padding-4: 4px;
+  --padding-6: 6px;
+  --padding-8: 8px;
+  --padding-12: 12px;
+  --padding-16: 16px;
+  --padding-24: 24px;
+  --padding-32: 32px;
+  --padding-36: 36px;
+
+  /* ================================================================
+     BORDER RADIUS TOKENS
+     ================================================================ */
+
+  --radius-2: 2px;
+  --radius-4: 4px;
+  --radius-6: 6px;
+  --radius-8: 8px;    /* phase list cards, answer options */
+  --radius-10: 10px;
+  --radius-12: 12px;  /* buttons, nav items, chips */
+  --radius-16: 16px;  /* large cards, modals */
+  --radius-24: 24px;  /* island map container */
+  --radius-32: 32px;
+  --radius-full: 1000px; /* pills, avatars, circular buttons, planet badges */
+
+  /* ================================================================
+     STROKE / BORDER TOKENS
+     ================================================================ */
+
+  --stroke-xs: 1px;   /* cards, inputs, answer options */
+  --stroke-sm: 2px;   /* selected/active answer borders */
+
+  /* ================================================================
+     ELEVATION / SHADOW TOKENS
+     ================================================================ */
+
+  --shadow-sm: 0px 1px 3px 0px rgba(0, 0, 0, 0.20);
+  --shadow-md: 0px 1px 3px 1px rgba(0, 0, 0, 0.20);
+  --shadow-lg: 2px 10px 5px 1px rgba(0, 0, 0, 0.20);
+  --shadow-glow-white: 0px 0px 20px 0px rgba(255, 255, 255, 1.0); /* Orbie logo glow only */
+  --background-blur: 4px; /* Frosted glass overlays */
+
+  /* ================================================================
+     MOTION TOKENS
+     ================================================================ */
+
+  /* Duration */
+  --duration-instant: 100ms;
+  --duration-fast: 200ms;
+  --duration-normal: 300ms;
+  --duration-slow: 500ms;
+  --duration-xslow: 800ms;
+  --duration-loop: 3000ms; /* continuous ambient animations */
+
+  /* Easing */
+  --easing-default: ease-in-out;
+  --easing-enter: ease-out;
+  --easing-exit: ease-in;
+  --easing-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --easing-linear: linear;
+
+  /* ================================================================
+     LAYOUT TOKENS
+     ================================================================ */
+
+  /* Mobile canvas */
+  --canvas-width: 375px;
+  --canvas-height: 812px;
+  --layout-margin: 24px;
+  --layout-gutter: 16px;
+  --layout-columns: 4;
+
+  /* Safe areas */
+  --safe-area-status-bar: 34px;   /* iOS status bar */
+  --safe-area-nav-bar: 34px;      /* iOS home indicator */
+  --safe-area-android-nav: 48px;  /* Android navigation bar */
+
+  /* ================================================================
+     COMPONENT TOKENS
+     ================================================================ */
+
+  /* Bottom navigation bar */
+  --nav-bottom-height: 64px;
+  --nav-bottom-bg: #142A51;
+  --nav-bottom-radius: 12px;
+  --nav-bottom-padding: 4px;
+  --nav-bottom-icon-size: 24px;
+  --nav-bottom-active-fill: #0059E7;
+  --nav-bottom-active-radius: 12px;
+  --nav-bottom-inactive-icon: #99C0FF;
+
+  /* Primary CTA button */
+  --button-primary-bg: #0059E7;
+  --button-primary-text: #FFFFFF;
+  --button-primary-radius: 12px;
+  --button-primary-height: 52px;
+  --button-primary-padding-x: 24px;
+
+  /* Secondary / ghost button */
+  --button-secondary-bg: transparent;
+  --button-secondary-text: #FFFFFF;
+  --button-secondary-radius: 12px;
+  --button-secondary-height: 52px;
+
+  /* Social login buttons (Google, Apple) */
+  --button-social-bg: #142A51;
+  --button-social-text: #FFFFFF;
+  --button-social-radius: 12px;
+  --button-social-height: 52px;
+  --button-social-border: 1px solid #224476;
+
+  /* Text input (access key, search) */
+  --input-bg: #142A51;
+  --input-text: #FFFFFF;
+  --input-placeholder: #526D98;
+  --input-radius: 12px;
+  --input-height: 52px;
+  --input-border: 1px solid #224476;
+  --input-border-focus: 1px solid #0059E7;
+  --input-padding-x: 16px;
+
+  /* Phase list item card */
+  --phase-card-bg: #142A51;
+  --phase-card-text: #FFFFFF;
+  --phase-card-radius: 12px;
+  --phase-card-border: 1px solid #224476;
+  --phase-card-padding: 16px;
+  --phase-card-height: 72px;
+
+  /* Answer option (multiple choice) */
+  --answer-option-bg-default: #142A51;
+  --answer-option-bg-selected: #0D2B6B;
+  --answer-option-bg-correct: rgba(18, 183, 106, 0.20);
+  --answer-option-bg-wrong: rgba(240, 68, 56, 0.20);
+  --answer-option-border-default: 1px solid #224476;
+  --answer-option-border-selected: 2px solid #0059E7;
+  --answer-option-border-correct: 2px solid #12B76A;
+  --answer-option-border-wrong: 2px solid #F04438;
+  --answer-option-radius: 8px;
+  --answer-option-padding: 16px;
+
+  /* Phase header (progress bar + metadata) */
+  --phase-header-bg: #0D1A32;
+  --phase-header-progress-height: 4px;
+  --phase-header-progress-fill: #0059E7;
+  --phase-header-progress-track: #224476;
+  --phase-header-close-icon: #FFFFFF;
+  --phase-header-timer-color: #99C0FF;
+  --phase-header-counter-color: #99C0FF;
+
+  /* Planet identification card */
+  --planet-card-bg: #142A51;
+  --planet-card-radius: 12px;
+  --planet-card-border: 1px solid #224476;
+  --planet-card-name-color: #FFFFFF;
+
+  /* Continue card (resume progress) */
+  --continue-card-bg: #142A51;
+  --continue-card-radius: 12px;
+  --continue-card-border: 1px solid #224476;
+  --continue-card-padding: 16px;
+
+  /* Chip / badge */
+  --chip-radius: 1000px;
+  --chip-padding-x: 12px;
+  --chip-padding-y: 4px;
+
+  /* Star rating (phase completion) */
+  --star-rating-active: #FFEA24;
+  --star-rating-inactive: #526D98;
+  --star-rating-size: 24px;
+
+  /* Tooltip */
+  --tooltip-bg: #0059E7;
+  --tooltip-text: #FFFFFF;
+  --tooltip-radius: 8px;
+  --tooltip-padding: 8px 12px;
+
+  /* Top bar (phase screen) */
+  --top-bar-bg: #0D1A32;
+  --top-bar-height: 56px;
+  --top-bar-title-color: #FFFFFF;
+  --top-bar-border-bottom: 1px solid #224476;
+}
+
+/* ================================================================
+   UTILITY CLASSES FOR TYPOGRAPHY
+   ================================================================ */
+
+/* Display typography - Orbitron */
+.display-xxl {
+  font-family: var(--font-display);
+  font-size: var(--display-xxl-size);
+  line-height: var(--display-xxl-height);
+  letter-spacing: var(--letter-spacing);
+}
+
+.display-xl {
+  font-family: var(--font-display);
+  font-size: var(--display-xl-size);
+  line-height: var(--display-xl-height);
+  letter-spacing: var(--letter-spacing);
+}
+
+.display-lg {
+  font-family: var(--font-display);
+  font-size: var(--display-lg-size);
+  line-height: var(--display-lg-height);
+  letter-spacing: var(--letter-spacing);
+}
+
+.display-md {
+  font-family: var(--font-display);
+  font-size: var(--display-md-size);
+  line-height: var(--display-md-height);
+  letter-spacing: var(--letter-spacing);
+}
+
+.display-sm {
+  font-family: var(--font-display);
+  font-size: var(--display-sm-size);
+  line-height: var(--display-sm-height);
+  letter-spacing: var(--letter-spacing);
+}
+
+/* Header typography - Outfit */
+.header-xl {
+  font-family: var(--font-body);
+  font-size: var(--header-xl-size);
+  line-height: var(--header-xl-height);
+  letter-spacing: var(--letter-spacing);
+}
+
+.header-lg {
+  font-family: var(--font-body);
+  font-size: var(--header-lg-size);
+  line-height: var(--header-lg-height);
+  letter-spacing: var(--letter-spacing);
+}
+
+.header-md {
+  font-family: var(--font-body);
+  font-size: var(--header-md-size);
+  line-height: var(--header-md-height);
+  letter-spacing: var(--letter-spacing);
+}
+
+.header-sm {
+  font-family: var(--font-body);
+  font-size: var(--header-sm-size);
+  line-height: var(--header-sm-height);
+  letter-spacing: var(--letter-spacing);
+}
+
+/* Body typography - Outfit */
+.body-xl {
+  font-family: var(--font-body);
+  font-size: var(--body-xl-size);
+  line-height: var(--body-xl-height);
+  letter-spacing: var(--letter-spacing);
+}
+
+.body-lg {
+  font-family: var(--font-body);
+  font-size: var(--body-lg-size);
+  line-height: var(--body-lg-height);
+  letter-spacing: var(--letter-spacing);
+}
+
+.body-md {
+  font-family: var(--font-body);
+  font-size: var(--body-md-size);
+  line-height: var(--body-md-height);
+  letter-spacing: var(--letter-spacing);
+}
+
+.body-sm {
+  font-family: var(--font-body);
+  font-size: var(--body-sm-size);
+  line-height: var(--body-sm-height);
+  letter-spacing: var(--letter-spacing);
+}
+
+/* Button typography - Outfit */
+.button-lg {
+  font-family: var(--font-body);
+  font-size: var(--button-lg-size);
+  line-height: var(--button-lg-height);
+  letter-spacing: var(--letter-spacing);
+}
+
+.button-md {
+  font-family: var(--font-body);
+  font-size: var(--button-md-size);
+  line-height: var(--button-md-height);
+  letter-spacing: var(--letter-spacing);
+}
+
+.button-sm {
+  font-family: var(--font-body);
+  font-size: var(--button-sm-size);
+  line-height: var(--button-sm-height);
+  letter-spacing: var(--letter-spacing);
+}
+
+/* Font weight utilities */
+.font-light { font-weight: 300; }
+.font-normal { font-weight: 400; }
+.font-medium { font-weight: 500; }
+.font-bold { font-weight: 700; }
+
+/* Text color utilities */
+.text-primary { color: var(--text-primary); }
+.text-secondary { color: var(--text-secondary); }
+.text-label { color: var(--text-label); }

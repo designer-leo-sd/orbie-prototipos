@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Template E-mail — Avaliação de Solicitações — SIG SESI MG</title>
+<style>
+  /* reset básico para compatibilidade com clientes de e-mail */
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #f1f3f4;
+    color: #000;
+    min-height: 100vh;
+    padding: 40px 20px;
+  }
+
+  /* wrapper do Gmail mockado */
+  .gmail-chrome {
+    background: #fff;
+    max-width: 900px;
+    margin: 0 auto;
+    border-radius: 8px;
+    box-shadow: 0 2px 12px rgba(0,0,0,.15);
+    overflow: hidden;
+  }
+
+  /* barra de assunto */
+  .gmail-subject-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 20px 10px 20px;
+    border-bottom: 1px solid #edeff1;
+    flex-wrap: wrap;
+  }
+  .gmail-subject-bar h2 {
+    font-size: 22px;
+    font-weight: 400;
+    color: #202124;
+    letter-spacing: -.2px;
+  }
+  .gmail-badge {
+    font-size: 12px;
+    font-weight: 500;
+    padding: 2px 7px;
+    border-radius: 4px;
+    line-height: 1.4;
+  }
+  .badge-inbox { background: rgba(0,0,0,.06); color: rgba(0,0,0,.6); }
+  .badge-fiemg { background: #164194; color: #fff; }
+
+  /* cabeçalho do remetente */
+  .gmail-sender {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 20px 16px 20px;
+    border-bottom: 1px solid #edeff1;
+  }
+  .sender-avatar {
+    width: 40px; height: 40px;
+    background: #164194;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .sender-avatar span {
+    font-size: 13px; font-weight: 700; color: #fff; letter-spacing: .5px;
+  }
+  .sender-info { flex: 1; }
+  .sender-name { font-size: 14px; font-weight: 700; color: #202124; }
+  .sender-email { font-size: 12px; color: rgba(0,0,0,.54); }
+  .sender-to { font-size: 12px; color: rgba(0,0,0,.54); margin-top: 2px; }
+  .sender-time { font-size: 12px; color: rgba(0,0,0,.6); white-space: nowrap; margin-left: auto; align-self: flex-start; padding-top: 2px; }
+
+  /* área do e-mail */
+  .gmail-body {
+    padding: 24px 70px 40px 70px;
+    background: #fff;
+  }
+
+  /* ── TEMPLATE DO E-MAIL ── */
+  .email-wrapper {
+    max-width: 720px;
+    margin: 0 auto;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #fff;
+  }
+
+  /* header azul */
+  .email-header {
+    background: #164194;
+    padding: 32px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 124px;
+  }
+  .email-logo-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  .email-logo-top {
+    font-size: 11px;
+    font-weight: 300;
+    color: rgba(255,255,255,.75);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .email-logo-main {
+    font-size: 34px;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.5px;
+    line-height: 1;
+  }
+  .email-logo-main span { color: #ffb802; }
+
+  /* corpo */
+  .email-body {
+    padding: 40px 40px 32px 40px;
+    background: #fff;
+  }
+  .email-title {
+    font-size: 28px;
+    font-weight: 600;
+    color: #000;
+    margin-bottom: 24px;
+    line-height: 1.2;
+  }
+  .email-text {
+    font-size: 16px;
+    font-weight: 300;
+    color: #000;
+    line-height: 24px;
+    margin-bottom: 16px;
+  }
+  .email-text b { font-weight: 500; }
+
+  /* seção de resultados */
+  .email-section {
+    margin: 24px 0 0;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .email-section-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+  }
+  .section-aprovadas .email-section-header { background: #d1e7dd; color: #0a3622; }
+  .section-rejeitadas .email-section-header { background: #f8d7da; color: #58151c; }
+  .email-section-item {
+    padding: 12px 16px;
+    border-top: 1px solid #dee2e6;
+    font-size: 14px;
+    color: #000;
+    line-height: 1.5;
+    background: #fff;
+  }
+  .email-section-item:first-of-type { border-top: none; }
+  .item-tipo { font-weight: 500; }
+  .item-registro { font-weight: 300; color: #6c757d; font-size: 13px; margin-top: 2px; }
+  .item-motivo {
+    margin-top: 8px;
+    padding: 8px 12px;
+    background: #fff5f5;
+    border-left: 3px solid #f5c2c7;
+    border-radius: 4px;
+    font-size: 13px;
+    color: #58151c;
+    font-weight: 300;
+  }
+  .item-motivo b { font-weight: 500; }
+
+  /* assinatura */
+  .email-sign {
+    margin-top: 32px;
+    font-size: 16px;
+    font-weight: 300;
+    color: rgba(0,0,0,.4);
+    line-height: 24px;
+  }
+  .email-sign b { font-weight: 500; }
+
+  /* rodapé */
+  .email-footer {
+    background: #f8f9fa;
+    padding: 20px 24px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 300;
+    color: rgba(0,0,0,.8);
+    line-height: 20px;
+    border-top: 1px solid #dee2e6;
+  }
+
+  /* variante toggle */
+  .variant-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .vt-btn {
+    padding: 6px 16px;
+    border-radius: 4px;
+    border: 1px solid #dee2e6;
+    background: #fff;
+    font-size: 13px;
+    font-weight: 500;
+    color: #343a40;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all .15s;
+  }
+  .vt-btn.act { background: #164194; color: #fff; border-color: #164194; }
+  .vt-btn:hover:not(.act) { background: #f0f0f0; }
+
+  .ann {
+    background: #FFFBEB;
+    border: 1px solid #FDE68A;
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-bottom: 28px;
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .ann h3 { font-size: 11px; font-weight: 700; color: #92400E; margin-bottom: 8px; text-transform: uppercase; letter-spacing: .4px; }
+  .ann p { font-size: 12px; color: #78350F; line-height: 1.5; margin-bottom: 4px; }
+  .ann p:last-child { margin-bottom: 0; }
+</style>
+</head>
+<body>
+
+<!-- anotações -->
+<div class="ann">
+  <h3>📋 HU 4/6 · Template de E-mail — Avaliação de Solicitações de Alteração de Vínculo ao Lote</h3>
+  <p>Este é o template do e-mail consolidado enviado ao Prestador após o SESI concluir a avaliação das solicitações. Use os botões abaixo para simular os 3 cenários dinâmicos previstos na doc.</p>
+  <p><b>Remetente:</b> no-reply.sigsesi@fiemg.com.br &nbsp;|&nbsp; <b>Destinatário:</b> E-mail para Comunicações Gerais do Prestador &nbsp;|&nbsp; <b>Frequência:</b> um e-mail por Prestador (consolidado)</p>
+</div>
+
+<!-- toggle de variante -->
+<div class="variant-tabs" style="max-width:900px;margin:0 auto 20px">
+  <span style="font-size:13px;color:#6c757d;align-self:center;margin-right:4px">Cenário:</span>
+  <button class="vt-btn act" onclick="setVariant('ambos',this)">Aprovadas + Rejeitadas</button>
+  <button class="vt-btn" onclick="setVariant('aprovadas',this)">Só Aprovadas</button>
+  <button class="vt-btn" onclick="setVariant('rejeitadas',this)">Só Rejeitadas</button>
+</div>
+
+<!-- Gmail mockado -->
+<div class="gmail-chrome">
+
+  <!-- barra de assunto -->
+  <div class="gmail-subject-bar">
+    <h2 id="email-subject">Resultado da Avaliação das Solicitações de Alteração de Vínculo ao Lote</h2>
+    <span class="gmail-badge badge-inbox">Inbox</span>
+    <span class="gmail-badge badge-fiemg">fiemg</span>
+  </div>
+
+  <!-- remetente -->
+  <div class="gmail-sender">
+    <div class="sender-avatar"><span>SIG</span></div>
+    <div class="sender-info">
+      <div class="sender-name">SIG SESI MG <span style="font-weight:400;font-size:12px;color:rgba(0,0,0,.54)">&lt;no-reply.sigsesi@fiemg.com.br&gt;</span>
+        <span style="font-size:11px;color:rgba(0,0,0,.54);text-decoration:underline;margin-left:8px;cursor:pointer">Unsubscribe</span>
+      </div>
+      <div class="sender-to">to <b id="destinatario-nome">Clínica VidaSaúde Ltda.</b></div>
+    </div>
+    <div class="sender-time">Agora mesmo</div>
+  </div>
+
+  <!-- corpo do e-mail -->
+  <div class="gmail-body">
+    <div class="email-wrapper">
+
+      <!-- header azul com logo -->
+      <div class="email-header">
+        <div class="email-logo-box">
+          <span class="email-logo-top">Sistema Integrado de Gestão</span>
+          <span class="email-logo-main">SESi<span>MG</span></span>
+        </div>
+      </div>
+
+      <!-- corpo -->
+      <div class="email-body">
+        <div class="email-title" id="email-title">Resultado das Avaliações das suas Solicitações</div>
+
+        <p class="email-text" id="email-intro">
+          Prezado(a) representante da <b id="prestador-nome">Clínica VidaSaúde Ltda.</b>,<br/><br/>
+          Informamos que o SESI concluiu a avaliação das solicitações de alteração de vínculo ao lote
+          realizadas por sua empresa. Abaixo você encontra o resultado consolidado de todas as
+          solicitações avaliadas nesta sessão.
+        </p>
+
+        <!-- seção aprovadas -->
+        <div class="email-section section-aprovadas" id="section-ap" style="display:none">
+          <div class="email-section-header">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            Solicitações Aprovadas
+          </div>
+          <div id="items-aprovados"></div>
+        </div>
+
+        <!-- seção rejeitadas -->
+        <div class="email-section section-rejeitadas" id="section-rj" style="display:none">
+          <div class="email-section-header">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            Solicitações Rejeitadas
+          </div>
+          <div id="items-rejeitados"></div>
+        </div>
+
+        <p class="email-text" style="margin-top:24px" id="email-obs"></p>
+
+        <p class="email-text" style="margin-top:8px;font-size:14px;color:rgba(0,0,0,.55)">
+          Este é um e-mail automático. Por favor não responda. Em caso de dúvidas entre em contato
+          através do <a href="#" style="color:#164194">link de suporte</a>.
+        </p>
+
+        <div class="email-sign">
+          <p>Atenciosamente,</p>
+          <p>&nbsp;</p>
+          <p><b>Equipe SESI Minas Gerais.</b></p>
+        </div>
+      </div>
+
+      <!-- rodapé -->
+      <div class="email-footer">
+        <p>Enviado por FIEMG</p>
+        <p>Av. do Contorno, 4456 – Funcionários, Belo Horizonte/MG – CEP: 30110-028</p>
+      </div>
+
+    </div><!-- /email-wrapper -->
+  </div><!-- /gmail-body -->
+</div><!-- /gmail-chrome -->
+
+<script>
+const DADOS = {
+  prestador: 'Clínica VidaSaúde Ltda.',
+  aprovadas: [
+    { tipo: 'Inclusão de Local', registro: 'UPA Centro — Rua das Flores, 100' },
+    { tipo: 'Alteração de Local', registro: 'UPA Norte — Av. Cristiano Machado, 550' },
+  ],
+  rejeitadas: [
+    {
+      tipo: 'Inclusão de Profissional',
+      registro: 'Dr. Roberto Lima CRM/MG 11223',
+      motivo: 'O profissional indicado não possui habilitação compatível com os serviços do lote. Solicite nova inclusão com a documentação atualizada.'
+    },
+    {
+      tipo: 'Alteração de Profissional',
+      registro: 'Dra. Marina Souza CRM/MG 78901 — Alteração de Especialidade',
+      motivo: 'A especialidade solicitada (Medicina do Trabalho) requer apresentação do Título de Especialista. Documento não localizado no processo.'
+    }
+  ]
+};
+
+function buildItem(item, rejeitada=false){
+  return `<div class="email-section-item">
+    <div class="item-tipo">${item.tipo}</div>
+    <div class="item-registro">${item.registro}</div>
+    ${rejeitada && item.motivo ? `<div class="item-motivo"><b>Motivo da rejeição:</b> ${item.motivo}</div>` : ''}
+  </div>`;
+}
+
+function setVariant(variant, el){
+  document.querySelectorAll('.vt-btn').forEach(b=>b.classList.remove('act'));
+  el.classList.add('act');
+
+  const secAp = document.getElementById('section-ap');
+  const secRj = document.getElementById('section-rj');
+  const itemsAp = document.getElementById('items-aprovados');
+  const itemsRj = document.getElementById('items-rejeitados');
+  const obs = document.getElementById('email-obs');
+  const title = document.getElementById('email-title');
+
+  itemsAp.innerHTML = DADOS.aprovadas.map(i=>buildItem(i,false)).join('');
+  itemsRj.innerHTML = DADOS.rejeitadas.map(i=>buildItem(i,true)).join('');
+
+  if(variant==='ambos'){
+    secAp.style.display='block';
+    secRj.style.display='block';
+    title.textContent='Resultado das Avaliações das suas Solicitações';
+    obs.innerHTML='Suas solicitações aprovadas já estão em vigor no vínculo. As solicitações rejeitadas podem ser reenviadas após os ajustes indicados nos motivos acima.';
+  } else if(variant==='aprovadas'){
+    secAp.style.display='block';
+    secRj.style.display='none';
+    title.textContent='Suas Solicitações foram Aprovadas';
+    obs.innerHTML='Todas as solicitações avaliadas nesta sessão foram <b>aprovadas</b> e já estão em vigor no vínculo ao lote.';
+  } else {
+    secAp.style.display='none';
+    secRj.style.display='block';
+    title.textContent='Resultado das Avaliações das suas Solicitações';
+    obs.innerHTML='As solicitações abaixo foram <b>rejeitadas</b>. Verifique os motivos indicados e, se necessário, realize uma nova solicitação com as correções adequadas.';
+  }
+}
+
+// inicia com "ambos"
+document.addEventListener('DOMContentLoaded', ()=>{
+  setVariant('ambos', document.querySelector('.vt-btn.act'));
+});
+</script>
+</body>
+</html>

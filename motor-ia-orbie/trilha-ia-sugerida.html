@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trilha IA — Frações e Números Mistos — Orbie</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body { font-family: 'Roboto', sans-serif; background: #0d1a32; color: #fff; min-height: 100vh; }
+
+    /* ── HEADER ── */
+    .phase-header {
+      width: 100%;
+      background: linear-gradient(180deg, #0b43af 0%, #0c40a6 20%, #0d1a32 100%);
+      display: flex; flex-direction: column; align-items: center;
+      padding: 24px 24px 48px; gap: 8px;
+    }
+    .btn-back {
+      align-self: flex-start; width: 40px; height: 40px;
+      border-radius: 12px; border: none; background: transparent;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: background 0.15s;
+    }
+    .btn-back:hover { background: rgba(255,255,255,0.08); }
+
+    .header-badges { display: flex; align-items: center; gap: 4px; margin-top: 8px; }
+    .badge-subject-mat { background: #2979ff; border-radius: 8px; padding: 4px 6px; font-size: 11px; }
+    .badge-more { background: rgba(255,255,255,0.04); border-radius: 8px; padding: 4px 6px; font-size: 11px; display: flex; align-items: center; gap: 3px; }
+
+    /* IA badge especial */
+    .badge-ia {
+      display: flex; align-items: center; gap: 4px;
+      background: rgba(55,236,101,0.15); border: 1px solid rgba(55,236,101,0.4);
+      border-radius: 8px; padding: 4px 8px;
+      font-size: 11px; font-weight: 700; color: #37ec65;
+    }
+
+    .header-title { font-weight: 700; font-size: 20px; line-height: 24px; text-align: center; margin-top: 8px; }
+    .header-desc { font-size: 13px; line-height: 20px; color: rgba(255,255,255,0.8); text-align: center; margin-top: 4px; }
+    .header-keywords { display: flex; gap: 4px; flex-wrap: wrap; justify-content: center; margin-top: 8px; }
+    .kw { background: rgba(255,255,255,0.04); border-radius: 8px; padding: 4px 8px; font-size: 11px; }
+    .header-meta { font-size: 13px; color: rgba(255,255,255,0.6); margin-top: 8px; }
+
+    /* IA why message */
+    .ia-why {
+      background: linear-gradient(135deg, rgba(55,236,101,0.08), rgba(0,89,231,0.1));
+      border: 1px solid rgba(55,236,101,0.25);
+      border-radius: 12px; padding: 12px 14px;
+      display: flex; gap: 10px; align-items: flex-start;
+      margin-top: 12px; width: 100%; max-width: 676px;
+    }
+    .ia-why-icon { flex-shrink: 0; margin-top: 1px; }
+    .ia-why-text { font-size: 12px; line-height: 18px; color: rgba(255,255,255,0.85); }
+    .ia-why-text strong { color: #37ec65; }
+
+    /* ── PAGE ── */
+    .page { max-width: 1024px; margin: 0 auto; padding-bottom: 120px; }
+    .phase-list { padding: 24px; display: flex; flex-direction: column; }
+
+    /* ── PHASE ITEMS ── */
+    .phase-item {
+      display: flex; align-items: flex-start;
+      gap: 16px; padding: 0 8px;
+    }
+    .phase-timeline {
+      display: flex; flex-direction: column; align-items: center;
+      flex-shrink: 0; width: 40px; height: 80px;
+    }
+    .phase-timeline.last { height: auto; }
+
+    /* FASE 1 — REVISÃO (azul com ícone livro) */
+    .circle-review {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: linear-gradient(135deg, #0059e7, #003db0);
+      border: 2.57px solid #0d1a32;
+      outline: 2.57px solid #0059e7;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+      box-shadow: 0 0 12px rgba(0,89,231,0.4);
+    }
+
+    /* DISPONÍVEL — play azul */
+    .circle-active {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: #0059e7;
+      border: 2.57px solid #0d1a32; outline: 2.57px solid #0059e7;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+
+    /* BLOQUEADA — cadeado */
+    .circle-locked {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: #1d3258; border: 2.57px solid #0d1a32; outline: 2.57px solid #1d3258;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+
+    .phase-line-blue { flex: 1; width: 1px; background: #0059e7; min-height: 4px; }
+    .phase-line-dark { flex: 1; width: 1px; background: #1d3258; min-height: 4px; }
+
+    .phase-content { flex: 1; padding-top: 2px; }
+
+    /* FASE 1 label especial */
+    .phase-name-review {
+      font-size: 16px; font-weight: 700; line-height: 24px; color: #fff;
+    }
+    .phase-label-review {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: rgba(0,89,231,0.2); border-radius: 6px;
+      padding: 2px 8px; font-size: 11px; font-weight: 700; color: #0099ff;
+      margin-top: 2px;
+    }
+    .phase-name-active { font-size: 16px; font-weight: 700; line-height: 24px; color: #fff; }
+    .phase-name-muted  { font-size: 16px; font-weight: 700; line-height: 24px; color: rgba(255,255,255,0.6); }
+    .phase-status { font-size: 11px; font-weight: 400; line-height: 16px; color: rgba(255,255,255,0.6); }
+
+    /* Fase 1 card expandido */
+    .phase-review-card {
+      background: rgba(0,89,231,0.08); border: 1px solid rgba(0,89,231,0.3);
+      border-radius: 12px; padding: 12px; margin-top: 8px;
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .phase-review-card-title { font-size: 13px; font-weight: 700; color: #0099ff; }
+    .phase-review-card-desc { font-size: 12px; color: rgba(255,255,255,0.6); line-height: 18px; }
+
+    .phase-xp-green { font-size: 11px; color: #32d583; white-space: nowrap; padding-top: 2px; min-width: 40px; text-align: right; }
+
+    /* ── BOTTOM CTA ── */
+    .bottom-cta {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: linear-gradient(to top, #0d1a32 72%, rgba(13,26,50,0) 100%);
+      padding: 64px 24px 24px;
+      display: flex; align-items: center; justify-content: center;
+      pointer-events: none;
+    }
+    .btn-start {
+      background: #0059e7; border: 1px solid #0040a7; border-bottom-width: 5px;
+      border-radius: 16px; height: 52px; width: 327px; max-width: 100%;
+      font-family: 'Roboto', sans-serif; font-weight: 700; font-size: 16px; color: #fff;
+      cursor: pointer; pointer-events: all;
+      transition: background 0.15s, transform 0.1s;
+    }
+    .btn-start:hover { background: #0066ff; transform: translateY(-1px); }
+    .btn-start:active { transform: scale(0.99); }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="phase-header">
+  <button class="btn-back" onclick="location.href='index.html'">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+      <path d="M15 18L9 12L15 6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </button>
+
+  <div class="header-badges">
+    <span class="badge-subject-mat">Matemática</span>
+    <span class="badge-more">+2
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" style="opacity:0.7;flex-shrink:0;">
+        <path d="M3 4.5L6 7.5L9 4.5" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </span>
+    <span class="badge-ia">
+      <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+        <path d="M5 1L6 3.5H8.5L6.5 5L7.3 7.5L5 6L2.7 7.5L3.5 5L1.5 3.5H4L5 1Z" fill="#37ec65"/>
+      </svg>
+      Criada pela IA
+    </span>
+  </div>
+
+  <h1 class="header-title">Frações e Números Mistos</h1>
+  <p class="header-desc">Essa trilha foi criada especialmente para você com base no seu desempenho.</p>
+
+  <div class="header-keywords">
+    <span class="kw">Frações</span>
+    <span class="kw">Equivalência</span>
+    <span class="kw">Números Mistos</span>
+  </div>
+
+  <p class="header-meta">8 fases · Fácil → Médio · 150 XP</p>
+
+  <div class="ia-why">
+    <div class="ia-why-icon">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M8 1L9.4 5.2H14L10.3 7.8L11.7 12L8 9.4L4.3 12L5.7 7.8L2 5.2H6.6L8 1Z" fill="#37ec65"/>
+      </svg>
+    </div>
+    <p class="ia-why-text">
+      <strong>Por que essa trilha?</strong> Você errou 68% das questões de Frações nas últimas 5 trilhas. Comecei com uma fase de <strong>revisão sem testes</strong> para que você se sinta confortável antes de responder questões.
+    </p>
+  </div>
+</div>
+
+<!-- PHASE LIST -->
+<div class="page">
+  <div class="phase-list">
+
+    <!-- FASE 1 — REVISÃO ESPECIAL -->
+    <div class="phase-item" style="height:auto;">
+      <div class="phase-timeline" style="height:auto;min-height:120px;">
+        <div class="circle-review">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+            <path d="M4 4h12v12H4z" rx="2" stroke="white" stroke-width="1.5" fill="none"/>
+            <path d="M7 8h6M7 11h4" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="phase-line-blue" style="flex:1;min-height:80px;"></div>
+      </div>
+      <div class="phase-content" style="padding-bottom:16px;">
+        <div class="phase-name-review">Revisão do Conteúdo</div>
+        <div class="phase-label-review">
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+            <path d="M2 3h6v4H2z" rx="1" stroke="#0099ff" stroke-width="1" fill="none"/>
+            <path d="M4 5h2M4 7h1" stroke="#0099ff" stroke-width="1" stroke-linecap="round"/>
+          </svg>
+          Sem teste · Só revisão
+        </div>
+        <div class="phase-review-card">
+          <p class="phase-review-card-title">📖 Leitura interativa de conceitos</p>
+          <p class="phase-review-card-desc">Você vai ver os conceitos de frações com exemplos visuais, explicações passo a passo e exemplos do dia a dia — sem nenhuma pressão de prova.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- FASE 2 — DISPONÍVEL após revisão -->
+    <div class="phase-item">
+      <div class="phase-timeline">
+        <div class="circle-active">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+            <path d="M4 3L11 7L4 11V3Z" fill="white"/>
+          </svg>
+        </div>
+        <div class="phase-line-dark"></div>
+      </div>
+      <div class="phase-content">
+        <div class="phase-name-active">O que são frações?</div>
+        <div class="phase-status">Disponível após a revisão</div>
+      </div>
+      <div class="phase-xp-green">+15 XP</div>
+    </div>
+
+    <!-- FASES 3-8 — BLOQUEADAS -->
+    <div class="phase-item">
+      <div class="phase-timeline">
+        <div class="circle-locked"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="2.5" y="6" width="9" height="7" rx="1.5" fill="#526D98"/><path d="M4.5 6V4.5a3.5 3.5 0 0 1 5 0V6" stroke="#526D98" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+        <div class="phase-line-dark"></div>
+      </div>
+      <div class="phase-content"><div class="phase-name-muted">Frações equivalentes</div><div class="phase-status">Bloqueada</div></div>
+      <div></div>
+    </div>
+
+    <div class="phase-item">
+      <div class="phase-timeline">
+        <div class="circle-locked"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="2.5" y="6" width="9" height="7" rx="1.5" fill="#526D98"/><path d="M4.5 6V4.5a3.5 3.5 0 0 1 5 0V6" stroke="#526D98" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+        <div class="phase-line-dark"></div>
+      </div>
+      <div class="phase-content"><div class="phase-name-muted">Comparando frações</div><div class="phase-status">Bloqueada</div></div>
+      <div></div>
+    </div>
+
+    <div class="phase-item">
+      <div class="phase-timeline">
+        <div class="circle-locked"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="2.5" y="6" width="9" height="7" rx="1.5" fill="#526D98"/><path d="M4.5 6V4.5a3.5 3.5 0 0 1 5 0V6" stroke="#526D98" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+        <div class="phase-line-dark"></div>
+      </div>
+      <div class="phase-content"><div class="phase-name-muted">Adição e subtração</div><div class="phase-status">Bloqueada</div></div>
+      <div></div>
+    </div>
+
+    <div class="phase-item">
+      <div class="phase-timeline">
+        <div class="circle-locked"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="2.5" y="6" width="9" height="7" rx="1.5" fill="#526D98"/><path d="M4.5 6V4.5a3.5 3.5 0 0 1 5 0V6" stroke="#526D98" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+        <div class="phase-line-dark"></div>
+      </div>
+      <div class="phase-content"><div class="phase-name-muted">Multiplicação de frações</div><div class="phase-status">Bloqueada</div></div>
+      <div></div>
+    </div>
+
+    <div class="phase-item">
+      <div class="phase-timeline">
+        <div class="circle-locked"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="2.5" y="6" width="9" height="7" rx="1.5" fill="#526D98"/><path d="M4.5 6V4.5a3.5 3.5 0 0 1 5 0V6" stroke="#526D98" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+        <div class="phase-line-dark"></div>
+      </div>
+      <div class="phase-content"><div class="phase-name-muted">Números mistos</div><div class="phase-status">Bloqueada</div></div>
+      <div></div>
+    </div>
+
+    <div class="phase-item">
+      <div class="phase-timeline last" style="height:auto;">
+        <div class="circle-locked"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="2.5" y="6" width="9" height="7" rx="1.5" fill="#526D98"/><path d="M4.5 6V4.5a3.5 3.5 0 0 1 5 0V6" stroke="#526D98" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+      </div>
+      <div class="phase-content"><div class="phase-name-muted">Desafio final — misto</div><div class="phase-status">Bloqueada</div></div>
+      <div></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- BOTTOM CTA -->
+<div class="bottom-cta">
+  <button class="btn-start" onclick="location.href='fase-revisao.html'">
+    Começar — Revisão do Conteúdo
+  </button>
+</div>
+
+</body>
+</html>

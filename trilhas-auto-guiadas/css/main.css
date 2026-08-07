@@ -1,0 +1,427 @@
+/* ====================================================================
+   ORBIE APP - MAIN STYLES
+   Base styles and layout using design tokens
+   ==================================================================== */
+
+/* Reset and Base Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--background-phase);
+  color: var(--text-primary);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* App Container */
+.app-container {
+  min-height: 100vh;
+  width: 100%;
+  max-width: var(--canvas-width);
+  margin: 0 auto;
+  position: relative;
+  background: var(--background-phase);
+}
+
+/* Screen Management */
+.screen {
+  display: none;
+  min-height: 100vh;
+  width: 100%;
+  padding-bottom: calc(var(--nav-bottom-height) + var(--safe-area-nav-bar));
+  background: var(--background-phase);
+}
+
+.screen.active {
+  display: block;
+}
+
+/* Lab Home Screen - Special background */
+#lab-home {
+  background: linear-gradient(135deg, var(--background-home) 0%, var(--purple-500) 100%);
+}
+
+/* Loading Screen - Special background */
+#trail-loading {
+  background: var(--background-splash);
+}
+
+/* Top Bar */
+.top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--padding-16) var(--layout-margin);
+  background: transparent;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(var(--background-blur));
+  background: var(--transparent-black-20);
+  border-bottom: var(--top-bar-border-bottom);
+}
+
+.top-bar h1 {
+  flex: 1;
+  text-align: center;
+  margin: 0 var(--gap-16);
+}
+
+.back-button {
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  cursor: pointer;
+  padding: var(--padding-8);
+  border-radius: var(--radius-8);
+  transition: background-color var(--duration-fast) var(--easing-default);
+}
+
+.back-button:hover {
+  background-color: var(--transparent-white-10);
+}
+
+/* Search Section */
+.search-section {
+  padding: var(--padding-16) var(--layout-margin);
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-12);
+}
+
+.search-input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-input {
+  width: 100%;
+  height: var(--input-height);
+  background: var(--input-bg);
+  border: var(--input-border);
+  border-radius: var(--input-radius);
+  padding: 0 var(--input-padding-x);
+  padding-right: 48px;
+  color: var(--input-text);
+  transition: border-color var(--duration-fast) var(--easing-default);
+}
+
+.search-input::placeholder {
+  color: var(--input-placeholder);
+}
+
+.search-input:focus {
+  outline: none;
+  border: var(--input-border-focus);
+}
+
+.search-button {
+  position: absolute;
+  right: var(--gap-12);
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: var(--padding-8);
+  border-radius: var(--radius-6);
+  transition: color var(--duration-fast) var(--easing-default);
+}
+
+.search-button:hover {
+  color: var(--text-primary);
+}
+.filter-button {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-8);
+  background: var(--surface-card);
+  border: var(--stroke-xs) solid var(--border-default);
+  border-radius: var(--radius-12);
+  padding: var(--padding-12) var(--padding-16);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--easing-default);
+}
+
+.filter-button:hover {
+  background: var(--gray-blue-800);
+  border-color: var(--brand-blue-300);
+}
+
+/* Stats Section */
+.stats-section {
+  display: flex;
+  gap: var(--gap-16);
+  padding: 0 var(--layout-margin) var(--padding-16);
+}
+
+.stat-card {
+  flex: 1;
+  background: var(--surface-card);
+  border: var(--stroke-xs) solid var(--border-default);
+  border-radius: var(--radius-16);
+  padding: var(--padding-16);
+  text-align: center;
+}
+
+.stat-value {
+  display: block;
+  color: var(--brand-blue-300);
+  margin-bottom: var(--gap-4);
+}
+
+/* Content Sections */
+.content-sections {
+  padding: 0 var(--layout-margin);
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-32);
+}
+
+.trilhas-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-16);
+}
+
+.section-title {
+  margin-bottom: var(--gap-8);
+}
+
+/* Continue Trail Card */
+.continue-trail-card {
+  background: var(--continue-card-bg);
+  border: var(--continue-card-border);
+  border-radius: var(--continue-card-radius);
+  padding: var(--continue-card-padding);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--easing-default);
+}
+
+.continue-trail-card:hover {
+  background: var(--gray-blue-800);
+  border-color: var(--brand-blue-300);
+}
+
+.trail-progress {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--gap-12);
+}
+
+.progress-bar {
+  flex: 1;
+  height: var(--phase-header-progress-height);
+  background: var(--progress-track);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  margin-right: var(--gap-12);
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--progress-fill);
+  border-radius: var(--radius-full);
+  transition: width var(--duration-slow) var(--easing-enter);
+}
+
+.progress-text {
+  white-space: nowrap;
+}
+
+.trail-title {
+  margin-bottom: var(--gap-4);
+}
+
+.trail-description {
+  margin-bottom: var(--gap-12);
+}
+
+.trail-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.xp-reward {
+  background: var(--orange-400);
+  color: var(--text-primary);
+  padding: var(--padding-4) var(--padding-8);
+  border-radius: var(--radius-full);
+  font-weight: 500;
+}
+
+.estimated-time {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-4);
+}
+
+/* Trails Grid */
+.trails-grid {
+  display: grid;
+  gap: var(--gap-16);
+  grid-template-columns: 1fr;
+}
+/* Trail Card */
+.trail-card {
+  background: var(--surface-card);
+  border: var(--stroke-xs) solid var(--border-default);
+  border-radius: var(--radius-16);
+  padding: var(--padding-16);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--easing-default);
+}
+
+.trail-card:hover {
+  background: var(--gray-blue-800);
+  border-color: var(--brand-blue-300);
+  transform: translateY(-2px);
+}
+
+.trail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--gap-12);
+}
+
+.subject-badge {
+  background: var(--brand-blue-300);
+  color: var(--text-primary);
+  padding: var(--chip-padding-y) var(--chip-padding-x);
+  border-radius: var(--chip-radius);
+  font-size: var(--body-sm-size);
+  font-weight: 500;
+}
+
+.difficulty-indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: var(--radius-full);
+}
+
+.difficulty-easy {
+  background: var(--green-400);
+}
+
+.difficulty-medium {
+  background: var(--orange-400);
+}
+
+.difficulty-hard {
+  background: var(--red-400);
+}
+
+.trail-stats {
+  display: flex;
+  gap: var(--gap-16);
+  margin-top: var(--gap-8);
+  padding-top: var(--gap-8);
+  border-top: var(--stroke-xs) solid var(--border-default);
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-4);
+}
+
+.stat-icon {
+  width: 16px;
+  height: 16px;
+  color: var(--text-secondary);
+}
+
+/* Popular Trails List */
+.trails-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-12);
+}
+
+.trail-list-item {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-16);
+  background: var(--surface-card);
+  border: var(--stroke-xs) solid var(--border-default);
+  border-radius: var(--radius-12);
+  padding: var(--padding-16);
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--easing-default);
+}
+
+.trail-list-item:hover {
+  background: var(--gray-blue-800);
+  border-color: var(--brand-blue-300);
+}
+
+.trail-ranking {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: var(--brand-blue-300);
+  color: var(--text-primary);
+  border-radius: var(--radius-full);
+  font-weight: 700;
+  font-size: var(--body-md-size);
+}
+
+.trail-content {
+  flex: 1;
+}
+
+.trail-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.completion-count {
+  white-space: nowrap;
+}
+
+/* Floating Action Button */
+.floating-action {
+  position: fixed;
+  bottom: calc(var(--nav-bottom-height) + var(--safe-area-nav-bar) + var(--gap-16));
+  right: var(--layout-margin);
+  z-index: 50;
+}
+
+.create-trail-button {
+  display: flex;
+  align-items: center;
+  gap: var(--gap-8);
+  background: var(--cta-primary);
+  color: var(--text-primary);
+  border: none;
+  border-radius: var(--radius-full);
+  padding: var(--padding-16) var(--padding-24);
+  cursor: pointer;
+  box-shadow: var(--shadow-lg);
+  transition: all var(--duration-fast) var(--easing-default);
+}
+
+.create-trail-button:hover {
+  background: var(--brand-blue-200);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 89, 231, 0.4);
+}

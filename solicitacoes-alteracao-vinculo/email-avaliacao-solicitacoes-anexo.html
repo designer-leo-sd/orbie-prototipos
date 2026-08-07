@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Template E-mail (Tabela em Anexo) — Avaliação de Solicitações — SIG SESI MG</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #f1f3f4;
+    color: #000;
+    min-height: 100vh;
+    padding: 40px 20px;
+  }
+
+  /* wrapper do Gmail mockado */
+  .gmail-chrome {
+    background: #fff;
+    max-width: 900px;
+    margin: 0 auto;
+    border-radius: 8px;
+    box-shadow: 0 2px 12px rgba(0,0,0,.15);
+    overflow: hidden;
+  }
+
+  /* barra de assunto */
+  .gmail-subject-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 20px 10px 20px;
+    border-bottom: 1px solid #edeff1;
+    flex-wrap: wrap;
+  }
+  .gmail-subject-bar h2 {
+    font-size: 22px;
+    font-weight: 400;
+    color: #202124;
+    letter-spacing: -.2px;
+  }
+  .gmail-badge {
+    font-size: 12px;
+    font-weight: 500;
+    padding: 2px 7px;
+    border-radius: 4px;
+    line-height: 1.4;
+  }
+  .badge-inbox { background: rgba(0,0,0,.06); color: rgba(0,0,0,.6); }
+  .badge-fiemg { background: #164194; color: #fff; }
+
+  /* cabeçalho do remetente */
+  .gmail-sender {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 20px 16px 20px;
+    border-bottom: 1px solid #edeff1;
+  }
+  .sender-avatar {
+    width: 40px; height: 40px;
+    background: #164194;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .sender-avatar span { font-size: 13px; font-weight: 700; color: #fff; letter-spacing: .5px; }
+  .sender-info { flex: 1; }
+  .sender-name { font-size: 14px; font-weight: 700; color: #202124; }
+  .sender-to { font-size: 12px; color: rgba(0,0,0,.54); margin-top: 2px; }
+  .sender-time { font-size: 12px; color: rgba(0,0,0,.6); white-space: nowrap; margin-left: auto; align-self: flex-start; padding-top: 2px; }
+
+  /* anexo */
+  .gmail-attachments {
+    padding: 12px 20px;
+    border-bottom: 1px solid #edeff1;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .gmail-att-label { font-size: 12px; color: rgba(0,0,0,.54); margin-right: 4px; }
+  .att-chip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    background: #f8f9fa;
+    font-size: 13px;
+    color: #202124;
+    cursor: pointer;
+    transition: background .15s;
+  }
+  .att-chip:hover { background: #e9ecef; }
+  .att-chip svg { flex-shrink: 0; }
+  .att-chip-name { font-weight: 500; }
+  .att-chip-size { font-size: 11px; color: rgba(0,0,0,.45); }
+
+  /* área do e-mail */
+  .gmail-body {
+    padding: 24px 70px 40px 70px;
+    background: #fff;
+  }
+
+  /* ── TEMPLATE DO E-MAIL ── */
+  .email-wrapper {
+    max-width: 720px;
+    margin: 0 auto;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #fff;
+  }
+
+  /* header azul */
+  .email-header {
+    background: #164194;
+    padding: 32px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 124px;
+  }
+  .email-logo-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  .email-logo-top {
+    font-size: 11px;
+    font-weight: 300;
+    color: rgba(255,255,255,.75);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .email-logo-main {
+    font-size: 34px;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: -0.5px;
+    line-height: 1;
+  }
+  .email-logo-main span { color: #ffb802; }
+
+  /* corpo */
+  .email-body {
+    padding: 40px 40px 32px 40px;
+    background: #fff;
+  }
+  .email-title {
+    font-size: 28px;
+    font-weight: 600;
+    color: #000;
+    margin-bottom: 24px;
+    line-height: 1.2;
+  }
+  .email-text {
+    font-size: 16px;
+    font-weight: 300;
+    color: #000;
+    line-height: 24px;
+    margin-bottom: 16px;
+  }
+  .email-text b { font-weight: 500; }
+
+  /* botão CTA */
+  .email-btn-wrap {
+    margin: 28px 0;
+    display: flex;
+    justify-content: center;
+  }
+  .email-btn {
+    display: inline-block;
+    background: #164194;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 500;
+    padding: 10px 24px;
+    border-radius: 6px;
+    text-decoration: none;
+    cursor: pointer;
+    font-family: inherit;
+    border: none;
+  }
+  .email-btn:hover { background: #1640a0; }
+
+  /* assinatura */
+  .email-sign {
+    margin-top: 32px;
+    font-size: 16px;
+    font-weight: 300;
+    color: rgba(0,0,0,.4);
+    line-height: 24px;
+  }
+  .email-sign b { font-weight: 500; }
+
+  /* rodapé */
+  .email-footer {
+    background: #f8f9fa;
+    padding: 20px 24px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 300;
+    color: rgba(0,0,0,.8);
+    line-height: 20px;
+    border-top: 1px solid #dee2e6;
+  }
+
+  /* ── TABELA ANEXO (painel separado abaixo) ── */
+  .anexo-panel {
+    max-width: 900px;
+    margin: 32px auto 0;
+    background: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0,0,0,.08);
+  }
+  .anexo-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 20px;
+    background: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+  }
+  .anexo-header svg { flex-shrink: 0; }
+  .anexo-header-name { font-size: 14px; font-weight: 600; color: #202124; }
+  .anexo-header-meta { font-size: 12px; color: rgba(0,0,0,.45); margin-left: 4px; }
+  .anexo-table-wrap { overflow-x: auto; }
+  .anexo-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .anexo-table thead th {
+    background: #164194;
+    color: #fff;
+    font-weight: 500;
+    font-size: 14px;
+    padding: 11px 16px;
+    text-align: left;
+    white-space: nowrap;
+  }
+  .anexo-table tbody tr { border-bottom: 1px solid #dee2e6; }
+  .anexo-table tbody tr:last-child { border-bottom: none; }
+  .anexo-table tbody tr:hover { background: #f8f9fa; }
+  .anexo-table tbody td {
+    padding: 11px 16px;
+    color: #000;
+    vertical-align: middle;
+    font-size: 14px;
+  }
+  .td-tipo { font-weight: 500; }
+  .td-registro { font-weight: 300; color: #6c757d; font-size: 13px; }
+  .result-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 9px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .badge-ap { background: #d1e7dd; color: #0a3622; }
+  .badge-rj { background: #f8d7da; color: #58151c; }
+  .td-motivo { font-size: 12px; color: #6c757d; max-width: 280px; line-height: 1.4; }
+
+  /* variante toggle */
+  .variant-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .vt-btn {
+    padding: 6px 16px;
+    border-radius: 4px;
+    border: 1px solid #dee2e6;
+    background: #fff;
+    font-size: 13px;
+    font-weight: 500;
+    color: #343a40;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all .15s;
+  }
+  .vt-btn.act { background: #164194; color: #fff; border-color: #164194; }
+  .vt-btn:hover:not(.act) { background: #f0f0f0; }
+
+  .ann {
+    background: #FFFBEB;
+    border: 1px solid #FDE68A;
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-bottom: 28px;
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .ann h3 { font-size: 11px; font-weight: 700; color: #92400E; margin-bottom: 8px; text-transform: uppercase; letter-spacing: .4px; }
+  .ann p { font-size: 12px; color: #78350F; line-height: 1.5; margin-bottom: 4px; }
+  .ann p:last-child { margin-bottom: 0; }
+</style>
+</head>
+<body>
+
+<!-- anotações -->
+<div class="ann">
+  <h3>📋 HU 4/6 · Template E-mail — Versão com Tabela em Anexo</h3>
+  <p>Variante em que o corpo do e-mail é enxuto (texto corrido + CTA) e o detalhe das solicitações avaliadas está na tabela anexa. Padrão fiel ao print de referência com "Documentos não conformes".</p>
+  <p>O chip de anexo aparece entre o remetente e o corpo, simulando como um cliente de e-mail exibiria o arquivo. A tabela abaixo do e-mail representa o anexo expandido/visualizado.</p>
+</div>
+
+<!-- toggle de variante -->
+<div class="variant-tabs" style="max-width:900px;margin:0 auto 20px">
+  <span style="font-size:13px;color:#6c757d;align-self:center;margin-right:4px">Cenário:</span>
+  <button class="vt-btn act" onclick="setVariant('ambos',this)">Aprovadas + Rejeitadas</button>
+  <button class="vt-btn" onclick="setVariant('aprovadas',this)">Só Aprovadas</button>
+  <button class="vt-btn" onclick="setVariant('rejeitadas',this)">Só Rejeitadas</button>
+</div>
+
+<!-- Gmail mockado -->
+<div class="gmail-chrome">
+
+  <!-- barra de assunto -->
+  <div class="gmail-subject-bar">
+    <h2>Resultado da Avaliação das Solicitações de Alteração de Vínculo ao Lote</h2>
+    <span class="gmail-badge badge-inbox">Inbox</span>
+    <span class="gmail-badge badge-fiemg">fiemg</span>
+  </div>
+
+  <!-- remetente -->
+  <div class="gmail-sender">
+    <div class="sender-avatar"><span>SIG</span></div>
+    <div class="sender-info">
+      <div class="sender-name">SIG SESI MG
+        <span style="font-weight:400;font-size:12px;color:rgba(0,0,0,.54)">&lt;no-reply.sigsesi@fiemg.com.br&gt;</span>
+        <span style="font-size:11px;color:rgba(0,0,0,.54);text-decoration:underline;margin-left:8px;cursor:pointer">Unsubscribe</span>
+      </div>
+      <div class="sender-to">to <b>Clínica VidaSaúde Ltda.</b></div>
+    </div>
+    <div class="sender-time">Agora mesmo</div>
+  </div>
+
+  <!-- chip de anexo -->
+  <div class="gmail-attachments">
+    <span class="gmail-att-label">1 anexo</span>
+    <div class="att-chip" onclick="document.getElementById('anexo-expandido').scrollIntoView({behavior:'smooth'})">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#164194" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="3" width="18" height="18" rx="2"/>
+        <path d="M3 9h18M9 21V9"/>
+      </svg>
+      <div>
+        <div class="att-chip-name" id="att-filename">resultado-avaliacao-solicitacoes.xlsx</div>
+        <div class="att-chip-size" id="att-filesize">14 KB</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- corpo do e-mail -->
+  <div class="gmail-body">
+    <div class="email-wrapper">
+
+      <!-- header azul com logo -->
+      <div class="email-header">
+        <div class="email-logo-box">
+          <span class="email-logo-top">Sistema Integrado de Gestão</span>
+          <span class="email-logo-main">SESi<span>MG</span></span>
+        </div>
+      </div>
+
+      <!-- corpo -->
+      <div class="email-body">
+        <div class="email-title" id="email-title">Resultado das Avaliações das suas Solicitações</div>
+
+        <p class="email-text">
+          Prezado(a) representante da <b>Clínica VidaSaúde Ltda.</b>,
+        </p>
+
+        <p class="email-text" id="email-intro" style="margin-top:12px"></p>
+
+        <p class="email-text" style="margin-top:12px">
+          Para consultar o detalhamento completo de cada solicitação avaliada, por favor verifique
+          a <b>tabela anexa</b> a este e-mail.
+        </p>
+
+        <div class="email-btn-wrap">
+          <button class="email-btn">Acessar vínculo</button>
+        </div>
+
+        <p class="email-text" style="font-size:14px;color:rgba(0,0,0,.55)">
+          Este é um e-mail automático. Por favor não responda. Em caso de dúvidas entre em contato
+          através do <a href="#" style="color:#164194">link de suporte</a>.
+        </p>
+
+        <div class="email-sign">
+          <p>Atenciosamente,</p>
+          <p>&nbsp;</p>
+          <p><b>Equipe SESI Minas Gerais.</b></p>
+        </div>
+      </div>
+
+      <!-- rodapé -->
+      <div class="email-footer">
+        <p>Enviado por FIEMG</p>
+        <p>Av. do Contorno, 4456 – Funcionários, Belo Horizonte/MG – CEP: 30110-028</p>
+      </div>
+
+    </div>
+  </div>
+</div><!-- /gmail-chrome -->
+
+<!-- tabela anexo expandida -->
+<div class="anexo-panel" id="anexo-expandido">
+  <div class="anexo-header">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#164194" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="3" width="18" height="18" rx="2"/>
+      <path d="M3 9h18M9 21V9"/>
+    </svg>
+    <span class="anexo-header-name" id="anexo-filename">resultado-avaliacao-solicitacoes.xlsx</span>
+    <span class="anexo-header-meta" id="anexo-meta">— 14 KB · Clínica VidaSaúde Ltda.</span>
+  </div>
+  <div class="anexo-table-wrap">
+    <table class="anexo-table">
+      <thead>
+        <tr>
+          <th>Tipo de Solicitação</th>
+          <th>Registro Afetado</th>
+          <th>Lote</th>
+          <th>Resultado</th>
+          <th>Motivo da Rejeição</th>
+        </tr>
+      </thead>
+      <tbody id="anexo-tbody"></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+const DADOS = {
+  prestador: 'Clínica VidaSaúde Ltda.',
+  lote: 'Lote 2025-BH-01',
+  aprovadas: [
+    { tipo: 'Inclusão de Local',   registro: 'UPA Centro — Rua das Flores, 100' },
+    { tipo: 'Alteração de Local',  registro: 'UPA Norte — Av. Cristiano Machado, 550' },
+  ],
+  rejeitadas: [
+    {
+      tipo: 'Inclusão de Profissional',
+      registro: 'Dr. Roberto Lima CRM/MG 11223',
+      motivo: 'Profissional sem habilitação compatível com os serviços do lote.'
+    },
+    {
+      tipo: 'Alteração de Profissional',
+      registro: 'Dra. Marina Souza CRM/MG 78901',
+      motivo: 'Alteração de especialidade requer Título de Especialista. Documento não localizado.'
+    }
+  ]
+};
+
+function buildRow(item, resultado){
+  const isAp = resultado === 'aprovada';
+  return `<tr>
+    <td class="td-tipo">${item.tipo}</td>
+    <td class="td-registro">${item.registro}</td>
+    <td>${DADOS.lote}</td>
+    <td>
+      <span class="result-badge ${isAp ? 'badge-ap' : 'badge-rj'}">
+        ${isAp
+          ? '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Aprovada'
+          : '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Rejeitada'}
+      </span>
+    </td>
+    <td class="td-motivo">${item.motivo || '—'}</td>
+  </tr>`;
+}
+
+function setVariant(variant, el){
+  document.querySelectorAll('.vt-btn').forEach(b=>b.classList.remove('act'));
+  el.classList.add('act');
+
+  const intro = document.getElementById('email-intro');
+  const title = document.getElementById('email-title');
+  const tbody = document.getElementById('anexo-tbody');
+
+  let rows = '';
+  let nAp = 0, nRj = 0;
+
+  if(variant === 'ambos' || variant === 'aprovadas'){
+    DADOS.aprovadas.forEach(i=>{ rows += buildRow(i,'aprovada'); nAp++; });
+  }
+  if(variant === 'ambos' || variant === 'rejeitadas'){
+    DADOS.rejeitadas.forEach(i=>{ rows += buildRow(i,'rejeitada'); nRj++; });
+  }
+
+  tbody.innerHTML = rows;
+
+  // atualiza filename e tamanho fictício
+  const total = nAp + nRj;
+  const fname = `resultado-avaliacao-solicitacoes.xlsx`;
+  const fsize = `${total * 6} KB`;
+  document.getElementById('att-filename').textContent = fname;
+  document.getElementById('att-filesize').textContent = fsize;
+  document.getElementById('anexo-filename').textContent = fname;
+  document.getElementById('anexo-meta').textContent = `— ${fsize} · ${DADOS.prestador}`;
+
+  // texto do corpo
+  if(variant === 'ambos'){
+    title.textContent = 'Resultado das Avaliações das suas Solicitações';
+    intro.innerHTML = `Concluímos a avaliação das solicitações de alteração de vínculo ao lote realizadas por
+      sua empresa. Das <b>${total} solicitação(ões)</b> avaliadas, <b>${nAp} foi(ram) aprovada(s)</b> e
+      <b>${nRj} foi(ram) rejeitada(s)</b>.`;
+  } else if(variant === 'aprovadas'){
+    title.textContent = 'Suas Solicitações foram Aprovadas';
+    intro.innerHTML = `Concluímos a avaliação das solicitações de alteração de vínculo ao lote realizadas por
+      sua empresa. Todas as <b>${nAp} solicitação(ões)</b> foram <b>aprovadas</b> e já estão em vigor no vínculo ao lote.`;
+  } else {
+    title.textContent = 'Resultado das Avaliações das suas Solicitações';
+    intro.innerHTML = `Concluímos a avaliação das solicitações de alteração de vínculo ao lote realizadas por
+      sua empresa. Das solicitações avaliadas, <b>${nRj} foi(ram) rejeitada(s)</b>. Verifique os motivos
+      na tabela anexa e, se necessário, realize uma nova solicitação com as correções adequadas.`;
+  }
+}
+
+document.addEventListener('DOMContentLoaded', ()=>{
+  setVariant('ambos', document.querySelector('.vt-btn.act'));
+});
+</script>
+</body>
+</html>

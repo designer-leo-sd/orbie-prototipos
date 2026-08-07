@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trilha Concluída — Orbie</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: #0d1a32; color: #fff;
+      min-height: 100vh; display: flex; flex-direction: column; align-items: center;
+      overflow-x: hidden;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      width: 100%;
+      background: linear-gradient(170deg, #1a0f45 0%, #3a0f45 50%, #0d1a32 100%);
+      display: flex; flex-direction: column; align-items: center;
+      padding: 56px 24px 64px; position: relative; overflow: hidden; text-align: center;
+    }
+    /* radial glow behind constellation */
+    .hero::before {
+      content: '';
+      position: absolute; top: -60px; left: 50%; transform: translateX(-50%);
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(255,201,77,0.18), rgba(139,92,246,0.12) 50%, transparent 72%);
+      pointer-events: none;
+    }
+    /* stars */
+    .star-bg span {
+      position: absolute; border-radius: 50%; background: #fff;
+      animation: twinkle 3s infinite;
+    }
+    @keyframes twinkle { 0%,100%{opacity:.2} 50%{opacity:.9} }
+
+    /* constellation SVG */
+    .constellation { position: relative; margin-bottom: 20px; filter: drop-shadow(0 0 16px rgba(255,201,77,0.6)); }
+
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(255,201,77,0.18); border: 1px solid rgba(255,201,77,0.4);
+      border-radius: 999px; padding: 5px 14px; margin-bottom: 12px;
+      font-size: 11px; font-weight: 700; color: #FFC94D;
+    }
+    .hero-title { font-size: 28px; font-weight: 800; line-height: 1.2; }
+    .hero-sub   { font-size: 13.5px; color: rgba(255,255,255,0.6); margin-top: 6px; }
+
+    /* score pills */
+    .score-pills { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; justify-content: center; }
+    .score-pill  {
+      background: rgba(255,255,255,0.09); border-radius: 999px;
+      padding: 7px 14px; font-size: 12px; font-weight: 700;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .pill-green  { color: #37ec65; }
+    .pill-gold   { color: #FFC94D; }
+    .pill-purple { color: #C084FC; }
+
+    /* ── PAGE ── */
+    .page {
+      width: 100%; max-width: 480px;
+      padding: 24px 20px 140px;
+      display: flex; flex-direction: column; gap: 16px;
+    }
+
+    /* ── CARD ── */
+    .card { background: rgba(255,255,255,0.05); border-radius: 16px; padding: 18px; }
+    .card-title {
+      font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.45);
+      letter-spacing: .05em; text-transform: uppercase; margin-bottom: 14px;
+    }
+
+    /* XP breakdown */
+    .xp-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; }
+    .xp-row-label { font-size: 13px; color: rgba(255,255,255,0.6); }
+    .xp-row-val   { font-size: 13px; font-weight: 700; }
+    .green  { color: #37ec65; }
+    .gold   { color: #FFC94D; }
+    .orange { color: #FF8A3D; }
+    .purple { color: #C084FC; }
+    hr.divider { border: none; border-top: 1px solid rgba(255,255,255,0.1); margin: 10px 0; }
+    .xp-total-row { display: flex; justify-content: space-between; align-items: baseline; }
+    .xp-total-label { font-size: 14px; font-weight: 700; }
+    .xp-total-val   { font-family: 'Orbitron', monospace; font-weight: 700; font-size: 26px; color: #FFC94D; }
+
+    /* level bar */
+    .level-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+    .level-label { font-size: 14px; font-weight: 700; }
+    .level-sub   { font-size: 11px; color: rgba(255,255,255,0.45); }
+    .level-bar   { height: 10px; border-radius: 999px; background: rgba(255,255,255,0.1); overflow:hidden; position:relative; }
+    .level-fill  {
+      height: 100%; border-radius: 999px;
+      background: linear-gradient(90deg, #FFC94D, #FF8A3D);
+      transition: width 1.2s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .level-gain  {
+      display: inline-block; margin-top: 8px;
+      background: rgba(255,201,77,0.16); color: #FFC94D;
+      border-radius: 999px; padding: 3px 10px; font-size: 11px; font-weight: 700;
+    }
+
+    /* mastery */
+    .mastery-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .mastery-item {
+      background: rgba(255,255,255,0.05); border-radius: 12px; padding: 12px;
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .mastery-item-name  { font-size: 11px; color: rgba(255,255,255,0.6); }
+    .mastery-item-pct   { font-size: 18px; font-weight: 800; color: #35C2FF; }
+    .mastery-item-bar   { height: 5px; border-radius: 999px; background: rgba(255,255,255,0.1); overflow:hidden; }
+    .mastery-item-fill  { height: 100%; border-radius: 999px; background: linear-gradient(90deg,#35C2FF,#8B5CF6); }
+    .mastery-item-delta { font-size: 10px; color: rgba(53,194,255,0.75); font-weight: 700; }
+
+    /* next recommendation */
+    .next-card {
+      background: linear-gradient(135deg, rgba(139,92,246,0.18), rgba(53,194,255,0.1));
+      border: 1px solid rgba(139,92,246,0.4); border-radius: 16px; padding: 16px;
+      display: flex; align-items: center; gap: 14px;
+    }
+    .next-icon {
+      width: 44px; height: 44px; flex-shrink: 0; border-radius: 12px;
+      background: rgba(139,92,246,0.2); display: flex; align-items: center; justify-content: center;
+    }
+    .next-body { flex: 1; }
+    .next-label { font-size: 10px; color: rgba(139,92,246,0.85); font-weight: 700; letter-spacing:.04em; }
+    .next-title { font-size: 14px; font-weight: 700; margin-top: 3px; }
+    .next-sub   { font-size: 11px; color: rgba(255,255,255,0.5); margin-top: 2px; }
+    .next-mult  {
+      flex-shrink: 0; background: rgba(255,201,77,0.18); color: #FFC94D;
+      border-radius: 999px; padding: 4px 10px; font-size: 11px; font-weight: 700;
+    }
+
+    /* ── BOTTOM CTA ── */
+    .bottom-cta {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: linear-gradient(to top, #0d1a32 65%, transparent 100%);
+      padding: 40px 20px 24px;
+      display: flex; flex-direction: column; align-items: center; gap: 10px;
+    }
+    .btn-primary {
+      background: linear-gradient(90deg, #35C2FF, #8B5CF6);
+      border: none; border-radius: 16px; height: 52px;
+      width: 327px; max-width: 100%;
+      font-family: 'Roboto', sans-serif; font-weight: 700; font-size: 16px; color: #fff;
+      cursor: pointer; box-shadow: 0 8px 24px rgba(139,92,246,0.35);
+      transition: opacity 0.15s, transform 0.1s;
+    }
+    .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+    .btn-secondary {
+      background: transparent; border: none; padding: 4px 8px; border-radius: 8px;
+      font-family: 'Roboto', sans-serif; font-size: 13px;
+      font-weight: 600; color: rgba(255,255,255,0.4); cursor: pointer;
+    }
+    .btn-secondary:hover { color: rgba(255,255,255,0.7); }
+  </style>
+</head>
+<body>
+
+  <!-- HERO -->
+  <div class="hero">
+    <!-- twinkling stars -->
+    <div class="star-bg">
+      <span style="width:3px;height:3px;top:30px;left:14%;animation-delay:0s;"></span>
+      <span style="width:2px;height:2px;top:55px;left:80%;animation-delay:1.2s;"></span>
+      <span style="width:3px;height:3px;top:100px;left:30%;animation-delay:2.1s;"></span>
+      <span style="width:2px;height:2px;top:80px;right:25%;animation-delay:0.7s;"></span>
+    </div>
+
+    <!-- constellation graphic -->
+    <div class="constellation">
+      <svg width="100" height="80" viewBox="0 0 100 80" fill="none">
+        <!-- lines -->
+        <path d="M20 60 L42 28 L75 18" stroke="#8B5CF6" stroke-width="1.8" stroke-dasharray="3 5" fill="none"/>
+        <!-- done stars -->
+        <circle cx="20" cy="60" r="6" fill="#37ec65"/>
+        <path d="M17 60L19.5 53L22 60L16 56.5L24 56.5Z" fill="#fff" fill-opacity=".8"/>
+        <circle cx="42" cy="28" r="6" fill="#37ec65"/>
+        <path d="M39 28L41.5 21L44 28L38 24.5L46 24.5Z" fill="#fff" fill-opacity=".8"/>
+        <!-- active star -->
+        <circle cx="75" cy="18" r="8" fill="#FFC94D" opacity=".95"/>
+        <path d="M75 9L77.9 15.8L85 16.3L79.5 21.3L81.4 28.4L75 24.6L68.6 28.4L70.5 21.3L65 16.3L72.1 15.8Z" fill="#fff" fill-opacity=".9"/>
+        <!-- locked -->
+        <circle cx="88" cy="55" r="5" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.2)" stroke-width="1.2"/>
+        <circle cx="60" cy="68" r="5" fill="rgba(255,255,255,0.12)" stroke="rgba(255,255,255,0.2)" stroke-width="1.2"/>
+      </svg>
+    </div>
+
+    <div class="hero-badge">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none"><path d="M12 2l2.6 6.9 7.4.3-5.8 4.7 2 7.1-6.2-4.1L5.8 21l2-7.1L2 9l7.4-.3L12 2z" fill="#FFC94D"/></svg>
+      Trilha concluída!
+    </div>
+    <h1 class="hero-title">Frações, Equivalências<br>e Números Mistos</h1>
+    <p class="hero-sub">8 fases · Escolhida pelo Orbie · Gap alto</p>
+
+    <div class="score-pills">
+      <div class="score-pill pill-green">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4 10-10" stroke="#37ec65" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        28/32 acertos
+      </div>
+      <div class="score-pill pill-gold">⚡ ×1.8 XP aplicado</div>
+      <div class="score-pill pill-purple">Maestria 38% → 71%</div>
+    </div>
+  </div>
+
+  <div class="page">
+
+    <!-- XP TOTAL BREAKDOWN -->
+    <div class="card">
+      <div class="card-title">XP desta trilha</div>
+
+      <div class="xp-row">
+        <span class="xp-row-label">Base (28 acertos × 10 XP)</span>
+        <span class="xp-row-val green">+280 XP</span>
+      </div>
+      <div class="xp-row">
+        <span class="xp-row-label">Bônus de gap · ×1.8 em 8 fases</span>
+        <span class="xp-row-val gold">+224 XP</span>
+      </div>
+      <div class="xp-row">
+        <span class="xp-row-label">Consistência · 3 dias seguidos</span>
+        <span class="xp-row-val orange">+80 XP</span>
+      </div>
+      <div class="xp-row">
+        <span class="xp-row-label">Bônus de conclusão da trilha</span>
+        <span class="xp-row-val purple">+50 XP</span>
+      </div>
+
+      <hr class="divider">
+
+      <div class="xp-total-row">
+        <span class="xp-total-label">Total</span>
+        <span class="xp-total-val">+634 XP</span>
+      </div>
+    </div>
+
+    <!-- NÍVEL -->
+    <div class="card">
+      <div class="card-title">Nível pessoal</div>
+      <div class="level-row">
+        <span class="level-label">Nível 7</span>
+        <span class="level-sub">954 / 1000 XP → Nível 8</span>
+      </div>
+      <div class="level-bar">
+        <div class="level-fill" id="levelFill" style="width:32%"></div>
+      </div>
+      <span class="level-gain">+634 XP ganhos hoje</span>
+    </div>
+
+    <!-- MAESTRIA -->
+    <div class="card">
+      <div class="card-title">Maestria atualizada</div>
+      <div class="mastery-grid">
+        <div class="mastery-item">
+          <span class="mastery-item-name">Equivalência de frações</span>
+          <span class="mastery-item-pct">71%</span>
+          <div class="mastery-item-bar"><div class="mastery-item-fill" style="width:71%"></div></div>
+          <span class="mastery-item-delta">↑ +33% nesta trilha</span>
+        </div>
+        <div class="mastery-item">
+          <span class="mastery-item-name">Simplificação</span>
+          <span class="mastery-item-pct">68%</span>
+          <div class="mastery-item-bar"><div class="mastery-item-fill" style="width:68%"></div></div>
+          <span class="mastery-item-delta">↑ +28% nesta trilha</span>
+        </div>
+        <div class="mastery-item">
+          <span class="mastery-item-name">Adição de frações</span>
+          <span class="mastery-item-pct">62%</span>
+          <div class="mastery-item-bar"><div class="mastery-item-fill" style="width:62%"></div></div>
+          <span class="mastery-item-delta">↑ +22% nesta trilha</span>
+        </div>
+        <div class="mastery-item">
+          <span class="mastery-item-name">Números mistos</span>
+          <span class="mastery-item-pct">55%</span>
+          <div class="mastery-item-bar"><div class="mastery-item-fill" style="width:55%"></div></div>
+          <span class="mastery-item-delta">↑ +15% (fase bônus)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- PRÓXIMA RECOMENDAÇÃO -->
+    <div class="next-card">
+      <div class="next-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+          <path d="M12 2l2.6 6.9 7.4.3-5.8 4.7 2 7.1-6.2-4.1L5.8 21l2-7.1L2 9l7.4-.3L12 2z" fill="rgba(139,92,246,0.85)"/>
+        </svg>
+      </div>
+      <div class="next-body">
+        <div class="next-label">PRÓXIMA RECOMENDAÇÃO · ORBIE</div>
+        <div class="next-title">Interpretação de gráficos</div>
+        <div class="next-sub">Matemática · Gap moderado</div>
+      </div>
+      <span class="next-mult">×1.3 XP</span>
+    </div>
+
+  </div>
+
+  <!-- BOTTOM CTA -->
+  <div class="bottom-cta">
+    <button class="btn-primary" onclick="location.href='trilha-detalhe-v2.html'">
+      Ver próxima recomendação
+    </button>
+    <button class="btn-secondary" onclick="location.href='index-v3.html'">
+      Voltar ao Laboratório
+    </button>
+  </div>
+
+<script>
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      document.getElementById('levelFill').style.width = '95.4%';
+    }, 400);
+  });
+</script>
+</body>
+</html>

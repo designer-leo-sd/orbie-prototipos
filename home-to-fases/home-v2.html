@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home — Orbie App v2</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:           #0F0A2E;
+      --bg-mid:       #160D3F;
+      --surface:      #1A1045;
+      --surface-card: #211450;
+      --border:       #2A1B6A;
+      --primary:      #0059E7;
+      --primary-100:  #99C0FF;
+      --green-400:    #12B76A;
+      --green-300:    #2ABC4E;
+      --yellow:       #FFEA24;
+      --star-off:     #3A2880;
+      --text:         #FFFFFF;
+      --text-muted:   rgba(255,255,255,0.5);
+      --text-dim:     rgba(255,255,255,0.35);
+      --orange:       #F79009;
+    }
+
+    html, body {
+      width: 100%; height: 100%;
+      overflow: hidden; /* full-screen space feel */
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      position: relative;
+    }
+
+    /* ══════════════════════════════════
+       SPACE BACKGROUND
+    ══════════════════════════════════ */
+    .space {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(ellipse 120% 80% at 20% 60%, #1A0D5C 0%, #0F0A2E 55%, #08051C 100%);
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    /* Static star field */
+    .star-field {
+      position: absolute;
+      inset: 0;
+    }
+    .star-dot {
+      position: absolute;
+      border-radius: 50%;
+      background: white;
+    }
+
+    /* Floating meteor rocks — right side, like in screenshot */
+    .rocks {
+      position: absolute;
+      right: 0;
+      top: 40px;
+      width: 220px;
+      height: 420px;
+      pointer-events: none;
+    }
+
+    /* ══════════════════════════════════
+       TOP NAV — horizontal, like production
+    ══════════════════════════════════ */
+    .top-nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+      z-index: 100;
+      /* subtle dark overlay so stars show through */
+      background: rgba(15, 10, 46, 0.6);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+
+    /* Logo */
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      flex-shrink: 0;
+    }
+    .logo-icon {
+      width: 32px; height: 32px;
+      position: relative;
+    }
+    .logo-icon svg { width: 100%; height: 100%; }
+    .logo-text {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 20px;
+      color: #fff;
+      letter-spacing: -0.3px;
+    }
+
+    /* Nav tabs — center */
+    .nav-tabs {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    .nav-tab {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 18px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 500;
+      color: rgba(255,255,255,0.65);
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      transition: color 0.2s, background 0.2s;
+      white-space: nowrap;
+    }
+    .nav-tab:hover:not(.active) {
+      color: rgba(255,255,255,0.9);
+      background: rgba(255,255,255,0.06);
+    }
+    .nav-tab.active {
+      background: var(--primary);
+      color: #fff;
+      font-weight: 600;
+    }
+    .nav-tab-icon {
+      width: 18px; height: 18px;
+      flex-shrink: 0;
+    }
+
+    /* Nav right — bell */
+    .nav-right {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .btn-bell {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+      transition: background 0.2s;
+    }
+    .btn-bell:hover { background: rgba(255,255,255,0.08); }
+    .bell-badge {
+      position: absolute;
+      top: 4px; right: 4px;
+      width: 10px; height: 10px;
+      background: var(--orange);
+      border-radius: 50%;
+      border: 2px solid var(--bg);
+    }
+
+    /* ══════════════════════════════════
+       MAIN CANVAS — planets float here
+    ══════════════════════════════════ */
+    .canvas {
+      position: fixed;
+      inset: 0;
+      top: 56px; /* below nav */
+      bottom: 60px; /* above bottom bar */
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    /* ── PLANET — absolutely positioned in the canvas ── */
+    .planet-wrap {
+      position: absolute;
+      display: flex;
+      align-items: center;
+      gap: 0;
+      cursor: pointer;
+    }
+
+    /* Planet image container */
+    .planet-img {
+      position: relative;
+      flex-shrink: 0;
+      transition: transform 0.4s ease;
+    }
+    .planet-wrap:hover .planet-img { transform: scale(1.04); }
+
+    .planet-img svg,
+    .planet-img canvas {
+      display: block;
+      filter: drop-shadow(0 12px 48px rgba(0,0,0,0.6));
+    }
+
+    /* Planet label — shown beside or above planet */
+    .planet-label {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .planet-label.right { padding-left: 20px; }
+    .planet-label.left  { padding-right: 20px; text-align: right; }
+
+    .planet-title {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 700;
+      font-size: 16px;
+      color: #fff;
+      letter-spacing: 0.5px;
+    }
+    /* Progress line */
+    .planet-progress-track {
+      width: 160px;
+      height: 2px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 2px;
+      position: relative;
+    }
+    .planet-label.right .planet-progress-track { margin-left: 0; }
+    .planet-label.left  .planet-progress-track { margin-left: auto; }
+
+    .planet-progress-fill {
+      position: absolute;
+      top: 0; left: 0;
+      height: 100%;
+      background: var(--green-300);
+      border-radius: 2px;
+    }
+
+    /* SIG mascot tiny — beside progress */
+    .planet-sig-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .planet-label.left .planet-sig-row { justify-content: flex-end; }
+
+    .planet-status-text {
+      font-size: 12px;
+      color: rgba(255,255,255,0.5);
+      font-weight: 400;
+    }
+    .planet-status-text.done { color: rgba(255,255,255,0.5); }
+    .planet-status-text.progress { color: rgba(255,255,255,0.5); }
+  </style>
+</head>
+<body>

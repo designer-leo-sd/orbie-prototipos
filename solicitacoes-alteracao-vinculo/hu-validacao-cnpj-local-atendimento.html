@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>MP · Validação de CNPJ — Local de Atendimento — SIG SESI MG</title>
+<style>
+/* ── tokens SIG SESI MG (baseados no Figma) ── */
+:root{
+  --blue-500:#164194;--blue-600:#233987;--blue-100:#b3d1e8;
+  --gray-900:#212529;--gray-800:#343a40;--gray-600:#6c757d;
+  --gray-400:#ced4da;--gray-300:#dee2e6;--gray-200:#e9ecef;
+  --green-100:#d1e7dd;--green-800:#0a3622;
+  --red-500:#ba0c2f;--red-100:#f8d7da;--red-800:#58151c;
+  --yellow-800:#664d03;--yellow-100:#fff3cd;--yellow-300:#ffda6a;
+  --warn-500:#ffb802;--yellow-900:#332701;
+  --secondary-100:#e6f2fa;
+  --white:#fff;--black:#000;
+  --r:6px;--r-lg:8px;--r-xl:16px;
+  --navbar:86px;--sidebar:336px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI','Gibson',system-ui,sans-serif;font-size:16px;background:#f0f2f5;color:var(--black);min-height:100vh}
+a{text-decoration:none;color:inherit;cursor:pointer}
+button{font-family:inherit;cursor:pointer;border:none;background:transparent}
+</style>
+<style>
+/* ── navbar ── */
+.navbar{height:var(--navbar);background:var(--blue-500);display:flex;align-items:center;justify-content:space-between;padding:0 24px 0 8px;position:fixed;top:0;left:0;right:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+.nb-logo{display:flex;align-items:center;gap:0;width:var(--sidebar);padding-left:16px}
+.nb-logo-inner{display:flex;flex-direction:column;line-height:1}
+.nb-sig{font-size:10px;font-weight:300;color:rgba(255,255,255,.65);letter-spacing:1px}
+.nb-sesi{font-size:22px;font-weight:800;color:#fff}
+.nb-right{display:flex;align-items:center;gap:24px}
+.nb-session{font-size:16px;font-weight:500;color:var(--blue-100)}
+.nb-icon{width:32px;height:32px;display:flex;align-items:center;justify-content:center;position:relative;cursor:pointer}
+.nb-icon svg{width:24px;height:24px;stroke:#fff;fill:none}
+.nb-badge{position:absolute;top:-4px;right:-4px;background:var(--warn-500);color:var(--yellow-900);font-size:10px;font-weight:700;min-width:18px;height:18px;padding:0 4px;border-radius:12px;display:flex;align-items:center;justify-content:center}
+.nb-avatar{width:32px;height:32px;border-radius:50%;border:1.5px solid rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;cursor:pointer}
+.nb-avatar svg{width:20px;height:20px;stroke:#fff;fill:none}
+/* ── sidebar ── */
+.sidebar{width:var(--sidebar);background:var(--white);border-right:1px solid var(--gray-200);position:fixed;top:var(--navbar);left:0;bottom:0;z-index:90;display:flex;flex-direction:column;justify-content:space-between;padding:24px 8px}
+.sb-menu{display:flex;flex-direction:column;gap:8px}
+.sb-item{display:flex;align-items:center;gap:16px;padding:16px;border-radius:var(--r);font-size:20px;font-weight:500;color:var(--gray-800);cursor:pointer;transition:background .15s}
+.sb-item:hover{background:var(--gray-200)}
+.sb-item.act{background:var(--gray-200);color:var(--blue-500)}
+.sb-item svg{width:24px;height:24px;stroke:currentColor;fill:none;flex-shrink:0}
+.sb-item .chev{width:24px;height:24px;stroke:var(--gray-600);fill:none;margin-left:auto;flex-shrink:0}
+.sb-foot{display:flex;align-items:center;justify-content:space-between;padding:0 8px}
+.sb-sesi{height:32px;width:92px;display:flex;align-items:center;justify-content:center;background:var(--blue-500);border-radius:10px}
+.sb-sesi span{font-size:14px;font-weight:800;color:#fff;letter-spacing:2px}
+.sb-collapse-btn{width:64px;height:64px;display:flex;align-items:center;justify-content:center;border-radius:var(--r);cursor:pointer}
+.sb-collapse-btn:hover{background:var(--gray-200)}
+.sb-collapse-btn svg{width:24px;height:24px;stroke:var(--gray-800);fill:none}
+</style>
+<style>
+/* ── main layout ── */
+.main{margin-top:var(--navbar);margin-left:var(--sidebar);padding:80px 80px 120px;min-height:calc(100vh - var(--navbar))}
+/* ── breadcrumb + title ── */
+.page-title{font-size:24px;font-weight:600;line-height:40px;color:var(--black);margin-bottom:4px}
+.breadcrumb{display:flex;align-items:center;gap:6px;font-size:16px;margin-bottom:40px}
+.breadcrumb a{color:var(--blue-500);font-weight:300}
+.breadcrumb span{color:var(--gray-600);font-weight:300}
+.bc-sep{color:var(--gray-400)}
+/* ── card ── */
+.card{background:var(--white);border:1px solid var(--gray-300);border-radius:var(--r-xl);padding:24px;margin-bottom:0}
+/* ── card local header ── */
+.local-header{display:flex;gap:24px;align-items:flex-start;margin-bottom:40px}
+.local-icon-wrap{width:56px;height:56px;background:var(--blue-500);border-radius:var(--r-lg);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.local-icon-wrap svg{width:32px;height:32px;stroke:#fff;fill:none}
+.local-info{flex:1}
+.local-name-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.local-name{font-size:24px;font-weight:600;color:var(--gray-800)}
+.local-meta{display:flex;align-items:center;justify-content:space-between;font-size:16px;color:var(--gray-600);font-weight:300}
+.local-meta-left{display:flex;gap:24px}
+.meta-pair{display:flex;gap:4px}
+.meta-pair b{font-weight:500;color:var(--gray-800)}
+/* ── section title ── */
+.sec-title{font-size:16px;font-weight:600;line-height:32px;color:var(--black);margin-bottom:24px}
+/* ── form rows ── */
+.form-row{display:flex;gap:24px;margin-bottom:24px;align-items:flex-start}
+.field{display:flex;flex-direction:column;gap:6px;flex:1}
+.field label{font-size:14px;font-weight:300;color:var(--black)}
+.field-hint{font-size:12px;color:var(--gray-600);margin-top:2px}
+/* ── input ── */
+.inp-wrap{display:flex;align-items:center;gap:8px;height:52px;border:1px solid var(--gray-300);border-radius:var(--r);padding:0 16px;background:var(--white);transition:border-color .15s}
+.inp-wrap:focus-within{border-color:var(--blue-500);box-shadow:0 0 0 3px rgba(22,65,148,.1)}
+.inp-wrap.err{border-color:var(--red-500);background:#fff8f8}
+.inp-wrap.ok{border-color:#16a34a}
+.inp-wrap.disabled{background:var(--gray-200)}
+.inp-wrap input{flex:1;border:none;outline:none;font-size:16px;font-family:inherit;color:var(--black);background:transparent}
+.inp-wrap input::placeholder{color:var(--gray-600);font-weight:300}
+.inp-wrap input:disabled{cursor:not-allowed}
+.inp-wrap svg{width:24px;height:24px;stroke:var(--gray-400);fill:none;flex-shrink:0}
+.sel-wrap{display:flex;align-items:center;gap:8px;height:52px;border:1px solid var(--gray-300);border-radius:var(--r);padding:0 16px;background:var(--white)}
+.sel-wrap select{flex:1;border:none;outline:none;font-size:16px;font-family:inherit;color:var(--gray-600);background:transparent;cursor:pointer}
+.sel-wrap svg{width:24px;height:24px;fill:none;stroke:var(--gray-600);flex-shrink:0}
+</style>
+<style>
+/* ── validação de CNPJ (MP) ── */
+.cnpj-validation{margin-top:6px;display:none;border-radius:var(--r);padding:12px 14px;font-size:14px;line-height:1.5;border:1px solid}
+.cnpj-validation.show{display:flex;gap:10px;align-items:flex-start}
+.cnpj-validation svg{width:18px;height:18px;fill:none;flex-shrink:0;margin-top:1px}
+.cnpj-val-bloqueado{background:var(--red-100);border-color:#f5c2c7;color:var(--red-800)}
+.cnpj-val-bloqueado svg{stroke:var(--red-800)}
+.cnpj-val-aviso{background:var(--yellow-100);border-color:var(--yellow-300);color:var(--yellow-800)}
+.cnpj-val-aviso svg{stroke:var(--yellow-800)}
+.cnpj-val-ok{background:var(--green-100);border-color:#a3cfbb;color:var(--green-800)}
+.cnpj-val-ok svg{stroke:var(--green-800)}
+.cnpj-val-link{font-weight:600;text-decoration:underline;cursor:pointer;margin-left:4px}
+/* ── reativação banner ── */
+.reativ-banner{display:none;align-items:flex-start;gap:12px;padding:14px 16px;border-radius:var(--r);border:1px solid #f5c2c7;background:var(--red-100);color:var(--red-800);font-size:14px;line-height:1.5;margin-bottom:24px}
+.reativ-banner.show{display:flex}
+.reativ-banner svg{width:20px;height:20px;stroke:var(--red-800);fill:none;flex-shrink:0;margin-top:1px}
+/* ── radio ── */
+.radio-group{display:flex;gap:24px;align-items:center}
+.radio-opt{display:flex;align-items:center;gap:8px;cursor:pointer;font-size:16px;font-weight:500;color:var(--gray-800)}
+.radio-opt input{width:16px;height:16px;accent-color:var(--blue-500);cursor:pointer}
+/* ── horários placeholder ── */
+.horarios-card{border:1.5px dashed var(--gray-600);border-radius:var(--r);padding:40px 24px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center}
+.horarios-card svg{width:80px;height:80px;stroke:var(--gray-400);fill:none;stroke-width:1}
+.horarios-card-title{font-size:24px;font-weight:600;color:var(--black)}
+.horarios-card-sub{font-size:16px;font-weight:300;color:var(--gray-600)}
+/* ── section header com botão ── */
+.sec-header{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:16px}
+.sec-header-info{flex:1}
+.sec-header-title{font-size:24px;font-weight:600;line-height:40px;color:var(--black)}
+.sec-header-sub{font-size:16px;font-weight:300;color:var(--gray-600)}
+/* ── alert info ── */
+.alert-info{display:flex;gap:12px;align-items:center;padding:14px 16px;border-radius:var(--r);border:1px solid var(--blue-600);background:var(--blue-100);font-size:14px;color:var(--blue-600);margin-bottom:16px;line-height:1.5}
+.alert-info svg{width:24px;height:24px;stroke:var(--blue-600);fill:none;flex-shrink:0}
+/* ── table ── */
+.tbl-search-row{display:flex;gap:24px;align-items:center;margin-bottom:16px}
+.search-inp{flex:1;display:flex;align-items:center;gap:8px;height:52px;border:1px solid var(--gray-300);border-radius:var(--r);padding:0 16px;background:var(--white)}
+.search-inp svg{width:24px;height:24px;stroke:var(--gray-600);fill:none;flex-shrink:0}
+.search-inp input{flex:1;border:none;outline:none;font-size:16px;font-family:inherit;color:var(--gray-600);background:transparent}
+.filter-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.filter-chip{display:flex;align-items:center;gap:8px;padding:5px 12px;border:1px solid var(--gray-300);border-radius:var(--r);font-size:16px;font-weight:300;color:var(--gray-600);cursor:pointer;background:var(--white)}
+.filter-chip svg{width:24px;height:24px;stroke:var(--gray-600);fill:none}
+.tbl-wrap{border:1px solid var(--gray-400);border-radius:var(--r);overflow:hidden}
+.tbl{width:100%;border-collapse:collapse}
+.tbl thead th{background:var(--blue-500);color:#fff;font-size:20px;font-weight:500;padding:12px 24px;text-align:left;white-space:nowrap}
+.tbl thead th:first-child{width:56px;text-align:center}
+.tbl thead th:last-child{width:100px;text-align:center}
+.tbl tbody tr{border-bottom:1px solid var(--gray-400)}
+.tbl tbody tr:last-child{border-bottom:none}
+.tbl tbody td{padding:12px 24px;font-size:16px;font-weight:500;color:var(--black);vertical-align:middle}
+.tbl tbody td:first-child,.tbl tbody td:last-child{text-align:center}
+/* ── badge ── */
+.badge{display:inline-flex;align-items:center;padding:4px 8px;border-radius:12px;font-size:12px;font-weight:400}
+.badge-green{background:var(--green-100);color:var(--green-800)}
+.badge-blue{background:var(--blue-500);color:#fff}
+.badge-blue-lt{background:var(--secondary-100);color:var(--gray-900)}
+.badge-gray{background:var(--gray-200);color:var(--gray-800)}
+/* ── pagination ── */
+.pagination{display:flex;gap:4px;justify-content:center;margin-top:16px}
+.pg-item{width:40px;height:40px;display:flex;align-items:center;justify-content:center;border:1px solid var(--gray-200);border-radius:4px;font-size:16px;font-weight:300;color:var(--gray-600);cursor:pointer;background:var(--white)}
+.pg-item.act{background:var(--blue-500);border-color:var(--blue-500);color:#fff}
+.pg-item svg{width:16px;height:16px;stroke:currentColor;fill:none}
+/* ── botões ── */
+.btn-row{display:flex;gap:24px;align-items:center;justify-content:flex-end;margin-top:24px}
+.btn{padding:10px 16px;border-radius:var(--r);font-size:16px;font-weight:500;font-family:inherit;cursor:pointer;border:none;display:inline-flex;align-items:center;gap:8px;min-width:180px;justify-content:center;transition:all .15s}
+.btn-primary{background:var(--blue-500);color:#fff}
+.btn-primary:hover{background:var(--blue-600)}
+.btn-danger{background:var(--red-500);color:#fff}
+.btn-ghost-blue{background:var(--white);color:var(--blue-500);border:1px solid var(--blue-500)}
+.btn-ghost-blue:hover{background:var(--blue-100)}
+/* ── spinner ── */
+.spin{display:inline-block;width:16px;height:16px;border:2px solid rgba(22,65,148,.25);border-top-color:var(--blue-500);border-radius:50%;animation:sp .7s linear infinite;flex-shrink:0}
+@keyframes sp{to{transform:rotate(360deg)}}
+/* ── annotations ── */
+.ann{background:#FFFBEB;border:1px solid #FDE68A;border-radius:var(--r-xl);padding:16px 20px;margin-bottom:28px}
+.ann h3{font-size:11px;font-weight:700;color:#92400E;margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px}
+.ann-item{display:flex;gap:8px;margin-bottom:7px;font-size:12px;color:#78350F;line-height:1.5}
+.ann-item:last-child{margin-bottom:0}
+.ann-n{min-width:18px;height:18px;background:#F59E0B;color:#fff;border-radius:50%;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+/* ── tabs (cadastro / reativação) ── */
+.view-tabs{display:flex;gap:0;border-bottom:2px solid var(--gray-300);margin-bottom:32px}
+.view-tab{padding:10px 32px;font-size:16px;font-weight:500;color:var(--blue-500);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s}
+.view-tab.act{color:var(--blue-600);border-bottom-color:var(--blue-600)}
+.view{display:none}
+.view.act{display:block}
+/* ── overlay + modal ── */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;display:none;align-items:center;justify-content:center}
+.overlay.open{display:flex}
+.modal{background:#fff;border-radius:var(--r-xl);box-shadow:0 20px 60px rgba(0,0,0,.2);width:100%;max-height:90vh;display:flex;flex-direction:column;overflow:hidden}
+.modal-md{max-width:640px}
+.modal-hd{display:flex;align-items:flex-start;justify-content:space-between;padding:20px 24px;border-bottom:1px solid var(--gray-300)}
+.modal-hd-left{display:flex;align-items:flex-start;gap:12px}
+.modal-hd-icon{width:44px;height:44px;border-radius:var(--r-lg);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.modal-hd-icon.err{background:#FEE2E2}
+.modal-hd-icon.err svg{stroke:#DC2626}
+.modal-hd-icon svg{width:22px;height:22px;fill:none}
+.modal-hd-text h2{font-size:18px;font-weight:600;color:var(--black)}
+.modal-hd-text p{font-size:13px;color:var(--gray-600);margin-top:3px;line-height:1.5}
+.modal-close{width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:var(--r);cursor:pointer;flex-shrink:0}
+.modal-close:hover{background:var(--gray-200)}
+.modal-close svg{width:18px;height:18px;stroke:var(--gray-600);fill:none}
+.modal-body{padding:20px 24px;overflow-y:auto;flex:1}
+.modal-ft{padding:16px 24px;border-top:1px solid var(--gray-300);display:flex;gap:10px;justify-content:flex-end;background:#F9FAFB}
+.modal-btn{padding:10px 20px;border-radius:var(--r);font-size:14px;font-weight:500;font-family:inherit;cursor:pointer;border:1px solid transparent}
+.modal-btn-ghost{background:#fff;border-color:var(--gray-300);color:var(--gray-800)}
+.modal-btn-ghost:hover{background:var(--gray-200)}
+/* ── info box no modal ── */
+.info-box{background:#F8FAFF;border:1px solid #D0DFFE;border-radius:var(--r-lg);padding:14px 16px;margin-bottom:16px}
+.info-box-title{font-size:11px;font-weight:700;color:var(--blue-600);margin-bottom:8px;text-transform:uppercase;letter-spacing:.4px}
+.info-row{display:flex;gap:8px;margin-bottom:5px;font-size:13px}
+.info-row:last-child{margin-bottom:0}
+.info-lbl{font-weight:600;min-width:110px;color:var(--black)}
+.info-val{color:var(--gray-600)}
+/* ── toast ── */
+.toast{position:fixed;bottom:24px;right:24px;background:#1F2937;color:#fff;border-radius:var(--r);padding:12px 16px;font-size:13px;display:flex;align-items:center;gap:8px;box-shadow:0 8px 24px rgba(0,0,0,.25);z-index:600;transform:translateY(80px);opacity:0;transition:all .3s;max-width:420px}
+.toast.show{transform:translateY(0);opacity:1}
+.toast-ok{border-left:4px solid #16A34A}
+.toast-err{border-left:4px solid var(--red-500)}
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="nb-logo">
+    <div class="nb-logo-inner">
+      <span class="nb-sig">SISTEMA INTEGRADO DE GESTÃO</span>
+      <span class="nb-sesi">SIG SESI MG</span>
+    </div>
+  </div>
+  <div class="nb-right">
+    <span class="nb-session">Sessão: 2:00h</span>
+    <div class="nb-icon">
+      <svg viewBox="0 0 24 24"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      <span class="nb-badge">1</span>
+    </div>
+    <div class="nb-avatar">
+      <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    </div>
+  </div>
+</nav>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sb-menu">
+    <div class="sb-item">
+      <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Início
+    </div>
+    <div class="sb-item act">
+      <svg viewBox="0 0 24 24"><path d="M20 7H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+      Prestadores
+    </div>
+    <div class="sb-item">
+      <svg viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+      Unidades Operacionais
+      <svg class="chev" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="sb-item">
+      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Agendamento
+      <svg class="chev" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="sb-item">
+      <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      Financeiro
+      <svg class="chev" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="sb-item">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+      Administração
+      <svg class="chev" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+  </div>
+  <div class="sb-foot">
+    <div class="sb-sesi"><span>SESi</span></div>
+    <div class="sb-collapse-btn">
+      <svg viewBox="0 0 24 24"><rect x="2" y="3" width="7" height="18" rx="1"/><polyline points="14 8 9 12 14 16"/></svg>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+  <!-- annotations -->
+  <div class="ann">
+    <h3>📋 MP · Validação de CNPJ duplicado como Local de Atendimento</h3>
+    <div class="ann-item"><span class="ann-n">1</span><span><b>Solução de UX:</b> A doc não especifica steps — a validação foi implementada como inline no campo CNPJ, fiel ao padrão do Figma. Ao sair do campo (ou clicar na lupa), o sistema valida e exibe feedback embaixo do campo. Se bloqueado, o formulário inteiro fica desabilitado.</span></div>
+    <div class="ann-item"><span class="ann-n">2</span><span><b>CNPJs de teste no cadastro:</b> <b>12.345.678/0001-90</b> → bloqueado (ativo em outro Prestador); <b>11.222.333/0001-44</b> → aviso (inativo em outro Prestador, permite); qualquer outro → livre.</span></div>
+    <div class="ann-item"><span class="ann-n">3</span><span><b>Aba Reativação:</b> O botão "Reativar" de "Centro Médico Savassi" (CNPJ 12.345.678/0001-90) está bloqueado — aparece banner de erro no topo e modal explicativo. Os demais têm reativação normal.</span></div>
+    <div class="ann-item"><span class="ann-n">4</span><span><b>Textos de erro:</b> Idênticos ao texto oficial da especificação, prontos para uso pelo dev sem ajuste.</span></div>
+  </div>
+
+  <!-- page header -->
+  <p class="page-title">Editar Local de atendimento</p>
+  <div class="breadcrumb">
+    <a>Prestadores</a>
+    <span class="bc-sep">›</span>
+    <a>NexoTech</a>
+    <span class="bc-sep">›</span>
+    <span>Local de atendimento</span>
+  </div>
+
+  <!-- tabs: cadastro | reativação -->
+  <div class="view-tabs">
+    <div class="view-tab act" onclick="showView('cadastro',this)">Cadastrar / Editar Local</div>
+    <div class="view-tab" onclick="showView('reativacao',this)">Reativar Local de Atendimento</div>
+  </div>
+
+  <!-- ═══════════════════════════════════════
+       VIEW: CADASTRO / EDIÇÃO
+       ═══════════════════════════════════════ -->
+  <div class="view act" id="view-cadastro">
+    <div class="card">
+      <!-- card header -->
+      <div class="local-header">
+        <div class="local-icon-wrap">
+          <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        </div>
+        <div class="local-info">
+          <div class="local-name-row">
+            <span class="local-name">Centro de Saúde Fernanda Costa</span>
+            <span class="badge badge-green">Ativo</span>
+          </div>
+          <div class="local-meta">
+            <div class="local-meta-left">
+              <span class="meta-pair"><b>CNPJ:</b> 12.345.678/0001-99</span>
+              <span class="meta-pair"><b>Cidade:</b> Belo Horizonte/MG</span>
+              <span class="meta-pair"><b>Telefone:</b> (31) 99999-9999</span>
+              <span class="meta-pair"><b>E-mail:</b> usuário@alphanexus.com.br</span>
+            </div>
+            <span class="meta-pair"><b>Última atualização:</b> 28/08/2025 | 18:15</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- seção: informações do local -->
+      <p class="sec-title">Informações do local</p>
+
+      <div class="form-row">
+        <!-- CNPJ com validação inline MP -->
+        <div class="field" style="flex:1">
+          <label>CNPJ*</label>
+          <div class="inp-wrap" id="cnpj-wrap">
+            <input type="text" id="cnpj-input" placeholder="Digite o número do CNPJ" maxlength="18" oninput="maskCNPJ(this)" onblur="validarCNPJ()"/>
+            <svg id="cnpj-search-icon" viewBox="0 0 24 24" style="cursor:pointer" onclick="validarCNPJ()"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <span class="spin" id="cnpj-spin" style="display:none"></span>
+          </div>
+          <!-- feedback inline MP -->
+          <div class="cnpj-validation" id="cnpj-feedback">
+            <svg viewBox="0 0 24 24" id="cnpj-fb-icon"></svg>
+            <div id="cnpj-fb-text"></div>
+          </div>
+        </div>
+        <div class="field" style="flex:1">
+          <label>Nome do Local*</label>
+          <div class="inp-wrap" id="nome-local-wrap">
+            <input type="text" id="nome-local-input" value="Centro de Saúde Fernanda Costa"/>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="field" style="flex:1">
+          <label>E-mail*</label>
+          <div class="inp-wrap" id="email-wrap"><input type="text" id="email-input" value="usuário@alphanexus.com.br"/></div>
+        </div>
+        <div class="field" style="flex:1">
+          <label>Telefone*</label>
+          <div class="inp-wrap" id="tel-wrap"><input type="text" id="tel-input" value="(31) 99999-9999"/></div>
+        </div>
+        <div class="field" style="flex:1">
+          <label>Tipo de Atendimento</label>
+          <div class="sel-wrap" id="tipo-wrap">
+            <select id="tipo-select"><option value="">Selecione o tipo de atendimento</option><option>Presencial</option><option>Remoto</option><option>Híbrido</option></select>
+            <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- tipo de local -->
+      <p class="sec-title">Tipo de local</p>
+      <div class="radio-group" style="margin-bottom:24px" id="tipo-local-wrap">
+        <label class="radio-opt"><input type="radio" name="tipo-local" value="matriz"> Matriz</label>
+        <label class="radio-opt"><input type="radio" name="tipo-local" value="filial" checked> Filial</label>
+      </div>
+      <!-- horários -->
+      <div class="sec-header">
+        <div class="sec-header-info">
+          <div class="sec-header-title">Horários de Atendimento e Vigências</div>
+          <div class="sec-header-sub">Defina os dias e horários de funcionamento deste Local de Atendimento e gerencie o histórico de configurações por período de vigência.</div>
+        </div>
+        <button class="btn btn-ghost-blue" style="min-width:auto;padding:10px 16px">
+          <svg viewBox="0 0 24 24" style="width:20px;height:20px;stroke:var(--blue-500);fill:none"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+          Adicionar
+        </button>
+      </div>
+      <div class="horarios-card" style="margin-bottom:24px">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <div class="horarios-card-title">Nenhuma configuração de horários cadastrada</div>
+        <div class="horarios-card-sub">Adicione um período de vigência para começar.</div>
+      </div>
+
+      <!-- endereço -->
+      <p class="sec-title">Endereço</p>
+      <div class="form-row" id="end-row1">
+        <div class="field" style="flex:1">
+          <label>CEP*</label>
+          <div class="inp-wrap" id="cep-wrap">
+            <input type="text" placeholder="Digite o número do CEP"/>
+            <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          </div>
+        </div>
+        <div class="field" style="flex:1">
+          <label>Endereço*</label>
+          <div class="inp-wrap" id="end-wrap"><input type="text" placeholder="Digite o endereço"/></div>
+        </div>
+      </div>
+      <div class="form-row" id="end-row2">
+        <div class="field" style="flex:1"><label>Número*</label><div class="inp-wrap" id="num-wrap"><input type="text" placeholder="Digite o número"/></div></div>
+        <div class="field" style="flex:1"><label>Complemento</label><div class="inp-wrap" id="comp-wrap"><input type="text" placeholder="Digite o complemento"/></div></div>
+        <div class="field" style="flex:1"><label>Bairro*</label><div class="inp-wrap" id="bairro-wrap"><input type="text" placeholder="Digite o bairro"/></div></div>
+      </div>
+      <div class="form-row" id="end-row3">
+        <div class="field" style="flex:1">
+          <label>Unidade Federativa</label>
+          <div class="sel-wrap" id="uf-wrap"><select><option>Minas Gerais</option></select><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+        </div>
+        <div class="field" style="flex:1">
+          <label>Cidade</label>
+          <div class="sel-wrap" id="cidade-wrap"><select><option value="">Selecione a cidade</option><option>Belo Horizonte</option><option>Contagem</option><option>Betim</option></select><svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+        </div>
+      </div>
+
+      <!-- abrangência -->
+      <div class="sec-header" id="abrang-header">
+        <div class="sec-header-info">
+          <div class="sec-header-title">Abrangência de atendimento</div>
+          <div class="sec-header-sub">Configure as regiões atendidas por este Local de Atendimento.</div>
+        </div>
+        <button class="btn btn-ghost-blue" style="min-width:auto;padding:10px 16px">
+          <svg viewBox="0 0 24 24" style="width:20px;height:20px;stroke:var(--blue-500);fill:none"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Adicionar
+          <svg viewBox="0 0 24 24" style="width:20px;height:20px;stroke:var(--blue-500);fill:none"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+      </div>
+      <div class="alert-info" id="abrang-alert">
+        <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        <span><b>Cidade do endereço: Belo Horizonte/MG.</b> Esta cidade é considerada automaticamente como atendida.</span>
+      </div>
+      <div class="tbl-search-row" id="abrang-search">
+        <div class="search-inp"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" placeholder="Buscar por nome"/></div>
+      </div>
+      <div class="filter-row" id="abrang-filter">
+        <div class="filter-chip">Referência de atendimento <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg></div>
+        <span style="font-size:14px;font-weight:500;color:var(--gray-800);cursor:pointer">Limpar filtros</span>
+      </div>
+      <div class="tbl-wrap" id="abrang-tbl">
+        <table class="tbl">
+          <thead><tr><th><input type="checkbox" style="accent-color:#fff;width:16px;height:16px"/></th><th>Cidades atendidas ↑</th><th>Referência de atendimento</th><th>Ações</th></tr></thead>
+          <tbody>
+            <tr><td><input type="checkbox" disabled style="accent-color:var(--blue-500)"/></td><td>Belo Horizonte</td><td><span class="badge badge-blue">Endereço</span></td><td></td></tr>
+            <tr><td><input type="checkbox"/></td><td>Nova Lima</td><td><span class="badge badge-blue-lt">Por área de abrangência</span></td><td><svg viewBox="0 0 24 24" style="width:20px;height:20px;stroke:var(--gray-600);fill:none;cursor:pointer"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></td></tr>
+            <tr><td><input type="checkbox"/></td><td>Contagem</td><td><span class="badge badge-blue-lt">Por área de abrangência</span></td><td><svg viewBox="0 0 24 24" style="width:20px;height:20px;stroke:var(--gray-600);fill:none;cursor:pointer"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></td></tr>
+            <tr><td><input type="checkbox"/></td><td>Sabará</td><td><span class="badge badge-blue-lt">Por área de abrangência</span></td><td><svg viewBox="0 0 24 24" style="width:20px;height:20px;stroke:var(--gray-600);fill:none;cursor:pointer"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></td></tr>
+            <tr><td><input type="checkbox"/></td><td>Ribeirão das Neves</td><td><span class="badge badge-blue-lt">Por área de abrangência</span></td><td><svg viewBox="0 0 24 24" style="width:20px;height:20px;stroke:var(--gray-600);fill:none;cursor:pointer"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></td></tr>
+            <tr><td><input type="checkbox"/></td><td>Ibirité</td><td><span class="badge badge-gray">Cidade adicional</span></td><td><svg viewBox="0 0 24 24" style="width:20px;height:20px;stroke:var(--gray-600);fill:none;cursor:pointer"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></td></tr>
+            <tr><td><input type="checkbox"/></td><td>Betim</td><td><span class="badge badge-blue-lt">Por área de abrangência</span></td><td><svg viewBox="0 0 24 24" style="width:20px;height:20px;stroke:var(--gray-600);fill:none;cursor:pointer"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></td></tr>
+            <tr><td><input type="checkbox"/></td><td>Esmeraldas</td><td><span class="badge badge-blue-lt">Por área de abrangência</span></td><td><svg viewBox="0 0 24 24" style="width:20px;height:20px;stroke:var(--gray-600);fill:none;cursor:pointer"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="pagination" id="abrang-pag">
+        <div class="pg-item"><svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg></div>
+        <div class="pg-item act">1</div>
+        <div class="pg-item">2</div>
+        <div class="pg-item"><svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg></div>
+      </div>
+
+      <!-- botões -->
+      <div class="btn-row">
+        <button class="btn btn-danger">Cancelar</button>
+        <button class="btn btn-primary" id="btn-salvar" onclick="salvarLocal()">Salvar</button>
+      </div>
+    </div><!-- /card -->
+  </div><!-- /view cadastro -->
+  <!-- ═══════════════════════════════════════
+       VIEW: REATIVAÇÃO
+       ═══════════════════════════════════════ -->
+  <div class="view" id="view-reativacao">
+    <!-- banner de bloqueio (aparece ao tentar reativar CNPJ ativo em outro Prestador) -->
+    <div class="reativ-banner" id="reativ-banner">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+      <div>
+        <strong>Não foi possível reativar o Local de Atendimento</strong><br/>
+        O CNPJ deste Local de Atendimento está atualmente vinculado a um Local de Atendimento ativo de outro Prestador. Para realizar esta reativação, será necessário primeiro inativar o vínculo ativo existente.
+        <span class="cnpj-val-link" onclick="openModal('modal-bloqueio-reativ')">Ver detalhes →</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="sec-header" style="margin-bottom:20px">
+        <div class="sec-header-info">
+          <div class="sec-header-title">Locais de Atendimento Inativos</div>
+          <div class="sec-header-sub">Selecione um local para reativar. O sistema verificará automaticamente se o CNPJ está disponível.</div>
+        </div>
+        <span class="badge badge-gray" style="font-size:14px;padding:6px 12px">4 registros</span>
+      </div>
+      <div class="tbl-wrap">
+        <table class="tbl">
+          <thead><tr><th style="width:auto;text-align:left">Local de Atendimento</th><th>CNPJ</th><th>Inativado em</th><th>Ações</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><div style="font-weight:600">Centro Médico Savassi</div><div style="font-size:14px;font-weight:300;color:var(--gray-600)">Av. do Contorno, 4500 — Savassi</div></td>
+              <td style="font-family:monospace">12.345.678/0001-90</td>
+              <td>10/03/2025</td>
+              <td><button class="btn btn-primary" style="min-width:auto;padding:7px 16px;font-size:14px" onclick="tentarReativar('bloqueado','Centro Médico Savassi','12.345.678/0001-90')">Reativar</button></td>
+            </tr>
+            <tr>
+              <td><div style="font-weight:600">Clínica Fisio Norte</div><div style="font-size:14px;font-weight:300;color:var(--gray-600)">Av. Cristiano Machado, 800 — BH</div></td>
+              <td style="font-family:monospace">98.765.432/0001-11</td>
+              <td>22/11/2024</td>
+              <td><button class="btn btn-primary" style="min-width:auto;padding:7px 16px;font-size:14px" onclick="tentarReativar('livre','Clínica Fisio Norte','98.765.432/0001-11')">Reativar</button></td>
+            </tr>
+            <tr>
+              <td><div style="font-weight:600">Lab Análises Centro</div><div style="font-size:14px;font-weight:300;color:var(--gray-600)">Rua Tupis, 340 — Centro BH</div></td>
+              <td style="font-family:monospace">55.443.221/0001-77</td>
+              <td>05/01/2025</td>
+              <td><button class="btn btn-primary" style="min-width:auto;padding:7px 16px;font-size:14px" onclick="tentarReativar('livre','Lab Análises Centro','55.443.221/0001-77')">Reativar</button></td>
+            </tr>
+            <tr>
+              <td><div style="font-weight:600">Centro Médico Pampulha</div><div style="font-size:14px;font-weight:300;color:var(--gray-600)">Av. Portugal, 1200 — Pampulha</div></td>
+              <td style="font-family:monospace">33.221.100/0001-55</td>
+              <td>14/04/2025</td>
+              <td><button class="btn btn-primary" style="min-width:auto;padding:7px 16px;font-size:14px" onclick="tentarReativar('livre','Centro Médico Pampulha','33.221.100/0001-55')">Reativar</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div><!-- /view reativacao -->
+</main>
+
+<!-- MODAL: bloqueio cadastro -->
+<div class="overlay" id="modal-bloqueio-cadastro">
+  <div class="modal modal-md">
+    <div class="modal-hd">
+      <div class="modal-hd-left">
+        <div class="modal-hd-icon err"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></div>
+        <div class="modal-hd-text">
+          <h2>CNPJ já vinculado a outro Prestador</h2>
+          <p>Não é possível prosseguir com este cadastro</p>
+        </div>
+      </div>
+      <button class="modal-close" onclick="closeModal('modal-bloqueio-cadastro')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div style="background:var(--red-100);border:1px solid #f5c2c7;border-radius:var(--r);padding:14px 16px;margin-bottom:20px;font-size:14px;color:var(--red-800);line-height:1.6;display:flex;gap:10px">
+        <svg viewBox="0 0 24 24" style="width:20px;height:20px;stroke:var(--red-800);fill:none;flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+        <div><strong>CNPJ já vinculado a outro Prestador</strong><br/>O CNPJ informado já está vinculado a um Local de Atendimento ativo de outro Prestador e não pode possuir dois vínculos ativos simultaneamente. Verifique o vínculo existente antes de prosseguir.</div>
+      </div>
+      <div class="info-box">
+        <div class="info-box-title">Vínculo ativo identificado</div>
+        <div class="info-row"><span class="info-lbl">CNPJ</span><span class="info-val" id="modal-cnpj-bloq">—</span></div>
+        <div class="info-row"><span class="info-lbl">Prestador</span><span class="info-val">Saúde &amp; Vida Serviços Médicos Ltda.</span></div>
+        <div class="info-row"><span class="info-lbl">Local</span><span class="info-val">Clínica SV — Unidade Savassi</span></div>
+        <div class="info-row"><span class="info-lbl">Situação</span><span class="info-val"><span class="badge badge-green">Ativo</span></span></div>
+        <div class="info-row"><span class="info-lbl">Vinculado desde</span><span class="info-val">15/02/2024</span></div>
+      </div>
+      <p style="font-size:13px;color:var(--gray-600);line-height:1.6">Para utilizar este CNPJ, será necessário primeiro inativar o vínculo existente no Prestador "Saúde &amp; Vida Serviços Médicos Ltda."</p>
+    </div>
+    <div class="modal-ft">
+      <button class="modal-btn modal-btn-ghost" onclick="closeModal('modal-bloqueio-cadastro')">Fechar</button>
+      <button class="modal-btn" style="background:var(--blue-500);color:#fff;border-color:var(--blue-500);display:inline-flex;align-items:center;gap:6px" onclick="acessarVinculoAtivo('cadastro')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        Acessar Local de Atendimento
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: bloqueio reativação -->
+<div class="overlay" id="modal-bloqueio-reativ">
+  <div class="modal modal-md">
+    <div class="modal-hd">
+      <div class="modal-hd-left">
+        <div class="modal-hd-icon err"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg></div>
+        <div class="modal-hd-text">
+          <h2>Não foi possível reativar o Local de Atendimento</h2>
+          <p id="modal-reativ-sub">CNPJ atualmente vinculado a outro Prestador</p>
+        </div>
+      </div>
+      <button class="modal-close" onclick="closeModal('modal-bloqueio-reativ')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div style="background:var(--red-100);border:1px solid #f5c2c7;border-radius:var(--r);padding:14px 16px;margin-bottom:20px;font-size:14px;color:var(--red-800);line-height:1.6;display:flex;gap:10px">
+        <svg viewBox="0 0 24 24" style="width:20px;height:20px;stroke:var(--red-800);fill:none;flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+        <div><strong>Não foi possível reativar o Local de Atendimento</strong><br/>O CNPJ deste Local de Atendimento está atualmente vinculado a um Local de Atendimento ativo de outro Prestador. Para realizar esta reativação, será necessário primeiro inativar o vínculo ativo existente.</div>
+      </div>
+      <div class="info-box">
+        <div class="info-box-title">Local que impede a reativação</div>
+        <div class="info-row"><span class="info-lbl">Local tentado</span><span class="info-val" id="modal-reativ-nome">—</span></div>
+        <div class="info-row"><span class="info-lbl">CNPJ</span><span class="info-val" id="modal-reativ-cnpj">—</span></div>
+        <div class="info-row"><span class="info-lbl">Prestador ativo</span><span class="info-val">Saúde &amp; Vida Serviços Médicos Ltda.</span></div>
+        <div class="info-row"><span class="info-lbl">Local vinculado</span><span class="info-val">Clínica SV — Unidade Savassi</span></div>
+        <div class="info-row"><span class="info-lbl">Situação</span><span class="info-val"><span class="badge badge-green">Ativo em outro Prestador</span></span></div>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="modal-btn modal-btn-ghost" onclick="closeModal('modal-bloqueio-reativ')">Fechar</button>
+      <button class="modal-btn" style="background:var(--blue-500);color:#fff;border-color:var(--blue-500);display:inline-flex;align-items:center;gap:6px" onclick="acessarVinculoAtivo('reativ')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        Acessar Local de Atendimento
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: confirmar reativação -->
+<div class="overlay" id="modal-confirmar-reativ">
+  <div class="modal modal-md" style="max-width:500px">
+    <div class="modal-hd">
+      <div class="modal-hd-left">
+        <div class="modal-hd-icon" style="background:#EEF3FF"><svg viewBox="0 0 24 24" style="stroke:var(--blue-500)"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+        <div class="modal-hd-text">
+          <h2>Confirmar reativação</h2>
+          <p id="modal-confirmar-sub">Deseja reativar este Local de Atendimento?</p>
+        </div>
+      </div>
+      <button class="modal-close" onclick="closeModal('modal-confirmar-reativ')"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div style="background:var(--yellow-100);border:1px solid var(--yellow-300);border-radius:var(--r);padding:14px 16px;font-size:14px;color:var(--yellow-800);line-height:1.6;display:flex;gap:10px">
+        <svg viewBox="0 0 24 24" style="width:18px;height:18px;stroke:var(--yellow-800);fill:none;flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <div>Ao confirmar, o Local de Atendimento voltará a ficar disponível. Certifique-se de que os dados cadastrais estão atualizados.</div>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="modal-btn modal-btn-ghost" onclick="closeModal('modal-confirmar-reativ')">Cancelar</button>
+      <button class="modal-btn" style="background:var(--blue-500);color:#fff;border-color:var(--blue-500)" onclick="confirmarReativacao()">Confirmar Reativação</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script>
+// ── utils ──
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+function showToast(msg, type='ok'){
+  const t=document.getElementById('toast');
+  t.className='toast toast-'+type;
+  t.innerHTML=msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),4000);
+}
+
+// ── views (cadastro / reativação) ──
+function showView(id, el){
+  document.querySelectorAll('.view-tab').forEach(t=>t.classList.remove('act'));
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('act'));
+  el.classList.add('act');
+  document.getElementById('view-'+id).classList.add('act');
+  // limpa estado ao trocar de aba
+  if(id==='reativacao') document.getElementById('reativ-banner').classList.remove('show');
+}
+
+// ── CNPJ mask ──
+function maskCNPJ(el){
+  let v=el.value.replace(/\D/g,'');
+  if(v.length>14)v=v.substr(0,14);
+  v=v.replace(/^(\d{2})(\d)/,'$1.$2');
+  v=v.replace(/^(\d{2})\.(\d{3})(\d)/,'$1.$2.$3');
+  v=v.replace(/\.(\d{3})(\d)/,'.$1/$2');
+  v=v.replace(/(\d{4})(\d)/,'$1-$2');
+  el.value=v;
+  // reset ao digitar
+  resetCNPJState();
+}
+
+function resetCNPJState(){
+  const wrap=document.getElementById('cnpj-wrap');
+  wrap.classList.remove('err','ok');
+  const fb=document.getElementById('cnpj-feedback');
+  fb.className='cnpj-validation';
+  setFormDisabled(false);
+  document.getElementById('btn-salvar').disabled=false;
+}
+
+// ── CNPJs mockados ──
+const CNPJ_BLOQUEADO='12.345.678/0001-90';
+const CNPJ_INATIVO_OUTRO='11.222.333/0001-44';
+
+// ── validação inline ──
+function validarCNPJ(){
+  const val=document.getElementById('cnpj-input').value.trim();
+  if(!val||val.length<18)return;
+
+  // spinner
+  document.getElementById('cnpj-search-icon').style.display='none';
+  document.getElementById('cnpj-spin').style.display='inline-block';
+
+  setTimeout(()=>{
+    document.getElementById('cnpj-search-icon').style.display='block';
+    document.getElementById('cnpj-spin').style.display='none';
+
+    const wrap=document.getElementById('cnpj-wrap');
+    const fb=document.getElementById('cnpj-feedback');
+    const fbIcon=document.getElementById('cnpj-fb-icon');
+    const fbText=document.getElementById('cnpj-fb-text');
+
+    if(val===CNPJ_BLOQUEADO){
+      // BLOQUEADO
+      wrap.classList.add('err');
+      fb.className='cnpj-validation cnpj-val-bloqueado show';
+      fbIcon.setAttribute('viewBox','0 0 24 24');
+      fbIcon.innerHTML='<circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>';
+      fbText.innerHTML='<strong>CNPJ já vinculado a outro Prestador</strong> — O CNPJ informado já está vinculado a um Local de Atendimento ativo de outro Prestador e não pode possuir dois vínculos ativos simultaneamente. <span class="cnpj-val-link" onclick="abrirModalBloqueio()">Ver vínculo existente →</span>';
+      setFormDisabled(true);
+      document.getElementById('btn-salvar').disabled=true;
+      document.getElementById('modal-cnpj-bloq').textContent=val;
+    } else if(val===CNPJ_INATIVO_OUTRO){
+      // AVISO — permitido
+      wrap.classList.add('ok');
+      wrap.style.borderColor='#D97706';
+      fb.className='cnpj-validation cnpj-val-aviso show';
+      fbIcon.setAttribute('viewBox','0 0 24 24');
+      fbIcon.innerHTML='<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>';
+      fbText.innerHTML='<span><strong>CNPJ vinculado a Local inativo em outro Prestador.</strong> Existe um histórico de vínculo <em>inativo</em> deste CNPJ com outro Prestador. O cadastro é <strong>permitido</strong>.</span>';
+      setFormDisabled(false);
+    } else {
+      // LIVRE
+      wrap.classList.add('ok');
+      fb.className='cnpj-validation cnpj-val-ok show';
+      fbIcon.setAttribute('viewBox','0 0 24 24');
+      fbIcon.innerHTML='<polyline points="20 6 9 17 4 12" stroke-linecap="round" stroke-linejoin="round"/>';
+      fbText.innerHTML='<strong>CNPJ disponível.</strong> Nenhum vínculo ativo encontrado. Você pode prosseguir com o cadastro.';
+      setFormDisabled(false);
+    }
+  },1000);
+}
+
+function abrirModalBloqueio(){
+  openModal('modal-bloqueio-cadastro');
+}
+
+function setFormDisabled(disabled){
+  const ids=['nome-local-input','email-input','tel-input','tipo-select'];
+  ids.forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.disabled=disabled;
+  });
+  const wraps=['nome-local-wrap','email-wrap','tel-wrap','tipo-wrap','cep-wrap','end-wrap','num-wrap','comp-wrap','bairro-wrap','uf-wrap','cidade-wrap'];
+  wraps.forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.classList.toggle('disabled',disabled);
+  });
+  // desabilita radios
+  document.querySelectorAll('input[name="tipo-local"]').forEach(r=>r.disabled=disabled);
+  // opacidade nas seções
+  const secs=['horarios-card','end-row1','end-row2','end-row3','abrang-header','abrang-alert','abrang-search','abrang-filter','abrang-tbl','abrang-pag'];
+  secs.forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.style.opacity=disabled?'0.35':'1';
+  });
+}
+
+function salvarLocal(){
+  const cnpj=document.getElementById('cnpj-input').value.trim();
+  if(cnpj===CNPJ_BLOQUEADO){
+    showToast('<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg> Não é possível salvar: CNPJ bloqueado.','err');
+    return;
+  }
+  showToast('<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Local de Atendimento salvo com sucesso!','ok');
+}
+
+// ── reativação ──
+let _reativNome='',_reativCNPJ='';
+function tentarReativar(tipo,nome,cnpj){
+  _reativNome=nome; _reativCNPJ=cnpj;
+  if(tipo==='bloqueado'){
+    document.getElementById('modal-reativ-nome').textContent=nome;
+    document.getElementById('modal-reativ-cnpj').textContent=cnpj;
+    document.getElementById('reativ-banner').classList.add('show');
+    openModal('modal-bloqueio-reativ');
+  } else {
+    document.getElementById('reativ-banner').classList.remove('show');
+    document.getElementById('modal-confirmar-sub').textContent='Reativar "'+nome+'" ('+cnpj+')?';
+    openModal('modal-confirmar-reativ');
+  }
+}
+function confirmarReativacao(){
+  closeModal('modal-confirmar-reativ');
+  showToast('<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> "'+_reativNome+'" reativado com sucesso!','ok');
+}
+
+// ── acessar Local de Atendimento ativo em outro Prestador ──
+// No sistema real: navegar para Prestadores > Saúde & Vida > Locais > Clínica SV Savassi
+function acessarVinculoAtivo(origem){
+  const modal = origem==='cadastro' ? 'modal-bloqueio-cadastro' : 'modal-bloqueio-reativ';
+  closeModal(modal);
+  showToast(
+    '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg> Navegando para: Saúde &amp; Vida — Clínica SV Unidade Savassi',
+    'ok'
+  );
+  // TODO (dev): redirecionar para a rota do Local de Atendimento ativo
+  // ex: /prestadores/{idPrestador}/locais/{idLocal}
+}
+
+// fechar overlay clicando fora
+document.addEventListener('click',e=>{
+  ['modal-bloqueio-cadastro','modal-bloqueio-reativ','modal-confirmar-reativ'].forEach(id=>{
+    const ov=document.getElementById(id);
+    if(e.target===ov) closeModal(id);
+  });
+});
+</script>
+</body>
+</html>

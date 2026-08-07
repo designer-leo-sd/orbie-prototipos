@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orbie - Laboratório</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* CSS Variables - Orbie Design System */
+        :root {
+            /* Colors */
+            --bg-primary: #0D1A32;
+            --bg-gradient-start: #0073FF;
+            --bg-gradient-end: rgba(0,115,255,0);
+            --surface-card: #142A51;
+            --text-primary: #FFFFFF;
+            --text-secondary: rgba(255,255,255,0.6);
+            --border-default: #1D3258;
+            --primary: #0059E7;
+            --primary-strong: #0040A7;
+            --success: #32D583;
+            --surface-opacity: rgba(255,255,255,0.04);
+            --browser-bg: #202124;
+            --browser-secondary: #35363A;
+            --subject-badge: #E040FB;
+            
+            /* Typography */
+            --font-display: 'Orbitron', monospace;
+            --font-ui: 'Roboto', sans-serif;
+            
+            /* Spacing */
+            --padding-xs: 6px;
+            --padding-sm: 8px;
+            --padding-md: 12px;
+            --padding-lg: 16px;
+            --padding-xl: 24px;
+            --gap-xs: 8px;
+            --gap-sm: 12px;
+            --gap-md: 16px;
+            
+            /* Border Radius */
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-full: 1000px;
+        }
+        
+        /* Reset and base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: var(--font-ui);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            width: 100vw;
+            max-width: 1440px;
+            margin: 0 auto;
+        }
+        
+        /* Browser Controls */
+        .browser-controls {
+            background: var(--browser-bg);
+            height: 80px;
+            width: 100%;
+            position: relative;
+        }
+        
+        .browser-toolbar {
+            background: var(--browser-secondary);
+            height: 38px;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            align-items: center;
+            padding: 0 12px;
+            border-top: 1px solid rgba(218, 220, 224, 0.2);
+            box-shadow: inset 0px -1px 0px 0px rgba(218, 220, 224, 0.2);
+        }
+        
+        .browser-nav-buttons {
+            display: flex;
+            gap: 31px;
+            align-items: center;
+        }
+        
+        .browser-nav-btn {
+            width: 16px;
+            height: 16px;
+            opacity: 0.6;
+            cursor: pointer;
+        }
+        
+        .browser-url-bar {
+            flex: 1;
+            max-width: 200px;
+            margin: 0 20px;
+            background: var(--browser-bg);
+            height: 28px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            padding: 0 11px;
+            font-size: 14px;
+            color: white;
+        }
+        
+        .browser-tab {
+            background: var(--browser-secondary);
+            height: 34px;
+            border-radius: 8px 8px 0 0;
+            display: flex;
+            align-items: center;
+            padding: 8px;
+            gap: 9px;
+            position: absolute;
+            top: 8px;
+            left: 80px;
+            min-width: 131px;
+        }
+        
+        .favicon {
+            width: 16px;
+            height: 16px;
+            background: #10206A;
+            border-radius: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+        }
+        
+        /* Header Section */
+        .lab-header {
+            background: linear-gradient(180deg, var(--bg-gradient-start) 41.589%, var(--bg-gradient-end) 100%);
+            padding: 42px var(--padding-xl) var(--padding-lg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--gap-md);
+            position: relative;
+        }
+        
+        .back-button {
+            position: absolute;
+            left: var(--padding-xl);
+            top: 24px;
+            background: transparent;
+            border: none;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: var(--gap-xs);
+            padding: var(--padding-md) var(--padding-lg);
+            border-radius: var(--radius-lg);
+            font-family: var(--font-ui);
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        
+        .xp-badge {
+            background: rgba(0,0,0,0.08);
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: var(--radius-full);
+            padding: var(--padding-md) var(--padding-lg);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .xp-text {
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 16px;
+            line-height: 24px;
+        }
+        
+        .xp-value {
+            color: var(--success);
+        }
+        
+        .xp-label {
+            color: rgba(255,255,255,0.6);
+        }
+        
+        .lab-icon {
+            width: 104px;
+            height: 107px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            opacity: 0.8;
+        }
+        
+        .lab-title {
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 25px;
+            line-height: 30px;
+            text-align: center;
+        }
+        
+        /* Content Section */
+        .content {
+            background: var(--bg-primary);
+            padding: 0 var(--padding-xl);
+            display: flex;
+            flex-direction: column;
+            gap: var(--gap-md);
+        }
+        
+        /* Search */
+        .search-container {
+            display: flex;
+            flex-direction: column;
+            gap: var(--gap-md);
+        }
+        
+        .search-input-container {
+            position: relative;
+        }
+        
+        .search-input {
+            width: 100%;
+            height: 48px;
+            background: transparent;
+            border: 2px solid var(--border-default);
+            border-radius: var(--radius-md);
+            padding: 0 var(--padding-md);
+            padding-left: 40px;
+            color: var(--text-primary);
+            font-size: 16px;
+            font-family: var(--font-ui);
+        }
+        
+        .search-input::placeholder {
+            color: var(--text-secondary);
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 18px;
+            height: 18px;
+            opacity: 0.6;
+        }
+        
+        /* Filter Chips */
+        .filter-chips {
+            display: flex;
+            gap: var(--gap-xs);
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+        
+        .filter-chip {
+            background: var(--surface-opacity);
+            border: 1px solid var(--primary);
+            border-radius: var(--radius-full);
+            padding: var(--padding-sm) var(--padding-md);
+            white-space: nowrap;
+            font-size: 16px;
+            font-weight: 400;
+            line-height: 24px;
+            cursor: pointer;
+        }
+        
+        .filter-chip.active {
+            background: var(--surface-opacity);
+            border-color: var(--primary);
+        }
+        
+        .filter-chip:not(.active) {
+            border-color: var(--border-default);
+        }
+        
+        /* Section */
+        .section {
+            display: flex;
+            flex-direction: column;
+            gap: var(--gap-xs);
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .section-title {
+            font-family: var(--font-ui);
+            font-weight: 700;
+            font-size: 16px;
+            line-height: 24px;
+        }
+        
+        .see-all-btn {
+            background: transparent;
+            border: none;
+            color: white;
+            font-family: var(--font-ui);
+            font-weight: 700;
+            font-size: 13px;
+            line-height: 20px;
+            padding: var(--padding-sm);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        /* Carousel */
+        .carousel {
+            display: flex;
+            gap: var(--gap-xs);
+            overflow-x: auto;
+            padding-bottom: 8px;
+        }
+        
+        .carousel::-webkit-scrollbar {
+            display: none;
+        }
+        
+        /* Experiment Card */
+        .experiment-card {
+            background: var(--surface-card);
+            border-radius: var(--radius-lg);
+            padding: var(--padding-lg);
+            width: 327px;
+            flex-shrink: 0;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            gap: var(--gap-sm);
+        }
+        
+        .experiment-card:hover {
+            background: #1a3259;
+            transform: translateY(-2px);
+        }
+        
+        .card-badges {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .badges-left {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .subject-badge {
+            background: var(--subject-badge);
+            border-radius: var(--radius-sm);
+            padding: var(--padding-xs);
+            font-size: 11px;
+            font-weight: 400;
+            line-height: 16px;
+        }
+        
+        .secondary-badge {
+            background: var(--surface-opacity);
+            border-radius: var(--radius-sm);
+            padding: var(--padding-xs);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+            font-weight: 400;
+            line-height: 16px;
+        }
+        
+        .difficulty-badge {
+            background: var(--surface-opacity);
+            border-radius: var(--radius-sm);
+            padding: var(--padding-xs) var(--padding-sm);
+            height: 28px;
+            display: flex;
+            align-items: center;
+            gap: var(--padding-xs);
+            font-size: 11px;
+            font-weight: 700;
+            line-height: 16px;
+        }
+        
+        .xp-badge-small {
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 12px;
+            line-height: 18px;
+            color: var(--success);
+        }
+        
+        .card-content {
+            display: flex;
+            flex-direction: column;
+            gap: var(--gap-xs);
+        }
+        
+        .card-title {
+            font-family: var(--font-ui);
+            font-weight: 700;
+            font-size: 16px;
+            line-height: 24px;
+        }
+        
+        .card-description {
+            font-family: var(--font-ui);
+            font-weight: 400;
+            font-size: 13px;
+            line-height: 20px;
+            color: var(--text-secondary);
+        }
+        
+        .card-keywords {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px 2px;
+        }
+        
+        .keyword-badge {
+            background: var(--surface-opacity);
+            border-radius: var(--radius-sm);
+            padding: var(--padding-xs) var(--padding-sm);
+            font-size: 11px;
+            font-weight: 400;
+            line-height: 16px;
+        }
+        
+        .progress-section {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--surface-opacity);
+            border-radius: var(--radius-full);
+            position: relative;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: var(--success);
+            border-radius: var(--radius-full);
+            width: 18%;
+        }
+        
+        .progress-text {
+            font-family: 'Inter', var(--font-ui);
+            font-size: 11px;
+            line-height: 16.5px;
+            color: var(--text-secondary);
+        }
+        
+        /* Create Button */
+        .create-button {
+            position: fixed;
+            bottom: 24px;
+            right: calc(75% + 244px);
+            background: var(--primary);
+            border: 3px solid var(--primary-strong);
+            border-radius: var(--radius-md);
+            padding: var(--padding-sm) var(--padding-md);
+            height: 46px;
+            display: flex;
+            align-items: center;
+            gap: var(--gap-xs);
+            font-family: var(--font-ui);
+            font-weight: 700;
+            font-size: 16px;
+            line-height: 24px;
+            color: white;
+            cursor: pointer;
+            z-index: 1000;
+            transition: all 0.2s ease;
+        }
+        
+        .create-button:hover {
+            background: #0066ff;
+            transform: translateY(-2px);
+        }
+        
+        .create-button svg {
+            width: 24px;
+            height: 24px;
+        }
+        
+        /* Icons */
+        .icon-16 {
+            width: 16px;
+            height: 16px;
+        }
+        
+        .icon-18 {
+            width: 18px;
+            height: 18px;
+        }
+        
+        .icon-24 {
+            width: 24px;
+            height: 24px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 1440px) {
+            .create-button {
+                right: 24px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                max-width: 100vw;
+            }
+            
+            .content {
+                padding: 0 var(--padding-lg);
+            }
+            
+            .lab-header {
+                padding: 24px var(--padding-lg) var(--padding-lg);
+            }
+            
+            .back-button {
+                left: var(--padding-lg);
+            }
+            
+            .experiment-card {
+                width: 280px;
+            }
+            
+            .create-button {
+                right: var(--padding-lg);
+                bottom: var(--padding-lg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Browser Controls -->
+    <div class="browser-controls">
+        <div class="browser-tab">
+            <div class="favicon">⚡</div>
+            <span style="color: white; font-size: 12px;">Orbie</span>
+            <span style="color: white; font-size: 18px; margin-left: auto;">×</span>
+        </div>
+        <div class="browser-toolbar">
+            <div class="browser-nav-buttons">
+                <div class="browser-nav-btn">←</div>
+                <div class="browser-nav-btn">→</div>
+                <div class="browser-nav-btn">↻</div>
+                <div class="browser-nav-btn">🏠</div>
+            </div>
+            <div class="browser-url-bar">
+                <span style="color: rgba(255,255,255,0.8); margin-right: 8px;">🔒</span>
+                play.orbieapp.com.br
+                <span style="margin-left: auto;">⭐</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lab Header -->
+    <div class="lab-header">
+        <button class="back-button">
+            ← Voltar
+        </button>
+        
+        <div class="xp-badge">
+            <span class="xp-text">
+                <span class="xp-value">380</span>
+                <span class="xp-label">XP</span>
+            </span>
+            <span style="margin-left: 4px;">⭐</span>
+        </div>
+        
+        <div class="lab-icon">
+            🧪
+        </div>
+        
+        <h1 class="lab-title">Laboratório</h1>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+        <!-- Search -->
+        <div class="search-container">
+            <div class="search-input-container">
+                <div class="search-icon">🔍</div>
+                <input type="text" class="search-input" placeholder="O que você quer aprender?">
+            </div>
+            
+            <div class="filter-chips">
+                <div class="filter-chip active">Todas</div>
+                <div class="filter-chip">Simulados</div>
+                <div class="filter-chip">Recomendados</div>
+            </div>
+        </div>
+
+        <!-- Continue Section -->
+        <div class="section">
+            <div class="section-header">
+                <h2 class="section-title">Continue</h2>
+                <button class="see-all-btn">
+                    Ver todos
+                    <span>→</span>
+                </button>
+            </div>
+            
+            <div class="carousel">
+                <div class="experiment-card">
+                    <div class="card-badges">
+                        <div class="badges-left">
+                            <div class="subject-badge">Ciências</div>
+                            <div class="secondary-badge">
+                                Matemática
+                                <span>▼</span>
+                            </div>
+                            <div class="difficulty-badge">
+                                <span>⭐</span>
+                                Fácil
+                            </div>
+                        </div>
+                        <div class="xp-badge-small">100 XP</div>
+                    </div>
+                    
+                    <div class="card-content">
+                        <h3 class="card-title">Cadeias Alimentares e Ecossistemas</h3>
+                        <p class="card-description">Revise conceitos fundamentais e teste seus conhecimentos com questões práticas.</p>
+                        <div class="card-keywords">
+                            <span class="keyword-badge">Ecossistema</span>
+                            <span class="keyword-badge">Energia</span>
+                            <span class="keyword-badge">Matéria</span>
+                        </div>
+                    </div>
+                    
+                    <div class="progress-section">
+                        <div class="progress-bar">
+                            <div class="progress-fill"></div>
+                        </div>
+                        <div class="progress-text">2/8 fases concluídas</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Recommended Section -->
+        <div class="section">
+            <div class="section-header">
+                <h2 class="section-title">Recomendados</h2>
+                <button class="see-all-btn">
+                    Ver todos
+                    <span>→</span>
+                </button>
+            </div>
+            
+            <div class="carousel">
+                <div class="experiment-card">
+                    <div class="card-badges">
+                        <div class="badges-left">
+                            <div class="subject-badge">Ciências</div>
+                            <div class="secondary-badge">
+                                Matemática
+                                <span>▼</span>
+                            </div>
+                            <div class="difficulty-badge">
+                                <span>⭐</span>
+                                Fácil
+                            </div>
+                        </div>
+                        <div class="xp-badge-small">100 XP</div>
+                    </div>
+                    
+                    <div class="card-content">
+                        <h3 class="card-title">Frações, Equivalências e Números Mistos</h3>
+                        <p class="card-description">Revise conceitos fundamentais e teste seus conhecimentos com questões práticas.</p>
+                        <div class="card-keywords">
+                            <span class="keyword-badge">Divisão</span>
+                            <span class="keyword-badge">Frações</span>
+                            <span class="keyword-badge">Números Mistos</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="experiment-card">
+                    <div class="card-badges">
+                        <div class="badges-left">
+                            <div class="subject-badge">Ciências</div>
+                            <div class="secondary-badge">
+                                Matemática
+                                <span>▼</span>
+                            </div>
+                            <div class="difficulty-badge">
+                                <span>⭐</span>
+                                Fácil
+                            </div>
+                        </div>
+                        <div class="xp-badge-small">100 XP</div>
+                    </div>
+                    
+                    <div class="card-content">
+                        <h3 class="card-title">Simulado Preparatório Avalia #2</h3>
+                        <p class="card-description">Revise conceitos fundamentais e teste seus conhecimentos com questões práticas.</p>
+                        <div class="card-keywords">
+                            <span class="keyword-badge">Revisão</span>
+                            <span class="keyword-badge">Avalia</span>
+                            <span class="keyword-badge">Prova</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="experiment-card">
+                    <div class="card-badges">
+                        <div class="badges-left">
+                            <div class="subject-badge">Ciências</div>
+                            <div class="secondary-badge">
+                                Matemática
+                                <span>▼</span>
+                            </div>
+                            <div class="difficulty-badge">
+                                <span>⭐</span>
+                                Médio
+                            </div>
+                        </div>
+                        <div class="xp-badge-small">200 XP</div>
+                    </div>
+                    
+                    <div class="card-content">
+                        <h3 class="card-title">Geometria Analítica</h3>
+                        <p class="card-description">Revise conceitos fundamentais e teste seus conhecimentos com questões práticas.</p>
+                        <div class="card-keywords">
+                            <span class="keyword-badge">Análise</span>
+                            <span class="keyword-badge">Geometria</span>
+                            <span class="keyword-badge">Cálculo</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Simulados Section -->
+        <div class="section">
+            <div class="section-header">
+                <h2 class="section-title">Simulados</h2>
+                <button class="see-all-btn">
+                    Ver todos
+                    <span>→</span>
+                </button>
+            </div>
+            
+            <div class="carousel">
+                <div class="experiment-card">
+                    <div class="card-badges">
+                        <div class="badges-left">
+                            <div class="subject-badge">Ciências</div>
+                            <div class="secondary-badge">
+                                Matemática
+                                <span>▼</span>
+                            </div>
+                            <div class="difficulty-badge">
+                                <span>⭐</span>
+                                Difícil
+                            </div>
+                        </div>
+                        <div class="xp-badge-small">100 XP</div>
+                    </div>
+                    
+                    <div class="card-content">
+                        <h3 class="card-title">Simulado Preparatório Enem 2025</h3>
+                        <p class="card-description">Revise conceitos fundamentais e teste seus conhecimentos com questões práticas.</p>
+                        <div class="card-keywords">
+                            <span class="keyword-badge">Revisão</span>
+                            <span class="keyword-badge">Vestibular</span>
+                            <span class="keyword-badge">ENEM</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="experiment-card">
+                    <div class="card-badges">
+                        <div class="badges-left">
+                            <div class="subject-badge">Ciências</div>
+                            <div class="secondary-badge">
+                                Matemática
+                                <span>▼</span>
+                            </div>
+                            <div class="difficulty-badge">
+                                <span>⭐</span>
+                                Fácil
+                            </div>
+                        </div>
+                        <div class="xp-badge-small">100 XP</div>
+                    </div>
+                    
+                    <div class="card-content">
+                        <h3 class="card-title">Simulado Preparatório Avalia #2</h3>
+                        <p class="card-description">Revise conceitos fundamentais e teste seus conhecimentos com questões práticas.</p>
+                        <div class="card-keywords">
+                            <span class="keyword-badge">Revisão</span>
+                            <span class="keyword-badge">Avalia</span>
+                            <span class="keyword-badge">Prova</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Matérias Section -->
+        <div class="section" style="margin-bottom: 80px;">
+            <div class="section-header">
+                <h2 class="section-title">Matérias</h2>
+                <button class="see-all-btn">
+                    Ver todos
+                    <span>→</span>
+                </button>
+            </div>
+            
+            <div class="carousel">
+                <div class="experiment-card">
+                    <div class="card-badges">
+                        <div class="badges-left">
+                            <div class="subject-badge">Ciências</div>
+                            <div class="secondary-badge">
+                                Matemática
+                                <span>▼</span>
+                            </div>
+                            <div class="difficulty-badge">
+                                <span>⭐</span>
+                                Fácil
+                            </div>
+                        </div>
+                        <div class="xp-badge-small">100 XP</div>
+                    </div>
+                    
+                    <div class="card-content">
+                        <h3 class="card-title">Frações, Equivalências e Números Mistos</h3>
+                        <p class="card-description">Revise conceitos fundamentais e teste seus conhecimentos com questões práticas.</p>
+                        <div class="card-keywords">
+                            <span class="keyword-badge">Divisão</span>
+                            <span class="keyword-badge">Frações</span>
+                            <span class="keyword-badge">Números Mistos</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="experiment-card">
+                    <div class="card-badges">
+                        <div class="badges-left">
+                            <div class="subject-badge">Ciências</div>
+                            <div class="secondary-badge">
+                                Matemática
+                                <span>▼</span>
+                            </div>
+                            <div class="difficulty-badge">
+                                <span>⭐</span>
+                                Fácil
+                            </div>
+                        </div>
+                        <div class="xp-badge-small">100 XP</div>
+                    </div>
+                    
+                    <div class="card-content">
+                        <h3 class="card-title">Frações, Equivalências e Números Mistos</h3>
+                        <p class="card-description">Revise conceitos fundamentais e teste seus conhecimentos com questões práticas.</p>
+                        <div class="card-keywords">
+                            <span class="keyword-badge">Divisão</span>
+                            <span class="keyword-badge">Frações</span>
+                            <span class="keyword-badge">Números Mistos</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Create Button -->
+    <button class="create-button">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+        </svg>
+        Criar
+    </button>
+
+    <script>
+        // Search functionality
+        const searchInput = document.querySelector('.search-input');
+        const cards = document.querySelectorAll('.experiment-card');
+        
+        searchInput.addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            
+            cards.forEach(card => {
+                const title = card.querySelector('.card-title').textContent.toLowerCase();
+                const description = card.querySelector('.card-description').textContent.toLowerCase();
+                const keywords = Array.from(card.querySelectorAll('.keyword-badge')).map(badge => 
+                    badge.textContent.toLowerCase()
+                ).join(' ');
+                
+                if (title.includes(searchTerm) || description.includes(searchTerm) || keywords.includes(searchTerm)) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = searchTerm === '' ? 'flex' : 'none';
+                }
+            });
+        });
+
+        // Filter chips functionality
+        const filterChips = document.querySelectorAll('.filter-chip');
+        
+        filterChips.forEach(chip => {
+            chip.addEventListener('click', function() {
+                // Remove active class from all chips
+                filterChips.forEach(c => c.classList.remove('active'));
+                
+                // Add active class to clicked chip
+                this.classList.add('active');
+                
+                const filterType = this.textContent.toLowerCase();
+                console.log('Filtering by:', filterType);
+                
+                // Here you could implement actual filtering logic
+                // For now, just log the filter type
+            });
+        });
+
+        // Card interactions
+        cards.forEach(card => {
+            card.addEventListener('click', function() {
+                // Add click feedback
+                this.style.transform = 'translateY(-2px) scale(0.98)';
+                setTimeout(() => {
+                    this.style.transform = 'translateY(-2px) scale(1)';
+                }, 150);
+                
+                const title = this.querySelector('.card-title').textContent;
+                console.log('Opening experiment:', title);
+                
+                // Here you would navigate to the experiment detail
+                alert(`Abrindo: ${title}`);
+            });
+        });
+
+        // Button interactions
+        document.querySelectorAll('.see-all-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const section = this.closest('.section').querySelector('.section-title').textContent;
+                console.log('Ver todos:', section);
+                alert(`Ver todos os experimentos de: ${section}`);
+            });
+        });
+
+        document.querySelector('.back-button').addEventListener('click', function() {
+            console.log('Back button clicked');
+            alert('Voltando para a tela anterior');
+        });
+
+        document.querySelector('.create-button').addEventListener('click', function() {
+            console.log('Create button clicked');
+            alert('Criando novo experimento...');
+        });
+
+        // Carousel smooth scrolling
+        const carousels = document.querySelectorAll('.carousel');
+        
+        carousels.forEach(carousel => {
+            let isDown = false;
+            let startX;
+            let scrollLeft;
+
+            carousel.addEventListener('mousedown', (e) => {
+                isDown = true;
+                startX = e.pageX - carousel.offsetLeft;
+                scrollLeft = carousel.scrollLeft;
+                carousel.style.cursor = 'grabbing';
+            });
+
+            carousel.addEventListener('mouseleave', () => {
+                isDown = false;
+                carousel.style.cursor = 'grab';
+            });
+
+            carousel.addEventListener('mouseup', () => {
+                isDown = false;
+                carousel.style.cursor = 'grab';
+            });
+
+            carousel.addEventListener('mousemove', (e) => {
+                if (!isDown) return;
+                e.preventDefault();
+                const x = e.pageX - carousel.offsetLeft;
+                const walk = (x - startX) * 2;
+                carousel.scrollLeft = scrollLeft - walk;
+            });
+        });
+
+        // Progressive loading animation
+        document.addEventListener('DOMContentLoaded', function() {
+            const elements = document.querySelectorAll('.experiment-card');
+            
+            elements.forEach((element, index) => {
+                element.style.opacity = '0';
+                element.style.transform = 'translateY(20px)';
+                
+                setTimeout(() => {
+                    element.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                    element.style.opacity = '1';
+                    element.style.transform = 'translateY(0)';
+                }, index * 150);
+            });
+        });
+    </script>
+</body>
+</html>

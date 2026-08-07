@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lab / Trilha Recomendada — Orbie</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Roboto', sans-serif; background: #0d1a32; color: #fff; min-height: 100vh; }
+    .page { max-width: 1024px; margin: 0 auto; padding-bottom: 120px; }
+
+    /* ── HEADER ── */
+    .phase-header {
+      width: 100%;
+      background: linear-gradient(180deg, #1a0f45 0%, #2c1150 45%, #0d1a32 100%);
+      display: flex; flex-direction: column; align-items: center;
+      padding: 24px 24px 48px; position: relative; gap: 10px;
+    }
+    .btn-back {
+      align-self: flex-start; width: 40px; height: 40px;
+      border-radius: 12px; border: none; background: transparent;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: background 0.15s;
+    }
+    .btn-back:hover { background: rgba(255,255,255,0.08); }
+
+    /* Orbie origin badge */
+    .orbie-origin {
+      display: flex; align-items: center; gap: 6px;
+      background: rgba(139,92,246,0.18); border: 1px solid rgba(139,92,246,0.4);
+      border-radius: 999px; padding: 5px 12px;
+      font-size: 11px; font-weight: 700; color: rgba(139,92,246,0.95);
+    }
+
+    .header-badges { display: flex; align-items: center; gap: 4px; margin-top: 4px; }
+    .badge-subject { border-radius: 8px; padding: 4px 6px; font-size: 11px; background: #2979ff; }
+    .badge-more { background: rgba(255,255,255,0.07); border-radius: 8px; padding: 4px 6px; font-size: 11px; }
+
+    /* Gap + XP multiplier row */
+    .gap-row {
+      display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: center;
+      margin-top: 4px;
+    }
+    .tag-gap-hi  { background: rgba(255,93,93,0.18); color: #FF8383; border-radius: 999px; padding: 3px 10px; font-size: 11px; font-weight: 700; }
+    .tag-mult    { background: rgba(255,201,77,0.2); color: #FFC94D; border-radius: 999px; padding: 3px 10px; font-size: 11px; font-weight: 700; }
+
+    .header-title { font-weight: 700; font-size: 20px; line-height: 26px; text-align: center; margin-top: 4px; }
+
+    /* Gap reason */
+    .gap-reason {
+      background: rgba(255,255,255,0.06); border-radius: 12px;
+      padding: 10px 14px; font-size: 11.5px; line-height: 1.6;
+      color: rgba(255,255,255,0.6); text-align: center; max-width: 380px;
+    }
+    .gap-reason strong { color: #FF8383; font-weight: 700; }
+
+    /* Maestria bar */
+    .mastery-wrap {
+      width: 100%; max-width: 380px;
+      background: rgba(255,255,255,0.06); border-radius: 12px;
+      padding: 12px 16px; display: flex; flex-direction: column; gap: 6px;
+    }
+    .mastery-header { display: flex; justify-content: space-between; align-items: baseline; }
+    .mastery-title { font-size: 11px; font-weight: 700; color: rgba(255,255,255,0.7); }
+    .mastery-pct { font-size: 13px; font-weight: 700; color: #35C2FF; }
+    .mastery-bar {
+      height: 6px; border-radius: 999px;
+      background: rgba(255,255,255,0.1); overflow: hidden;
+    }
+    .mastery-fill {
+      height: 100%; border-radius: 999px;
+      background: linear-gradient(90deg, #35C2FF, #8B5CF6);
+    }
+    .mastery-sub { font-size: 10px; color: rgba(255,255,255,0.4); }
+
+    .header-meta { font-size: 13px; color: rgba(255,255,255,0.55); margin-top: 4px; }
+    .header-meta span { color: #FFC94D; font-weight: 700; }
+
+    /* ── PHASE LIST ── */
+    .phase-list { padding: 24px; display: flex; flex-direction: column; }
+    .phase-item { display: flex; align-items: flex-start; gap: 16px; padding: 0 8px; }
+    .phase-timeline { display: flex; flex-direction: column; align-items: center; flex-shrink: 0; width: 40px; min-height: 68px; }
+
+    .circle-done {
+      width: 36px; height: 36px; border-radius: 50%; background: #142a51;
+      border: 2.5px solid #0d1a32; outline: 2.5px solid #2abc4e;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .circle-active {
+      width: 36px; height: 36px; border-radius: 50%; background: #8B5CF6;
+      border: 2.5px solid #0d1a32; outline: 2.5px solid #8B5CF6;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+      box-shadow: 0 0 12px rgba(139,92,246,0.5);
+    }
+    .circle-locked {
+      width: 36px; height: 36px; border-radius: 50%; background: #1d3258;
+      border: 2.5px solid #0d1a32; outline: 2.5px solid #1d3258;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+
+    .phase-line-green { flex: 1; width: 1px; background: #2abc4e; min-height: 4px; }
+    .phase-line-purple { flex: 1; width: 1px; background: rgba(139,92,246,0.4); min-height: 4px; }
+    .phase-line-dark { flex: 1; width: 1px; background: #1d3258; min-height: 4px; }
+
+    .phase-content { flex: 1; padding-top: 2px; }
+    .phase-name { font-size: 16px; font-weight: 700; line-height: 24px; }
+    .phase-name.muted { color: rgba(255,255,255,0.5); }
+    .phase-status { font-size: 11px; color: rgba(255,255,255,0.5); }
+
+    /* phase XP — mostra multiplicador nas primeiras fases */
+    .phase-xp { font-size: 11px; white-space: nowrap; padding-top: 2px; min-width: 50px; text-align: right; }
+    .phase-xp.green { color: #32d583; }
+    .phase-xp.gold  { color: #FFC94D; }
+    .phase-xp.muted { color: rgba(255,255,255,0.3); }
+
+    /* ── BOTTOM CTA ── */
+    .bottom-cta {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: linear-gradient(to top, #0d1a32 72%, rgba(13,26,50,0) 100%);
+      padding: 64px 24px 24px;
+      display: flex; align-items: center; justify-content: center; pointer-events: none;
+    }
+    .btn-start {
+      background: linear-gradient(90deg, #35C2FF, #8B5CF6);
+      border: none; border-radius: 16px; height: 52px;
+      width: 327px; max-width: 100%;
+      font-family: 'Roboto', sans-serif; font-weight: 700; font-size: 16px; color: #fff;
+      cursor: pointer; pointer-events: all;
+      box-shadow: 0 8px 24px rgba(139,92,246,0.35);
+      transition: opacity 0.15s, transform 0.1s;
+    }
+    .btn-start:hover { opacity: 0.92; transform: translateY(-1px); }
+    .btn-start:active { transform: scale(0.99); }
+  </style>
+</head>
+<body>
+
+  <div class="phase-header">
+    <button class="btn-back" onclick="location.href='index-v3.html'">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+        <path d="M15 18L9 12L15 6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+
+    <div class="orbie-origin">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none">
+        <path d="M12 2l2.6 6.9 7.4.3-5.8 4.7 2 7.1-6.2-4.1L5.8 21l2-7.1L2 9l7.4-.3L12 2z" fill="rgba(139,92,246,0.95)"/>
+      </svg>
+      Orbie escolheu para você
+    </div>
+
+    <div class="header-badges">
+      <span class="badge-subject">Matemática</span>
+      <span class="badge-more">+2</span>
+    </div>
+
+    <div class="gap-row">
+      <span class="tag-gap-hi">Gap alto</span>
+      <span class="tag-mult">×1.8 XP nessa trilha</span>
+    </div>
+
+    <h1 class="header-title">Frações, Equivalências e Números Mistos</h1>
+
+    <div class="gap-reason">
+      Por que essa trilha? Você acertou apenas <strong>38%</strong> das questões de frações nas últimas 2 semanas. Essa é a habilidade com maior margem de crescimento agora.
+    </div>
+
+    <div class="mastery-wrap">
+      <div class="mastery-header">
+        <span class="mastery-title">Maestria em Frações</span>
+        <span class="mastery-pct">38%</span>
+      </div>
+      <div class="mastery-bar"><div class="mastery-fill" style="width:38%"></div></div>
+      <span class="mastery-sub">Complete fases para avançar rumo aos 80%</span>
+    </div>
+
+    <p class="header-meta">8 fases · Médio · até <span>+180 XP</span> com bônus de gap</p>
+  </div>
+
+  <div class="page">
+    <div class="phase-list">
+
+      <!-- Fase 1 — concluída -->
+      <div class="phase-item">
+        <div class="phase-timeline">
+          <div class="circle-done">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8L6.5 11.5L13 5" stroke="#2abc4e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="phase-line-green"></div>
+        </div>
+        <div class="phase-content">
+          <div class="phase-name">O que é uma fração?</div>
+          <div class="phase-status">Concluída</div>
+        </div>
+        <div class="phase-xp green">+32 XP</div>
+      </div>
+
+      <!-- Fase 2 — ativa (gap alto, mult visível) -->
+      <div class="phase-item">
+        <div class="phase-timeline">
+          <div class="circle-active">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M4 3L11 7L4 11V3Z" fill="white"/></svg>
+          </div>
+          <div class="phase-line-purple"></div>
+        </div>
+        <div class="phase-content">
+          <div class="phase-name">Equivalência de frações</div>
+          <div class="phase-status" style="color:#FFC94D;">Próxima · ×1.8 XP</div>
+        </div>
+        <div class="phase-xp gold">~58 XP</div>
+      </div>
+
+      <!-- Fases 3-8 — bloqueadas -->
+      <div class="phase-item">
+        <div class="phase-timeline">
+          <div class="circle-locked"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="3" y="7" width="10" height="8" rx="2" fill="#526D98"/><path d="M5 7V5a3 3 0 0 1 6 0v2" stroke="#526D98" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+          <div class="phase-line-dark"></div>
+        </div>
+        <div class="phase-content"><div class="phase-name muted">Simplificação de frações</div><div class="phase-status">Bloqueada</div></div>
+        <div class="phase-xp muted">~58 XP</div>
+      </div>
+
+      <div class="phase-item">
+        <div class="phase-timeline">
+          <div class="circle-locked"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="3" y="7" width="10" height="8" rx="2" fill="#526D98"/><path d="M5 7V5a3 3 0 0 1 6 0v2" stroke="#526D98" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+          <div class="phase-line-dark"></div>
+        </div>
+        <div class="phase-content"><div class="phase-name muted">Adição de frações de mesmo denominador</div><div class="phase-status">Bloqueada</div></div>
+        <div class="phase-xp muted">~58 XP</div>
+      </div>
+
+      <div class="phase-item">
+        <div class="phase-timeline">
+          <div class="circle-locked"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="3" y="7" width="10" height="8" rx="2" fill="#526D98"/><path d="M5 7V5a3 3 0 0 1 6 0v2" stroke="#526D98" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+          <div class="phase-line-dark"></div>
+        </div>
+        <div class="phase-content"><div class="phase-name muted">Adição com denominadores diferentes</div><div class="phase-status">Bloqueada</div></div>
+        <div class="phase-xp muted">~58 XP</div>
+      </div>
+
+      <div class="phase-item">
+        <div class="phase-timeline">
+          <div class="circle-locked"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="3" y="7" width="10" height="8" rx="2" fill="#526D98"/><path d="M5 7V5a3 3 0 0 1 6 0v2" stroke="#526D98" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+          <div class="phase-line-dark"></div>
+        </div>
+        <div class="phase-content"><div class="phase-name muted">Multiplicação de frações</div><div class="phase-status">Bloqueada</div></div>
+        <div class="phase-xp muted">~58 XP</div>
+      </div>
+
+      <div class="phase-item">
+        <div class="phase-timeline">
+          <div class="circle-locked"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="3" y="7" width="10" height="8" rx="2" fill="#526D98"/><path d="M5 7V5a3 3 0 0 1 6 0v2" stroke="#526D98" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+          <div class="phase-line-dark"></div>
+        </div>
+        <div class="phase-content"><div class="phase-name muted">Divisão de frações</div><div class="phase-status">Bloqueada</div></div>
+        <div class="phase-xp muted">~58 XP</div>
+      </div>
+
+      <div class="phase-item">
+        <div class="phase-timeline" style="min-height:auto;">
+          <div class="circle-locked" style="border-color:rgba(255,201,77,0.3);outline-color:rgba(255,201,77,0.3);">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 2l2.6 6.9 7.4.3-5.8 4.7 2 7.1-6.2-4.1L5.8 21l2-7.1L2 9l7.4-.3L12 2z" fill="#FFC94D" opacity="0.4"/></svg>
+          </div>
+        </div>
+        <div class="phase-content"><div class="phase-name muted">Números mistos — Fase Bônus</div><div class="phase-status" style="color:rgba(255,201,77,0.5);">Bônus desbloqueável</div></div>
+        <div class="phase-xp gold" style="opacity:0.45;">+32 XP</div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="bottom-cta">
+    <button class="btn-start" onclick="location.href='fase-questao-v2.html'">
+      Continuar — Equivalência de frações
+    </button>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,1201 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Orbie – Trilha Diagnóstico</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Outfit:wght@300;400;500;700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:            #0D1A32;
+      --bg-home:       #150038;
+      --surface:       #142A51;
+      --surface-dark:  #10203D;
+      --border:        #224476;
+      --primary:       #0059E7;
+      --primary-hover: #3F84F3;
+      --success:       #12B76A;
+      --success-bright:#2ABC4E;
+      --danger:        #F04438;
+      --yellow:        #FFEA24;
+      --yellow-border: #E5B400;
+      --locked:        rgba(255,255,255,0.18);
+      --locked-border: rgba(255,255,255,0.25);
+      --text:          #FFFFFF;
+      --text-muted:    #99C0FF;
+      --text-label:    #C0CADB;
+      --star-active:   #FFEA24;
+      --star-inactive: #526D98;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .app {
+      width: 375px;
+      min-height: 100vh;
+      background: var(--bg);
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* ===== SCREENS ===== */
+    .screen { display: none; flex-direction: column; min-height: 100vh; }
+    .screen.active { display: flex; }
+
+    /* ===== STATUS BAR ===== */
+    .status-bar {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 14px 24px 0; height: 34px;
+      font-size: 13px; color: var(--text);
+    }
+    .status-icons { display: flex; gap: 6px; align-items: center; }
+    .status-icons span { font-size: 11px; }
+
+    /* ===== TOP NAV ===== */
+    .top-nav {
+      display: flex; justify-content: center; align-items: center;
+      padding: 12px 24px; position: relative; height: 56px;
+    }
+    .top-nav .logo {
+      font-family: 'Orbitron', sans-serif; font-size: 20px; font-weight: 700;
+      letter-spacing: 2px;
+    }
+    .top-nav .logo span { color: var(--primary); }
+    .top-nav .bell {
+      position: absolute; right: 24px; width: 40px; height: 40px;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--surface); border-radius: 12px; cursor: pointer;
+      border: 1px solid var(--border);
+    }
+
+    /* ===== HOME BACKGROUND ===== */
+    .home-bg {
+      position: absolute; inset: 0; pointer-events: none; overflow: hidden;
+      background: radial-gradient(ellipse at 50% 20%, #260060 0%, #0D1A32 65%);
+    }
+    .star {
+      position: absolute; background: white; border-radius: 50%;
+      animation: twinkle 3s ease-in-out infinite;
+    }
+    @keyframes twinkle {
+      0%,100% { opacity: 0.2; } 50% { opacity: 0.9; }
+    }
+
+    /* ===== PLANET CARD ===== */
+    .planet-card {
+      margin: 0 16px 16px; border-radius: 16px; padding: 14px 16px;
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.1);
+      display: flex; align-items: center; gap: 12px;
+      position: relative; z-index: 2;
+    }
+    .planet-orb {
+      width: 56px; height: 56px; border-radius: 50%; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 28px; position: relative;
+    }
+    .planet-orb.earth {
+      background: radial-gradient(circle at 35% 35%, #4fc3f7 0%, #1565c0 40%, #0d47a1 100%);
+      box-shadow: 0 0 16px rgba(21,101,192,0.6);
+    }
+    .planet-orb.locked-planet {
+      background: radial-gradient(circle at 35% 35%, #78909c 0%, #37474f 60%);
+      filter: grayscale(1) brightness(0.6);
+    }
+    .planet-info { flex: 1; min-width: 0; }
+    .planet-name {
+      font-family: 'Orbitron', sans-serif; font-size: 14px; font-weight: 500;
+      color: var(--text); margin-bottom: 6px;
+    }
+    .planet-progress-bar {
+      height: 8px; border-radius: 100px; background: rgba(255,255,255,0.1); overflow: hidden;
+    }
+    .planet-progress-fill {
+      height: 100%; border-radius: 100px;
+      background: linear-gradient(90deg, #AD46FF, #2B7FFF);
+    }
+    .planet-badge {
+      font-size: 11px; color: var(--text-muted); margin-top: 4px;
+    }
+    .planet-locked-label {
+      font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 6px;
+    }
+
+    /* ===== SECTION DIVIDER ===== */
+    .section-label {
+      font-size: 11px; font-weight: 600; color: var(--text-muted);
+      text-transform: uppercase; letter-spacing: 1px;
+      padding: 8px 24px; position: relative; z-index: 2;
+    }
+
+    /* ===== TRAIL ===== */
+    .trail-container {
+      flex: 1; padding: 16px 0 20px;
+      position: relative; z-index: 2;
+      overflow-y: auto;
+    }
+    .trail-inner {
+      display: flex; flex-direction: column; align-items: center;
+      position: relative; padding-bottom: 24px;
+    }
+
+    /* Connector line */
+    .trail-inner::before {
+      content: ''; position: absolute;
+      left: 50%; top: 0; bottom: 0;
+      width: 2px; margin-left: -1px;
+      background: repeating-linear-gradient(
+        to bottom,
+        rgba(255,255,255,0.25) 0px,
+        rgba(255,255,255,0.25) 8px,
+        transparent 8px,
+        transparent 16px
+      );
+      z-index: 0;
+    }
+
+    .trail-step {
+      position: relative; z-index: 1;
+      margin-bottom: 20px; display: flex;
+      flex-direction: column; align-items: center;
+    }
+
+    /* The glow ring */
+    .trail-ring {
+      width: 78px; height: 78px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      position: relative; margin-bottom: 4px;
+    }
+    .trail-ring.done-ring {
+      background: radial-gradient(circle, rgba(50,213,131,0.3) 0%, transparent 70%);
+    }
+    .trail-ring.play-ring {
+      background: radial-gradient(circle, rgba(255,234,36,0.4) 0%, transparent 70%);
+      animation: pulse-ring 2s ease-in-out infinite;
+    }
+    .trail-ring.locked-ring {
+      background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+    }
+    @keyframes pulse-ring {
+      0%,100% { box-shadow: 0 0 0 0 rgba(255,234,36,0.0); }
+      50%      { box-shadow: 0 0 0 14px rgba(255,234,36,0.15); }
+    }
+
+    /* The actual button */
+    .trail-btn {
+      width: 54px; height: 54px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      border: 2px solid transparent; cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      position: relative; font-size: 22px;
+    }
+    .trail-btn.done {
+      background: var(--success-bright);
+      border-color: #1a8f3e;
+      box-shadow: 0 4px 16px rgba(42,188,78,0.45);
+    }
+    .trail-btn.play {
+      background: var(--yellow);
+      border-color: var(--yellow-border);
+      box-shadow: 0 4px 16px rgba(255,234,36,0.5);
+    }
+    .trail-btn.play:hover { transform: scale(1.1); box-shadow: 0 6px 22px rgba(255,234,36,0.7); }
+    .trail-btn.locked {
+      background: rgba(255,255,255,0.12);
+      border-color: rgba(255,255,255,0.22);
+      cursor: default;
+    }
+
+    .trail-btn svg { display: block; }
+
+    .trail-label {
+      font-size: 11px; font-weight: 500; color: var(--text-muted);
+      text-align: center; max-width: 80px; line-height: 1.3;
+    }
+    .trail-label.active-label { color: var(--yellow); font-weight: 700; }
+
+    /* Left/right offset for zigzag */
+    .trail-step.left  { align-self: flex-start; margin-left: 54px; }
+    .trail-step.right { align-self: flex-end;   margin-right: 54px; }
+    .trail-step.center{ align-self: center; }
+
+    /* ===== BOTTOM NAV ===== */
+    .bottom-nav {
+      display: flex; justify-content: space-around; align-items: center;
+      padding: 12px 8px 24px;
+      background: var(--bg);
+      border-top: 1px solid rgba(255,255,255,0.12);
+      position: relative; z-index: 10;
+    }
+    .nav-btn {
+      width: 48px; height: 40px; display: flex; align-items: center;
+      justify-content: center; border-radius: 12px; cursor: pointer;
+      transition: background 0.15s;
+    }
+    .nav-btn.active { background: var(--primary); }
+    .nav-btn svg { width: 24px; height: 24px; }
+
+    /* ===== TOOLTIP MODAL ===== */
+    .tooltip-overlay {
+      position: fixed; inset: 0; z-index: 100;
+      display: none; align-items: center; justify-content: center;
+    }
+    .tooltip-overlay.active { display: flex; }
+    .tooltip-backdrop {
+      position: absolute; inset: 0; background: rgba(0,0,0,0.45);
+      backdrop-filter: blur(2px);
+    }
+    .tooltip-card {
+      position: relative; z-index: 1;
+      background: #1a3260;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 24px;
+      width: 320px;
+      animation: pop-in 0.2s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    @keyframes pop-in {
+      from { transform: scale(0.85); opacity: 0; }
+      to   { transform: scale(1);    opacity: 1; }
+    }
+    .tooltip-card h3 {
+      font-family: 'Orbitron', sans-serif; font-size: 16px;
+      margin-bottom: 6px; color: var(--text);
+    }
+    .tooltip-card p {
+      font-size: 13px; color: var(--text-muted); margin-bottom: 20px; line-height: 1.5;
+    }
+    .tooltip-meta {
+      display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap;
+    }
+    .tooltip-chip {
+      background: rgba(255,255,255,0.08); border-radius: 100px;
+      padding: 4px 12px; font-size: 11px; color: var(--text-muted);
+      border: 1px solid var(--border);
+    }
+    .tooltip-actions { display: flex; gap: 10px; }
+    .btn-secondary {
+      flex: 1; height: 48px; border-radius: 12px;
+      background: transparent; border: 1.5px solid var(--border);
+      color: var(--text); font-family: 'Outfit', sans-serif;
+      font-size: 14px; font-weight: 600; cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+    }
+    .btn-secondary:hover { background: rgba(255,255,255,0.06); border-color: #3F84F3; }
+    .btn-primary {
+      flex: 1.4; height: 48px; border-radius: 12px;
+      background: var(--primary); border: none;
+      color: white; font-family: 'Outfit', sans-serif;
+      font-size: 14px; font-weight: 700; cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+    }
+    .btn-primary:hover { background: var(--primary-hover); transform: translateY(-1px); }
+    .btn-primary:active { transform: translateY(0); }
+
+    /* ===== QUIZ SCREEN ===== */
+    .quiz-header {
+      padding: 16px 20px 12px;
+      display: flex; align-items: center; gap: 12px;
+      border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; background: var(--bg); z-index: 5;
+    }
+    .quiz-close {
+      width: 36px; height: 36px; border-radius: 10px;
+      background: var(--surface); border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; flex-shrink: 0; font-size: 18px; color: var(--text);
+    }
+    .quiz-progress-wrap { flex: 1; }
+    .quiz-progress-track {
+      height: 8px; border-radius: 100px;
+      background: var(--surface); overflow: hidden; margin-bottom: 4px;
+    }
+    .quiz-progress-fill {
+      height: 100%; border-radius: 100px;
+      background: var(--primary);
+      transition: width 0.4s ease;
+    }
+    .quiz-counter { font-size: 12px; color: var(--text-muted); text-align: right; }
+
+    .quiz-body { flex: 1; overflow-y: auto; padding: 24px 20px; }
+    .quiz-fase-label {
+      font-family: 'Orbitron', sans-serif; font-size: 12px; font-weight: 500;
+      color: var(--primary); text-transform: uppercase; letter-spacing: 1px;
+      margin-bottom: 10px;
+    }
+    .quiz-question {
+      font-size: 17px; font-weight: 500; line-height: 1.55;
+      color: var(--text); margin-bottom: 24px;
+    }
+
+    .answer-option {
+      width: 100%; padding: 14px 16px; border-radius: 12px; margin-bottom: 10px;
+      background: var(--surface); border: 1.5px solid var(--border);
+      color: var(--text); font-family: 'Outfit', sans-serif;
+      font-size: 15px; text-align: left; cursor: pointer;
+      transition: all 0.15s ease; display: flex; align-items: center; gap: 12px;
+    }
+    .answer-option:hover:not(:disabled) {
+      border-color: var(--primary-hover);
+      background: rgba(63,132,243,0.12);
+    }
+    .answer-option.selected {
+      background: rgba(0,89,231,0.15);
+      border-color: var(--primary);
+      border-width: 2px;
+    }
+    .answer-option.correct {
+      background: rgba(18,183,106,0.2);
+      border-color: var(--success);
+      border-width: 2px;
+    }
+    .answer-option.wrong {
+      background: rgba(240,68,56,0.15);
+      border-color: var(--danger);
+      border-width: 2px;
+    }
+    .answer-option:disabled { cursor: default; }
+    .answer-letter {
+      width: 28px; height: 28px; border-radius: 8px; flex-shrink: 0;
+      background: rgba(255,255,255,0.08); display: flex; align-items: center;
+      justify-content: center; font-weight: 700; font-size: 12px;
+    }
+
+    .quiz-footer {
+      padding: 16px 20px 28px;
+      background: var(--bg); border-top: 1px solid var(--border);
+    }
+    .quiz-submit {
+      width: 100%; height: 52px; border-radius: 12px;
+      background: var(--primary); border: none;
+      color: white; font-family: 'Outfit', sans-serif;
+      font-size: 16px; font-weight: 700; cursor: pointer;
+      transition: background 0.15s, opacity 0.15s;
+    }
+    .quiz-submit:disabled {
+      opacity: 0.4; cursor: default;
+    }
+    .quiz-submit:not(:disabled):hover { background: var(--primary-hover); }
+
+    /* feedback strip */
+    .feedback-strip {
+      padding: 14px 16px; border-radius: 12px; margin-bottom: 16px;
+      display: none; align-items: flex-start; gap: 12px; font-size: 14px;
+    }
+    .feedback-strip.show { display: flex; }
+    .feedback-strip.correct-fb {
+      background: rgba(18,183,106,0.15);
+      border: 1px solid var(--success);
+      color: var(--success);
+    }
+    .feedback-strip.wrong-fb {
+      background: rgba(240,68,56,0.12);
+      border: 1px solid var(--danger);
+      color: #FCA5A1;
+    }
+    .feedback-strip .fb-icon { font-size: 20px; flex-shrink: 0; margin-top: -2px; }
+    .feedback-strip .fb-text strong { display: block; margin-bottom: 2px; font-weight: 700; }
+
+    /* ===== CONCLUSION SCREEN ===== */
+    .conclusion-bg {
+      position: absolute; inset: 0; pointer-events: none;
+      background: radial-gradient(ellipse at 50% 30%, #1b006b 0%, #0D1A32 65%);
+      overflow: hidden;
+    }
+    .conclusion-content {
+      position: relative; z-index: 2;
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; padding: 40px 24px 32px;
+    }
+    .conclusion-badge {
+      width: 100px; height: 100px; border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #6ee7b7, #059669);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 48px; margin-bottom: 24px;
+      box-shadow: 0 0 40px rgba(16,185,129,0.5);
+      animation: badge-pop 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
+    }
+    @keyframes badge-pop {
+      from { transform: scale(0); opacity: 0; }
+      to   { transform: scale(1); opacity: 1; }
+    }
+    .conclusion-title {
+      font-family: 'Orbitron', sans-serif; font-size: 22px; font-weight: 700;
+      text-align: center; margin-bottom: 8px;
+      background: linear-gradient(135deg, #FFEA24, #FF9800);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .conclusion-subtitle {
+      font-size: 14px; color: var(--text-muted); text-align: center; margin-bottom: 32px;
+    }
+
+    /* Diagnostic card */
+    .diag-card {
+      width: 100%; background: var(--surface);
+      border: 1px solid var(--border); border-radius: 16px;
+      padding: 20px; margin-bottom: 16px;
+    }
+    .diag-title {
+      font-family: 'Orbitron', sans-serif; font-size: 14px; font-weight: 600;
+      color: var(--text-muted); text-transform: uppercase;
+      letter-spacing: 1px; margin-bottom: 16px;
+    }
+    .diag-score-row {
+      display: flex; align-items: flex-end; gap: 8px; margin-bottom: 12px;
+    }
+    .diag-score-num {
+      font-family: 'Orbitron', sans-serif; font-size: 48px; font-weight: 900;
+      line-height: 1; color: var(--yellow);
+    }
+    .diag-score-denom { font-size: 20px; color: var(--text-muted); margin-bottom: 8px; }
+
+    .diag-bars { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+    .diag-bar-row { display: flex; flex-direction: column; gap: 4px; }
+    .diag-bar-label { display: flex; justify-content: space-between; font-size: 12px; }
+    .diag-bar-label span:first-child { color: var(--text-label); }
+    .diag-bar-label span:last-child  { color: var(--text); font-weight: 600; }
+    .diag-bar-track {
+      height: 8px; border-radius: 100px;
+      background: rgba(255,255,255,0.08); overflow: hidden;
+    }
+    .diag-bar-fill {
+      height: 100%; border-radius: 100px;
+      transition: width 1s ease 0.3s;
+    }
+    .fill-green  { background: var(--success); }
+    .fill-orange { background: #F79009; }
+    .fill-red    { background: var(--danger); }
+    .fill-blue   { background: var(--primary); }
+
+    .diag-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+    .diag-tag {
+      padding: 4px 12px; border-radius: 100px; font-size: 11px; font-weight: 600;
+      border: 1px solid transparent;
+    }
+    .diag-tag.strong { background: rgba(18,183,106,0.15); border-color: var(--success); color: #6ee7b7; }
+    .diag-tag.weak   { background: rgba(240,68,56,0.12);  border-color: var(--danger);  color: #FCA5A1; }
+    .diag-tag.ok     { background: rgba(247,144,9,0.12);  border-color: #F79009;        color: #FCD34D; }
+
+    .btn-start-trail {
+      width: 100%; height: 56px; border-radius: 14px;
+      background: linear-gradient(135deg, #6B21A8, #0059E7);
+      border: none; color: white;
+      font-family: 'Outfit', sans-serif; font-size: 16px; font-weight: 700;
+      cursor: pointer; margin-top: 8px;
+      box-shadow: 0 8px 24px rgba(0,89,231,0.4);
+      transition: opacity 0.15s, transform 0.1s;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+    }
+    .btn-start-trail:hover { opacity: 0.9; transform: translateY(-2px); }
+    .btn-start-trail:active { transform: none; }
+
+    /* Stars row */
+    .stars-row {
+      display: flex; gap: 8px; justify-content: center; margin-bottom: 24px;
+    }
+    .star-icon {
+      font-size: 32px; opacity: 0;
+      animation: star-in 0.4s ease forwards;
+    }
+    .star-icon:nth-child(1) { animation-delay: 0.2s; }
+    .star-icon:nth-child(2) { animation-delay: 0.4s; }
+    .star-icon:nth-child(3) { animation-delay: 0.6s; }
+    @keyframes star-in {
+      from { transform: scale(0) rotate(-30deg); opacity: 0; }
+      to   { transform: scale(1) rotate(0);      opacity: 1; }
+    }
+
+    /* confetti particles */
+    .confetti-wrap { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+    .confetti-dot {
+      position: absolute; width: 6px; height: 6px; border-radius: 2px;
+      animation: fall 2.5s ease-in forwards;
+    }
+    @keyframes fall {
+      from { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+      to   { transform: translateY(120vh) rotate(720deg); opacity: 0; }
+    }
+
+    /* phases list modal */
+    .phases-modal {
+      position: fixed; inset: 0; z-index: 200;
+      display: none; align-items: flex-end; justify-content: center;
+    }
+    .phases-modal.active { display: flex; }
+    .phases-bg { position: absolute; inset: 0; background: rgba(0,0,0,0.6); }
+    .phases-sheet {
+      position: relative; z-index: 1;
+      background: #162040; border-radius: 24px 24px 0 0;
+      width: 375px; padding: 20px;
+      animation: slide-up 0.25s ease;
+    }
+    @keyframes slide-up {
+      from { transform: translateY(60px); opacity: 0; }
+      to   { transform: none; opacity: 1; }
+    }
+    .phases-handle { width: 40px; height: 4px; border-radius: 2px; background: rgba(255,255,255,0.2); margin: 0 auto 16px; }
+    .phases-sheet h3 { font-family: 'Orbitron', sans-serif; font-size: 15px; margin-bottom: 16px; }
+    .phase-item {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 14px; border-radius: 12px; margin-bottom: 8px;
+      background: var(--surface); border: 1px solid var(--border);
+    }
+    .phase-num {
+      width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Orbitron', sans-serif; font-size: 12px; font-weight: 700;
+    }
+    .phase-num.done-num  { background: var(--success-bright); color: white; }
+    .phase-num.play-num  { background: var(--yellow); color: #333; }
+    .phase-num.lock-num  { background: var(--surface-dark); color: var(--text-muted); }
+    .phase-info { flex: 1; }
+    .phase-info strong { font-size: 14px; display: block; }
+    .phase-info span { font-size: 11px; color: var(--text-muted); }
+  </style>
+</head>
+<body>
+<div class="app" id="app">
+
+  <!-- ============================================================ -->
+  <!--  SCREEN 1: HOME – TRILHA                                    -->
+  <!-- ============================================================ -->
+  <div id="screen-home" class="screen active">
+    <!-- background stars -->
+    <div class="home-bg" id="starfield"></div>
+
+    <!-- Status bar -->
+    <div class="status-bar">
+      <span>9:41</span>
+      <div class="status-icons">
+        <svg width="16" height="12" viewBox="0 0 16 12" fill="white"><rect x="0" y="4" width="3" height="8" rx="1"/><rect x="4" y="2" width="3" height="10" rx="1"/><rect x="8" y="0" width="3" height="12" rx="1"/><rect x="12" y="0" width="3" height="12" rx="1" opacity=".3"/></svg>
+        <svg width="16" height="12" viewBox="0 0 24 18" fill="white"><path d="M1 5C3.76 2.24 7.69 0.5 12 0.5s8.24 1.74 11 4.5l-3 3C17.94 5.81 15.11 4.5 12 4.5s-5.94 1.31-8 3.5L1 5z"/><path d="M5 9c1.85-1.85 4.41-3 7-3s5.15 1.15 7 3l-3 3c-1.07-1.07-2.55-1.73-4-1.73S9.07 10.93 8 12L5 9z"/><circle cx="12" cy="16.5" r="1.5"/></svg>
+        <svg width="25" height="12" viewBox="0 0 25 12" fill="white"><rect x="0" y="1" width="22" height="10" rx="3" stroke="white" stroke-width="1.5" fill="none"/><rect x="1.5" y="2.5" width="17" height="7" rx="2" fill="white"/><rect x="22.5" y="4" width="2" height="4" rx="1" fill="white" opacity=".5"/></svg>
+      </div>
+    </div>
+
+    <!-- Top nav -->
+    <div class="top-nav">
+      <div class="logo">○<span>r</span>bie</div>
+      <div class="bell" onclick="showBell()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#99C0FF" stroke-width="2" stroke-linecap="round">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+        </svg>
+      </div>
+    </div>
+
+    <!-- Planet card: Diagnóstico -->
+    <div class="planet-card">
+      <div class="planet-orb earth">🌍</div>
+      <div class="planet-info">
+        <div class="planet-name">Diagnóstico</div>
+        <div class="planet-progress-bar">
+          <div class="planet-progress-fill" style="width: 35%"></div>
+        </div>
+        <div class="planet-badge">3 de 8 fases · Em andamento</div>
+      </div>
+    </div>
+
+    <!-- Trail -->
+    <div class="trail-container">
+      <div class="trail-inner">
+
+        <!-- Fase 1 – DONE -->
+        <div class="trail-step left">
+          <div class="trail-ring done-ring">
+            <div class="trail-btn done">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+          </div>
+          <span class="trail-label">Fundamentos</span>
+        </div>
+
+        <!-- Fase 2 – DONE -->
+        <div class="trail-step right">
+          <div class="trail-ring done-ring">
+            <div class="trail-btn done">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+          </div>
+          <span class="trail-label">Lógica Básica</span>
+        </div>
+
+        <!-- Fase 3 – PLAY (ativa) -->
+        <div class="trail-step center" id="step-play">
+          <div class="trail-ring play-ring">
+            <div class="trail-btn play" onclick="openTooltip()">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="#1a1a00"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            </div>
+          </div>
+          <span class="trail-label active-label">Resolução de Problemas</span>
+        </div>
+
+        <!-- Fase 4 – LOCKED -->
+        <div class="trail-step left">
+          <div class="trail-ring locked-ring">
+            <div class="trail-btn locked">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            </div>
+          </div>
+          <span class="trail-label">Análise Crítica</span>
+        </div>
+
+        <!-- Fase 5 – LOCKED -->
+        <div class="trail-step right">
+          <div class="trail-ring locked-ring">
+            <div class="trail-btn locked">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            </div>
+          </div>
+          <span class="trail-label">Aplicações</span>
+        </div>
+
+        <!-- Planet locked: Trilha Autoguiada -->
+        <div style="width:100%; padding: 8px 16px; position:relative; z-index:2;">
+          <div class="planet-card" style="opacity:0.6; pointer-events:none;">
+            <div class="planet-orb locked-planet">🪐</div>
+            <div class="planet-info">
+              <div class="planet-name">Trilha Autoguiada</div>
+              <div class="planet-locked-label">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#99C0FF" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                Disponível após concluir o Diagnóstico
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Fases 6-8 LOCKED -->
+        <div class="trail-step center" style="margin-top: 8px;">
+          <div class="trail-ring locked-ring">
+            <div class="trail-btn locked">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            </div>
+          </div>
+          <span class="trail-label">Síntese Final</span>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Bottom nav -->
+    <div class="bottom-nav">
+      <div class="nav-btn active">
+        <svg viewBox="0 0 24 24" fill="white"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4" fill="#0059E7"/></svg>
+      </div>
+      <div class="nav-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#99C0FF" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      </div>
+      <div class="nav-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#99C0FF" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="nav-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#99C0FF" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </div>
+      <div class="nav-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#99C0FF" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      </div>
+    </div>
+  </div><!-- /screen-home -->
+
+  <!-- ============================================================ -->
+  <!--  TOOLTIP MODAL                                              -->
+  <!-- ============================================================ -->
+  <div id="tooltip-overlay" class="tooltip-overlay">
+    <div class="tooltip-backdrop" onclick="closeTooltip()"></div>
+    <div class="tooltip-card">
+      <h3>Resolução de Problemas</h3>
+      <p>Desenvolva habilidades para identificar, analisar e resolver desafios de forma estruturada e criativa.</p>
+      <div class="tooltip-meta">
+        <span class="tooltip-chip">⚡ 3 questões</span>
+        <span class="tooltip-chip">⏱ ~5 min</span>
+        <span class="tooltip-chip">📊 Diagnóstico</span>
+      </div>
+      <div class="tooltip-actions">
+        <button class="btn-secondary" onclick="openPhasesModal()">Ver fases</button>
+        <button class="btn-primary" onclick="startQuiz()">Começar →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!--  PHASES LIST MODAL                                          -->
+  <!-- ============================================================ -->
+  <div id="phases-modal" class="phases-modal">
+    <div class="phases-bg" onclick="closePhasesModal()"></div>
+    <div class="phases-sheet">
+      <div class="phases-handle"></div>
+      <h3>Fases do Diagnóstico</h3>
+      <div class="phase-item">
+        <div class="phase-num done-num">1</div>
+        <div class="phase-info"><strong>Fundamentos</strong><span>Concluída · 100%</span></div>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#12B76A" stroke-width="2.5" stroke-linecap="round"/></svg>
+      </div>
+      <div class="phase-item">
+        <div class="phase-num done-num">2</div>
+        <div class="phase-info"><strong>Lógica Básica</strong><span>Concluída · 100%</span></div>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12" stroke="#12B76A" stroke-width="2.5" stroke-linecap="round"/></svg>
+      </div>
+      <div class="phase-item" style="border-color: var(--yellow);">
+        <div class="phase-num play-num">3</div>
+        <div class="phase-info"><strong>Resolução de Problemas</strong><span>Em andamento</span></div>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="#FFEA24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      </div>
+      <div class="phase-item" style="opacity:0.5;">
+        <div class="phase-num lock-num">4</div>
+        <div class="phase-info"><strong>Análise Crítica</strong><span>Bloqueada</span></div>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#526D98" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      </div>
+      <div class="phase-item" style="opacity:0.5;">
+        <div class="phase-num lock-num">5</div>
+        <div class="phase-info"><strong>Aplicações</strong><span>Bloqueada</span></div>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#526D98" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      </div>
+      <div style="margin-top:16px;">
+        <button class="btn-primary" style="width:100%;" onclick="startQuiz(); closePhasesModal();">Começar Fase 3 →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!--  SCREEN 2: QUIZ                                             -->
+  <!-- ============================================================ -->
+  <div id="screen-quiz" class="screen">
+    <div class="quiz-header">
+      <div class="quiz-close" onclick="exitQuiz()">✕</div>
+      <div class="quiz-progress-wrap">
+        <div class="quiz-progress-track">
+          <div class="quiz-progress-fill" id="quiz-bar" style="width:0%"></div>
+        </div>
+        <div class="quiz-counter" id="quiz-counter">1 / 3</div>
+      </div>
+    </div>
+
+    <div class="quiz-body" id="quiz-body">
+      <!-- Preenchido via JS -->
+    </div>
+
+    <div class="quiz-footer">
+      <div class="feedback-strip" id="feedback-strip">
+        <span class="fb-icon"></span>
+        <div class="fb-text">
+          <strong id="fb-title"></strong>
+          <span id="fb-detail"></span>
+        </div>
+      </div>
+      <button class="quiz-submit" id="quiz-submit" disabled onclick="handleSubmit()">Responder</button>
+    </div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!--  SCREEN 3: CONCLUSION                                       -->
+  <!-- ============================================================ -->
+  <div id="screen-conclusion" class="screen" style="position:relative; overflow:hidden;">
+    <div class="conclusion-bg"></div>
+
+    <!-- Stars confetti -->
+    <div class="confetti-wrap" id="confetti-wrap"></div>
+
+    <!-- Status bar -->
+    <div class="status-bar" style="position:relative;z-index:2;">
+      <span>9:41</span>
+      <div class="status-icons">
+        <span style="font-size:12px;color:#99C0FF">✦ ✦ ✦</span>
+      </div>
+    </div>
+
+    <div class="conclusion-content">
+      <div class="conclusion-badge">🏆</div>
+      <div class="conclusion-title">Diagnóstico Concluído!</div>
+      <div class="conclusion-subtitle">Parabéns! Agora você tem uma trilha personalizada.</div>
+
+      <!-- Stars -->
+      <div class="stars-row" id="stars-row">
+        <span class="star-icon">⭐</span>
+        <span class="star-icon">⭐</span>
+        <span class="star-icon" id="star3">⭐</span>
+      </div>
+
+      <!-- Diagnostic card -->
+      <div class="diag-card">
+        <div class="diag-title">📊 Seu Diagnóstico</div>
+
+        <div class="diag-score-row">
+          <div class="diag-score-num" id="score-num">0</div>
+          <div class="diag-score-denom">/ 3</div>
+        </div>
+
+        <div class="diag-bars">
+          <div class="diag-bar-row">
+            <div class="diag-bar-label">
+              <span>Fundamentos</span><span>100%</span>
+            </div>
+            <div class="diag-bar-track"><div class="diag-bar-fill fill-green" id="bar-fund" style="width:0%"></div></div>
+          </div>
+          <div class="diag-bar-row">
+            <div class="diag-bar-label">
+              <span>Lógica</span><span>80%</span>
+            </div>
+            <div class="diag-bar-track"><div class="diag-bar-fill fill-blue" id="bar-logic" style="width:0%"></div></div>
+          </div>
+          <div class="diag-bar-row">
+            <div class="diag-bar-label">
+              <span>Resolução de Problemas</span><span id="bar-prob-pct">–</span>
+            </div>
+            <div class="diag-bar-track"><div class="diag-bar-fill fill-orange" id="bar-prob" style="width:0%"></div></div>
+          </div>
+          <div class="diag-bar-row">
+            <div class="diag-bar-label">
+              <span>Análise Crítica</span><span>65%</span>
+            </div>
+            <div class="diag-bar-track"><div class="diag-bar-fill fill-orange" id="bar-crit" style="width:0%"></div></div>
+          </div>
+        </div>
+
+        <div class="diag-tags">
+          <span class="diag-tag strong">✅ Fundamentos</span>
+          <span class="diag-tag ok" id="prob-tag">⚡ Resolução</span>
+          <span class="diag-tag weak">📌 Análise Crítica</span>
+        </div>
+      </div>
+
+      <!-- CTA -->
+      <button class="btn-start-trail" onclick="startAutoTrail()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Iniciar Trilha Autoguiada
+      </button>
+
+      <p style="font-size:12px;color:var(--text-muted);text-align:center;margin-top:12px;">
+        Trilha gerada pela IA com base no seu desempenho
+      </p>
+    </div>
+  </div>
+
+</div><!-- /app -->
+
+<script>
+  /* ============================================================
+     DATA – 3 questões (1 por fase de quiz)
+  ============================================================ */
+  const QUESTIONS = [
+    {
+      fase: "Fase 3 · Questão 1",
+      question: "Um estudante precisa resolver um problema complexo. Qual é a PRIMEIRA etapa mais indicada?",
+      options: [
+        "Implementar a solução imediatamente",
+        "Identificar e compreender claramente o problema",
+        "Buscar ajuda de colegas",
+        "Pesquisar soluções prontas na internet"
+      ],
+      correct: 1,
+      explanation: "Compreender o problema é a base de qualquer metodologia de resolução. Sem clareza sobre o que precisa ser resolvido, qualquer solução pode ser inadequada."
+    },
+    {
+      fase: "Fase 3 · Questão 2",
+      question: "Qual destas estratégias representa melhor o pensamento ANALÍTICO na resolução de problemas?",
+      options: [
+        "Usar intuição e experiência pessoal",
+        "Dividir o problema em partes menores e analisar cada uma",
+        "Copiar a solução de um problema semelhante",
+        "Ignorar detalhes irrelevantes desde o início"
+      ],
+      correct: 1,
+      explanation: "Decompor o problema em partes menores (decomposição) é uma estratégia central do pensamento computacional e analítico."
+    },
+    {
+      fase: "Fase 3 · Questão 3",
+      question: "Após encontrar uma solução, o próximo passo mais importante é:",
+      options: [
+        "Apresentar imediatamente para todos",
+        "Descartar e buscar outra abordagem",
+        "Validar e testar a solução com dados reais",
+        "Documentar apenas se exigido"
+      ],
+      correct: 2,
+      explanation: "Validar e testar garante que a solução realmente resolve o problema e funciona em diferentes cenários."
+    }
+  ];
+
+  /* ============================================================
+     STATE
+  ============================================================ */
+  let currentQ     = 0;
+  let score        = 0;
+  let selectedOpt  = null;
+  let answered     = false;
+  let totalCorrect = 0;
+
+  /* ============================================================
+     NAVIGATION
+  ============================================================ */
+  function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    window.scrollTo(0, 0);
+  }
+
+  /* ============================================================
+     STARS / STARFIELD
+  ============================================================ */
+  function buildStars() {
+    const sf = document.getElementById('starfield');
+    for (let i = 0; i < 80; i++) {
+      const d = document.createElement('div');
+      const sz = Math.random() * 2.5 + 0.5;
+      d.className = 'star';
+      d.style.cssText = `width:${sz}px;height:${sz}px;top:${Math.random()*100}%;left:${Math.random()*100}%;opacity:${Math.random()*0.5+0.1};animation-delay:${Math.random()*4}s;animation-duration:${2+Math.random()*3}s;`;
+      sf.appendChild(d);
+    }
+  }
+  buildStars();
+
+  /* ============================================================
+     TOOLTIP
+  ============================================================ */
+  function openTooltip() {
+    document.getElementById('tooltip-overlay').classList.add('active');
+  }
+  function closeTooltip() {
+    document.getElementById('tooltip-overlay').classList.remove('active');
+  }
+  function showBell() {
+    const bell = document.querySelector('.bell');
+    bell.style.transform = 'rotate(20deg)';
+    setTimeout(() => bell.style.transform = 'rotate(-20deg)', 100);
+    setTimeout(() => bell.style.transform = 'rotate(0)', 200);
+  }
+
+  /* ============================================================
+     PHASES MODAL
+  ============================================================ */
+  function openPhasesModal() {
+    closeTooltip();
+    document.getElementById('phases-modal').classList.add('active');
+  }
+  function closePhasesModal() {
+    document.getElementById('phases-modal').classList.remove('active');
+  }
+
+  /* ============================================================
+     QUIZ
+  ============================================================ */
+  function startQuiz() {
+    closeTooltip();
+    currentQ     = 0;
+    score        = 0;
+    totalCorrect = 0;
+    selectedOpt  = null;
+    answered     = false;
+    showScreen('screen-quiz');
+    renderQuestion();
+  }
+
+  function renderQuestion() {
+    const q = QUESTIONS[currentQ];
+    answered  = false;
+    selectedOpt = null;
+
+    // update header
+    const pct = (currentQ / QUESTIONS.length) * 100;
+    document.getElementById('quiz-bar').style.width = pct + '%';
+    document.getElementById('quiz-counter').textContent = `${currentQ + 1} / ${QUESTIONS.length}`;
+
+    // reset feedback
+    const strip = document.getElementById('feedback-strip');
+    strip.className = 'feedback-strip';
+
+    // reset submit
+    const btn = document.getElementById('quiz-submit');
+    btn.disabled   = true;
+    btn.textContent = 'Responder';
+    btn.onclick     = handleSubmit;
+
+    // build body
+    const body = document.getElementById('quiz-body');
+    const letters = ['A','B','C','D'];
+    body.innerHTML = `
+      <div class="quiz-fase-label">${q.fase}</div>
+      <div class="quiz-question">${q.question}</div>
+      ${q.options.map((opt, i) => `
+        <button class="answer-option" id="opt-${i}" onclick="selectOption(${i})" data-idx="${i}">
+          <span class="answer-letter">${letters[i]}</span>
+          ${opt}
+        </button>
+      `).join('')}
+    `;
+  }
+
+  function selectOption(idx) {
+    if (answered) return;
+    selectedOpt = idx;
+    document.querySelectorAll('.answer-option').forEach(b => b.classList.remove('selected'));
+    document.getElementById(`opt-${idx}`).classList.add('selected');
+    const btn = document.getElementById('quiz-submit');
+    btn.disabled = false;
+    btn.textContent = 'Responder';
+  }
+
+  function handleSubmit() {
+    if (answered) {
+      // "Continuar" pressed
+      currentQ++;
+      if (currentQ >= QUESTIONS.length) {
+        showConclusion();
+      } else {
+        renderQuestion();
+      }
+      return;
+    }
+
+    if (selectedOpt === null) return;
+    answered = true;
+
+    const q = QUESTIONS[currentQ];
+    const correct = selectedOpt === q.correct;
+    if (correct) totalCorrect++;
+
+    // style options
+    document.querySelectorAll('.answer-option').forEach((b, i) => {
+      b.disabled = true;
+      if (i === q.correct) {
+        b.classList.remove('selected'); b.classList.add('correct');
+      } else if (i === selectedOpt && !correct) {
+        b.classList.remove('selected'); b.classList.add('wrong');
+      }
+    });
+
+    // feedback
+    const strip = document.getElementById('feedback-strip');
+    const fbTitle  = document.getElementById('fb-title');
+    const fbDetail = document.getElementById('fb-detail');
+    if (correct) {
+      strip.className = 'feedback-strip show correct-fb';
+      fbTitle.textContent  = '✓ Correto!';
+      fbDetail.textContent = q.explanation;
+    } else {
+      strip.className = 'feedback-strip show wrong-fb';
+      fbTitle.textContent  = '✗ Resposta incorreta';
+      fbDetail.textContent = q.explanation;
+    }
+
+    // update progress bar
+    const pct = ((currentQ + 1) / QUESTIONS.length) * 100;
+    document.getElementById('quiz-bar').style.width = pct + '%';
+
+    // change button
+    const btn = document.getElementById('quiz-submit');
+    btn.disabled    = false;
+    btn.textContent = currentQ + 1 < QUESTIONS.length ? 'Continuar →' : 'Ver Resultado →';
+    btn.onclick     = handleSubmit;
+  }
+
+  function exitQuiz() {
+    showScreen('screen-home');
+  }
+</script>
+
+<script>
+  /* ============================================================
+     CONCLUSION
+  ============================================================ */
+  function showConclusion() {
+    showScreen('screen-conclusion');
+
+    // score counter animation
+    let n = 0;
+    const el = document.getElementById('score-num');
+    const interval = setInterval(() => {
+      el.textContent = n;
+      n++;
+      if (n > totalCorrect) clearInterval(interval);
+    }, 200);
+
+    // progress bars animate in
+    setTimeout(() => {
+      document.getElementById('bar-fund').style.width  = '100%';
+      document.getElementById('bar-logic').style.width = '80%';
+      document.getElementById('bar-crit').style.width  = '65%';
+
+      const probPct = Math.round((totalCorrect / QUESTIONS.length) * 100);
+      document.getElementById('bar-prob').style.width    = probPct + '%';
+      document.getElementById('bar-prob-pct').textContent = probPct + '%';
+
+      // tag color
+      const tag = document.getElementById('prob-tag');
+      if (probPct >= 80) {
+        tag.className = 'diag-tag strong'; tag.textContent = '✅ Resolução';
+      } else if (probPct >= 50) {
+        tag.className = 'diag-tag ok'; tag.textContent = '⚡ Resolução';
+      } else {
+        tag.className = 'diag-tag weak'; tag.textContent = '📌 Resolução';
+      }
+    }, 400);
+
+    // stars
+    const star3 = document.getElementById('star3');
+    if (totalCorrect < 2) {
+      star3.textContent = '☆';
+      star3.style.opacity = '0.3';
+    }
+    if (totalCorrect === 0) {
+      document.querySelectorAll('.star-icon').forEach((s, i) => {
+        if (i > 0) { s.textContent = '☆'; s.style.opacity = '0.3'; }
+      });
+    }
+
+    // confetti
+    spawnConfetti();
+  }
+
+  function spawnConfetti() {
+    const wrap  = document.getElementById('confetti-wrap');
+    const colors = ['#FFEA24','#0059E7','#2ABC4E','#F04438','#AD46FF','#00C1FE'];
+    for (let i = 0; i < 60; i++) {
+      const dot = document.createElement('div');
+      dot.className = 'confetti-dot';
+      dot.style.cssText = `
+        left:${Math.random()*100}%;
+        top:${-10 + Math.random()*20}px;
+        background:${colors[Math.floor(Math.random()*colors.length)]};
+        animation-delay:${Math.random()*1.5}s;
+        animation-duration:${1.8 + Math.random()*1.2}s;
+        transform: rotate(${Math.random()*360}deg);
+        width:${4 + Math.random()*6}px;
+        height:${4 + Math.random()*6}px;
+      `;
+      wrap.appendChild(dot);
+      setTimeout(() => dot.remove(), 3500);
+    }
+  }
+
+  function startAutoTrail() {
+    // Simulate navigating to auto-guided trail
+    const btn = document.querySelector('.btn-start-trail');
+    btn.textContent = '⏳ Gerando trilha...';
+    btn.disabled = true;
+    setTimeout(() => {
+      btn.innerHTML = `
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><polyline points="20 6 9 17 4 12" stroke="white" stroke-width="3" stroke-linecap="round"/></svg>
+        Trilha Pronta! Abrindo...
+      `;
+      setTimeout(() => {
+        // Reset to home with "unlocked" state simulation
+        showScreen('screen-home');
+        btn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg> Iniciar Trilha Autoguiada`;
+        btn.disabled = false;
+        // update planet card to show trail unlocked
+        const planetCard = document.querySelector('.planet-card:last-of-type');
+      }, 1200);
+    }, 1800);
+  }
+</script>
+</body>
+</html>

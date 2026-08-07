@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>HU 25191 · Home — Pendência de Reagendamento — SIG SESI MG</title>
+<style>
+:root{
+  --side:#1B3A7A;--side2:#152D62;--side-act:#1E4CB8;
+  --bg:#F4F5F8;--card:#fff;
+  --blue:#1E4CB8;--blue-h:#1640A0;--blue-lt:#EEF3FF;--blue-bd:#C7D7F9;
+  --tx:#1A1A2E;--tx2:#6B7280;--tx3:#374151;--txd:#9CA3AF;
+  --bdr:#E5E7EB;--bdf:#3B82F6;
+  --red:#DC2626;--red-bg:#FEF2F2;--red-bd:#FECACA;
+  --grn:#16A34A;--grn-bg:#F0FDF4;--grn-bd:#BBF7D0;
+  --ylw:#D97706;--ylw-bg:#FFFBEB;--ylw-bd:#FDE68A;
+  --orn:#EA580C;--orn-bg:#FFF7ED;--orn-bd:#FED7AA;
+  --r:8px;--rs:4px;--shadow:0 1px 3px rgba(0,0,0,.08);
+  --navbar:86px;--sidebar:336px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter','Segoe UI',system-ui,sans-serif;font-size:14px;background:var(--bg);color:var(--tx);min-height:100vh}
+a{text-decoration:none;color:inherit}
+</style>
+</head>
+<body>
+<style>
+/* NAVBAR */
+.navbar{height:var(--navbar);background:var(--side);display:flex;align-items:center;justify-content:space-between;padding:0 28px 0 24px;position:fixed;top:0;left:0;right:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.18)}
+.nb-left{display:flex;align-items:center;gap:20px}
+.nb-logo{display:flex;align-items:center;gap:10px}
+.nb-logo-box{width:36px;height:36px;background:#fff;border-radius:6px;display:flex;align-items:center;justify-content:center}
+.nb-logo-box svg{width:22px;height:22px}
+.nb-title{color:#fff;font-weight:700;font-size:15px}
+.nb-sep{width:1px;height:24px;background:rgba(255,255,255,.2)}
+.nb-bc{font-size:13px;color:rgba(255,255,255,.7)}
+.nb-right{display:flex;align-items:center;gap:12px}
+.nb-user-badge{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);border-radius:6px;padding:5px 12px;font-size:12px;color:#fff;font-weight:500}
+.nb-avatar{width:36px;height:36px;background:#2E4A80;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:600;cursor:pointer}
+.nb-notif{position:relative;cursor:pointer}
+.nb-notif svg{width:20px;height:20px;stroke:#fff;fill:none}
+.nb-notif-dot{position:absolute;top:-2px;right:-2px;width:8px;height:8px;background:#EF4444;border-radius:50%;border:2px solid var(--side)}
+
+/* SIDEBAR */
+.sidebar{width:var(--sidebar);background:var(--side);position:fixed;top:var(--navbar);left:0;bottom:0;overflow-y:auto;z-index:90;display:flex;flex-direction:column}
+.sb-section{padding:16px 8px 4px}
+.sb-section-lbl{font-size:10px;font-weight:600;color:rgba(255,255,255,.4);letter-spacing:.8px;text-transform:uppercase;padding:4px 12px 8px}
+.sb-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:6px;color:rgba(255,255,255,.7);font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;margin-bottom:2px}
+.sb-item:hover{background:rgba(255,255,255,.08);color:#fff}
+.sb-item.act{background:var(--side-act);color:#fff;font-weight:600}
+.sb-item svg{width:18px;height:18px;flex-shrink:0;opacity:.8}
+.sb-item.act svg{opacity:1}
+.sb-foot{margin-top:auto;padding:12px 8px;border-top:1px solid rgba(255,255,255,.1)}
+.sb-user-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:6px;cursor:pointer}
+.sb-user-row:hover{background:rgba(255,255,255,.07)}
+.sb-av{width:34px;height:34px;background:#2E4A80;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:600;flex-shrink:0}
+.sb-user-info{color:#fff;font-size:12px;line-height:1.4}
+.sb-user-info small{display:block;opacity:.5;font-size:11px}
+
+/* MAIN */
+.main{margin-top:var(--navbar);margin-left:var(--sidebar);min-height:calc(100vh - var(--navbar));padding:32px 40px 48px}
+
+/* ROLE BAR */
+.role-bar{background:var(--side2);padding:7px 0;display:flex;align-items:center;gap:8px;margin-bottom:28px;border-radius:var(--r);padding:10px 16px;flex-wrap:wrap}
+.role-bar-lbl{font-size:11px;color:rgba(255,255,255,.55);margin-right:2px}
+.rb{padding:4px 12px;border-radius:4px;background:rgba(255,255,255,.1);border:1px solid transparent;color:rgba(255,255,255,.7);font-size:11px;font-weight:500;cursor:pointer;transition:all .15s}
+.rb.act{background:rgba(255,255,255,.22);border-color:rgba(255,255,255,.2);color:#fff;font-weight:600}
+.rb:hover:not(.act){background:rgba(255,255,255,.15)}
+.role-hint{font-size:11px;color:rgba(255,255,255,.5);margin-left:4px}
+
+/* PAGE HEADER */
+.page-header{margin-bottom:24px}
+.page-header h1{font-size:22px;font-weight:700;color:var(--tx)}
+.page-header p{font-size:13px;color:var(--tx2);margin-top:4px}
+
+/* ANNOTATIONS */
+.ann{background:#FFFBEB;border:1px solid #FDE68A;border-radius:var(--r);padding:14px 18px;margin-bottom:24px}
+.ann h3{font-size:11px;font-weight:700;color:#92400E;margin-bottom:10px;text-transform:uppercase;letter-spacing:.4px}
+.ann-item{display:flex;gap:8px;margin-bottom:7px;font-size:12px;color:#78350F;line-height:1.5}
+.ann-item:last-child{margin-bottom:0}
+.ann-n{min-width:18px;height:18px;background:#F59E0B;color:#fff;border-radius:50%;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+</style>
+<style>
+/* ACORDEON BASE */
+.accordion-wrap{display:flex;flex-direction:column;gap:0;border:1px solid var(--bdr);border-radius:var(--r);overflow:hidden;background:var(--card);box-shadow:var(--shadow);margin-bottom:16px}
+.accordion-title{display:flex;align-items:center;gap:10px;padding:0 16px;height:64px;cursor:pointer;user-select:none;background:var(--card);transition:background .15s;border-bottom:1px solid transparent}
+.accordion-title:hover{background:#FAFAFA}
+.accordion-title.open{border-bottom-color:var(--bdr)}
+.acc-ico{width:24px;height:24px;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.acc-ico svg{width:18px;height:18px}
+.acc-label{font-size:14px;font-weight:600;color:var(--tx);flex:1}
+.acc-badge{display:inline-flex;align-items:center;justify-content:center;min-width:24px;height:20px;padding:0 6px;background:#E5E7EB;border-radius:20px;font-size:11px;font-weight:700;color:var(--tx2)}
+.acc-badge.alert{background:#FEE2E2;color:#991B1B}
+.acc-chevron{width:16px;height:16px;transition:transform .2s;flex-shrink:0}
+.acc-chevron.open{transform:rotate(180deg)}
+.accordion-body{display:none;padding:0}
+.accordion-body.open{display:block}
+
+/* ACORDEON REAGENDAMENTO — destaque amarelo */
+.accordion-wrap.reagend .accordion-title{background:var(--ylw-bg);border-bottom-color:var(--ylw-bd)}
+.accordion-wrap.reagend .accordion-title:hover{background:#FEF3C7}
+.accordion-wrap.reagend .accordion-title.open{border-bottom-color:var(--ylw-bd)}
+.accordion-wrap.reagend .acc-ico svg{stroke:var(--ylw)}
+.accordion-wrap.reagend .acc-label{color:#92400E}
+.accordion-wrap.reagend .acc-badge{background:#FDE68A;color:#78350F}
+
+/* LOADING SKELETON */
+.skeleton-row{height:20px;background:linear-gradient(90deg,#F3F4F6 25%,#E5E7EB 50%,#F3F4F6 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:4px;margin:6px 0}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* TABELA */
+.pend-table{width:100%;border-collapse:collapse}
+.pend-table thead th{font-size:12px;font-weight:600;color:var(--tx2);text-align:left;padding:10px 16px;background:#F9FAFB;border-bottom:2px solid var(--bdr);white-space:nowrap;cursor:pointer;user-select:none;transition:background .15s}
+.pend-table thead th:hover{background:#F3F4F6}
+.pend-table thead th.no-sort{cursor:default}
+.pend-table thead th.no-sort:hover{background:#F9FAFB}
+.sort-icon{display:inline-block;margin-left:4px;font-size:10px;opacity:.5}
+.sort-icon.asc::after{content:'▲'}
+.sort-icon.desc::after{content:'▼'}
+.sort-icon.none::after{content:'⇅'}
+.pend-table tbody tr{border-bottom:1px solid var(--bdr);transition:background .12s}
+.pend-table tbody tr:last-child{border-bottom:none}
+.pend-table tbody tr:hover{background:#FFF8EE}
+.pend-table tbody td{padding:12px 16px;font-size:13px;vertical-align:top;color:var(--tx)}
+.pend-table tbody td.td-obs{min-width:220px;max-width:300px}
+.obs-input{width:100%;border:1px solid var(--bdr);border-radius:var(--rs);padding:6px 9px;font-size:12px;font-family:inherit;resize:vertical;min-height:34px;max-height:80px;outline:none;transition:border-color .15s;color:var(--tx);background:#fff}
+.obs-input:focus{border-color:var(--bdf);box-shadow:0 0 0 3px rgba(59,130,246,.1)}
+.btn-action{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:var(--rs);background:var(--blue-lt);border:1px solid var(--blue-bd);cursor:pointer;transition:all .15s}
+.btn-action:hover{background:var(--blue);border-color:var(--blue)}
+.btn-action:hover svg{stroke:#fff}
+.btn-action svg{width:16px;height:16px;stroke:var(--blue);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.motivo-tag{display:inline-flex;align-items:center;font-size:11px;color:var(--ylw);background:var(--ylw-bg);border:1px solid var(--ylw-bd);border-radius:4px;padding:2px 8px;white-space:nowrap;font-weight:500}
+.pend-footer{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:#F9FAFB;border-top:1px solid var(--bdr);font-size:12px;color:var(--tx2)}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:#1F2937;color:#fff;border-radius:var(--r);padding:12px 16px;font-size:13px;display:flex;align-items:center;gap:8px;box-shadow:0 8px 24px rgba(0,0,0,.25);z-index:600;transform:translateY(80px);opacity:0;transition:all .3s;max-width:360px}
+.toast.show{transform:translateY(0);opacity:1}
+.toast-ok{border-left:4px solid var(--grn)}
+.toast-err{border-left:4px solid var(--red)}
+</style>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- NAVBAR -->
+<header class="navbar">
+  <div class="nb-left">
+    <div class="nb-logo">
+      <div class="nb-logo-box">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#1B3A7A" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+      </div>
+      <span class="nb-title">SIG SESI MG</span>
+    </div>
+    <span class="nb-sep"></span>
+    <span class="nb-bc">Página Inicial</span>
+  </div>
+  <div class="nb-right">
+    <span class="nb-notif">
+      <svg viewBox="0 0 24 24"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+      <span class="nb-notif-dot"></span>
+    </span>
+    <span class="nb-user-badge" id="nb-badge">Admin DR</span>
+    <div class="nb-avatar" id="nb-av">AS</div>
+  </div>
+</header>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sb-section">
+    <div class="sb-item act">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+      Página Inicial
+    </div>
+  </div>
+  <div class="sb-section">
+    <div class="sb-section-lbl">Cadastros</div>
+    <div class="sb-item">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+      Prestadores
+    </div>
+    <div class="sb-item">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+      Clientes
+    </div>
+    <div class="sb-item">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+      Agendamentos
+    </div>
+  </div>
+  <div class="sb-foot">
+    <div class="sb-user-row">
+      <div class="sb-av" id="sb-av">AS</div>
+      <div class="sb-user-info" id="sb-info">Ana Silveira<small>Admin DR</small></div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+  <!-- ROLE BAR -->
+  <div class="role-bar">
+    <span class="role-bar-lbl">🎭 Simular perfil:</span>
+    <button class="rb act" id="rb-admindr" onclick="setRole('admindr')">Admin DR</button>
+    <button class="rb" id="rb-agdr" onclick="setRole('agdr')">Agendamento DR</button>
+    <button class="rb" id="rb-aguo" onclick="setRole('aguo')">Agendamento UO</button>
+    <button class="rb" id="rb-sem" onclick="setRole('sem')">Perfil sem acesso</button>
+    <span class="role-hint" id="role-hint">Visualiza todos os registros do sistema</span>
+  </div>
+
+  <!-- ANNOTATIONS -->
+  <div class="ann">
+    <h3>📋 Anotações — HU 25191 · Pendência de Agendamentos aguardando Reagendamento</h3>
+    <div class="ann-item"><div class="ann-n">1</div><div><strong>RN001/RN007/CA001/CA002:</strong> O acordeon só aparece se houver ao menos 1 registro na abrangência do usuário. Troque para "Perfil sem acesso" — o componente desaparece completamente.</div></div>
+    <div class="ann-item"><div class="ann-n">2</div><div><strong>RN005/CA003:</strong> "Admin DR" e "Agendamento DR" veem todos os 5 registros. "Agendamento UO" vê apenas os 3 da sua UO (UO-BH). Troque os perfis para comparar.</div></div>
+    <div class="ann-item"><div class="ann-n">3</div><div><strong>RN008/CA005:</strong> Ao expandir, há simulação de carregamento lazy (800ms de skeleton) antes de exibir a tabela.</div></div>
+    <div class="ann-item"><div class="ann-n">4</div><div><strong>RN009/CA009:</strong> Edite o campo "Observações" de qualquer linha — o agendamento permanece na lista. Só a mudança de situação o remove.</div></div>
+    <div class="ann-item"><div class="ann-n">5</div><div><strong>RN003/CA008:</strong> Clique no ícone de ação (→) para simular a conclusão da tratativa — o registro sai da pendência e o contador é atualizado.</div></div>
+    <div class="ann-item"><div class="ann-n">6</div><div><strong>Ordenação:</strong> Clique nos cabeçalhos de coluna para ordenar (exceto "Ação"). Suporta asc/desc/original.</div></div>
+  </div>
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <h1>Página Inicial</h1>
+    <p>Bem-vindo, <span id="ph-nome">Ana Silveira</span>. Acompanhe as pendências do sistema abaixo.</p>
+  </div>
+
+  <!-- ACORDEONS DA HOME -->
+  <div id="acordeons-wrap"></div>
+
+</main>
+
+<script>
+// ---- BANCO DE AGENDAMENTOS EM REAGENDAMENTO ----
+let agendamentos = [
+  {id:'AG001', cliente:'Carlos Eduardo Souza',    data:'07/09/2026', hora:'07:30', qtdExames:2, motivo:'Horário de Atendimento', uo:'UO-BH', obs:''},
+  {id:'AG002', cliente:'Maria Aparecida Ferreira', data:'09/09/2026', hora:'07:00', qtdExames:1, motivo:'Horário de Atendimento', uo:'UO-BH', obs:''},
+  {id:'AG003', cliente:'João Pedro Alves',         data:'14/09/2026', hora:'18:30', qtdExames:3, motivo:'Bloqueio de Agenda',      uo:'UO-BH', obs:''},
+  {id:'AG004', cliente:'Fernanda Lima Rocha',      data:'21/09/2026', hora:'07:15', qtdExames:1, motivo:'Horário de Atendimento', uo:'UO-CP', obs:''},
+  {id:'AG005', cliente:'Roberto Carlos Nunes',     data:'05/10/2026', hora:'18:45', qtdExames:4, motivo:'Bloqueio de Agenda',      uo:'UO-CP', obs:''},
+];
+
+// ---- PERFIS ----
+const PERFIS = {
+  admindr: {lbl:'Admin DR',        av:'AS', nome:'Ana Silveira',   hint:'Visualiza todos os registros do sistema (RN005)',          acesso:true,  abrangencia:'todos'},
+  agdr:    {lbl:'Agendamento DR',  av:'MR', nome:'Marcos Rocha',   hint:'Visualiza todos os registros do sistema (RN005)',          acesso:true,  abrangencia:'todos'},
+  aguo:    {lbl:'Agendamento UO',  av:'CT', nome:'Carla Torres',   hint:'Visualiza somente registros da UO-BH (RN005)',            acesso:true,  abrangencia:'uo', uo:'UO-BH'},
+  sem:     {lbl:'Gestor Financeiro',av:'GF',nome:'Guilherme Freitas',hint:'Sem acesso à pendência (RN004/CA002)',                  acesso:false, abrangencia:null},
+};
+let perfil = 'admindr';
+
+// ---- ESTADO DE CARREGAMENTO ----
+let accordionLoaded = false;
+
+// ---- HELPERS ----
+function getRegistros(){
+  const p = PERFIS[perfil];
+  if(!p.acesso) return [];
+  if(p.abrangencia === 'todos') return [...agendamentos];
+  return agendamentos.filter(a => a.uo === p.uo);
+}
+
+function fmtDate(d){ return d; }
+</script>
+
+<script>
+// ---- RENDER HOME ----
+function renderHome(){
+  const wrap = document.getElementById('acordeons-wrap');
+  wrap.innerHTML = '';
+  accordionLoaded = false;
+
+  const registros = getRegistros();
+  const qtd = registros.length;
+
+  // Acordeons existentes (mock dos outros acordeons do Figma)
+  const outros = [
+    {key:'doc-venc',    label:'Documentos de prestadores vencidos',                  qtd:4,  alerta:true},
+    {key:'doc-vencer',  label:'Documentos de prestadores a vencer em 10 dias',       qtd:7,  alerta:false},
+    {key:'doc-aval',    label:'Documentos atualizados aguardando avaliação do SESI',  qtd:2,  alerta:false},
+    {key:'doc-vencida', label:'Documentos não conformes com diligência vencida',      qtd:3,  alerta:true},
+  ];
+
+  outros.forEach(o => wrap.appendChild(buildOtherAccordion(o)));
+
+  // HU 25191: acordeon de reagendamento — só aparece se qtd > 0 (RN007/CA001/CA002)
+  if(qtd > 0){
+    wrap.appendChild(buildReagendamentoAccordion(registros));
+  }
+}
+
+function buildOtherAccordion(cfg){
+  const div = document.createElement('div');
+  div.className = 'accordion-wrap';
+  div.innerHTML = `
+    <div class="accordion-title" onclick="toggleOther(this)">
+      <span class="acc-ico">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#6B7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+        </svg>
+      </span>
+      <span class="acc-label">${cfg.label}</span>
+      <span class="acc-badge ${cfg.alerta?'alert':''}">${cfg.qtd}</span>
+      <svg class="acc-chevron" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="accordion-body">
+      <div style="padding:20px 16px;font-size:13px;color:var(--tx2);font-style:italic">Conteúdo não detalhado neste protótipo.</div>
+    </div>`;
+  return div;
+}
+
+function toggleOther(titleEl){
+  titleEl.classList.toggle('open');
+  const body = titleEl.nextElementSibling;
+  body.classList.toggle('open');
+  const chev = titleEl.querySelector('.acc-chevron');
+  chev.classList.toggle('open');
+}
+
+function buildReagendamentoAccordion(registros){
+  const qtd = registros.length;
+  const div = document.createElement('div');
+  div.className = 'accordion-wrap reagend';
+  div.id = 'acc-reagend';
+  div.innerHTML = `
+    <div class="accordion-title" id="acc-reagend-title" onclick="toggleReagend()">
+      <span class="acc-ico">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+        </svg>
+      </span>
+      <span class="acc-label">Agendamentos aguardando Reagendamento</span>
+      <span class="acc-badge alert" id="reagend-count">${qtd}</span>
+      <svg class="acc-chevron" id="reagend-chevron" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="accordion-body" id="acc-reagend-body"></div>`;
+  return div;
+}
+</script>
+
+<script>
+// ---- TOGGLE E LAZY LOAD ----
+function toggleReagend(){
+  const title = document.getElementById('acc-reagend-title');
+  const body  = document.getElementById('acc-reagend-body');
+  const chev  = document.getElementById('reagend-chevron');
+  const isOpen = title.classList.toggle('open');
+  body.classList.toggle('open');
+  chev.classList.toggle('open');
+
+  if(isOpen && !accordionLoaded){
+    // RN008/CA005: carrega skeleton e depois os dados (simula lazy)
+    body.innerHTML = `<div style="padding:16px 24px">
+      <div class="skeleton-row" style="width:60%"></div>
+      <div class="skeleton-row" style="width:80%;margin-top:8px"></div>
+      <div class="skeleton-row" style="width:70%;margin-top:8px"></div>
+    </div>`;
+    setTimeout(()=>{
+      body.innerHTML = '';
+      body.appendChild(buildTable());
+      accordionLoaded = true;
+    }, 800);
+  }
+}
+
+// ---- TABELA DE REAGENDAMENTOS ----
+let sortCol = null;
+let sortDir = 'none';
+
+function buildTable(){
+  const registros = getRegistros();
+  const sorted = sortRegistros(registros);
+  const frag = document.createDocumentFragment();
+
+  const cols = [
+    {key:'acao',      label:'Ação',          sortable:false},
+    {key:'cliente',   label:'Cliente',        sortable:true},
+    {key:'data',      label:'Data 1º Exame',  sortable:true},
+    {key:'hora',      label:'Horário 1º Exame',sortable:true},
+    {key:'qtdExames', label:'Qtd. Exames',    sortable:true},
+    {key:'motivo',    label:'Motivo',         sortable:true},
+    {key:'obs',       label:'Observações',    sortable:false},
+  ];
+
+  const table = document.createElement('table');
+  table.className = 'pend-table';
+
+  // thead
+  const thead = table.createTHead();
+  const tr = thead.insertRow();
+  cols.forEach(c=>{
+    const th = document.createElement('th');
+    if(!c.sortable) th.className = 'no-sort';
+    let icon = '';
+    if(c.sortable){
+      const dir = sortCol===c.key ? sortDir : 'none';
+      icon = `<span class="sort-icon ${dir}"></span>`;
+      th.onclick = ()=>{ sortBy(c.key); };
+    }
+    th.innerHTML = c.label + icon;
+    tr.appendChild(th);
+  });
+
+  // tbody
+  const tbody = table.createTBody();
+  sorted.forEach(ag=>{
+    const row = tbody.insertRow();
+    // Ação
+    const tdAcao = row.insertCell();
+    tdAcao.innerHTML = `<button class="btn-action" title="Acessar agendamento" onclick="concluirTratativa('${ag.id}')">
+      <svg viewBox="0 0 24 24"><path d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
+    </button>`;
+    // Cliente
+    row.insertCell().textContent = ag.cliente;
+    // Data
+    row.insertCell().textContent = ag.data;
+    // Hora
+    row.insertCell().textContent = ag.hora;
+    // Qtd
+    const tdQtd = row.insertCell();
+    tdQtd.textContent = ag.qtdExames;
+    tdQtd.style.textAlign = 'center';
+    // Motivo
+    const tdMot = row.insertCell();
+    tdMot.innerHTML = `<span class="motivo-tag">📋 ${ag.motivo}</span>`;
+    // Observações (editável — RN009)
+    const tdObs = row.insertCell();
+    tdObs.className = 'td-obs';
+    tdObs.innerHTML = `<textarea class="obs-input" placeholder="Registre observações de acompanhamento..." onchange="salvarObs('${ag.id}',this.value)">${ag.obs}</textarea>`;
+  });
+
+  const footer = document.createElement('div');
+  footer.className = 'pend-footer';
+  footer.innerHTML = `<span>${sorted.length} agendamento${sorted.length!==1?'s':''} aguardando reagendamento</span>
+    <span style="color:var(--tx3);font-size:11px">Acesse cada registro para realizar a tratativa</span>`;
+
+  const wrapper = document.createElement('div');
+  wrapper.appendChild(table);
+  wrapper.appendChild(footer);
+  return wrapper;
+}
+
+function sortBy(col){
+  if(sortCol === col){
+    sortDir = sortDir==='asc'?'desc':sortDir==='desc'?'none':'asc';
+    if(sortDir==='none') sortCol = null;
+  } else {
+    sortCol = col; sortDir = 'asc';
+  }
+  refreshTable();
+}
+
+function sortRegistros(list){
+  if(!sortCol || sortDir==='none') return [...list];
+  return [...list].sort((a,b)=>{
+    const va = a[sortCol]+'', vb = b[sortCol]+'';
+    return sortDir==='asc' ? va.localeCompare(vb) : vb.localeCompare(va);
+  });
+}
+
+function refreshTable(){
+  if(!accordionLoaded) return;
+  const body = document.getElementById('acc-reagend-body');
+  body.innerHTML = '';
+  body.appendChild(buildTable());
+}
+
+function salvarObs(id, val){
+  const ag = agendamentos.find(a=>a.id===id);
+  if(ag){ ag.obs = val; toast('Observação salva.','ok'); }
+}
+
+// RN003/CA008: concluir tratativa remove da pendência
+function concluirTratativa(id){
+  agendamentos = agendamentos.filter(a=>a.id!==id);
+  accordionLoaded = false;
+  const registros = getRegistros();
+  if(registros.length === 0){
+    // remove o acordeon
+    document.getElementById('acc-reagend')?.remove();
+    toast('Agendamento tratado. Pendência encerrada.','ok');
+  } else {
+    document.getElementById('reagend-count').textContent = registros.length;
+    refreshTable();
+    toast('Agendamento tratado e removido da pendência.','ok');
+  }
+}
+</script>
+
+<script>
+// ---- CONTROLE DE PERFIL ----
+function setRole(r){
+  perfil = r;
+  const p = PERFIS[r];
+  ['admindr','agdr','aguo','sem'].forEach(x=>document.getElementById('rb-'+x)?.classList.toggle('act',x===r));
+  document.getElementById('role-hint').textContent = p.hint;
+  document.getElementById('nb-badge').textContent = p.lbl;
+  document.getElementById('nb-av').textContent = p.av;
+  document.getElementById('sb-av').textContent = p.av;
+  document.getElementById('ph-nome').textContent = p.nome;
+  document.getElementById('sb-info').innerHTML = p.nome+'<small>'+p.lbl+'</small>';
+  renderHome();
+  const msgs = {
+    admindr:'Perfil Admin DR: vê todos os 5 agendamentos.',
+    agdr:   'Perfil Agendamento DR: vê todos os 5 agendamentos.',
+    aguo:   'Perfil Agendamento UO: vê apenas os 3 da UO-BH.',
+    sem:    'Perfil sem acesso: acordeon não é exibido.',
+  };
+  toast(msgs[r],'ok');
+}
+
+// ---- TOAST ----
+let ttimer=null;
+function toast(msg,type='ok'){
+  const el=document.getElementById('toast');
+  el.textContent=msg; el.className=`toast toast-${type} show`;
+  if(ttimer) clearTimeout(ttimer);
+  ttimer=setTimeout(()=>el.classList.remove('show'),3500);
+}
+
+// ---- INIT ----
+document.addEventListener('DOMContentLoaded',()=>{ renderHome(); });
+</script>
+</body>
+</html>

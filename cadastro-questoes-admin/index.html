@@ -1,0 +1,453 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Objetivos de Aprendizagem — Orbie Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+--brand-50:#E6EEFF;--brand-100:#C0D4FF;--brand-500:#2177FF;--brand-600:#0059E7;
+--neutral-0:#FFFFFF;--neutral-50:#F8F9FC;--neutral-100:#F1F4F9;--neutral-200:#E1E8EF;
+--neutral-300:#C5D0DE;--neutral-400:#8A95B2;--neutral-500:#52607A;--neutral-600:#344054;--neutral-700:#1D2939;
+--success-light:#ECFDF3;--success-base:#12B76A;--success-dark:#027A48;
+--warning-light:#FFFAEB;--warning-base:#F79009;--warning-dark:#B54708;
+--error-light:#FEF3F2;--error-base:#F04438;
+--shadow-sm:0 1px 3px rgba(0,0,0,.12);--shadow-md:0 4px 16px rgba(0,0,0,.12);
+--sidebar-w:240px;--r-sm:6px;--r-md:8px;--r-lg:12px;--r-pill:1000px}
+body{font-family:"Outfit",sans-serif;background:var(--neutral-50);color:var(--neutral-600);min-height:100vh;display:flex}
+/* SIDEBAR */
+.sidebar{width:var(--sidebar-w);background:var(--neutral-0);border-right:1px solid var(--neutral-200);height:100vh;position:fixed;top:0;left:0;display:flex;flex-direction:column;padding:20px 12px;gap:2px}
+.sidebar-logo{display:flex;align-items:center;gap:10px;padding:8px 12px 20px;font-size:18px;font-weight:700;color:var(--brand-500)}
+.sb-section{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--neutral-400);padding:12px 12px 4px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--r-md);font-size:14px;font-weight:500;color:var(--neutral-500);cursor:pointer;transition:all .15s;text-decoration:none}
+.nav-item:hover{background:var(--neutral-100);color:var(--neutral-700)}
+.nav-item.active{background:var(--brand-50);color:var(--brand-500)}
+/* MAIN */
+.main{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column}
+/* TOPBAR */
+.topbar{background:var(--neutral-0);border-bottom:1px solid var(--neutral-200);padding:0 32px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+.topbar-bc{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--neutral-400)}
+.topbar-bc span:last-child{color:var(--neutral-600);font-weight:500}
+.topbar-actions{display:flex;align-items:center;gap:10px}
+.avatar{width:32px;height:32px;border-radius:var(--r-pill);background:var(--brand-50);color:var(--brand-500);font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center}
+/* PAGE */
+.page{padding:32px;max-width:960px}
+.page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px}
+.page-title{font-size:22px;font-weight:700;color:var(--neutral-700)}
+.page-sub{font-size:14px;color:var(--neutral-400);margin-top:2px}
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--r-lg);font-family:"Outfit",sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all .15s;border:none}
+.btn-primary{background:var(--brand-500);color:#fff}
+.btn-primary:hover{background:var(--brand-600)}
+.btn-secondary{background:var(--neutral-0);color:var(--neutral-600);border:1px solid var(--neutral-200)}
+.btn-secondary:hover{background:var(--neutral-50);border-color:var(--neutral-300)}
+.btn-ghost{background:transparent;color:var(--neutral-500);border:none}
+.btn-ghost:hover{background:var(--neutral-100);color:var(--neutral-700)}
+.btn-sm{padding:5px 12px;font-size:12px;font-weight:500;border-radius:var(--r-md)}
+.btn-xs{padding:3px 8px;font-size:12px;font-weight:500;border-radius:var(--r-sm)}
+/* CARD */
+.card{background:var(--neutral-0);border:1px solid var(--neutral-200);border-radius:var(--r-md);box-shadow:var(--shadow-sm)}
+.card-section{padding:20px 24px;border-bottom:1px solid var(--neutral-100)}
+.card-section:last-child{border-bottom:none}
+.sec-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.7px;color:var(--neutral-400);margin-bottom:12px}
+/* META */
+.meta-row{display:flex;gap:24px;flex-wrap:wrap}
+.meta-item{display:flex;flex-direction:column;gap:4px}
+.meta-lbl{font-size:11px;font-weight:600;color:var(--neutral-400);text-transform:uppercase;letter-spacing:.5px}
+.meta-val{font-size:14px;font-weight:500;color:var(--neutral-600)}
+/* CHIP */
+.chip{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:var(--r-pill);font-size:12px;font-weight:500;white-space:nowrap}
+.chip-neutral{background:var(--neutral-100);color:var(--neutral-600);border:1px solid var(--neutral-200)}
+.chip-brand{background:var(--brand-50);color:var(--brand-500);border:1px solid var(--brand-100)}
+.chip-success{background:var(--success-light);color:var(--success-dark)}
+.chip-warning{background:var(--warning-light);color:var(--warning-dark)}
+/* HABILIDADE LIST */
+.hab-list{display:flex;flex-direction:column;gap:10px}
+.hab-row{display:flex;align-items:center;gap:12px;padding:12px 16px;border:1px solid var(--neutral-200);border-radius:var(--r-md);background:var(--neutral-0);transition:box-shadow .15s}
+.hab-row:hover{box-shadow:var(--shadow-sm)}
+.hab-code{display:inline-flex;padding:2px 8px;border-radius:var(--r-sm);background:var(--brand-50);color:var(--brand-500);font-size:11px;font-weight:700;white-space:nowrap;flex-shrink:0;border:1px solid var(--brand-100);letter-spacing:.3px}
+.hab-desc{font-size:13px;color:var(--neutral-600);line-height:1.45;flex:1}
+.hab-oa-badge{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:var(--r-pill);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap;flex-shrink:0}
+.hab-oa-badge.has-oa{background:var(--brand-50);color:var(--brand-500);border:1px solid var(--brand-100)}
+.hab-oa-badge.has-oa:hover{background:var(--brand-100);border-color:var(--brand-500)}
+.hab-oa-badge.no-oa{background:var(--neutral-100);color:var(--neutral-400);border:1px solid var(--neutral-200)}
+.hab-oa-badge.no-oa:hover{background:var(--neutral-200);color:var(--neutral-600)}
+.hab-actions{display:flex;gap:4px;flex-shrink:0}
+/* QUESTION TEXT */
+.question-text{font-size:15px;color:var(--neutral-700);line-height:1.6;padding:16px;background:var(--neutral-50);border:1px solid var(--neutral-200);border-radius:var(--r-md)}
+/* === MODAL === */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;display:none;align-items:center;justify-content:center;padding:24px}
+.modal-overlay.open{display:flex}
+.modal{background:var(--neutral-0);border-radius:16px;box-shadow:var(--shadow-md);width:100%;max-width:600px;max-height:86vh;display:flex;flex-direction:column;overflow:hidden;animation:modal-in .2s ease}
+@keyframes modal-in{from{opacity:0;transform:scale(.96) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.modal-head{padding:20px 24px 16px;border-bottom:1px solid var(--neutral-100);display:flex;align-items:flex-start;gap:12px}
+.modal-head-info{flex:1}
+.modal-title{font-size:16px;font-weight:700;color:var(--neutral-700)}
+.modal-sub{font-size:13px;color:var(--neutral-400);margin-top:2px;line-height:1.4}
+.modal-close{width:32px;height:32px;border-radius:var(--r-md);border:none;background:var(--neutral-100);color:var(--neutral-500);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s}
+.modal-close:hover{background:var(--neutral-200);color:var(--neutral-700)}
+/* search bar dentro da modal */
+.modal-search{padding:12px 24px;border-bottom:1px solid var(--neutral-100)}
+.search-wrap{position:relative}
+.search-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--neutral-400);pointer-events:none}
+.search-input{width:100%;height:36px;padding:0 12px 0 34px;border:1px solid var(--neutral-200);border-radius:var(--r-md);font-family:"Outfit",sans-serif;font-size:13px;color:var(--neutral-700);outline:none;transition:border-color .15s}
+.search-input:focus{border-color:var(--brand-500)}
+.search-input::placeholder{color:var(--neutral-400)}
+/* filtro contador */
+.modal-filters{padding:8px 24px;border-bottom:1px solid var(--neutral-100);display:flex;align-items:center;justify-content:space-between}
+.filter-tabs{display:flex;gap:4px}
+.filter-tab{padding:4px 10px;border-radius:var(--r-pill);font-size:12px;font-weight:500;cursor:pointer;border:1px solid transparent;color:var(--neutral-500);transition:all .15s}
+.filter-tab:hover{background:var(--neutral-100)}
+.filter-tab.active{background:var(--neutral-0);border-color:var(--neutral-200);color:var(--neutral-700);box-shadow:0 1px 2px rgba(0,0,0,.06)}
+.modal-count{font-size:12px;color:var(--neutral-400)}
+/* lista de oas */
+.modal-list{flex:1;overflow-y:auto;padding:8px 16px}
+.oa-item{display:flex;align-items:flex-start;gap:10px;padding:10px;border-radius:var(--r-md);transition:background .12s;cursor:pointer}
+.oa-item:hover{background:var(--neutral-50)}
+.oa-item.selected{background:var(--brand-50)}
+/* checkbox custom */
+.oa-check{width:18px;height:18px;border-radius:4px;border:1.5px solid var(--neutral-300);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;transition:all .15s;background:var(--neutral-0)}
+.oa-item.selected .oa-check{background:var(--brand-500);border-color:var(--brand-500)}
+.oa-item.selected .oa-check::after{content:"";display:block;width:10px;height:6px;border-left:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(-45deg) translate(0px,1px)}
+.oa-body{flex:1}
+.oa-code{font-size:11px;font-weight:700;color:var(--neutral-400);margin-bottom:2px;text-transform:uppercase;letter-spacing:.4px}
+.oa-item.selected .oa-code{color:var(--brand-500)}
+.oa-name{font-size:13px;font-weight:500;color:var(--neutral-700);line-height:1.4}
+.oa-desc{font-size:12px;color:var(--neutral-500);margin-top:2px;line-height:1.4}
+/* empty */
+.oa-empty{text-align:center;padding:32px 16px;color:var(--neutral-400)}
+.oa-empty svg{opacity:.4;margin-bottom:8px}
+.oa-empty p{font-size:13px}
+/* modal footer */
+.modal-foot{padding:14px 24px;border-top:1px solid var(--neutral-100);display:flex;align-items:center;justify-content:space-between;gap:12px}
+.modal-foot-left{font-size:13px;color:var(--neutral-400)}
+.modal-foot-left strong{color:var(--brand-500)}
+.modal-foot-right{display:flex;gap:8px}
+</style>
+</head>
+<body>
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <svg width="26" height="26" viewBox="0 0 26 26" fill="none"><circle cx="13" cy="13" r="13" fill="#2177FF"/><circle cx="13" cy="13" r="6" fill="white" opacity=".25"/><circle cx="13" cy="13" r="3" fill="white"/></svg>
+    Orbie Admin
+  </div>
+  <span class="sb-section">Conteúdo</span>
+  <a class="nav-item" href="#">
+    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+    Trilhas
+  </a>
+  <a class="nav-item active" href="#">
+    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+    Questões
+  </a>
+  <a class="nav-item" href="#">
+    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+    Habilidades
+  </a>
+  <a class="nav-item" href="#">
+    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+    Objetivos
+  </a>
+  <span class="sb-section">Gestão</span>
+  <a class="nav-item" href="#">
+    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+    Usuários
+  </a>
+  <a class="nav-item" href="#">
+    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18"/><path d="M3 9h18M9 21V9"/></svg>
+    Relatórios
+  </a>
+</aside>
+<!-- MAIN -->
+<div class="main">
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-bc">
+      <span>Questões</span>
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg>
+      <span>QST-2847</span>
+    </div>
+    <div class="topbar-actions">
+      <button class="btn btn-secondary btn-sm">Cancelar</button>
+      <button class="btn btn-primary btn-sm">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        Salvar questão
+      </button>
+      <div class="avatar">CM</div>
+    </div>
+  </div>
+  <!-- PAGE -->
+  <div class="page">
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Editar questão</h1>
+        <p class="page-sub">QST-2847 · Criada em 12 jan 2026</p>
+      </div>
+      <span class="chip chip-success">Publicada</span>
+    </div>
+    <!-- CARD ENUNCIADO -->
+    <div class="card" style="margin-bottom:20px">
+      <div class="card-section">
+        <div class="sec-label">Enunciado</div>
+        <div class="question-text">Um trem parte de uma cidade A às 8h e percorre 240 km até a cidade B a uma velocidade constante de 60 km/h. Outro trem parte de B às 9h em direção a A, a 80 km/h. A que horas e a que distância de A os dois trens se encontram?</div>
+      </div>
+      <div class="card-section">
+        <div class="sec-label">Classificação</div>
+        <div class="meta-row">
+          <div class="meta-item"><span class="meta-lbl">Etapa de ensino</span><span class="meta-val">Ensino Fundamental — 9º Ano</span></div>
+          <div class="meta-item"><span class="meta-lbl">Componente curricular</span><span class="meta-val">Matemática</span></div>
+          <div class="meta-item"><span class="meta-lbl">Dificuldade</span><span class="chip chip-warning" style="margin-top:2px">Média</span></div>
+          <div class="meta-item"><span class="meta-lbl">Tipo</span><span class="meta-val">Múltipla escolha</span></div>
+        </div>
+      </div>
+    </div>
+    <!-- CARD HABILIDADES -->
+    <div class="card">
+      <div class="card-section">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+          <div class="sec-label" style="margin-bottom:0">Habilidades vinculadas</div>
+          <button class="btn btn-secondary btn-sm" style="gap:5px">
+            <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Adicionar habilidade
+          </button>
+        </div>
+        <div class="hab-list">
+          <!-- HAB ROW 1 -->
+          <div class="hab-row">
+            <span class="hab-code">EF09MA13</span>
+            <p class="hab-desc">Resolver e elaborar problemas que envolvam equações de 1º grau, aplicando as propriedades de igualdade.</p>
+            <button class="hab-oa-badge has-oa" onclick="openModal('EF09MA13','Resolver e elaborar problemas que envolvam equações de 1º grau, aplicando as propriedades de igualdade.',0)">
+              <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              <span id="badge-count-0">3 objetivos</span>
+            </button>
+            <div class="hab-actions">
+              <button class="btn btn-ghost btn-xs" title="Remover habilidade">
+                <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              </button>
+            </div>
+          </div>
+          <!-- HAB ROW 2 -->
+          <div class="hab-row">
+            <span class="hab-code">EF09MA14</span>
+            <p class="hab-desc">Resolver problemas de movimento uniforme, calculando velocidade, tempo e distância em contextos reais.</p>
+            <button class="hab-oa-badge has-oa" onclick="openModal('EF09MA14','Resolver problemas de movimento uniforme, calculando velocidade, tempo e distância em contextos reais.',1)">
+              <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              <span id="badge-count-1">2 objetivos</span>
+            </button>
+            <div class="hab-actions">
+              <button class="btn btn-ghost btn-xs" title="Remover habilidade">
+                <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              </button>
+            </div>
+          </div>
+          <!-- HAB ROW 3 (sem OAs) -->
+          <div class="hab-row">
+            <span class="hab-code">EF09MA16</span>
+            <p class="hab-desc">Descrever e representar, por meio de expressões algébricas, situações de proporcionalidade direta e inversa.</p>
+            <button class="hab-oa-badge no-oa" onclick="openModal('EF09MA16','Descrever e representar, por meio de expressões algébricas, situações de proporcionalidade direta e inversa.',2)">
+              <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              <span id="badge-count-2">Vincular objetivos</span>
+            </button>
+            <div class="hab-actions">
+              <button class="btn btn-ghost btn-xs" title="Remover habilidade">
+                <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              </button>
+            </div>
+          </div>
+        </div><!-- /hab-list -->
+      </div>
+    </div><!-- /card habilidades -->
+  </div><!-- /page -->
+</div><!-- /main -->
+<!-- ===== MODAL ===== -->
+<div class="modal-overlay" id="modal-overlay" onclick="handleOverlayClick(event)">
+  <div class="modal">
+    <!-- HEAD -->
+    <div class="modal-head">
+      <div class="modal-head-info">
+        <div id="modal-code-badge" style="margin-bottom:6px"></div>
+        <h2 class="modal-title" id="modal-title">Objetivos de aprendizagem</h2>
+        <p class="modal-sub" id="modal-sub"></p>
+      </div>
+      <button class="modal-close" onclick="closeModal()">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <!-- SEARCH -->
+    <div class="modal-search">
+      <div class="search-wrap">
+        <svg class="search-icon" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input class="search-input" type="text" placeholder="Buscar objetivos de aprendizagem..." id="modal-search" oninput="filterOAs()" />
+      </div>
+    </div>
+    <!-- FILTERS -->
+    <div class="modal-filters">
+      <div class="filter-tabs">
+        <button class="filter-tab active" onclick="setFilter('todos',this)">Todos</button>
+        <button class="filter-tab" onclick="setFilter('selecionados',this)">Selecionados</button>
+        <button class="filter-tab" onclick="setFilter('nao-selecionados',this)">Não selecionados</button>
+      </div>
+      <span class="modal-count" id="modal-count"></span>
+    </div>
+    <!-- LIST -->
+    <div class="modal-list" id="modal-list"></div>
+    <!-- FOOT -->
+    <div class="modal-foot">
+      <div class="modal-foot-left" id="modal-selected-label">0 selecionados</div>
+      <div class="modal-foot-right">
+        <button class="btn btn-secondary btn-sm" onclick="closeModal()">Cancelar</button>
+        <button class="btn btn-primary btn-sm" onclick="saveModal()">Salvar vínculos</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+// ===== DADOS =====
+const ALL_OAS = [
+  {code:"OA-01",name:"Identificar variáveis e incógnitas",desc:"Reconhecer variáveis e incógnitas em situações-problema envolvendo equações de 1º grau"},
+  {code:"OA-02",name:"Resolver equações simples",desc:"Resolver equações de 1º grau com uma incógnita usando operações inversas"},
+  {code:"OA-03",name:"Interpretar resultados",desc:"Interpretar o resultado de uma equação em contextos práticos, verificando a coerência da solução"},
+  {code:"OA-04",name:"Calcular velocidade média",desc:"Calcular a velocidade média de um móvel a partir da distância percorrida e do tempo"},
+  {code:"OA-05",name:"Resolver encontros entre móveis",desc:"Determinar o ponto e o momento de encontro entre dois móveis em movimento uniforme"},
+  {code:"OA-06",name:"Elaborar problemas de movimento",desc:"Criar situações-problema envolvendo movimento uniforme com dados reais"},
+  {code:"OA-07",name:"Aplicar proporcionalidade direta",desc:"Identificar e calcular situações de proporcionalidade direta entre grandezas"},
+  {code:"OA-08",name:"Aplicar proporcionalidade inversa",desc:"Identificar e calcular situações de proporcionalidade inversa entre grandezas"},
+  {code:"OA-09",name:"Representar algebricamente",desc:"Representar situações de proporcionalidade por meio de expressões algébricas"},
+  {code:"OA-10",name:"Comparar grandezas proporcionais",desc:"Comparar grandezas diretamente e inversamente proporcionais em tabelas e gráficos"},
+  {code:"OA-11",name:"Resolver sistemas de equações",desc:"Resolver sistemas de equações do 1º grau com duas variáveis por substituição"},
+  {code:"OA-12",name:"Modelar situações algébricas",desc:"Traduzir situações do cotidiano em equações ou sistemas algébricos"},
+  {code:"OA-13",name:"Verificar soluções",desc:"Verificar se um valor é solução de uma equação substituindo na expressão"},
+  {code:"OA-14",name:"Calcular tempo de percurso",desc:"Determinar o tempo necessário para percorrer uma distância a velocidade constante"},
+  {code:"OA-15",name:"Analisar gráficos de movimento",desc:"Interpretar gráficos de distância x tempo para movimento uniforme"},
+];
+
+// estado por habilidade: array de índices selecionados
+const HAB_DATA = [
+  {selected: new Set([0,1,2])},  // EF09MA13
+  {selected: new Set([3,4])},    // EF09MA14
+  {selected: new Set([])},       // EF09MA16
+];
+
+let currentHabIdx = null;
+let modalSelected = new Set();
+let searchTerm = "";
+let filterMode = "todos";
+
+// ===== MODAL =====
+function openModal(code, desc, habIdx) {
+  currentHabIdx = habIdx;
+  modalSelected = new Set(HAB_DATA[habIdx].selected);
+
+  // cabeçalho
+  document.getElementById("modal-code-badge").innerHTML =
+    `<span style="display:inline-flex;padding:2px 8px;border-radius:6px;background:#E6EEFF;color:#2177FF;font-size:11px;font-weight:700;border:1px solid #C0D4FF;letter-spacing:.3px">${code}</span>`;
+  document.getElementById("modal-title").textContent = "Objetivos de aprendizagem";
+  document.getElementById("modal-sub").textContent = desc;
+
+  // reset
+  document.getElementById("modal-search").value = "";
+  searchTerm = "";
+  filterMode = "todos";
+  document.querySelectorAll(".filter-tab").forEach((t,i) => t.classList.toggle("active", i===0));
+
+  document.getElementById("modal-overlay").classList.add("open");
+  document.body.style.overflow = "hidden";
+  renderList();
+}
+
+function closeModal() {
+  document.getElementById("modal-overlay").classList.remove("open");
+  document.body.style.overflow = "";
+}
+
+function handleOverlayClick(e) {
+  if (e.target === document.getElementById("modal-overlay")) closeModal();
+}
+
+function saveModal() {
+  HAB_DATA[currentHabIdx].selected = new Set(modalSelected);
+  updateBadge(currentHabIdx);
+  closeModal();
+}
+
+function updateBadge(idx) {
+  const count = HAB_DATA[idx].selected.size;
+  const span = document.getElementById("badge-count-"+idx);
+  const btn = span.closest(".hab-oa-badge");
+  if (count > 0) {
+    span.textContent = count + (count===1 ? " objetivo" : " objetivos");
+    btn.className = "hab-oa-badge has-oa";
+    btn.querySelector("svg").innerHTML = '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>';
+  } else {
+    span.textContent = "Vincular objetivos";
+    btn.className = "hab-oa-badge no-oa";
+    btn.querySelector("svg").innerHTML = '<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>';
+  }
+}
+
+// ===== LISTA =====
+function renderList() {
+  const list = document.getElementById("modal-list");
+  const q = searchTerm.toLowerCase();
+
+  const visible = ALL_OAS.filter((oa, i) => {
+    const matchSearch = !q || oa.code.toLowerCase().includes(q) || oa.name.toLowerCase().includes(q) || oa.desc.toLowerCase().includes(q);
+    const isSel = modalSelected.has(i);
+    const matchFilter = filterMode === "todos" || (filterMode === "selecionados" && isSel) || (filterMode === "nao-selecionados" && !isSel);
+    return matchSearch && matchFilter;
+  });
+
+  document.getElementById("modal-count").textContent = visible.length + " de " + ALL_OAS.length;
+  updateSelectedLabel();
+
+  if (visible.length === 0) {
+    list.innerHTML = `<div class="oa-empty"><svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><p>Nenhum objetivo encontrado</p></div>`;
+    return;
+  }
+
+  list.innerHTML = visible.map(({code,name,desc}, _) => {
+    const realIdx = ALL_OAS.indexOf(ALL_OAS.find(o => o.code === code));
+    const isSel = modalSelected.has(realIdx);
+    return `<div class="oa-item${isSel?" selected":""}" onclick="toggleOA(${realIdx})">
+      <div class="oa-check">${isSel?"":""}</div>
+      <div class="oa-body">
+        <div class="oa-code">${code}</div>
+        <div class="oa-name">${name}</div>
+        <div class="oa-desc">${desc}</div>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+function toggleOA(idx) {
+  if (modalSelected.has(idx)) modalSelected.delete(idx);
+  else modalSelected.add(idx);
+  renderList();
+}
+
+function filterOAs() {
+  searchTerm = document.getElementById("modal-search").value;
+  renderList();
+}
+
+function setFilter(mode, el) {
+  filterMode = mode;
+  document.querySelectorAll(".filter-tab").forEach(t => t.classList.remove("active"));
+  el.classList.add("active");
+  renderList();
+}
+
+function updateSelectedLabel() {
+  const n = modalSelected.size;
+  document.getElementById("modal-selected-label").innerHTML =
+    `<strong>${n}</strong> ${n===1?"objetivo selecionado":"objetivos selecionados"}`;
+}
+
+// ESC fecha modal
+document.addEventListener("keydown", e => { if (e.key==="Escape") closeModal(); });
+</script>
+</body>
+</html>

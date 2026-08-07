@@ -1,0 +1,945 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Orbie — Materiais Impressos · Satélite Avaliativo em Papel</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ───────────────────────────────────────────
+   SHELL (showcase wrapper — não imprimível)
+─────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Outfit', sans-serif; background: #C8D5E0; font-size: 14px; color: #344054; }
+
+.shell-nav {
+  position: sticky; top: 0; z-index: 200;
+  background: #1D2939; padding: 10px 32px;
+  display: flex; align-items: center; gap: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.35);
+}
+.shell-logo { font-weight: 700; font-size: 17px; color: #fff; white-space: nowrap; }
+.shell-logo em { color: #2177FF; font-style: normal; }
+.shell-pills { display: flex; gap: 8px; flex-wrap: wrap; }
+.shell-pill {
+  padding: 4px 13px; border-radius: 1000px; font-size: 11px; font-weight: 600;
+  color: rgba(255,255,255,.65); border: 1px solid rgba(255,255,255,.18);
+  text-decoration: none; transition: all .15s; white-space: nowrap;
+}
+.shell-pill:hover { background: rgba(255,255,255,.1); color: #fff; }
+
+.shell-section { padding: 40px 40px 0; max-width: 1040px; margin: 0 auto; }
+.shell-section:last-of-type { padding-bottom: 60px; }
+
+.shell-eyebrow {
+  font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.4px;
+  color: #2177FF; margin-bottom: 6px;
+}
+.shell-title  { font-size: 20px; font-weight: 700; color: #1D2939; margin-bottom: 4px; }
+.shell-desc   { font-size: 13px; color: #525E76; margin-bottom: 20px; max-width: 640px; line-height: 1.55; }
+
+.shell-card { background: #fff; border-radius: 14px; box-shadow: 0 4px 20px rgba(0,0,0,.12); overflow: hidden; margin-bottom: 40px; }
+.shell-card-head {
+  background: #F8F9FC; border-bottom: 1px solid #E1E8EF;
+  padding: 12px 20px; display: flex; align-items: center; justify-content: space-between;
+}
+.shell-card-head h3 { font-size: 13px; font-weight: 600; color: #344054; }
+.chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 2px 10px; border-radius: 1000px; font-size: 11px; font-weight: 600;
+}
+.chip-blue  { background: #EFF6FF; color: #2177FF; }
+.chip-green { background: #ECFDF3; color: #027A48; }
+.chip-warn  { background: #FFFAEB; color: #B54708; }
+.chip-gray  { background: #F1F4F9; color: #52607A; }
+
+.shell-card-body { padding: 28px; display: flex; justify-content: center; background: #B8C5D0; gap: 24px; flex-wrap: wrap; }
+.shell-hr { border: none; border-top: 1px solid #D0D9E2; margin: 0 0 40px; }
+
+/* ───────────────────────────────────────────
+   A4 PAGE — base (794 × 1123px ≈ 210×297 mm @ 96dpi)
+─────────────────────────────────────────── */
+.a4 {
+  width: 794px; min-height: 1123px; background: #fff;
+  box-shadow: 0 2px 16px rgba(0,0,0,.22);
+  font-family: 'Outfit', sans-serif; font-size: 11px; color: #1a1a1a;
+  position: relative; display: flex; flex-direction: column;
+}
+
+/* ─── Header strip ─── */
+.doc-header {
+  padding: 12px 24px 10px;
+  border-bottom: 2.5px solid #1D2939;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  flex-shrink: 0;
+}
+.doc-header-logos { display: flex; align-items: center; gap: 14px; }
+
+/* Orbie logo mark */
+.orbie-mark {
+  width: 32px; height: 32px; background: #2177FF; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 900; color: #fff; font-size: 13px; letter-spacing: -1px; flex-shrink: 0;
+}
+
+/* SESI logo text (text-based fallback) */
+.sesi-mark {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 0;
+  padding: 2px 0 2px 14px; border-left: 2px solid #1D2939;
+}
+.sesi-mark .sesi-text {
+  font-size: 16px; font-weight: 900; color: #1D2939; line-height: 1; letter-spacing: -.5px;
+}
+.sesi-mark .sesi-sub { font-size: 7px; font-weight: 600; color: #52607A; letter-spacing: .3px; text-transform: uppercase; line-height: 1.2; }
+
+.doc-header-center { flex: 1; }
+.doc-avalia-title { font-size: 13px; font-weight: 700; color: #1D2939; line-height: 1.3; }
+.doc-avalia-sub   { font-size: 9px; color: #525E76; margin-top: 1px; }
+
+.doc-header-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.type-badge {
+  padding: 3px 10px; border-radius: 1000px; font-size: 10px; font-weight: 800;
+  letter-spacing: .6px; white-space: nowrap; text-transform: uppercase;
+}
+.tb-blue   { background: #2177FF; color: #fff; }
+.tb-dark   { background: #344054; color: #fff; }
+.tb-orange { background: #B54708; color: #fff; }
+.tb-gray   { background: #8A95B2; color: #fff; }
+
+/* QR placeholder (grid pattern) */
+.qr-box {
+  width: 56px; height: 56px; flex-shrink: 0;
+  border: 1.5px solid #1D2939; border-radius: 4px;
+  background:
+    repeating-conic-gradient(#1D2939 0% 25%, #fff 0% 50%) 0 0 / 8px 8px;
+  position: relative;
+}
+.qr-box::after {
+  content: 'QR'; position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px; font-weight: 700; color: rgba(255,255,255,.9);
+  background: rgba(29,41,57,.55); border-radius: 3px;
+}
+
+/* ─── Identity grid ─── */
+.id-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  margin: 8px 20px; border: 1px solid #C5D0DE; border-radius: 6px; overflow: hidden;
+}
+.id-grid.cols3 { grid-template-columns: 1fr 1fr 1fr; }
+.id-cell {
+  padding: 5px 10px; border-right: 1px solid #C5D0DE; border-bottom: 1px solid #C5D0DE;
+}
+.id-cell:nth-child(2n)   { border-right: none; }
+.id-grid.cols3 .id-cell:nth-child(3n) { border-right: none; }
+.id-grid.cols3 .id-cell:nth-child(2n) { border-right: 1px solid #C5D0DE; }
+.id-cell.full { grid-column: 1/-1; border-right: none; }
+.id-label { font-size: 7.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .9px; color: #52607A; display: block; margin-bottom: 2px; }
+.id-val   { font-size: 11px; font-weight: 600; color: #1a1a1a; }
+.id-line  { border-bottom: 1px solid #888; height: 15px; width: 100%; margin-top: 2px; }
+
+/* ─── Instructions + Example ─── */
+.instr-wrap {
+  margin: 6px 20px 8px;
+  border: 1px solid #C5D0DE; border-radius: 6px;
+  padding: 10px 14px;
+  display: grid; grid-template-columns: 1.4fr 0.6fr; gap: 0 20px;
+}
+.instr-col-title {
+  font-size: 8.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .9px;
+  color: #344054; margin-bottom: 6px;
+}
+.instr-list { padding-left: 13px; font-size: 10px; line-height: 1.7; color: #344054; }
+.instr-example-box {
+  background: #F8F9FC; border: 1px solid #E1E8EF; border-radius: 6px;
+  padding: 8px 10px; display: flex; flex-direction: column; gap: 6px; align-items: flex-start;
+}
+.ex-caption { font-size: 8px; color: #52607A; }
+.ex-row     { display: flex; align-items: center; gap: 7px; margin-top: 2px; }
+.ex-num     { font-size: 10px; font-weight: 700; color: #344054; min-width: 22px; }
+.bubble {
+  width: 19px; height: 19px; border-radius: 50%;
+  border: 1.5px solid #344054;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 8.5px; font-weight: 700; color: #344054;
+}
+.bubble.filled { background: #1D2939; color: #fff; border-color: #1D2939; }
+
+/* ─── Divider ─── */
+.doc-divider { border: none; border-top: 1px solid #E8ECF2; margin: 4px 20px; }
+
+/* ─── Question columns ─── */
+.q-area { padding: 6px 20px 12px; flex: 1; }
+.q-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 0 20px; }
+.q-item { border-bottom: 1px solid #EDF0F5; padding: 8px 0; }
+.q-item:last-child { border-bottom: none; }
+.q-hdr  { display: flex; align-items: baseline; gap: 7px; margin-bottom: 4px; }
+.q-num  { font-size: 10px; font-weight: 800; color: #2177FF; min-width: 20px; }
+.q-text { font-size: 10px; line-height: 1.55; color: #1a1a1a; }
+.q-img  {
+  width: 100%; height: 68px;
+  background: #F1F4F9; border: 1px dashed #C5D0DE; border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  color: #8A95B2; font-size: 8.5px; margin: 5px 0; gap: 4px;
+}
+.alts   { display: flex; flex-direction: column; gap: 2px; padding-left: 2px; margin-top: 4px; }
+.alt    { display: flex; align-items: baseline; gap: 5px; font-size: 9.5px; color: #344054; line-height: 1.5; }
+.alt-l  { font-weight: 700; min-width: 14px; }
+
+/* ─── Lateral stripe (componente curricular) ─── */
+.lateral-stripe {
+  writing-mode: vertical-rl; text-orientation: mixed;
+  transform: rotate(180deg);
+  background: #1D2939; color: #fff;
+  font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+  display: flex; align-items: center; justify-content: center;
+  padding: 12px 8px; gap: 16px; position: absolute; right: 0; top: 0; bottom: 0; width: 28px;
+  border-radius: 0; font-family: 'Outfit', sans-serif;
+}
+.lateral-stripe .yr { font-size: 10px; font-weight: 800; letter-spacing: 0; }
+
+/* ─── Footer ─── */
+.doc-footer {
+  border-top: 1px solid #C5D0DE; padding: 6px 24px;
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 8px; color: #8A95B2; flex-shrink: 0;
+}
+.doc-footer strong { color: #525E76; }
+
+/* ─── Signature row ─── */
+.sign-row { display: flex; align-items: center; gap: 10px; padding: 8px 20px 6px; }
+.sign-lbl { font-size: 8.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .6px; color: #52607A; white-space: nowrap; }
+.sign-line { flex: 1; border-bottom: 1.5px solid #344054; height: 16px; }
+
+/* ─── OMR grid ─── */
+.omr-area { padding: 8px 20px; flex: 1; }
+.omr-title {
+  font-size: 8.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .9px;
+  color: #344054; margin-bottom: 8px; padding-bottom: 4px; border-bottom: 1px solid #E1E8EF;
+}
+.omr-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 0 32px; }
+.omr-row  { display: flex; align-items: center; gap: 10px; padding: 4px 0; border-bottom: 1px solid #F1F4F9; }
+.omr-row:last-child { border-bottom: none; }
+.omr-q    { font-size: 11px; font-weight: 700; color: #344054; min-width: 26px; }
+.omr-bubs { display: flex; gap: 9px; align-items: center; }
+.omr-b {
+  width: 22px; height: 22px; border-radius: 50%;
+  border: 1.5px solid #344054;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px; font-weight: 700; color: #344054;
+}
+
+/* ─── Contingency banner ─── */
+.cont-banner {
+  margin: 8px 20px; border: 1.5px solid #B54708; border-radius: 6px;
+  padding: 8px 12px; display: flex; align-items: flex-start; gap: 8px; background: #FFFAEB;
+}
+.cont-banner-icon { font-size: 16px; flex-shrink: 0; }
+.cont-banner strong { display: block; font-size: 10.5px; font-weight: 700; color: #7A3A00; margin-bottom: 2px; }
+.cont-banner p { font-size: 9.5px; color: #7A3A00; line-height: 1.5; }
+</style>
+</head>
+<body>
+
+<!-- ══ NAV ═══════════════════════════════════════ -->
+<nav class="shell-nav">
+  <div class="shell-logo">orbie<em>.</em></div>
+  <div class="shell-pills">
+    <a class="shell-pill" href="#s1">1 · Prova Nominal</a>
+    <a class="shell-pill" href="#s2">2 · Prova Genérica</a>
+    <a class="shell-pill" href="#s3">3 · Cartão-Resposta</a>
+    <a class="shell-pill" href="#s4">4 · Cartão Avulso</a>
+    <a class="shell-pill" href="#s5">5 · Prova Avulsa</a>
+  </div>
+</nav>
+
+<!-- ══ SEÇÃO 1 — PROVA NOMINAL ═══════════════════ -->
+<div class="shell-section" id="s1">
+  <div class="shell-eyebrow">Material 1 de 5</div>
+  <div class="shell-title">Prova Nominal — Tipo A / B / C</div>
+  <div class="shell-desc">Gerada quando o professor escolhe "Provas por tipo (A, B e C)". Traz logo Orbie + SESI, nome do aluno, componente curricular, município, escola, QR Code, faixa lateral com disciplina + ano, instruções em coluna e modelo de preenchimento.</div>
+  <div class="shell-card">
+    <div class="shell-card-head">
+      <h3>Prova Nominal · Tipo A · Adryan Rafael Siqueira Machado</h3>
+      <span class="chip chip-blue">Com QR Code · Nominal</span>
+    </div>
+    <div class="shell-card-body">
+      <div class="a4">
+        <!-- LATERAL STRIPE -->
+        <div class="lateral-stripe">
+          <span>Matemática</span>
+          <span class="yr">3º ANO EF</span>
+        </div>
+
+        <!-- HEADER -->
+        <div class="doc-header" style="padding-right:46px;">
+          <div class="doc-header-logos">
+            <div class="orbie-mark">O·</div>
+            <div class="sesi-mark">
+              <span class="sesi-text">SESI</span>
+              <span class="sesi-sub">Serviço Social<br>da Indústria</span>
+            </div>
+          </div>
+          <div class="doc-header-center">
+            <div class="doc-avalia-title">Satélite Avaliativo — AVALIA SESI I · 2026</div>
+            <div class="doc-avalia-sub">Matemática · 3º Ano – Ensino Fundamental – Anos Iniciais · Turno: Manhã</div>
+          </div>
+          <div class="doc-header-right">
+            <span class="type-badge tb-blue">Tipo&nbsp;A</span>
+            <div class="qr-box"></div>
+          </div>
+        </div>
+
+        <!-- IDENTITY -->
+        <div class="id-grid cols3" style="margin-right:48px;">
+          <div class="id-cell full"><span class="id-label">Estudante</span><div class="id-val">Adryan Rafael Siqueira Machado</div></div>
+          <div class="id-cell"><span class="id-label">Escola</span><div class="id-val">Escola Municipal Bom Jesus</div></div>
+          <div class="id-cell"><span class="id-label">Município</span><div class="id-val">São Caetano do Sul</div></div>
+          <div class="id-cell"><span class="id-label">Regional</span><div class="id-val">SCP</div></div>
+          <div class="id-cell"><span class="id-label">Etapa Escolar / Turma</span><div class="id-val">3º ano — Manhã</div></div>
+          <div class="id-cell"><span class="id-label">Componente Curricular</span><div class="id-val">Matemática</div></div>
+          <div class="id-cell"><span class="id-label">Data de Aplicação</span><div class="id-val">15 / 08 / 2026</div></div>
+          
+        </div>
+
+        <!-- INSTRUCTIONS -->
+        <div class="instr-wrap" style="margin-right:48px;">
+          <div>
+            <div class="instr-col-title">Instruções</div>
+            <ol class="instr-list">
+              <li>Não será permitido substituir a folha de respostas.</li>
+              <li>Esta folha deverá, obrigatoriamente, ser devolvida ao aplicador.</li>
+              <li>Não amasse, dobre ou rasure esta folha.</li>
+              <li>Utilize caneta de tinta azul ou preta.</li>
+              <li>Assinale apenas <strong>uma</strong> alternativa por questão.</li>
+              <li>Mais de uma marcação anulará a resposta.</li>
+            </ol>
+          </div>
+          <div>
+            <div class="instr-col-title">Exemplo de Marcação</div>
+            <div class="instr-example-box">
+              <div class="ex-caption">Preencha conforme o exemplo abaixo:</div>
+              <div class="ex-row">
+                <span class="ex-num">00</span>
+                <div class="bubble">A</div>
+                <div class="bubble filled">B</div>
+                <div class="bubble">C</div>
+                <div class="bubble">D</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <hr class="doc-divider" style="margin-right:48px;">
+
+        <!-- QUESTIONS -->
+        <div class="q-area" style="padding-right:48px;">
+          <div class="q-cols">
+            <div>
+              <div class="q-item">
+                <div class="q-hdr"><span class="q-num">01</span><span class="q-text">Qual é o resultado de 48 ÷ 6 + 5 × 2?</span></div>
+                <div class="alts">
+                  <div class="alt"><span class="alt-l">A)</span>18</div>
+                  <div class="alt"><span class="alt-l">B)</span>22</div>
+                  <div class="alt"><span class="alt-l">C)</span>28</div>
+                  <div class="alt"><span class="alt-l">D)</span>34</div>
+                </div>
+              </div>
+              <div class="q-item">
+                <div class="q-hdr"><span class="q-num">02</span><span class="q-text">Observe a figura e indique a fração que representa a parte pintada.</span></div>
+                <div class="q-img">📷 Imagem impressa aqui</div>
+                <div class="alts">
+                  <div class="alt"><span class="alt-l">A)</span>1/4</div>
+                  <div class="alt"><span class="alt-l">B)</span>2/5</div>
+                  <div class="alt"><span class="alt-l">C)</span>3/8</div>
+                  <div class="alt"><span class="alt-l">D)</span>1/2</div>
+                </div>
+              </div>
+              <div class="q-item">
+                <div class="q-hdr"><span class="q-num">03</span><span class="q-text">Uma caixa tem 144 ovos. Quantas dúzias cabem nessa caixa?</span></div>
+                <div class="alts">
+                  <div class="alt"><span class="alt-l">A)</span>10</div>
+                  <div class="alt"><span class="alt-l">B)</span>12</div>
+                  <div class="alt"><span class="alt-l">C)</span>14</div>
+                  <div class="alt"><span class="alt-l">D)</span>16</div>
+                </div>
+              </div>
+              <div class="q-item">
+                <div class="q-hdr"><span class="q-num">04</span><span class="q-text">Qual das alternativas representa 3.046 por extenso?</span></div>
+                <div class="alts">
+                  <div class="alt"><span class="alt-l">A)</span>Três mil e quarenta e seis</div>
+                  <div class="alt"><span class="alt-l">B)</span>Três mil quarenta e seis</div>
+                  <div class="alt"><span class="alt-l">C)</span>Trinta e quatro e seis</div>
+                  <div class="alt"><span class="alt-l">D)</span>Três mil e quarenta e seis centésimos</div>
+                </div>
+              </div>
+              <div class="q-item">
+                <div class="q-hdr"><span class="q-num">05</span><span class="q-text">Pedro tem R$ 87,50 e quer comprar um livro de R$ 34,90. Quanto sobrará?</span></div>
+                <div class="alts">
+                  <div class="alt"><span class="alt-l">A)</span>R$ 42,60</div>
+                  <div class="alt"><span class="alt-l">B)</span>R$ 52,60</div>
+                  <div class="alt"><span class="alt-l">C)</span>R$ 53,60</div>
+                  <div class="alt"><span class="alt-l">D)</span>R$ 62,40</div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div class="q-item">
+                <div class="q-hdr"><span class="q-num">06</span><span class="q-text">Qual figura tem todos os lados iguais e todos os ângulos retos?</span></div>
+                <div class="alts">
+                  <div class="alt"><span class="alt-l">A)</span>Triângulo equilátero</div>
+                  <div class="alt"><span class="alt-l">B)</span>Retângulo</div>
+                  <div class="alt"><span class="alt-l">C)</span>Quadrado</div>
+                  <div class="alt"><span class="alt-l">D)</span>Losango</div>
+                </div>
+              </div>
+              <div class="q-item">
+                <div class="q-hdr"><span class="q-num">07</span><span class="q-text">Mariana leu 1/3 na segunda e 2/3 na terça. Que fração leu ao todo?</span></div>
+                <div class="alts">
+                  <div class="alt"><span class="alt-l">A)</span>3/6</div>
+                  <div class="alt"><span class="alt-l">B)</span>2/3</div>
+                  <div class="alt"><span class="alt-l">C)</span>3/3</div>
+                  <div class="alt"><span class="alt-l">D)</span>1</div>
+                </div>
+              </div>
+              <div class="q-item">
+                <div class="q-hdr"><span class="q-num">08</span><span class="q-text">Um trem parte às 14h30 e chega após 3h45min. A que horas chegou?</span></div>
+                <div class="alts">
+                  <div class="alt"><span class="alt-l">A)</span>17h15</div>
+                  <div class="alt"><span class="alt-l">B)</span>18h00</div>
+                  <div class="alt"><span class="alt-l">C)</span>18h15</div>
+                  <div class="alt"><span class="alt-l">D)</span>18h45</div>
+                </div>
+              </div>
+              <div class="q-item">
+                <div class="q-hdr"><span class="q-num">09</span><span class="q-text">No mapa, 1 cm = 50 km. Dois pontos estão a 8 cm. Qual é a distância real?</span></div>
+                <div class="q-img">📷 Imagem do mapa impressa aqui</div>
+                <div class="alts">
+                  <div class="alt"><span class="alt-l">A)</span>200 km</div>
+                  <div class="alt"><span class="alt-l">B)</span>350 km</div>
+                  <div class="alt"><span class="alt-l">C)</span>400 km</div>
+                  <div class="alt"><span class="alt-l">D)</span>450 km</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="doc-footer" style="padding-right:48px;">
+          <span>AVALIA SESI I – 2026 &nbsp;·&nbsp; Matemática – 3º Ano EF &nbsp;·&nbsp; <strong>Tipo A</strong></span>
+          <span>Página 1 / 2 &nbsp;·&nbsp; orbie.</span>
+        </div>
+      </div><!-- /.a4 -->
+    </div>
+  </div>
+</div>
+<hr class="shell-hr">
+
+<!-- ══ SEÇÃO 2 — PROVA GENÉRICA ══════════════════ -->
+<div class="shell-section" id="s2">
+  <div class="shell-eyebrow">Material 2 de 5</div>
+  <div class="shell-title">Prova Genérica — Todas as Provas Iguais</div>
+  <div class="shell-desc">Sem nome pré-impresso. O aluno registra a identificação manualmente. Sem QR Code na prova (identificação fica somente no cartão-resposta). Faixa lateral, logos, instruções em coluna e exemplo de preenchimento presentes.</div>
+  <div class="shell-card">
+    <div class="shell-card-head">
+      <h3>Prova Genérica · Versão Única</h3>
+      <span class="chip chip-gray">Sem QR Code · Sem Nome</span>
+    </div>
+    <div class="shell-card-body">
+      <div class="a4">
+        <div class="lateral-stripe">
+          <span>Matemática</span>
+          <span class="yr">3º ANO EF</span>
+        </div>
+
+        <div class="doc-header" style="padding-right:46px;">
+          <div class="doc-header-logos">
+            <div class="orbie-mark">O·</div>
+            <div class="sesi-mark">
+              <span class="sesi-text">SESI</span>
+              <span class="sesi-sub">Serviço Social<br>da Indústria</span>
+            </div>
+          </div>
+          <div class="doc-header-center">
+            <div class="doc-avalia-title">Satélite Avaliativo — AVALIA SESI I · 2026</div>
+            <div class="doc-avalia-sub">Matemática · 3º Ano – Ensino Fundamental – Anos Iniciais</div>
+          </div>
+          <div class="doc-header-right">
+            <span class="type-badge tb-gray">Versão Única</span>
+          </div>
+        </div>
+
+        <div class="id-grid cols3" style="margin-right:48px;">
+          <div class="id-cell full"><span class="id-label">Estudante (preencher à mão com letra de forma)</span><div class="id-line"></div></div>
+          <div class="id-cell"><span class="id-label">Escola</span><div class="id-val">Escola Municipal Bom Jesus</div></div>
+          <div class="id-cell"><span class="id-label">Município</span><div class="id-val">São Caetano do Sul</div></div>
+          <div class="id-cell"><span class="id-label">Regional</span><div class="id-val">SCP</div></div>
+          <div class="id-cell"><span class="id-label">Etapa Escolar / Turma (preencher)</span><div class="id-line"></div></div>
+          <div class="id-cell"><span class="id-label">Componente Curricular</span><div class="id-val">Matemática</div></div>
+          <div class="id-cell"><span class="id-label">Data de Aplicação</span><div class="id-val">15 / 08 / 2026</div></div>
+          
+        </div>
+
+        <div class="instr-wrap" style="margin-right:48px;">
+          <div>
+            <div class="instr-col-title">Instruções</div>
+            <ol class="instr-list">
+              <li>Preencha seu nome e turma nos campos acima com caneta.</li>
+              <li>Esta folha deverá, obrigatoriamente, ser devolvida ao aplicador.</li>
+              <li>Não amasse, dobre ou rasure esta folha.</li>
+              <li>Utilize caneta de tinta azul ou preta.</li>
+              <li>Assinale apenas <strong>uma</strong> alternativa por questão.</li>
+              <li>Mais de uma marcação anulará a resposta.</li>
+            </ol>
+          </div>
+          <div>
+            <div class="instr-col-title">Exemplo de Marcação</div>
+            <div class="instr-example-box">
+              <div class="ex-caption">Preencha conforme o exemplo abaixo:</div>
+              <div class="ex-row">
+                <span class="ex-num">00</span>
+                <div class="bubble">A</div>
+                <div class="bubble filled">B</div>
+                <div class="bubble">C</div>
+                <div class="bubble">D</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <hr class="doc-divider" style="margin-right:48px;">
+
+        <div class="q-area" style="padding-right:48px;">
+          <div class="q-cols">
+            <div>
+              <div class="q-item">
+                <div class="q-hdr"><span class="q-num">01</span><span class="q-text">Qual é o resultado de 48 ÷ 6 + 5 × 2?</span></div>
+                <div class="alts"><div class="alt"><span class="alt-l">A)</span>18</div><div class="alt"><span class="alt-l">B)</span>22</div><div class="alt"><span class="alt-l">C)</span>28</div><div class="alt"><span class="alt-l">D)</span>34</div></div>
+              </div>
+              <div class="q-item">
+                <div class="q-hdr"><span class="q-num">02</span><span class="q-text">Observe a figura e indique a fração que representa a parte pintada.</span></div>
+                <div class="q-img">📷 Imagem impressa aqui</div>
+                <div class="alts"><div class="alt"><span class="alt-l">A)</span>1/4</div><div class="alt"><span class="alt-l">B)</span>2/5</div><div class="alt"><span class="alt-l">C)</span>3/8</div><div class="alt"><span class="alt-l">D)</span>1/2</div></div>
+              </div>
+              <div class="q-item">
+                <div class="q-hdr"><span class="q-num">03</span><span class="q-text">Pedro tem R$ 87,50 e quer comprar um livro de R$ 34,90. Quanto sobrará?</span></div>
+                <div class="alts"><div class="alt"><span class="alt-l">A)</span>R$ 42,60</div><div class="alt"><span class="alt-l">B)</span>R$ 52,60</div><div class="alt"><span class="alt-l">C)</span>R$ 53,60</div><div class="alt"><span class="alt-l">D)</span>R$ 62,40</div></div>
+              </div>
+            </div>
+            <div>
+              <div class="q-item">
+                <div class="q-hdr"><span class="q-num">04</span><span class="q-text">Qual figura tem todos os lados iguais e todos os ângulos retos?</span></div>
+                <div class="alts"><div class="alt"><span class="alt-l">A)</span>Triângulo equilátero</div><div class="alt"><span class="alt-l">B)</span>Retângulo</div><div class="alt"><span class="alt-l">C)</span>Quadrado</div><div class="alt"><span class="alt-l">D)</span>Losango</div></div>
+              </div>
+              <div class="q-item">
+                <div class="q-hdr"><span class="q-num">05</span><span class="q-text">Um trem parte às 14h30 e chega após 3h45min. A que horas chegou?</span></div>
+                <div class="alts"><div class="alt"><span class="alt-l">A)</span>17h15</div><div class="alt"><span class="alt-l">B)</span>18h00</div><div class="alt"><span class="alt-l">C)</span>18h15</div><div class="alt"><span class="alt-l">D)</span>18h45</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="doc-footer" style="padding-right:48px;">
+          <span>AVALIA SESI I – 2026 &nbsp;·&nbsp; Matemática – 3º Ano EF &nbsp;·&nbsp; <strong>Versão Única</strong></span>
+          <span>Página 1 / 2 &nbsp;·&nbsp; orbie.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<hr class="shell-hr">
+
+<!-- ══ SEÇÃO 3 — CARTÃO-RESPOSTA ═════════════════ -->
+<div class="shell-section" id="s3">
+  <div class="shell-eyebrow">Material 3 de 5</div>
+  <div class="shell-title">Cartão-Resposta Nominal</div>
+  <div class="shell-desc">Sempre nominal — nome do aluno, turma, escola, município, componente curricular, QR Code, campo de assinatura, data e grid OMR com bolhas A/B/C/D. Máximo de 30 questões. Faixa lateral com disciplina e ano.</div>
+  <div class="shell-card">
+    <div class="shell-card-head">
+      <h3>Cartão-Resposta · Tipo A · Adryan Rafael Siqueira Machado</h3>
+      <span class="chip chip-blue">Com QR Code · Nominal · Máx. 30 questões</span>
+    </div>
+    <div class="shell-card-body">
+      <div class="a4" style="min-height:auto;">
+        <div class="lateral-stripe">
+          <span>Matemática</span>
+          <span class="yr">3º ANO EF</span>
+        </div>
+
+        <div class="doc-header" style="padding-right:46px;">
+          <div class="doc-header-logos">
+            <div class="orbie-mark">O·</div>
+            <div class="sesi-mark">
+              <span class="sesi-text">SESI</span>
+              <span class="sesi-sub">Serviço Social<br>da Indústria</span>
+            </div>
+          </div>
+          <div class="doc-header-center">
+            <div class="doc-avalia-title">Folha de Respostas — AVALIA SESI I · 2026</div>
+            <div class="doc-avalia-sub">Matemática · 3º Ano – Ensino Fundamental – Anos Iniciais</div>
+          </div>
+          <div class="doc-header-right">
+            <span class="type-badge tb-blue">Tipo&nbsp;A</span>
+            <div class="qr-box"></div>
+          </div>
+        </div>
+
+        <div class="id-grid cols3" style="margin-right:48px;">
+          <div class="id-cell full"><span class="id-label">Estudante</span><div class="id-val">Adryan Rafael Siqueira Machado</div></div>
+          <div class="id-cell"><span class="id-label">Escola</span><div class="id-val">Escola Municipal Bom Jesus</div></div>
+          <div class="id-cell"><span class="id-label">Município</span><div class="id-val">São Caetano do Sul</div></div>
+          <div class="id-cell"><span class="id-label">Regional</span><div class="id-val">SCP</div></div>
+          <div class="id-cell"><span class="id-label">Etapa Escolar / Turma</span><div class="id-val">3º ano – Manhã</div></div>
+          <div class="id-cell"><span class="id-label">Componente Curricular</span><div class="id-val">Matemática</div></div>
+          
+          <div class="id-cell"><span class="id-label">Data de Aplicação</span><div class="id-val">15 / 08 / 2026</div></div>
+        </div>
+
+        <!-- Instruções compactas + exemplo -->
+        <div class="instr-wrap" style="margin-right:48px;">
+          <div>
+            <div class="instr-col-title">Instruções</div>
+            <ol class="instr-list">
+              <li>Não será permitido substituir a folha de respostas.</li>
+              <li>Esta folha deverá, obrigatoriamente, ser devolvida ao aplicador.</li>
+              <li>Não amasse, dobre ou rasure esta folha.</li>
+              <li>Utilize caneta de tinta azul ou preta.</li>
+              <li>Assinale apenas <strong>uma</strong> alternativa por questão.</li>
+              <li>Mais de uma marcação anulará a resposta.</li>
+            </ol>
+          </div>
+          <div>
+            <div class="instr-col-title">Exemplo de Marcação</div>
+            <div class="instr-example-box">
+              <div class="ex-caption">Preencha conforme o exemplo abaixo:</div>
+              <div class="ex-row">
+                <span class="ex-num">00</span>
+                <div class="bubble">A</div>
+                <div class="bubble filled">B</div>
+                <div class="bubble">C</div>
+                <div class="bubble">D</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Assinatura -->
+        <div class="sign-row" style="padding-right:48px;">
+          <span class="sign-lbl">Assinatura do Estudante:</span>
+          <div class="sign-line"></div>
+        </div>
+
+        <hr class="doc-divider" style="margin: 6px 20px 8px; margin-right:48px;">
+
+        <!-- OMR -->
+        <div class="omr-area" style="padding-right:48px;">
+          <div class="omr-title">Questão &nbsp;|&nbsp; Resposta — marque apenas uma alternativa por questão</div>
+          <div class="omr-cols">
+            <div>
+              <div class="omr-row"><span class="omr-q">01</span><div class="omr-bubs"><div class="omr-b">A</div><div class="omr-b">B</div><div class="omr-b">C</div><div class="omr-b">D</div></div></div>
+              <div class="omr-row"><span class="omr-q">02</span><div class="omr-bubs"><div class="omr-b">A</div><div class="omr-b">B</div><div class="omr-b">C</div><div class="omr-b">D</div></div></div>
+              <div class="omr-row"><span class="omr-q">03</span><div class="omr-bubs"><div class="omr-b">A</div><div class="omr-b">B</div><div class="omr-b">C</div><div class="omr-b">D</div></div></div>
+              <div class="omr-row"><span class="omr-q">04</span><div class="omr-bubs"><div class="omr-b">A</div><div class="omr-b">B</div><div class="omr-b">C</div><div class="omr-b">D</div></div></div>
+              <div class="omr-row"><span class="omr-q">05</span><div class="omr-bubs"><div class="omr-b">A</div><div class="omr-b">B</div><div class="omr-b">C</div><div class="omr-b">D</div></div></div>
+              <div class="omr-row"><span class="omr-q">06</span><div class="omr-bubs"><div class="omr-b">A</div><div class="omr-b">B</div><div class="omr-b">C</div><div class="omr-b">D</div></div></div>
+              <div class="omr-row"><span class="omr-q">07</span><div class="omr-bubs"><div class="omr-b">A</div><div class="omr-b">B</div><div class="omr-b">C</div><div class="omr-b">D</div></div></div>
+              <div class="omr-row"><span class="omr-q">08</span><div class="omr-bubs"><div class="omr-b">A</div><div class="omr-b">B</div><div class="omr-b">C</div><div class="omr-b">D</div></div></div>
+              <div class="omr-row"><span class="omr-q">09</span><div class="omr-bubs"><div class="omr-b">A</div><div class="omr-b">B</div><div class="omr-b">C</div><div class="omr-b">D</div></div></div>
+              <div class="omr-row"><span class="omr-q">10</span><div class="omr-bubs"><div class="omr-b">A</div><div class="omr-b">B</div><div class="omr-b">C</div><div class="omr-b">D</div></div></div>
+              <div class="omr-row"><span class="omr-q">11</span><div class="omr-bubs"><div class="omr-b">A</div><div class="omr-b">B</div><div class="omr-b">C</div><div class="omr-b">D</div></div></div>
+              <div class="omr-row"><span class="omr-q">12</span><div class="omr-bubs"><div class="omr-b">A</div><div class="omr-b">B</div><div class="omr-b">C</div><div class="omr-b">D</div></div></div>
+              <div class="omr-row"><span class="omr-q">13</span><div class="omr-bubs"><div class="omr-b">A</div><div class="omr-b">B</div><div class="omr-b">C</div><div class="omr-b">D</div></div></div>
+              <div class="omr-row"><span class="omr-q">14</span><div class="omr-bubs"><div class="omr-b">A</div><div class="omr-b">B</div><div class="omr-b">C</div><div class="omr-b">D</div></div></div>
+              <div class="omr-row"><span class="omr-q">15</span><div class="omr-bubs"><div class="omr-b">A</div><div class="omr-b">B</div><div class="omr-b">C</div><div class="omr-b">D</div></div></div>
+            </div>
+            <div>
+              <div class="omr-row"><span class="omr-q">16</span><div class="omr-bubs"><div class="omr-b">A</div><div class="omr-b">B</div><div class="omr-b">C</div><div class="omr-b">D</div></div></div>
+              <div class="omr-row"><span class="omr-q">17</span><div class="omr-bubs"><div class="omr-b">A</div><div class="omr-b">B</div><div class="omr-b">C</div><div class="omr-b">D</div></div></div>
+              <div class="omr-row"><span class="omr-q">18</span><div class="omr-bubs"><div class="omr-b">A</div><div class="omr-b">B</div><div class="omr-b">C</div><div class="omr-b">D</div></div></div>
+              <div class="omr-row"><span class="omr-q">19</span><div class="omr-bubs"><div class="omr-b">A</div><div class="omr-b">B</div><div class="omr-b">C</div><div class="omr-b">D</div></div></div>
+              <div class="omr-row"><span class="omr-q">20</span><div class="omr-bubs"><div class="omr-b">A</div><div class="omr-b">B</div><div class="omr-b">C</div><div class="omr-b">D</div></div></div>
+              <div class="omr-row"><span class="omr-q">21</span><div class="omr-bubs"><div class="omr-b">A</div><div class="omr-b">B</div><div class="omr-b">C</div><div class="omr-b">D</div></div></div>
+              <div class="omr-row"><span class="omr-q">22</span><div class="omr-bubs"><div class="omr-b">A</div><div class="omr-b">B</div><div class="omr-b">C</div><div class="omr-b">D</div></div></div>
+              <div class="omr-row"><span class="omr-q">23</span><div class="omr-bubs"><div class="omr-b">A</div><div class="omr-b">B</div><div class="omr-b">C</div><div class="omr-b">D</div></div></div>
+              <div class="omr-row"><span class="omr-q">24</span><div class="omr-bubs"><div class="omr-b">A</div><div class="omr-b">B</div><div class="omr-b">C</div><div class="omr-b">D</div></div></div>
+              <div class="omr-row"><span class="omr-q">25</span><div class="omr-bubs"><div class="omr-b">A</div><div class="omr-b">B</div><div class="omr-b">C</div><div class="omr-b">D</div></div></div>
+              <div class="omr-row"><span class="omr-q">26</span><div class="omr-bubs"><div class="omr-b">A</div><div class="omr-b">B</div><div class="omr-b">C</div><div class="omr-b">D</div></div></div>
+              <div class="omr-row"><span class="omr-q">27</span><div class="omr-bubs"><div class="omr-b">A</div><div class="omr-b">B</div><div class="omr-b">C</div><div class="omr-b">D</div></div></div>
+              <div class="omr-row"><span class="omr-q">28</span><div class="omr-bubs"><div class="omr-b">A</div><div class="omr-b">B</div><div class="omr-b">C</div><div class="omr-b">D</div></div></div>
+              <div class="omr-row"><span class="omr-q">29</span><div class="omr-bubs"><div class="omr-b">A</div><div class="omr-b">B</div><div class="omr-b">C</div><div class="omr-b">D</div></div></div>
+              <div class="omr-row"><span class="omr-q">30</span><div class="omr-bubs"><div class="omr-b">A</div><div class="omr-b">B</div><div class="omr-b">C</div><div class="omr-b">D</div></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="doc-footer" style="padding-right:48px; margin-top:auto;">
+          <span>AVALIA SESI I – 2026 &nbsp;·&nbsp; Folha de Respostas &nbsp;·&nbsp; <strong>Tipo A</strong> &nbsp;·&nbsp; Use caneta azul ou preta</span>
+          <span>orbie.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<hr class="shell-hr">
+
+<!-- ══ SEÇÃO 4 — CARTÃO AVULSO ═══════════════════ -->
+<div class="shell-section" id="s4">
+  <div class="shell-eyebrow">Material 4 de 5</div>
+  <div class="shell-title">Cartão Avulso — Contingência</div>
+  <div class="shell-desc">Sem QR Code. O aluno preenche nome à mão. Identificado claramente como "Cartão Avulso". Campo de assinatura e data presentes. Correção sempre manual. Entregue junto com a Prova Avulsa.</div>
+  <div class="shell-card">
+    <div class="shell-card-head">
+      <h3>Cartão Avulso — Sem QR Code · Sem Nome pré-impresso</h3>
+      <span class="chip chip-warn">Contingência · Correção Manual</span>
+    </div>
+    <div class="shell-card-body">
+      <div class="a4" style="min-height:auto;">
+        <div class="lateral-stripe">
+          <span>Matemática</span>
+          <span class="yr">3º ANO EF</span>
+        </div>
+
+        <div class="cont-banner" style="margin-top:12px; margin-right:48px;">
+          <span class="cont-banner-icon">⚠️</span>
+          <div>
+            <strong>Cartão Avulso — Material de Contingência</strong>
+            <p>Este cartão <strong>não possui QR Code</strong> e não é lido automaticamente. Correção sempre manual. Entregue sempre junto com a Prova Avulsa — nunca separado.</p>
+          </div>
+        </div>
+
+        <div class="doc-header" style="padding-right:46px;">
+          <div class="doc-header-logos">
+            <div class="orbie-mark">O·</div>
+            <div class="sesi-mark">
+              <span class="sesi-text">SESI</span>
+              <span class="sesi-sub">Serviço Social<br>da Indústria</span>
+            </div>
+          </div>
+          <div class="doc-header-center">
+            <div class="doc-avalia-title">Folha de Respostas — Avulso — AVALIA SESI I · 2026</div>
+            <div class="doc-avalia-sub">Matemática · 3º Ano – Ensino Fundamental – Anos Iniciais</div>
+          </div>
+          <div class="doc-header-right">
+            <span class="type-badge tb-orange">Avulso</span>
+          </div>
+        </div>
+
+        <div class="id-grid cols3" style="margin-right:48px;">
+          <div class="id-cell full"><span class="id-label">Estudante (preencher à mão com letra de forma)</span><div class="id-line"></div></div>
+          <div class="id-cell"><span class="id-label">Escola</span><div class="id-val">Escola Municipal Bom Jesus</div></div>
+          <div class="id-cell"><span class="id-label">Município</span><div class="id-val">São Caetano do Sul</div></div>
+          <div class="id-cell"><span class="id-label">Regional</span><div class="id-val">SCP</div></div>
+          <div class="id-cell"><span class="id-label">Etapa Escolar / Turma (preencher)</span><div class="id-line"></div></div>
+          <div class="id-cell"><span class="id-label">Componente Curricular</span><div class="id-val">Matemática</div></div>
+          
+          <div class="id-cell"><span class="id-label">Data de Aplicação</span><div class="id-val">15 / 08 / 2026</div></div>
+        </div>
+
+        <div class="instr-wrap" style="margin-right:48px;">
+          <div>
+            <div class="instr-col-title">Instruções</div>
+            <ol class="instr-list">
+              <li>Preencha seu nome e turma acima com caneta azul ou preta.</li>
+              <li>Esta folha deverá, obrigatoriamente, ser devolvida ao aplicador.</li>
+              <li>Não amasse, dobre ou rasure esta folha.</li>
+              <li>Assinale apenas <strong>uma</strong> alternativa por questão.</li>
+              <li>Mais de uma marcação anulará a resposta.</li>
+            </ol>
+          </div>
+          <div>
+            <div class="instr-col-title">Exemplo de Marcação</div>
+            <div class="instr-example-box">
+              <div class="ex-caption">Preencha conforme o exemplo abaixo:</div>
+              <div class="ex-row">
+                <span class="ex-num">00</span>
+                <div class="bubble">A</div>
+                <div class="bubble filled">B</div>
+                <div class="bubble">C</div>
+                <div class="bubble">D</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sign-row" style="padding-right:48px;">
+          <span class="sign-lbl">Assinatura do Estudante:</span>
+          <div class="sign-line"></div>
+        </div>
+
+        <hr class="doc-divider" style="margin:6px 20px 8px; margin-right:48px;">
+
+        <div class="omr-area" style="padding-right:48px;">
+          <div class="omr-title">Questão &nbsp;|&nbsp; Resposta — Prova Avulsa (ordem de questões própria)</div>
+          <div class="omr-cols">
+            <div>
+              <div class="omr-row"><span class="omr-q">01</span><div class="omr-bubs"><div class="omr-b">A</div><div class="omr-b">B</div><div class="omr-b">C</div><div class="omr-b">D</div></div></div>
+              <div class="omr-row"><span class="omr-q">02</span><div class="omr-bubs"><div class="omr-b">A</div><div class="omr-b">B</div><div class="omr-b">C</div><div class="omr-b">D</div></div></div>
+              <div class="omr-row"><span class="omr-q">03</span><div class="omr-bubs"><div class="omr-b">A</div><div class="omr-b">B</div><div class="omr-b">C</div><div class="omr-b">D</div></div></div>
+              <div class="omr-row"><span class="omr-q">04</span><div class="omr-bubs"><div class="omr-b">A</div><div class="omr-b">B</div><div class="omr-b">C</div><div class="omr-b">D</div></div></div>
+              <div class="omr-row"><span class="omr-q">05</span><div class="omr-bubs"><div class="omr-b">A</div><div class="omr-b">B</div><div class="omr-b">C</div><div class="omr-b">D</div></div></div>
+              <div class="omr-row"><span class="omr-q">06</span><div class="omr-bubs"><div class="omr-b">A</div><div class="omr-b">B</div><div class="omr-b">C</div><div class="omr-b">D</div></div></div>
+              <div class="omr-row"><span class="omr-q">07</span><div class="omr-bubs"><div class="omr-b">A</div><div class="omr-b">B</div><div class="omr-b">C</div><div class="omr-b">D</div></div></div>
+              <div class="omr-row"><span class="omr-q">08</span><div class="omr-bubs"><div class="omr-b">A</div><div class="omr-b">B</div><div class="omr-b">C</div><div class="omr-b">D</div></div></div>
+              <div class="omr-row"><span class="omr-q">09</span><div class="omr-bubs"><div class="omr-b">A</div><div class="omr-b">B</div><div class="omr-b">C</div><div class="omr-b">D</div></div></div>
+              <div class="omr-row"><span class="omr-q">10</span><div class="omr-bubs"><div class="omr-b">A</div><div class="omr-b">B</div><div class="omr-b">C</div><div class="omr-b">D</div></div></div>
+              <div class="omr-row"><span class="omr-q">11</span><div class="omr-bubs"><div class="omr-b">A</div><div class="omr-b">B</div><div class="omr-b">C</div><div class="omr-b">D</div></div></div>
+              <div class="omr-row"><span class="omr-q">12</span><div class="omr-bubs"><div class="omr-b">A</div><div class="omr-b">B</div><div class="omr-b">C</div><div class="omr-b">D</div></div></div>
+              <div class="omr-row"><span class="omr-q">13</span><div class="omr-bubs"><div class="omr-b">A</div><div class="omr-b">B</div><div class="omr-b">C</div><div class="omr-b">D</div></div></div>
+            </div>
+            <div>
+              <div class="omr-row"><span class="omr-q">14</span><div class="omr-bubs"><div class="omr-b">A</div><div class="omr-b">B</div><div class="omr-b">C</div><div class="omr-b">D</div></div></div>
+              <div class="omr-row"><span class="omr-q">15</span><div class="omr-bubs"><div class="omr-b">A</div><div class="omr-b">B</div><div class="omr-b">C</div><div class="omr-b">D</div></div></div>
+              <div class="omr-row"><span class="omr-q">16</span><div class="omr-bubs"><div class="omr-b">A</div><div class="omr-b">B</div><div class="omr-b">C</div><div class="omr-b">D</div></div></div>
+              <div class="omr-row"><span class="omr-q">17</span><div class="omr-bubs"><div class="omr-b">A</div><div class="omr-b">B</div><div class="omr-b">C</div><div class="omr-b">D</div></div></div>
+              <div class="omr-row"><span class="omr-q">18</span><div class="omr-bubs"><div class="omr-b">A</div><div class="omr-b">B</div><div class="omr-b">C</div><div class="omr-b">D</div></div></div>
+              <div class="omr-row"><span class="omr-q">19</span><div class="omr-bubs"><div class="omr-b">A</div><div class="omr-b">B</div><div class="omr-b">C</div><div class="omr-b">D</div></div></div>
+              <div class="omr-row"><span class="omr-q">20</span><div class="omr-bubs"><div class="omr-b">A</div><div class="omr-b">B</div><div class="omr-b">C</div><div class="omr-b">D</div></div></div>
+              <div class="omr-row"><span class="omr-q">21</span><div class="omr-bubs"><div class="omr-b">A</div><div class="omr-b">B</div><div class="omr-b">C</div><div class="omr-b">D</div></div></div>
+              <div class="omr-row"><span class="omr-q">22</span><div class="omr-bubs"><div class="omr-b">A</div><div class="omr-b">B</div><div class="omr-b">C</div><div class="omr-b">D</div></div></div>
+              <div class="omr-row"><span class="omr-q">23</span><div class="omr-bubs"><div class="omr-b">A</div><div class="omr-b">B</div><div class="omr-b">C</div><div class="omr-b">D</div></div></div>
+              <div class="omr-row"><span class="omr-q">24</span><div class="omr-bubs"><div class="omr-b">A</div><div class="omr-b">B</div><div class="omr-b">C</div><div class="omr-b">D</div></div></div>
+              <div class="omr-row"><span class="omr-q">25</span><div class="omr-bubs"><div class="omr-b">A</div><div class="omr-b">B</div><div class="omr-b">C</div><div class="omr-b">D</div></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="doc-footer" style="padding-right:48px; margin-top:auto;">
+          <span>AVALIA SESI I – 2026 &nbsp;·&nbsp; <strong>Cartão Avulso</strong> — Contingência &nbsp;·&nbsp; Correção Manual &nbsp;·&nbsp; Use apenas com a Prova Avulsa</span>
+          <span>orbie.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<hr class="shell-hr">
+
+<!-- ══ SEÇÃO 5 — PROVA AVULSA ════════════════════ -->
+<div class="shell-section" id="s5">
+  <div class="shell-eyebrow">Material 5 de 5</div>
+  <div class="shell-title">Prova Avulsa — Contingência</div>
+  <div class="shell-desc">Versão genérica com ordem de questões própria (chave de correção específica). Sem QR Code. Aluno registra o nome à mão. Sempre entregue junto com o Cartão Avulso. Correção sempre manual.</div>
+  <div class="shell-card">
+    <div class="shell-card-head">
+      <h3>Prova Avulsa — Ordem Própria</h3>
+      <span class="chip chip-warn">Contingência · Sem QR Code · Correção Manual</span>
+    </div>
+    <div class="shell-card-body">
+      <div class="a4">
+        <div class="lateral-stripe">
+          <span>Matemática</span>
+          <span class="yr">3º ANO EF</span>
+        </div>
+
+        <div class="cont-banner" style="margin-top:12px; margin-right:48px;">
+          <span class="cont-banner-icon">⚠️</span>
+          <div>
+            <strong>Prova Avulsa — Material de Contingência</strong>
+            <p>Esta prova possui ordem de questões <strong>diferente</strong> das versões A, B, C e Única. Entregue <strong>sempre junto com o Cartão Avulso</strong>. Nunca use esta prova com cartões dos tipos A, B ou C. Correção sempre manual pelo professor.</p>
+          </div>
+        </div>
+
+        <div class="doc-header" style="padding-right:46px;">
+          <div class="doc-header-logos">
+            <div class="orbie-mark">O·</div>
+            <div class="sesi-mark">
+              <span class="sesi-text">SESI</span>
+              <span class="sesi-sub">Serviço Social<br>da Indústria</span>
+            </div>
+          </div>
+          <div class="doc-header-center">
+            <div class="doc-avalia-title">Satélite Avaliativo — Prova Avulsa — AVALIA SESI I · 2026</div>
+            <div class="doc-avalia-sub">Matemática · 3º Ano – Ensino Fundamental – Anos Iniciais</div>
+          </div>
+          <div class="doc-header-right">
+            <span class="type-badge tb-orange">Avulso</span>
+          </div>
+        </div>
+
+        <div class="id-grid cols3" style="margin-right:48px;">
+          <div class="id-cell full"><span class="id-label">Estudante (preencher à mão com letra de forma)</span><div class="id-line"></div></div>
+          <div class="id-cell"><span class="id-label">Escola</span><div class="id-val">Escola Municipal Bom Jesus</div></div>
+          <div class="id-cell"><span class="id-label">Município</span><div class="id-val">São Caetano do Sul</div></div>
+          <div class="id-cell"><span class="id-label">Regional</span><div class="id-val">SCP</div></div>
+          <div class="id-cell"><span class="id-label">Etapa Escolar / Turma (preencher)</span><div class="id-line"></div></div>
+          <div class="id-cell"><span class="id-label">Componente Curricular</span><div class="id-val">Matemática</div></div>
+          <div class="id-cell"><span class="id-label">Data de Aplicação</span><div class="id-val">15 / 08 / 2026</div></div>
+          
+        </div>
+
+        <div class="instr-wrap" style="margin-right:48px;">
+          <div>
+            <div class="instr-col-title">Instruções</div>
+            <ol class="instr-list">
+              <li>Preencha seu nome e turma nos campos acima com caneta.</li>
+              <li>Esta folha deverá, obrigatoriamente, ser devolvida ao aplicador.</li>
+              <li>Não amasse, dobre ou rasure esta folha.</li>
+              <li>Utilize caneta de tinta azul ou preta.</li>
+              <li>Assinale apenas <strong>uma</strong> alternativa por questão.</li>
+              <li>Esta prova possui ordem própria — use somente o Cartão Avulso.</li>
+            </ol>
+          </div>
+          <div>
+            <div class="instr-col-title">Exemplo de Marcação</div>
+            <div class="instr-example-box">
+              <div class="ex-caption">Preencha conforme o exemplo abaixo:</div>
+              <div class="ex-row">
+                <span class="ex-num">00</span>
+                <div class="bubble">A</div>
+                <div class="bubble filled">B</div>
+                <div class="bubble">C</div>
+                <div class="bubble">D</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <hr class="doc-divider" style="margin-right:48px;">
+
+        <div class="q-area" style="padding-right:48px;">
+          <div class="q-cols">
+            <div>
+              <div class="q-item">
+                <div class="q-hdr"><span class="q-num">01</span><span class="q-text">Um trem parte às 14h30 e chega após 3h45min. A que horas chegou ao destino?</span></div>
+                <div class="alts"><div class="alt"><span class="alt-l">A)</span>17h15</div><div class="alt"><span class="alt-l">B)</span>18h00</div><div class="alt"><span class="alt-l">C)</span>18h15</div><div class="alt"><span class="alt-l">D)</span>18h45</div></div>
+              </div>
+              <div class="q-item">
+                <div class="q-hdr"><span class="q-num">02</span><span class="q-text">Observe a figura e indique a fração que representa a parte pintada.</span></div>
+                <div class="q-img">📷 Imagem impressa aqui</div>
+                <div class="alts"><div class="alt"><span class="alt-l">A)</span>1/4</div><div class="alt"><span class="alt-l">B)</span>2/5</div><div class="alt"><span class="alt-l">C)</span>3/8</div><div class="alt"><span class="alt-l">D)</span>1/2</div></div>
+              </div>
+              <div class="q-item">
+                <div class="q-hdr"><span class="q-num">03</span><span class="q-text">Qual figura tem todos os lados iguais e todos os ângulos retos?</span></div>
+                <div class="alts"><div class="alt"><span class="alt-l">A)</span>Triângulo equilátero</div><div class="alt"><span class="alt-l">B)</span>Retângulo</div><div class="alt"><span class="alt-l">C)</span>Quadrado</div><div class="alt"><span class="alt-l">D)</span>Losango</div></div>
+              </div>
+            </div>
+            <div>
+              <div class="q-item">
+                <div class="q-hdr"><span class="q-num">04</span><span class="q-text">Qual é o resultado de 48 ÷ 6 + 5 × 2?</span></div>
+                <div class="alts"><div class="alt"><span class="alt-l">A)</span>18</div><div class="alt"><span class="alt-l">B)</span>22</div><div class="alt"><span class="alt-l">C)</span>28</div><div class="alt"><span class="alt-l">D)</span>34</div></div>
+              </div>
+              <div class="q-item">
+                <div class="q-hdr"><span class="q-num">05</span><span class="q-text">Mariana leu 1/3 na segunda e 2/3 na terça. Que fração leu ao todo?</span></div>
+                <div class="alts"><div class="alt"><span class="alt-l">A)</span>3/6</div><div class="alt"><span class="alt-l">B)</span>2/3</div><div class="alt"><span class="alt-l">C)</span>3/3</div><div class="alt"><span class="alt-l">D)</span>1</div></div>
+              </div>
+              <div class="q-item">
+                <div class="q-hdr"><span class="q-num">06</span><span class="q-text">No mapa, 1 cm = 50 km. Dois pontos estão a 8 cm. Qual a distância real?</span></div>
+                <div class="q-img">📷 Imagem impressa aqui</div>
+                <div class="alts"><div class="alt"><span class="alt-l">A)</span>200 km</div><div class="alt"><span class="alt-l">B)</span>350 km</div><div class="alt"><span class="alt-l">C)</span>400 km</div><div class="alt"><span class="alt-l">D)</span>450 km</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="doc-footer" style="padding-right:48px;">
+          <span>AVALIA SESI I – 2026 &nbsp;·&nbsp; <strong>Prova Avulsa</strong> — Contingência &nbsp;·&nbsp; Use apenas com o Cartão Avulso</span>
+          <span>Página 1 / 2 &nbsp;·&nbsp; orbie.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="height:60px;"></div>
+</body>
+</html>
+
