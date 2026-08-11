@@ -1,0 +1,1102 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Turmas — Orbie Admin</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/primeicons@7.0.0/primeicons.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary: #2177FF;
+      --primary-light: #E6EEFF;
+      --primary-hover: #0059E7;
+      --text-primary: #344054;
+      --text-secondary: #525e76;
+      --text-placeholder: #8A95B2;
+      --border: #DDE4EB;
+      --surface: #FFFFFF;
+      --bg: #F8F9FC;
+      --success: #12B76A;
+      --success-light: #ECFDF3;
+      --warning: #F79009;
+      --warning-light: #FFFAEB;
+      --error: #F04438;
+      --error-light: #FEF3F2;
+      --info-light: #EFF8FF;
+      --info: #2E90FA;
+      --radius-sm: 6px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --radius-xl: 16px;
+      --radius-full: 1000px;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.12);
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: var(--surface);
+      color: var(--text-primary);
+      font-size: 14px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── HEADER (sticky) ── */
+    .header {
+      position: sticky; top: 0; z-index: 100; flex-shrink: 0;
+      height: 64px;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center;
+      padding: 0 16px;
+      gap: 16px;
+    }
+    .header-logo {
+      display: flex; align-items: center; gap: 8px;
+      width: 167px; flex-shrink: 0;
+    }
+    .header-logo svg { height: 28px; width: auto; }
+    .header-spacer { flex: 1; }
+    .header-right { display: flex; align-items: center; gap: 8px; }
+    .header-role {
+      display: flex; align-items: center; gap: 6px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 6px 12px;
+      font-size: 14px; color: var(--text-primary);
+      cursor: pointer; background: var(--surface);
+    }
+    .header-role i { font-size: 14px; color: var(--text-secondary); }
+    .icon-btn {
+      width: 40px; height: 40px; border-radius: var(--radius-full);
+      display: flex; align-items: center; justify-content: center;
+      border: none; background: transparent; cursor: pointer;
+      color: var(--text-secondary); font-size: 20px;
+      position: relative; transition: background 0.15s;
+    }
+    .icon-btn:hover { background: rgba(0,0,0,0.04); }
+    .notif-dot {
+      width: 10px; height: 10px; border-radius: 50%;
+      background: var(--error);
+      position: absolute; top: 7px; right: 7px;
+      border: 2px solid white;
+    }
+    .avatar {
+      width: 40px; height: 40px; border-radius: var(--radius-full);
+      background: rgba(0,0,0,0.03);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 500; font-size: 16px; color: var(--text-primary);
+      cursor: pointer;
+    }
+
+    /* ── LAYOUT ── */
+    .app { display: flex; flex: 1; min-height: 0; overflow: hidden; }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      width: 235px; flex-shrink: 0;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      padding: 16px 12px;
+      display: flex; flex-direction: column; gap: 8px;
+      overflow-y: auto;
+      /* sticky ao lado esquerdo */
+      position: sticky; top: 0; align-self: flex-start;
+      height: 100vh;
+    }
+    .nav-item {
+      display: flex; align-items: center; gap: 6px;
+      padding: 8px 4px 8px 0; border-radius: var(--radius-sm);
+      cursor: pointer; font-size: 14px; font-weight: 500;
+      color: var(--text-primary);
+      text-decoration: none; transition: background 0.15s;
+      position: relative; border: none; background: transparent;
+      font-family: 'Outfit', sans-serif; width: 100%;
+    }
+    .nav-item:hover { background: rgba(0,0,0,0.03); }
+    .nav-indicator { width: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .nav-indicator-bar { width: 4px; height: 18px; background: var(--primary); border-radius: var(--radius-full); }
+    .nav-item i.nav-icon { font-size: 20px; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: var(--text-secondary); }
+    .nav-item span.nav-label { flex: 1; }
+    .nav-item i.expand-icon { font-size: 14px; margin-left: auto; color: var(--text-secondary); }
+    .nav-sub { display: flex; flex-direction: column; gap: 2px; width: 100%; }
+    .nav-sub-item {
+      display: flex; align-items: center; gap: 8px;
+      padding: 6px 8px 6px 12px; border-radius: var(--radius-sm);
+      cursor: pointer; font-size: 14px; font-weight: 400;
+      color: var(--text-primary); text-decoration: none;
+      font-family: 'Outfit', sans-serif;
+    }
+    .nav-sub-item:hover { background: rgba(0,0,0,0.03); }
+    .nav-sub-item.active { padding-left: 0; }
+    .nav-sub-item .nav-indicator { display: none; }
+    .nav-sub-item.active .nav-indicator { display: flex; }
+    .nav-sub-item .nav-sub-label { padding-left: 8px; }
+    .nav-sub-item.active .nav-sub-label { padding-left: 8px; font-weight: 500; }
+    .nav-accordion { display: flex; flex-direction: column; width: 100%; }
+
+    /* ── MAIN ── */
+    .main { flex: 1; min-width: 0; display: flex; flex-direction: column; overflow-y: auto; }
+
+    /* ── PAGE: LISTAGEM ── */
+    .page { display: none; padding: 8px 24px 32px; }
+    .page.active { display: block; }
+
+    .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+    .page-title { font-size: 28px; font-weight: 700; color: var(--text-primary); }
+    .btn-primary {
+      display: flex; align-items: center; gap: 8px;
+      background: var(--primary); color: white;
+      border: none; border-radius: var(--radius-lg);
+      padding: 8px 16px; height: 40px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 16px; font-weight: 500;
+      cursor: pointer; transition: background 0.15s; white-space: nowrap;
+    }
+    .btn-primary:hover { background: var(--primary-hover); }
+    .btn-secondary {
+      display: flex; align-items: center; gap: 8px;
+      background: white; color: var(--text-primary);
+      border: 1px solid var(--border); border-radius: var(--radius-lg);
+      padding: 8px 16px; height: 40px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 16px; font-weight: 500;
+      cursor: pointer; transition: all 0.15s; white-space: nowrap;
+    }
+    .btn-secondary:hover { border-color: var(--primary); color: var(--primary); }
+    .search-bar {
+      display: flex; align-items: center; gap: 8px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 6px 12px; height: 40px;
+      background: var(--surface);
+      margin-bottom: 24px;
+    }
+    .search-bar i { color: var(--text-placeholder); font-size: 18px; }
+    .search-bar input {
+      flex: 1; border: none; outline: none;
+      font-family: 'Outfit', sans-serif; font-size: 14px;
+      color: var(--text-primary); background: transparent;
+    }
+    .search-bar input::placeholder { color: var(--text-placeholder); }
+
+    /* ── TABLE ── */
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; }
+    th {
+      text-align: left; padding: 10px 4px;
+      font-size: 14px; font-weight: 700; color: var(--text-primary);
+      white-space: nowrap;
+    }
+    th .sort-icon { font-size: 11px; color: var(--text-placeholder); margin-left: 2px; }
+    th.center, td.center { text-align: center; }
+    td {
+      padding: 0 4px; height: 60px;
+      font-size: 14px; color: var(--text-secondary);
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle; overflow: hidden;
+      max-width: 160px; text-overflow: ellipsis; white-space: nowrap;
+    }
+    td.img-cell { width: 80px; }
+    td img.row-img { width: 50px; height: 50px; border-radius: var(--radius-md); object-fit: cover; }
+    td.actions { text-align: center; width: 100px; }
+    .action-btn {
+      width: 32px; height: 32px; border-radius: var(--radius-full);
+      border: none; background: transparent; cursor: pointer;
+      color: var(--primary); font-size: 16px;
+      display: inline-flex; align-items: center; justify-content: center;
+      transition: background 0.15s;
+    }
+    .action-btn:hover { background: var(--primary-light); }
+    .paginator {
+      display: flex; align-items: center; justify-content: center; gap: 2px;
+      margin-top: 20px;
+    }
+    .pag-btn {
+      width: 36px; height: 42px; border: none; background: transparent;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 500;
+      color: var(--text-secondary); cursor: pointer;
+      border-radius: var(--radius-sm); transition: background 0.12s;
+    }
+    .pag-btn:hover { background: rgba(0,0,0,0.04); }
+    .pag-btn.active {
+      color: var(--primary);
+      border-bottom: 2px solid var(--primary);
+      border-radius: 0;
+    }
+    .pag-btn i { font-size: 14px; }
+
+    /* ── PAGE: EDIÇÃO ── */
+    .edit-page { display: none; flex-direction: column; flex: 1; overflow-y: auto; }
+    .edit-page.active { display: flex; }
+    .edit-form-area { flex: 1; padding: 24px 32px 100px; }
+
+    /* breadcrumb-style back */
+    .back-row {
+      display: flex; align-items: center; gap: 8px;
+      margin-bottom: 24px;
+    }
+    .back-btn {
+      display: flex; align-items: center; gap: 6px;
+      background: none; border: none;
+      font-family: 'Outfit', sans-serif; font-size: 14px;
+      color: var(--text-secondary); cursor: pointer;
+      padding: 4px 0;
+    }
+    .back-btn:hover { color: var(--primary); }
+    .back-btn i { font-size: 16px; }
+    .back-sep { color: var(--border); }
+    .back-current { font-size: 14px; font-weight: 500; color: var(--text-primary); }
+
+    /* section card */
+    .form-section {
+      background: white; border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 24px; margin-bottom: 24px;
+    }
+    .section-title {
+      font-size: 22px; font-weight: 700;
+      color: var(--text-primary); margin-bottom: 20px;
+    }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 24px; }
+    .form-grid.three { grid-template-columns: 1fr 1fr 1fr; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group.full { grid-column: 1 / -1; }
+    .form-label {
+      font-size: 14px; font-weight: 500; color: var(--text-primary);
+    }
+    .form-label .req { color: var(--error); }
+    .form-input {
+      height: 36px; border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 0 12px;
+      font-family: 'Outfit', sans-serif; font-size: 14px;
+      color: var(--text-primary); outline: none;
+      transition: border-color 0.15s;
+    }
+    .form-input:focus { border-color: var(--primary); }
+    .form-input::placeholder { color: var(--text-placeholder); }
+    .form-select {
+      height: 36px; border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 0 12px;
+      font-family: 'Outfit', sans-serif; font-size: 14px;
+      color: var(--text-primary); outline: none;
+      background: white; cursor: pointer;
+      transition: border-color 0.15s;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238A95B2' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 32px;
+    }
+    .form-select:focus { border-color: var(--primary); }
+    .form-select:disabled {
+      background-color: var(--bg);
+      color: var(--text-placeholder);
+      cursor: not-allowed;
+    }
+
+    /* ── TRILHAS ADAPTATIVAS BLOCK ── */
+    .trilhas-block {
+      background: white; border: 1px solid var(--border);
+      border-radius: var(--radius-xl);
+      padding: 24px; margin-bottom: 24px;
+    }
+    .trilhas-header {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      margin-bottom: 0;
+    }
+    .trilhas-title-group { display: flex; flex-direction: column; gap: 4px; }
+    .trilhas-title {
+      font-size: 22px; font-weight: 700; color: var(--text-primary);
+    }
+    .trilhas-subtitle {
+      font-size: 14px; color: var(--text-secondary);
+    }
+    .trilhas-body { margin-top: 20px; }
+
+    /* toggle switch */
+    .switch-row {
+      display: flex; align-items: center; gap: 12px;
+      padding: 14px 16px;
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+    }
+    .switch-label-group { display: flex; flex-direction: column; gap: 2px; flex: 1; }
+    .switch-label { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+    .switch-hint { font-size: 12px; color: var(--text-secondary); }
+    .toggle {
+      position: relative; width: 44px; height: 24px; flex-shrink: 0;
+    }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .toggle-track {
+      position: absolute; inset: 0;
+      background: #C5D0DE; border-radius: var(--radius-full);
+      cursor: pointer; transition: background 0.2s;
+    }
+    .toggle input:checked + .toggle-track { background: var(--primary); }
+    .toggle-thumb {
+      position: absolute; top: 2px; left: 2px;
+      width: 20px; height: 20px; border-radius: 50%;
+      background: white; transition: transform 0.2s;
+      box-shadow: var(--shadow-sm);
+    }
+    .toggle input:checked ~ .toggle-thumb { transform: translateX(20px); }
+
+    /* periodicidade row */
+    .form-select:disabled { background:#F8FAFC; color:var(--color-on-bg-light); cursor:not-allowed; opacity:.7; }
+    .periodicity-row {
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid var(--color-outline);
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .periodicity-row.hidden { display: none; }
+
+    /* informativo inline */
+    .info-banner {
+      display: flex; align-items: flex-start; gap: 10px;
+      background: var(--info-light); border: 1px solid #B2D9FF;
+      border-radius: var(--radius-md);
+      padding: 12px 14px; margin-top: 16px;
+      font-size: 13px; color: #1849A9;
+    }
+    .info-banner.hidden { display: none; }
+    .info-banner i { font-size: 16px; flex-shrink: 0; margin-top: 1px; color: var(--info); }
+
+    /* warning inline */
+    .warning-banner {
+      display: flex; align-items: flex-start; gap: 10px;
+      background: var(--warning-light); border: 1px solid #F9C86C;
+      border-radius: var(--radius-md);
+      padding: 12px 14px; margin-top: 12px;
+      font-size: 13px; color: #7A3800;
+    }
+    .warning-banner.hidden { display: none; }
+    .warning-banner i { font-size: 16px; flex-shrink: 0; margin-top: 1px; color: var(--warning); }
+
+    /* revisão switch row */
+    .revisao-row {
+      margin-top: 16px; padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+    .revisao-row.hidden { display: none; }
+
+    /* ── MODAL DE CONFIRMAÇÃO ── */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.4);
+      z-index: 200; display: flex; align-items: center; justify-content: center;
+    }
+    .modal-overlay.hidden { display: none; }
+    .modal {
+      background: white; border-radius: var(--radius-xl);
+      padding: 24px; width: 480px; max-width: 90vw;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    }
+    .modal-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .modal-title { font-size: 18px; font-weight: 700; color: var(--text-primary); }
+    .modal-body { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
+    .modal-footer {
+      display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px;
+    }
+    .btn-danger {
+      display: flex; align-items: center; gap: 8px;
+      background: #B42318; color: white;
+      border: none; border-radius: var(--radius-lg);
+      padding: 8px 16px; height: 40px;
+      font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 500;
+      cursor: pointer; transition: background 0.15s;
+    }
+    .btn-danger:hover { background: #92190E; }
+
+    /* ── BUTTON BAR ── */
+    .button-bar {
+      position: sticky; bottom: 0;
+      height: 72px; background: white;
+      border-top: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: flex-end;
+      padding: 0 32px; gap: 12px;
+      z-index: 50;
+    }
+    .button-bar.hidden { display: none; }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed; bottom: 32px; right: 32px;
+      background: #344054; color: white;
+      border-radius: var(--radius-lg);
+      padding: 12px 18px; font-size: 14px;
+      display: flex; align-items: center; gap: 10px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      z-index: 300; opacity: 0; transform: translateY(8px);
+      transition: all 0.25s;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    .toast i { font-size: 18px; color: var(--success); }
+    .toast.warning i { color: var(--warning); }
+
+    /* highlight new section */
+    @keyframes highlightPulse {
+      0% { box-shadow: 0 0 0 0 rgba(33,119,255,0.4); }
+      70% { box-shadow: 0 0 0 8px rgba(33,119,255,0); }
+      100% { box-shadow: none; }
+    }
+    .trilhas-block.highlight { animation: highlightPulse 1.2s ease-out; }
+
+    /* status badge on list */
+    .badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 2px 8px; border-radius: var(--radius-full);
+      font-size: 12px; font-weight: 500;
+    }
+    .badge.active-t { background: var(--success-light); color: #027A48; }
+    .badge.inactive-t { background: #F1F4F9; color: var(--text-secondary); }
+
+    .tag-ia {
+      display: inline-block; padding: 1px 6px;
+      background: #EFF8FF; color: #1849A9;
+      border-radius: var(--radius-full); font-size: 11px; font-weight: 500;
+      margin-left: 4px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══ HEADER ═══ -->
+<header class="header">
+  <div class="header-logo">
+    <!-- Logo Orbie completo — extraído do DS Figma node 26358:172 -->
+    <svg width="112" height="33" viewBox="0 0 191 56" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0">
+      <g clip-path="url(#clip_logo)">
+        <path d="M41.763 56C56.5366 56 67.7509 45.0144 67.7509 30.4669C67.7509 15.9194 56.5392 4.9364 41.763 4.9364C26.9868 4.9364 15.7776 15.922 15.7776 30.4669C15.7776 45.0119 26.9157 56 41.7655 56M41.7655 52.1357C29.4156 52.1357 20.0967 42.893 20.0967 30.4669C20.0967 18.0408 29.4156 8.79812 41.7655 8.79812C54.1154 8.79812 63.4344 18.0408 63.4344 30.4669C63.4344 42.893 54.1154 52.1357 41.7655 52.1357Z" fill="#1064AD"/>
+        <path d="M92.769 16.8315C91.481 16.453 90.4952 16.3005 88.981 16.3005C84.1335 16.3005 80.4954 19.0291 78.4502 23.4219V18.5718C78.4502 17.5861 77.9192 16.9814 76.936 16.9814H76.0264C75.1169 16.9814 74.5122 17.5886 74.5122 18.5718V53.4238C74.5122 54.4096 75.1194 55.0905 76.0264 55.0905H77.1621C78.0716 55.0905 78.6763 54.4096 78.6763 53.4238V33.1956C78.6763 25.5433 82.8429 20.0124 88.6024 20.0124C89.512 20.0124 90.3453 20.1648 91.4047 20.4671C92.3143 20.7695 93.1476 20.6932 93.5261 19.5576L93.6786 18.9504C94.1334 17.6623 93.5261 17.0551 92.769 16.829" fill="#1064AD"/>
+        <path d="M116.487 16.3006C110.046 16.3006 104.82 19.1028 101.408 23.5743V2.58637C101.408 1.45072 100.954 0.767295 99.6655 1.14584L98.7559 1.37196C97.694 1.67429 97.3154 2.20528 97.3154 3.0386V53.4213C97.3154 54.4071 97.8464 55.088 98.8296 55.088H99.8916C100.877 55.088 101.406 54.4071 101.406 53.4213V48.4976C104.663 53.0428 109.891 55.9975 116.484 55.9975C127.699 55.9975 135.577 47.2095 135.577 36.1478C135.577 25.086 127.699 16.298 116.484 16.298M116.106 52.2095C107.696 52.2095 101.18 46.3 101.027 36.1478C100.875 25.9955 107.77 20.0861 116.106 20.0861C125.272 20.0861 131.334 27.2836 131.334 36.1478C131.334 45.0119 125.272 52.2095 116.106 52.2095Z" fill="#1064AD"/>
+        <path d="M143.848 55.0905H144.984C145.969 55.0905 146.498 54.4096 146.498 53.4239V18.5719C146.498 17.5861 145.967 16.9814 144.984 16.9814H143.848C142.939 16.9814 142.334 17.5887 142.334 18.5719V53.4239C142.334 54.4096 142.941 55.0905 143.848 55.0905Z" fill="#1064AD"/>
+        <path d="M157.566 37.4384H188.478C189.766 37.4384 190.523 36.605 190.523 35.3932C190.523 30.6194 188.856 25.998 185.749 22.5123C182.642 18.6481 177.944 16.3005 172.111 16.3005C161.125 16.3005 153.244 24.8624 153.244 36.2265C153.244 48.6526 162.64 56 172.944 56C178.097 56 184.385 53.9548 188.704 49.4071C189.235 48.7999 189.613 47.8929 188.78 47.0596L188.325 46.6811C187.644 46.0002 186.811 45.8478 185.825 46.6811C181.961 50.5453 177.037 52.212 172.794 52.212C164.99 52.212 158.097 46.7573 157.566 37.4384ZM172.113 20.0886C176.963 20.0886 180.752 22.0575 183.099 25.3934C184.842 27.591 185.901 30.3933 186.28 33.6529H157.566C158.399 25.5458 164.083 20.0911 172.113 20.0911" fill="#1064AD"/>
+        <path d="M140.645 6.44547C141.212 8.48558 143.361 9.68982 145.442 9.13343C147.522 8.57704 148.749 6.47088 148.183 4.43077C147.616 2.39067 145.467 1.18642 143.386 1.74535C141.305 2.30175 140.078 4.40791 140.645 6.44801" fill="#29B84C"/>
+        <path d="M79.9758 3.57717C79.8513 2.26876 78.863 1.32111 78.1465 0.846021C77.547 0.447146 76.203 0 74.6812 0C70.8017 0 64.3155 1.94102 56.6276 5.38608C56.3913 5.49279 54.1327 6.6259 52.9081 7.24072C53.777 7.62689 54.618 8.05626 55.4259 8.52881L57.842 7.26359C65.5299 3.81091 71.6883 1.96897 75.4306 1.96897C76.1776 1.96897 76.9652 2.07059 77.3056 2.2027C77.6486 2.33482 78.0297 2.51266 78.0449 3.22911C78.0881 5.35559 75.4306 9.25542 70.634 14.0292C64.3688 20.2639 55.0677 27.4004 44.4428 34.1203C25.3603 46.1907 10.6528 51.5946 4.54515 51.5946C1.02132 51.5946 2.0274 49.4605 1.96643 49.9457C2.27384 47.489 5.47247 42.6466 13.9911 35.2179L15.9474 33.4979C15.8458 32.5655 15.7873 31.6178 15.7797 30.6498L12.6497 33.3937C4.4486 40.4921 0 46.2644 0 49.6815C0 50.1261 0.193086 52.2856 2.77942 53.2002C3.46031 53.4416 4.30125 53.5636 5.29717 53.5636C12.9266 53.5636 28.8232 46.6277 45.797 35.8911C56.3837 29.1966 65.6849 22.088 71.9881 15.8813C75.9616 11.9662 80.2883 6.88758 79.9758 3.57971" fill="#F79850"/>
+      </g>
+      <defs>
+        <clipPath id="clip_logo"><rect width="190.523" height="56" fill="white"/></clipPath>
+      </defs>
+    </svg>
+  </div>
+  <div style="width:40px;height:40px;display:flex;align-items:center;justify-content:center;cursor:pointer;">
+    <i class="pi pi-bars" style="font-size:20px;color:var(--text-secondary);"></i>
+  </div>
+  <div class="header-spacer"></div>
+  <div class="header-right">
+    <div class="header-role">
+      <span>Super Administrador</span>
+      <i class="pi pi-chevron-down"></i>
+    </div>
+    <button class="icon-btn">
+      <i class="pi pi-bell"></i>
+      <span class="notif-dot"></span>
+    </button>
+    <div class="avatar">A</div>
+  </div>
+</header>
+
+<!-- ═══ APP BODY ═══ -->
+<div class="app">
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <a class="nav-item" onclick="showPage('list')">
+      <div class="nav-indicator"></div>
+      <i class="pi pi-home nav-icon" style="font-size:20px"></i>
+      <span class="nav-label">Início</span>
+    </a>
+
+    <div class="nav-accordion">
+      <button class="nav-item">
+        <div class="nav-indicator"><div class="nav-indicator-bar"></div></div>
+        <i class="pi pi-users nav-icon" style="font-size:20px"></i>
+        <span class="nav-label">Turmas</span>
+      </button>
+      <div class="nav-sub">
+        <a class="nav-sub-item active" onclick="showPage('list')">
+          <div class="nav-indicator"><div class="nav-indicator-bar"></div></div>
+          <span class="nav-sub-label">Listar Turmas</span>
+        </a>
+        <a class="nav-sub-item" onclick="showPage('edit')">
+          <div class="nav-indicator"></div>
+          <span class="nav-sub-label">Cadastrar Turma</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="nav-accordion">
+      <button class="nav-item">
+        <div class="nav-indicator"></div>
+        <i class="pi pi-book nav-icon" style="font-size:20px"></i>
+        <span class="nav-label">Biblioteca</span>
+        <i class="pi pi-chevron-down expand-icon" style="font-size:14px"></i>
+      </button>
+    </div>
+
+    <button class="nav-item">
+      <div class="nav-indicator"></div>
+      <i class="pi pi-pen-to-square nav-icon" style="font-size:20px"></i>
+      <span class="nav-label">Correção de Respostas</span>
+    </button>
+
+    <div class="nav-accordion">
+      <button class="nav-item">
+        <div class="nav-indicator"></div>
+        <i class="pi pi-chart-line nav-icon" style="font-size:20px"></i>
+        <span class="nav-label">Relatórios</span>
+        <i class="pi pi-chevron-down expand-icon" style="font-size:14px"></i>
+      </button>
+    </div>
+
+    <button class="nav-item">
+      <div class="nav-indicator"></div>
+      <i class="pi pi-question-circle nav-icon" style="font-size:20px"></i>
+      <span class="nav-label">Central de Ajuda</span>
+    </button>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <main class="main">
+
+    <!-- ── LISTAGEM DE TURMAS ── -->
+    <div class="page active" id="page-list">
+      <div class="page-header">
+        <h1 class="page-title">Turmas</h1>
+        <button class="btn-primary" onclick="showPage('edit')">
+          <i class="pi pi-plus"></i> Cadastrar Turma
+        </button>
+      </div>
+
+      <div class="search-bar">
+        <i class="pi pi-search"></i>
+        <input type="text" placeholder="Digite uma palavra chave" />
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Imagem</th>
+              <th>Nome <span class="sort-icon">↑↓</span></th>
+              <th class="center">Código de Jogo <span class="sort-icon">↑↓</span></th>
+              <th>Apelido <span class="sort-icon">↑↓</span></th>
+              <th>Escola <span class="sort-icon">↑↓</span></th>
+              <th>Temporada <span class="sort-icon">↑↓</span></th>
+              <th>Criado em <span class="sort-icon">↑↓</span></th>
+              <th class="center">Alteração <span class="sort-icon">↑↓</span></th>
+              <th class="center">Professores <span class="sort-icon">↑↓</span></th>
+              <th class="center">Estudantes <span class="sort-icon">↑↓</span></th>
+              <th class="center">Trilhas <span class="sort-icon">↑↓</span></th>
+              <th class="center">Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="img-cell"><img class="row-img" src="https://www.figma.com/api/mcp/asset/442d28be-4751-49ba-87d9-8bb257e73fd8.png" alt="turma" /></td>
+              <td>TEMPORADA ANUAL EM1</td>
+              <td class="center">5634</td>
+              <td>SuperProfes SC SMO</td>
+              <td>223 - SESI/SC - Videira</td>
+              <td>FORMAÇÃO DE PROFESSORES...</td>
+              <td>08/01/2024</td>
+              <td class="center">—</td>
+              <td class="center">3 <button class="action-btn"><i class="pi pi-eye"></i></button></td>
+              <td class="center">28 <button class="action-btn"><i class="pi pi-eye"></i></button></td>
+              <td class="center"><span class="badge inactive-t">Inativo</span></td>
+              <td class="actions">
+                <button class="action-btn" onclick="showPage('edit')" title="Editar"><i class="pi pi-pen-to-square"></i></button>
+              </td>
+            </tr>
+            <tr>
+              <td class="img-cell"><img class="row-img" src="https://www.figma.com/api/mcp/asset/f097c5a2-7f14-4a68-b979-8f44b77408d8.png" alt="turma" /></td>
+              <td>MAP - CIÊNCIAS DA NATUREZA - EM1 - Piauí (PI)</td>
+              <td class="center">4536</td>
+              <td>SuperProfes SC Chapecó ...</td>
+              <td>2038 - SESI/SC - São José II</td>
+              <td>FORMAÇÃO DE PROFESSORES...</td>
+              <td>08/01/2024</td>
+              <td class="center">—</td>
+              <td class="center">3 <button class="action-btn"><i class="pi pi-eye"></i></button></td>
+              <td class="center">28 <button class="action-btn"><i class="pi pi-eye"></i></button></td>
+              <td class="center"><span class="badge active-t"><i class="pi pi-check" style="font-size:10px"></i> Mensal</span></td>
+              <td class="actions">
+                <button class="action-btn" onclick="showPage('edit')" title="Editar"><i class="pi pi-pen-to-square"></i></button>
+              </td>
+            </tr>
+            <tr>
+              <td class="img-cell"><img class="row-img" src="https://www.figma.com/api/mcp/asset/bc8c7ba4-e104-411c-9dae-6a647da706ab.png" alt="turma" /></td>
+              <td>EEB JONAS R C NEVES - TESTE 5º ANO</td>
+              <td class="center">9678</td>
+              <td>SuperProfes SC</td>
+              <td>2038 - SESI/SC - São José II</td>
+              <td>FORMAÇÃO DE PROFESSORES - SC</td>
+              <td>08/01/2024</td>
+              <td class="center">—</td>
+              <td class="center">3 <button class="action-btn"><i class="pi pi-eye"></i></button></td>
+              <td class="center">28 <button class="action-btn"><i class="pi pi-eye"></i></button></td>
+              <td class="center"><span class="badge inactive-t">Inativo</span></td>
+              <td class="actions">
+                <button class="action-btn" onclick="showPage('edit')" title="Editar"><i class="pi pi-pen-to-square"></i></button>
+              </td>
+            </tr>
+            <tr>
+              <td class="img-cell"><img class="row-img" src="https://www.figma.com/api/mcp/asset/c18ac5d8-13fd-47b3-bc63-d9ca0a050707.png" alt="turma" /></td>
+              <td>FORMAÇÃO DE PROFESSORES 2025 SC</td>
+              <td class="center">12312</td>
+              <td>EM EMFG 2025/1 M1</td>
+              <td>2038 - SESI/SC - São José II</td>
+              <td>Temporada SESI EM1/2025 (SC)</td>
+              <td>08/01/2024</td>
+              <td class="center">—</td>
+              <td class="center">3 <button class="action-btn"><i class="pi pi-eye"></i></button></td>
+              <td class="center">28 <button class="action-btn"><i class="pi pi-eye"></i></button></td>
+              <td class="center"><span class="badge active-t"><i class="pi pi-check" style="font-size:10px"></i> Semanal</span></td>
+              <td class="actions">
+                <button class="action-btn" onclick="showPage('edit')" title="Editar"><i class="pi pi-pen-to-square"></i></button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="paginator">
+        <button class="pag-btn"><i class="pi pi-angle-double-left"></i></button>
+        <button class="pag-btn"><i class="pi pi-angle-left"></i></button>
+        <button class="pag-btn active">1</button>
+        <button class="pag-btn">2</button>
+        <button class="pag-btn">3</button>
+        <button class="pag-btn"><i class="pi pi-angle-right"></i></button>
+        <button class="pag-btn"><i class="pi pi-angle-double-right"></i></button>
+      </div>
+    </div>
+
+    <!-- ── EDIÇÃO DE TURMA ── -->
+    <div class="edit-page" id="page-edit">
+      <div class="edit-form-area">
+
+        <!-- Back row -->
+        <div class="back-row">
+          <button class="back-btn" onclick="showPage('list')">
+            <i class="pi pi-arrow-left"></i> Turmas
+          </button>
+          <span class="back-sep">/</span>
+          <span class="back-current">Editar Turma</span>
+        </div>
+
+        <!-- DADOS GERAIS -->
+        <div class="form-section">
+          <h2 class="section-title">Dados Gerais</h2>
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">Nome <span class="req">*</span></label>
+              <input class="form-input" type="text" value="MAP - CIÊNCIAS DA NATUREZA - EM1 - Piauí" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Apelido</label>
+              <input class="form-input" type="text" value="SuperProfes SC Chapecó" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Código de Jogo</label>
+              <input class="form-input" type="text" value="4536" />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Escola <span class="req">*</span></label>
+              <select class="form-select">
+                <option>2038 - SESI/SC - São José II</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Temporada <span class="req">*</span></label>
+              <select class="form-select">
+                <option>FORMAÇÃO DE PROFESSORES 2025 SC</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Série / Ano</label>
+              <select class="form-select">
+                <option>1º Ano do Ensino Médio</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- CONTROLE DE INGRESSO -->
+        <div class="form-section">
+          <h2 class="section-title">Controle de Ingresso na Turma</h2>
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">Limite de Jogadores</label>
+              <input class="form-input" type="number" value="35" />
+            </div>
+          </div>
+          <div style="margin-top:16px;display:flex;flex-direction:column;gap:12px;">
+            <div class="switch-row" style="background:white;">
+              <div class="switch-label-group">
+                <span class="switch-label">Permitir ingresso aberto</span>
+                <span class="switch-hint">Estudantes podem entrar sem aprovação manual</span>
+              </div>
+              <label class="toggle">
+                <input type="checkbox" checked />
+                <span class="toggle-track"></span>
+                <span class="toggle-thumb"></span>
+              </label>
+            </div>
+            <div class="switch-row" style="background:white;">
+              <div class="switch-label-group">
+                <span class="switch-label">Exigir e-mail institucional</span>
+                <span class="switch-hint">Somente e-mails do domínio da escola são aceitos</span>
+              </div>
+              <label class="toggle">
+                <input type="checkbox" />
+                <span class="toggle-track"></span>
+                <span class="toggle-thumb"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══ TRILHAS ADAPTATIVAS ═══ -->
+        <div class="trilhas-block" id="trilhasBlock">
+          <div class="trilhas-header">
+            <div class="trilhas-title-group">
+              <h2 class="trilhas-title">Trilhas Adaptativas</h2>
+              <p class="trilhas-subtitle">Configure a geração automática de trilhas de recomposição para esta turma.</p>
+            </div>
+          </div>
+
+          <div class="trilhas-body">
+            <!-- Card agrupado: toggle + periodicidade -->
+            <div style="background:#F8FAFC;border:1px solid var(--border);border-radius:10px;padding:18px 20px;display:flex;flex-direction:column;gap:16px;">
+
+              <!-- Switch principal -->
+              <div class="switch-row" style="background:transparent;border:none;padding:0;">
+                <div class="switch-label-group">
+                  <span class="switch-label">Habilitar Trilhas Adaptativas</span>
+                  <span class="switch-hint">Ao ativar, o sistema gerará automaticamente trilhas de revisão para os estudantes com base no diagnóstico de lacunas.</span>
+                </div>
+                <label class="toggle">
+                  <input type="checkbox" id="trilhasSwitch" onchange="onTrilhasToggle(this)" />
+                  <span class="toggle-track"></span>
+                  <span class="toggle-thumb"></span>
+                </label>
+              </div>
+
+              <!-- Divider -->
+              <div style="height:1px;background:var(--border);"></div>
+
+              <!-- Periodicidade — sempre visível, desabilitada enquanto toggle off -->
+              <div id="periodicityRow" style="opacity:.5;transition:opacity .2s;display:flex;flex-direction:column;gap:6px;">
+                <label class="form-label" style="margin:0;">Periodicidade <span class="req">*</span></label>
+                <select class="form-select" id="periodicitySelect" style="max-width:320px;" onchange="onPeriodicityChange(this)" disabled>
+                  <option value="">Selecione a periodicidade</option>
+                  <option value="7">Semanal — 7 dias</option>
+                  <option value="15">Quinzenal — 15 dias</option>
+                  <option value="30" selected>Mensal — 30 dias</option>
+                  <option value="90">Trimestral — 90 dias</option>
+                </select>
+                <span style="font-size:12px;color:var(--text-secondary);">Define com qual frequência o sistema irá gerar novas trilhas para os estudantes.</span>
+              </div>
+
+            </div>
+
+            <!-- Informativo: data prevista (aparece ao ativar) -->
+            <div class="info-banner hidden" id="activationInfo">
+              <i class="pi pi-info-circle"></i>
+              <span id="activationInfoText">As trilhas adaptativas começarão a ser geradas para os estudantes desta turma a partir de <strong>07/09/2026</strong> (fim do 1º ciclo de 30 dias).</span>
+            </div>
+
+            <!-- Aviso: periodicidade alterada com ciclo ativo -->
+            <div class="warning-banner hidden" id="periodicityWarning">
+              <i class="pi pi-exclamation-triangle"></i>
+              <span>A nova periodicidade será aplicada a partir do próximo ciclo, previsto para <strong>07/09/2026</strong>. O ciclo em andamento não é alterado.</span>
+            </div>
+
+            <!-- Switch de revisão obrigatória (aparece ao ativar) -->
+            <div class="revisao-row hidden" id="revisaoRow">
+              <div class="switch-row" style="background:white;">
+                <div class="switch-label-group">
+                  <span class="switch-label">Exigir revisão do professor antes de liberar ao estudante</span>
+                  <span class="switch-hint">A trilha ficará em status "Sugerida" por até 72h aguardando sua aprovação. Se não houver ação no prazo, é publicada automaticamente.</span>
+                </div>
+                <label class="toggle">
+                  <input type="checkbox" id="revisaoSwitch" />
+                  <span class="toggle-track"></span>
+                  <span class="toggle-thumb"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PROFESSORES DA TURMA -->
+        <div class="form-section">
+          <h2 class="section-title">Professores da Turma</h2>
+          <table style="width:100%">
+            <thead>
+              <tr>
+                <th>Componente Curricular</th>
+                <th>Professor</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Ciências da Natureza</td>
+                <td><input class="form-input" type="text" value="Prof. Carlos Mendes" style="width:100%" /></td>
+              </tr>
+              <tr>
+                <td>Matemática</td>
+                <td><input class="form-input" type="text" value="Profa. Ana Silva" style="width:100%" /></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- ESTUDANTES -->
+        <div class="form-section">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+            <h2 class="section-title" style="margin:0">Estudantes</h2>
+            <div style="display:flex;gap:12px;">
+              <button class="btn-secondary"><i class="pi pi-download"></i> Exportar lista</button>
+              <button class="btn-primary"><i class="pi pi-plus"></i> Adicionar estudante</button>
+            </div>
+          </div>
+          <table style="width:100%">
+            <thead>
+              <tr>
+                <th style="width:33px;"><input type="checkbox" /></th>
+                <th>Código</th>
+                <th>Nome</th>
+                <th>Apelido</th>
+                <th>E-mail</th>
+                <th class="center">Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><input type="checkbox" /></td>
+                <td>EST001</td>
+                <td>João Pedro Santos</td>
+                <td>JoaoPedro</td>
+                <td>joao.santos@escola.edu.br</td>
+                <td class="actions"><button class="action-btn"><i class="pi pi-trash"></i></button></td>
+              </tr>
+              <tr>
+                <td><input type="checkbox" /></td>
+                <td>EST002</td>
+                <td>Maria Clara Oliveira</td>
+                <td>MariClara</td>
+                <td>maria.oliveira@escola.edu.br</td>
+                <td class="actions"><button class="action-btn"><i class="pi pi-trash"></i></button></td>
+              </tr>
+              <tr>
+                <td><input type="checkbox" /></td>
+                <td>EST003</td>
+                <td>Lucas Fernandes</td>
+                <td>LucasFer</td>
+                <td>lucas.fernandes@escola.edu.br</td>
+                <td class="actions"><button class="action-btn"><i class="pi pi-trash"></i></button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div><!-- /edit-form-area -->
+
+      <!-- BUTTON BAR -->
+      <div class="button-bar" id="buttonBar">
+        <button class="btn-secondary" onclick="showPage('list')">Cancelar</button>
+        <button class="btn-primary" onclick="onSave()"><i class="pi pi-check"></i> Salvar Turma</button>
+      </div>
+    </div><!-- /page-edit -->
+
+  </main>
+</div>
+
+<!-- ═══ MODAL DESATIVAÇÃO ═══ -->
+<div class="modal-overlay hidden" id="deactivateModal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">Desativar Trilhas Adaptativas</span>
+      <button class="icon-btn" onclick="closeModal()" style="width:32px;height:32px;font-size:16px;">
+        <i class="pi pi-times"></i>
+      </button>
+    </div>
+    <div class="modal-body">
+      <p>Ao desativar, novas trilhas adaptativas deixarão de ser geradas para esta turma.</p>
+      <br/>
+      <p><strong>Impacto imediato:</strong></p>
+      <ul style="margin:8px 0 0 16px;line-height:1.8;color:var(--text-secondary);">
+        <li>Trilhas <strong>não iniciadas</strong> (Disponível) serão canceladas e removidas da home dos estudantes.</li>
+        <li>Trilhas <strong>em andamento</strong> permanecerão acessíveis até o fim da vigência do ciclo.</li>
+        <li>Trilhas <strong>concluídas ou expiradas</strong> ficam no histórico, inalteradas.</li>
+      </ul>
+      <br/>
+      <p>Deseja continuar?</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeModal()">Cancelar</button>
+      <button class="btn-danger" onclick="confirmDeactivate()">Sim, desativar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ TOAST ═══ -->
+<div class="toast" id="toast">
+  <i class="pi pi-check-circle"></i>
+  <span id="toastMsg">Turma salva com sucesso!</span>
+</div>
+
+<script>
+  // ── Estado global ──
+  let trilhasActive = false;
+  let periodicityChanged = false; // simula ciclo em andamento
+
+  // ── Navegação de páginas ──
+  function showPage(name) {
+    document.querySelectorAll('.page, .edit-page').forEach(p => {
+      p.classList.remove('active');
+    });
+    if (name === 'list') {
+      document.getElementById('page-list').classList.add('active');
+      document.getElementById('nav-turmas').classList.add('active');
+    } else if (name === 'edit') {
+      document.getElementById('page-edit').classList.add('active');
+      // Scroll suave ao topo
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+
+  // ── Toggle Trilhas Adaptativas ──
+  function onTrilhasToggle(checkbox) {
+    if (checkbox.checked) {
+      // Ativar
+      trilhasActive = true;
+      periodicityChanged = false;
+      showPeriodicityPanel(true);
+      // Pré-seleciona Mensal
+      document.getElementById('periodicitySelect').value = '30';
+      updateActivationInfo('30');
+      // Scroll suave ao bloco
+      setTimeout(() => {
+        const block = document.getElementById('trilhasBlock');
+        block.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        block.classList.add('highlight');
+        setTimeout(() => block.classList.remove('highlight'), 1200);
+      }, 100);
+    } else {
+      // Tentativa de desativar — abre modal
+      checkbox.checked = true; // reverte visualmente até confirmar
+      document.getElementById('deactivateModal').classList.remove('hidden');
+    }
+  }
+
+  function showPeriodicityPanel(show) {
+    const sel = document.getElementById('periodicitySelect');
+    const row = document.getElementById('periodicityRow');
+    const info = document.getElementById('activationInfo');
+    const revisao = document.getElementById('revisaoRow');
+    if (show) {
+      sel.disabled = false;
+      row.style.opacity = '1';
+      info.classList.remove('hidden');
+      revisao.classList.remove('hidden');
+    } else {
+      sel.disabled = true;
+      row.style.opacity = '.5';
+      info.classList.add('hidden');
+      revisao.classList.add('hidden');
+      document.getElementById('periodicityWarning').classList.add('hidden');
+    }
+  }
+
+  // ── Dropdown periodicidade ──
+  function onPeriodicityChange(select) {
+    if (!trilhasActive) return;
+    // Simula ciclo em andamento → mostra aviso
+    if (periodicityChanged) {
+      document.getElementById('periodicityWarning').classList.remove('hidden');
+    } else {
+      periodicityChanged = true;
+      document.getElementById('periodicityWarning').classList.remove('hidden');
+    }
+    updateActivationInfo(select.value);
+  }
+
+  function updateActivationInfo(days) {
+    const labels = { '7': 'Semanal — 7 dias', '15': 'Quinzenal — 15 dias', '30': 'Mensal — 30 dias', '90': 'Trimestral — 90 dias' };
+    const daysNum = parseInt(days) || 30;
+    const today = new Date();
+    const future = new Date(today.getTime() + daysNum * 86400000);
+    const dateStr = future.toLocaleDateString('pt-BR');
+    const infoText = document.getElementById('activationInfoText');
+    infoText.innerHTML = `As trilhas adaptativas começarão a ser geradas para os estudantes desta turma a partir de <strong>${dateStr}</strong> (fim do 1º ciclo de ${daysNum} dias).`;
+  }
+
+  // ── Modal desativação ──
+  function closeModal() {
+    document.getElementById('deactivateModal').classList.add('hidden');
+  }
+
+  function confirmDeactivate() {
+    trilhasActive = false;
+    periodicityChanged = false;
+    // Reverte o switch
+    document.getElementById('trilhasSwitch').checked = false;
+    showPeriodicityPanel(false);
+    closeModal();
+    showToast('Trilhas Adaptativas desativadas. Trilhas não iniciadas serão removidas.', 'warning');
+  }
+
+  // ── Salvar ──
+  function onSave() {
+    const switch_ = document.getElementById('trilhasSwitch');
+    const select = document.getElementById('periodicitySelect');
+    // Validação: switch ativo mas sem periodicidade
+    if (switch_.checked && !select.value) {
+      select.style.borderColor = '#F04438';
+      select.focus();
+      showToast('Selecione a periodicidade das Trilhas Adaptativas.', 'warning');
+      return;
+    }
+    select.style.borderColor = '';
+    showToast('Turma salva com sucesso!');
+    setTimeout(() => showPage('list'), 1800);
+  }
+
+  // ── Toast ──
+  function showToast(msg, type) {
+    const toast = document.getElementById('toast');
+    const icon = toast.querySelector('i');
+    document.getElementById('toastMsg').textContent = msg;
+    if (type === 'warning') {
+      toast.classList.add('warning');
+      icon.className = 'pi pi-exclamation-triangle';
+    } else {
+      toast.classList.remove('warning');
+      icon.className = 'pi pi-check-circle';
+    }
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 3500);
+  }
+
+  // ── Fechar modal ao clicar fora ──
+  document.getElementById('deactivateModal').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+  });
+</script>
+</body>
+</html>
+

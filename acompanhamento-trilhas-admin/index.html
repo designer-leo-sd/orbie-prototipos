@@ -1,0 +1,1246 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trilhas Adaptativas — Orbie Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/primeicons@7.0.0/primeicons.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --color-primary: #2177FF;
+  --color-primary-5: rgba(33,119,255,0.05);
+  --color-outline: #DDE4EB;
+  --color-on-bg: #344054;
+  --color-on-bg-mid: #525E76;
+  --color-on-bg-light: #8A95B2;
+  --color-surface: #FFFFFF;
+  --color-state-overlay: rgba(0,0,0,0.03);
+  --color-success: #12B76A;
+  --color-success-light: #ECFDF3;
+  --color-warning: #F79009;
+  --color-warning-light: #FFFAEB;
+  --color-error: #F04438;
+  --color-error-light: #FEF3F2;
+  --color-critical: #F97066;
+  --color-moderate: #FDB022;
+  --color-attention: #2E90FA;
+  --font: 'Outfit', sans-serif;
+}
+body {
+  font-family: var(--font);
+  color: var(--color-on-bg);
+  background: #FFF;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  font-size: 14px;
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header style="position:sticky;top:0;z-index:100;height:64px;background:#fff;border-bottom:1px solid var(--color-outline);display:flex;align-items:center;padding:0 24px;gap:16px;flex-shrink:0;">
+  <svg width="112" height="33" viewBox="0 0 191 56" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0">
+    <g clip-path="url(#clip_logo)">
+      <path d="M41.763 56C56.5366 56 67.7509 45.0144 67.7509 30.4669C67.7509 15.9194 56.5392 4.9364 41.763 4.9364C26.9868 4.9364 15.7776 15.922 15.7776 30.4669C15.7776 45.0119 26.9157 56 41.7655 56M41.7655 52.1357C29.4156 52.1357 20.0967 42.893 20.0967 30.4669C20.0967 18.0408 29.4156 8.79812 41.7655 8.79812C54.1154 8.79812 63.4344 18.0408 63.4344 30.4669C63.4344 42.893 54.1154 52.1357 41.7655 52.1357Z" fill="#1064AD"/>
+      <path d="M92.769 16.8315C91.481 16.453 90.4952 16.3005 88.981 16.3005C84.1335 16.3005 80.4954 19.0291 78.4502 23.4219V18.5718C78.4502 17.5861 77.9192 16.9814 76.936 16.9814H76.0264C75.1169 16.9814 74.5122 17.5886 74.5122 18.5718V53.4238C74.5122 54.4096 75.1194 55.0905 76.0264 55.0905H77.1621C78.0716 55.0905 78.6763 54.4096 78.6763 53.4238V33.1956C78.6763 25.5433 82.8429 20.0124 88.6024 20.0124C89.512 20.0124 90.3453 20.1648 91.4047 20.4671C92.3143 20.7695 93.1476 20.6932 93.5261 19.5576L93.6786 18.9504C94.1334 17.6623 93.5261 17.0551 92.769 16.829" fill="#1064AD"/>
+      <path d="M116.487 16.3006C110.046 16.3006 104.82 19.1028 101.408 23.5743V2.58637C101.408 1.45072 100.954 0.767295 99.6655 1.14584L98.7559 1.37196C97.694 1.67429 97.3154 2.20528 97.3154 3.0386V53.4213C97.3154 54.4071 97.8464 55.088 98.8296 55.088H99.8916C100.877 55.088 101.406 54.4071 101.406 53.4213V48.4976C104.663 53.0428 109.891 55.9975 116.484 55.9975C127.699 55.9975 135.577 47.2095 135.577 36.1478C135.577 25.086 127.699 16.298 116.484 16.298M116.106 52.2095C107.696 52.2095 101.18 46.3 101.027 36.1478C100.875 25.9955 107.77 20.0861 116.106 20.0861C125.272 20.0861 131.334 27.2836 131.334 36.1478C131.334 45.0119 125.272 52.2095 116.106 52.2095Z" fill="#1064AD"/>
+      <path d="M143.848 55.0905H144.984C145.969 55.0905 146.498 54.4096 146.498 53.4239V18.5719C146.498 17.5861 145.967 16.9814 144.984 16.9814H143.848C142.939 16.9814 142.334 17.5887 142.334 18.5719V53.4239C142.334 54.4096 142.941 55.0905 143.848 55.0905Z" fill="#1064AD"/>
+      <path d="M157.566 37.4384H188.478C189.766 37.4384 190.523 36.605 190.523 35.3932C190.523 30.6194 188.856 25.998 185.749 22.5123C182.642 18.6481 177.944 16.3005 172.111 16.3005C161.125 16.3005 153.244 24.8624 153.244 36.2265C153.244 48.6526 162.64 56 172.944 56C178.097 56 184.385 53.9548 188.704 49.4071C189.235 48.7999 189.613 47.8929 188.78 47.0596L188.325 46.6811C187.644 46.0002 186.811 45.8478 185.825 46.6811C181.961 50.5453 177.037 52.212 172.794 52.212C164.99 52.212 158.097 46.7573 157.566 37.4384ZM172.113 20.0886C176.963 20.0886 180.752 22.0575 183.099 25.3934C184.842 27.591 185.901 30.3933 186.28 33.6529H157.566C158.399 25.5458 164.083 20.0911 172.113 20.0911" fill="#1064AD"/>
+      <path d="M140.645 6.44547C141.212 8.48558 143.361 9.68982 145.442 9.13343C147.522 8.57704 148.749 6.47088 148.183 4.43077C147.616 2.39067 145.467 1.18642 143.386 1.74535C141.305 2.30175 140.078 4.40791 140.645 6.44801" fill="#29B84C"/>
+      <path d="M79.9758 3.57717C79.8513 2.26876 78.863 1.32111 78.1465 0.846021C77.547 0.447146 76.203 0 74.6812 0C70.8017 0 64.3155 1.94102 56.6276 5.38608C56.3913 5.49279 54.1327 6.6259 52.9081 7.24072C53.777 7.62689 54.618 8.05626 55.4259 8.52881L57.842 7.26359C65.5299 3.81091 71.6883 1.96897 75.4306 1.96897C76.1776 1.96897 76.9652 2.07059 77.3056 2.2027C77.6486 2.33482 78.0297 2.51266 78.0449 3.22911C78.0881 5.35559 75.4306 9.25542 70.634 14.0292C64.3688 20.2639 55.0677 27.4004 44.4428 34.1203C25.3603 46.1907 10.6528 51.5946 4.54515 51.5946C1.02132 51.5946 2.0274 49.4605 1.96643 49.9457C2.27384 47.489 5.47247 42.6466 13.9911 35.2179L15.9474 33.4979C15.8458 32.5655 15.7873 31.6178 15.7797 30.6498L12.6497 33.3937C4.4486 40.4921 0 46.2644 0 49.6815C0 50.1261 0.193086 52.2856 2.77942 53.2002C3.46031 53.4416 4.30125 53.5636 5.29717 53.5636C12.9266 53.5636 28.8232 46.6277 45.797 35.8911C56.3837 29.1966 65.6849 22.088 71.9881 15.8813C75.9616 11.9662 80.2883 6.88758 79.9758 3.57971" fill="#F79850"/>
+    </g>
+    <defs><clipPath id="clip_logo"><rect width="190.523" height="56" fill="white"/></clipPath></defs>
+  </svg>
+  <div style="flex:1"></div>
+  <div style="display:flex;align-items:center;gap:8px;">
+    <button style="display:flex;align-items:center;gap:6px;border:1px solid var(--color-outline);border-radius:var(--radius-lg);padding:6px 10px 6px 12px;background:white;font-family:var(--font);font-size:13px;color:var(--color-on-bg);cursor:pointer;">
+      Professor <i class="pi pi-chevron-down" style="font-size:11px;color:var(--color-on-bg-light);"></i>
+    </button>
+    <button style="display:flex;align-items:center;gap:6px;border:1px solid var(--color-outline);border-radius:var(--radius-lg);padding:6px 10px 6px 12px;background:white;font-family:var(--font);font-size:13px;color:var(--color-on-bg);cursor:pointer;">
+      Escola SESI SC – Rio do Sul <i class="pi pi-chevron-down" style="font-size:11px;color:var(--color-on-bg-light);"></i>
+    </button>
+    <button style="width:36px;height:36px;border-radius:50%;border:none;background:transparent;cursor:pointer;position:relative;display:flex;align-items:center;justify-content:center;color:var(--color-on-bg-mid);font-size:18px;">
+      <i class="pi pi-bell"></i>
+      <span style="position:absolute;top:6px;right:6px;width:8px;height:8px;background:var(--color-error);border-radius:50%;border:2px solid white;"></span>
+    </button>
+    <div style="width:32px;height:32px;border-radius:50%;background:#E8F0FE;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:13px;color:var(--color-primary);cursor:pointer;">A</div>
+  </div>
+</header>
+
+<!-- APP WRAPPER -->
+<div class="app" style="display:flex;flex:1;">
+
+<!-- SIDEBAR -->
+<aside style="width:235px;background:#fff;border-right:1px solid var(--color-outline);padding:16px 8px;display:flex;flex-direction:column;gap:2px;position:sticky;top:64px;height:calc(100vh - 64px);overflow-y:auto;flex-shrink:0;">
+
+  <div style="padding:0 12px 4px;margin-top:8px;"></div>
+
+  <a href="#" style="display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:6px;text-decoration:none;color:var(--color-on-bg-mid);font-size:14px;font-weight:500;transition:background .12s;" onmouseover="this.style.background='var(--color-state-overlay)'" onmouseout="this.style.background=''">
+    <div style="width:4px;height:18px;border-radius:99px;flex-shrink:0;"></div>
+    <i class="pi pi-home" style="font-size:18px;width:20px;text-align:center;flex-shrink:0;"></i>
+    <span>Início</span>
+  </a>
+
+  <a href="#" style="display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:6px;text-decoration:none;color:var(--color-on-bg-mid);font-size:14px;font-weight:500;transition:background .12s;" onmouseover="this.style.background='var(--color-state-overlay)'" onmouseout="this.style.background=''">
+    <div style="width:4px;height:18px;border-radius:99px;flex-shrink:0;"></div>
+    <i class="pi pi-users" style="font-size:18px;width:20px;text-align:center;flex-shrink:0;"></i>
+    <span>Turmas</span>
+  </a>
+
+  <a href="#" style="display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:6px;text-decoration:none;color:var(--color-on-bg-mid);font-size:14px;font-weight:500;" onmouseover="this.style.background='var(--color-state-overlay)'" onmouseout="this.style.background=''">
+    <div style="width:4px;height:18px;border-radius:99px;flex-shrink:0;"></div>
+    <i class="pi pi-copy" style="font-size:18px;width:20px;text-align:center;flex-shrink:0;"></i>
+    <span style="flex:1">Conteúdos</span>
+    <i class="pi pi-chevron-down" style="font-size:12px;"></i>
+  </a>
+
+  <a href="#" style="display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:6px;text-decoration:none;color:var(--color-on-bg-mid);font-size:14px;font-weight:500;" onmouseover="this.style.background='var(--color-state-overlay)'" onmouseout="this.style.background=''">
+    <div style="width:4px;height:18px;border-radius:99px;flex-shrink:0;"></div>
+    <i class="pi pi-pen-to-square" style="font-size:18px;width:20px;text-align:center;flex-shrink:0;"></i>
+    <span>Correção de Respostas</span>
+  </a>
+
+  <!-- Relatórios — expandido e ativo -->
+  <div style="display:flex;flex-direction:column;gap:0;">
+    <div style="display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:6px;color:var(--color-on-bg);font-size:14px;font-weight:600;cursor:pointer;" onmouseover="this.style.background='var(--color-state-overlay)'" onmouseout="this.style.background=''">
+      <div style="width:4px;height:18px;border-radius:99px;flex-shrink:0;"></div>
+      <i class="pi pi-chart-line" style="font-size:18px;width:20px;text-align:center;flex-shrink:0;"></i>
+      <span style="flex:1">Relatórios</span>
+      <i class="pi pi-chevron-up" style="font-size:12px;"></i>
+    </div>
+    <!-- sub-itens -->
+    <a href="#" style="display:flex;align-items:center;gap:8px;padding:6px 8px 6px 32px;border-radius:6px;text-decoration:none;color:var(--color-on-bg-mid);font-size:13.5px;" onmouseover="this.style.background='var(--color-state-overlay)'" onmouseout="this.style.background=''">
+      <div style="width:4px;height:16px;border-radius:99px;flex-shrink:0;"></div>
+      <span>Acompanhamento</span>
+    </a>
+    <!-- ATIVO -->
+    <a href="#" style="display:flex;align-items:center;gap:8px;padding:6px 8px 6px 32px;border-radius:6px;text-decoration:none;color:var(--color-primary);font-size:13.5px;font-weight:600;background:var(--color-primary-5);">
+      <div style="width:4px;height:16px;border-radius:99px;flex-shrink:0;background:var(--color-primary);"></div>
+      <span>Trilhas Adaptativas</span>
+    </a>
+    <a href="#" style="display:flex;align-items:center;gap:8px;padding:6px 8px 6px 32px;border-radius:6px;text-decoration:none;color:var(--color-on-bg-mid);font-size:13.5px;" onmouseover="this.style.background='var(--color-state-overlay)'" onmouseout="this.style.background=''">
+      <div style="width:4px;height:16px;border-radius:99px;flex-shrink:0;"></div>
+      <span>Downloads</span>
+    </a>
+    <a href="#" style="display:flex;align-items:center;gap:8px;padding:6px 8px 6px 32px;border-radius:6px;text-decoration:none;color:var(--color-on-bg-mid);font-size:13.5px;" onmouseover="this.style.background='var(--color-state-overlay)'" onmouseout="this.style.background=''">
+      <div style="width:4px;height:16px;border-radius:99px;flex-shrink:0;"></div>
+      <span>Feedback de Questões</span>
+    </a>
+  </div>
+
+  <a href="#" style="display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:6px;text-decoration:none;color:var(--color-on-bg-mid);font-size:14px;font-weight:500;" onmouseover="this.style.background='var(--color-state-overlay)'" onmouseout="this.style.background=''">
+    <div style="width:4px;height:18px;border-radius:99px;flex-shrink:0;"></div>
+    <i class="pi pi-question-circle" style="font-size:18px;width:20px;text-align:center;flex-shrink:0;"></i>
+    <span>Central de Ajuda</span>
+  </a>
+
+  <a href="#" style="display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:6px;text-decoration:none;color:var(--color-on-bg-mid);font-size:14px;font-weight:500;" onmouseover="this.style.background='var(--color-state-overlay)'" onmouseout="this.style.background=''">
+    <div style="width:4px;height:18px;border-radius:99px;flex-shrink:0;"></div>
+    <i class="pi pi-star" style="font-size:18px;width:20px;text-align:center;flex-shrink:0;"></i>
+    <span>Favoritos</span>
+  </a>
+
+</aside>
+<!-- END SIDEBAR -->
+
+<main id="main-content" style="flex:1;overflow-y:auto;background:#F8FAFC;">
+
+<!-- ===== VIEW 1: VISÃO DA TURMA ===== -->
+<div id="view-turma" style="padding:32px 36px;max-width:1200px;">
+
+  <!-- Breadcrumb -->
+  <div style="display:flex;align-items:center;gap:6px;margin-bottom:12px;">
+    <a href="#" style="font-size:13px;color:var(--color-on-bg-mid);text-decoration:none;" onmouseover="this.style.color='var(--color-primary)'" onmouseout="this.style.color='var(--color-on-bg-mid)'">Relatórios</a>
+    <i class="pi pi-chevron-right" style="font-size:10px;color:var(--color-on-bg-light);"></i>
+    <span style="font-size:13px;color:var(--color-on-bg);font-weight:500;">Trilhas Adaptativas</span>
+    <button style="width:28px;height:28px;border:none;background:transparent;cursor:pointer;color:var(--color-on-bg-light);font-size:14px;display:flex;align-items:center;justify-content:center;border-radius:50%;" onmouseover="this.style.background='var(--color-state-overlay)'" onmouseout="this.style.background='transparent'">
+      <i class="pi pi-star"></i>
+    </button>
+  </div>
+  <div style="margin-bottom:24px;">
+    <h1 style="font-size:28px;font-weight:700;color:var(--color-on-bg);margin-bottom:0;">Trilhas Adaptativas</h1>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="font-size:13px;color:var(--color-on-bg-light);">Atualizado: 02/07/2026 às 14h32</span>
+        <span style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;background:#EFF8FF;color:#1849A9;font-size:12px;font-weight:600;border-radius:99px;margin-left:4px;"><i class="pi pi-refresh" style="font-size:11px;"></i> Geração semanal</span>
+        <button onclick="alert('Configurações de Trilhas Adaptativas')" style="display:flex;align-items:center;gap:6px;padding:7px 14px;border:1px solid var(--color-outline);border-radius:8px;background:#fff;font-family:var(--font);font-size:13px;color:var(--color-on-bg-mid);cursor:pointer;transition:all .15s;">
+          <i class="pi pi-cog" style="font-size:13px;"></i> Configurar
+        </button>
+      </div>
+    </div>
+    <p style="font-size:14px;color:var(--color-on-bg-mid);">Acompanhe e gerencie as trilhas de recomposição personalizadas geradas para cada estudante com base no diagnóstico de lacunas.</p>
+  </div>
+
+  <!-- FILTROS -->
+  <div style="display:flex;align-items:flex-end;gap:12px;margin-bottom:24px;flex-wrap:wrap;">
+
+    <div style="display:flex;flex-direction:column;gap:5px;">
+      <label style="font-size:12px;font-weight:600;color:var(--color-on-bg-mid);">Ciclo</label>
+      <div style="position:relative;">
+        <select style="appearance:none;padding:8px 32px 8px 12px;border:1px solid var(--color-outline);border-radius:8px;background:#fff;font-family:var(--font);font-size:13px;color:var(--color-on-bg);cursor:pointer;min-width:260px;">
+          <option>Ciclo 4 — 01/07 a 31/07/2026 (atual)</option>
+          <option>Ciclo 3 — 01/06 a 30/06/2026</option>
+          <option>Ciclo 2 — 01/05 a 31/05/2026</option>
+          <option>Ciclo 1 — 01/04 a 30/04/2026</option>
+        </select>
+        <i class="pi pi-chevron-down" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:11px;color:var(--color-on-bg-light);pointer-events:none;"></i>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:5px;">
+      <label style="font-size:12px;font-weight:600;color:var(--color-on-bg-mid);">Turma</label>
+      <div style="position:relative;">
+        <select style="appearance:none;padding:8px 32px 8px 12px;border:1px solid var(--color-outline);border-radius:8px;background:#fff;font-family:var(--font);font-size:13px;color:var(--color-on-bg);cursor:pointer;min-width:280px;">
+          <option>MAP - Ciências da Natureza - EM1 (PI)</option>
+          <option>MAP - Matemática - EM1 (PI)</option>
+          <option>MAP - Língua Portuguesa - EM2 (PI)</option>
+        </select>
+        <i class="pi pi-chevron-down" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:11px;color:var(--color-on-bg-light);pointer-events:none;"></i>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:5px;">
+      <label style="font-size:12px;font-weight:600;color:var(--color-on-bg-mid);">Componente curricular</label>
+      <div style="position:relative;">
+        <select style="appearance:none;padding:8px 32px 8px 12px;border:1px solid var(--color-outline);border-radius:8px;background:#fff;font-family:var(--font);font-size:13px;color:var(--color-on-bg);cursor:pointer;min-width:200px;">
+          <option>Todos os componentes</option>
+          <option>Matemática</option>
+          <option>Língua Portuguesa</option>
+          <option>Ciências da Natureza</option>
+          <option>Geografia</option>
+        </select>
+        <i class="pi pi-chevron-down" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:11px;color:var(--color-on-bg-light);pointer-events:none;"></i>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:5px;">
+      <label style="font-size:12px;font-weight:600;color:var(--color-on-bg-mid);">Status da trilha</label>
+      <div style="position:relative;">
+        <select style="appearance:none;padding:8px 32px 8px 12px;border:1px solid var(--color-outline);border-radius:8px;background:#fff;font-family:var(--font);font-size:13px;color:var(--color-on-bg);cursor:pointer;min-width:160px;">
+          <option>Todos os status</option>
+          <option>Disponível</option>
+          <option>Em andamento</option>
+          <option>Concluída</option>
+          <option>Expirada</option>
+          <option>Não gerada</option>
+        </select>
+        <i class="pi pi-chevron-down" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:11px;color:var(--color-on-bg-light);pointer-events:none;"></i>
+      </div>
+    </div>
+
+    <div style="flex:1;"></div>
+    <button style="display:flex;align-items:center;gap:6px;padding:8px 14px;border:none;background:none;font-family:var(--font);font-size:13px;color:var(--color-primary);cursor:pointer;font-weight:500;">
+      <i class="pi pi-download" style="font-size:13px;"></i> Exportar CSV
+    </button>
+  </div>
+
+  <!-- CARDS DE INDICADORES -->
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:28px;">
+
+    <div style="background:#fff;border:1px solid var(--color-outline);border-radius:12px;padding:18px 20px;">
+      <div style="font-size:12px;font-weight:600;color:var(--color-on-bg-light);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;">Trilhas geradas</div>
+      <div style="font-size:32px;font-weight:700;color:var(--color-on-bg);line-height:1;">28</div>
+      <div style="font-size:13px;color:var(--color-on-bg-light);margin-top:4px;">neste ciclo · 28 estudantes</div>
+    </div>
+
+    <div style="background:#fff;border:1px solid var(--color-outline);border-radius:12px;padding:18px 20px;">
+      <div style="font-size:12px;font-weight:600;color:var(--color-on-bg-light);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;">Taxa de conclusão</div>
+      <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:10px;">
+        <span style="font-size:32px;font-weight:700;color:var(--color-on-bg);line-height:1;">64%</span>
+        <span style="font-size:13px;color:var(--color-success);font-weight:500;">▲ +4% vs. ciclo anterior</span>
+      </div>
+      <div style="background:#EFF2F7;border-radius:99px;height:6px;overflow:hidden;">
+        <div style="width:64%;background:var(--color-primary);height:100%;border-radius:99px;transition:width .6s ease;"></div>
+      </div>
+    </div>
+
+    <div style="background:#fff;border:1px solid var(--color-outline);border-radius:12px;padding:18px 20px;">
+      <div style="font-size:12px;font-weight:600;color:var(--color-on-bg-light);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;">Concluídas</div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span style="font-size:32px;font-weight:700;color:var(--color-on-bg);line-height:1;">18</span>
+        <span style="padding:3px 8px;background:var(--color-success-light);color:var(--color-success);font-size:12px;font-weight:600;border-radius:99px;">● Concluídas</span>
+      </div>
+      <div style="font-size:13px;color:var(--color-on-bg-light);margin-top:4px;">de 28 trilhas geradas</div>
+    </div>
+
+    <div style="background:#fff;border:1px solid var(--color-outline);border-radius:12px;padding:18px 20px;">
+      <div style="font-size:12px;font-weight:600;color:var(--color-on-bg-light);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;">Em andamento</div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span style="font-size:32px;font-weight:700;color:var(--color-on-bg);line-height:1;">6</span>
+        <span style="padding:3px 8px;background:var(--color-warning-light);color:var(--color-warning);font-size:12px;font-weight:600;border-radius:99px;">● Em andamento</span>
+      </div>
+      <div style="font-size:13px;color:var(--color-on-bg-light);margin-top:4px;">estudantes em progresso</div>
+    </div>
+
+    <div style="background:#fff;border:1px solid var(--color-outline);border-radius:12px;padding:18px 20px;">
+      <div style="font-size:12px;font-weight:600;color:var(--color-on-bg-light);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;">Sem lacunas relevantes</div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span style="font-size:32px;font-weight:700;color:var(--color-on-bg);line-height:1;">3</span>
+        <span style="padding:3px 8px;background:#EFF8FF;color:var(--color-attention);font-size:12px;font-weight:600;border-radius:99px;">● Resultado positivo!</span>
+      </div>
+      <div style="font-size:13px;color:var(--color-on-bg-light);margin-top:4px;">nenhuma trilha necessária</div>
+    </div>
+
+    <div style="background:#fff;border:1px solid var(--color-outline);border-radius:12px;padding:18px 20px;">
+      <div style="font-size:12px;font-weight:600;color:var(--color-on-bg-light);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;">Sem evidências no ciclo</div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span style="font-size:32px;font-weight:700;color:var(--color-on-bg);line-height:1;">4</span>
+        <span style="padding:3px 8px;background:#F2F4F7;color:var(--color-on-bg-light);font-size:12px;font-weight:600;border-radius:99px;">● Sem dados</span>
+      </div>
+      <div style="font-size:13px;color:var(--color-on-bg-light);margin-top:4px;">não realizaram atividades</div>
+    </div>
+
+  </div>
+  <!-- END CARDS -->
+
+  <!-- PAINEL HABILIDADES — largura total -->
+  <div style="background:#fff;border:1px solid var(--color-outline);border-radius:12px;padding:20px 24px;margin-bottom:20px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+      <div>
+        <h3 style="font-size:15px;font-weight:600;color:var(--color-on-bg);">Habilidades com maior incidência de gap</h3>
+        <p style="font-size:12px;color:var(--color-on-bg-light);margin-top:2px;">Proporção de estudantes com lacuna identificada por habilidade</p>
+      </div>
+      <button style="border:none;background:none;font-family:var(--font);font-size:13px;color:var(--color-primary);cursor:pointer;font-weight:500;">Ver todas →</button>
+    </div>
+
+    <!-- Cabeçalho das colunas -->
+    <div style="display:grid;grid-template-columns:120px 180px 100px 1fr 130px;gap:12px;padding:8px 0 4px;border-bottom:1px solid var(--color-outline);margin-bottom:4px;">
+      <span style="font-size:11px;font-weight:600;color:var(--color-on-bg-light);text-transform:uppercase;letter-spacing:.05em;">Habilidade</span>
+      <span style="font-size:11px;font-weight:600;color:var(--color-on-bg-light);text-transform:uppercase;letter-spacing:.05em;">Conteúdo</span>
+      <span style="font-size:11px;font-weight:600;color:var(--color-on-bg-light);text-transform:uppercase;letter-spacing:.05em;">Nível de Gap</span>
+      <span style="font-size:11px;font-weight:600;color:var(--color-on-bg-light);text-transform:uppercase;letter-spacing:.05em;">Distribuição</span>
+      <span style="font-size:11px;font-weight:600;color:var(--color-on-bg-light);text-transform:uppercase;letter-spacing:.05em;text-align:right;">Ação</span>
+    </div>
+
+    <!-- EF06MA07 — Crítico 64% -->
+    <div style="display:grid;grid-template-columns:120px 180px 100px 1fr 130px;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #F2F4F7;">
+      <span style="font-size:13px;font-weight:600;color:var(--color-on-bg);">EF06MA07</span>
+      <span style="font-size:13px;color:var(--color-on-bg-mid);">Frações</span>
+      <span style="padding:2px 8px;border:1.5px solid #F97066;color:#F97066;font-size:12px;font-weight:600;border-radius:99px;text-align:center;display:inline-block;">Crítico</span>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div style="flex:1;background:#EFF2F7;border-radius:99px;height:8px;overflow:hidden;">
+          <div style="width:64%;background:#F97066;height:100%;border-radius:99px;"></div>
+        </div>
+        <span style="font-size:12px;font-weight:600;color:var(--color-on-bg);min-width:32px;text-align:right;">64%</span>
+      </div>
+      <button onclick="alert('Criar Intervenção')" style="border:none;background:none;font-family:var(--font);font-size:13px;color:var(--color-primary);cursor:pointer;font-weight:500;text-align:right;">Criar Intervenção</button>
+    </div>
+
+    <!-- EF06LP03 — Crítico 50% -->
+    <div style="display:grid;grid-template-columns:120px 180px 100px 1fr 130px;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #F2F4F7;">
+      <span style="font-size:13px;font-weight:600;color:var(--color-on-bg);">EF06LP03</span>
+      <span style="font-size:13px;color:var(--color-on-bg-mid);">Interpretação de texto</span>
+      <span style="padding:2px 8px;border:1.5px solid #F97066;color:#F97066;font-size:12px;font-weight:600;border-radius:99px;text-align:center;display:inline-block;">Crítico</span>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div style="flex:1;background:#EFF2F7;border-radius:99px;height:8px;overflow:hidden;">
+          <div style="width:50%;background:#F97066;height:100%;border-radius:99px;"></div>
+        </div>
+        <span style="font-size:12px;font-weight:600;color:var(--color-on-bg);min-width:32px;text-align:right;">50%</span>
+      </div>
+      <button onclick="alert('Criar Intervenção')" style="border:none;background:none;font-family:var(--font);font-size:13px;color:var(--color-primary);cursor:pointer;font-weight:500;text-align:right;">Criar Intervenção</button>
+    </div>
+
+    <!-- EF06GE02 — Moderado 43% -->
+    <div style="display:grid;grid-template-columns:120px 180px 100px 1fr 130px;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #F2F4F7;">
+      <span style="font-size:13px;font-weight:600;color:var(--color-on-bg);">EF06GE02</span>
+      <span style="font-size:13px;color:var(--color-on-bg-mid);">Equações</span>
+      <span style="padding:2px 8px;border:1.5px solid #FDB022;color:#FDB022;font-size:12px;font-weight:600;border-radius:99px;text-align:center;display:inline-block;">Moderado</span>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div style="flex:1;background:#EFF2F7;border-radius:99px;height:8px;overflow:hidden;">
+          <div style="width:43%;background:#FDB022;height:100%;border-radius:99px;"></div>
+        </div>
+        <span style="font-size:12px;font-weight:600;color:var(--color-on-bg);min-width:32px;text-align:right;">43%</span>
+      </div>
+      <button onclick="alert('Criar Intervenção')" style="border:none;background:none;font-family:var(--font);font-size:13px;color:var(--color-primary);cursor:pointer;font-weight:500;text-align:right;">Criar Intervenção</button>
+    </div>
+
+    <!-- EF06MA12 — Moderado 32% -->
+    <div style="display:grid;grid-template-columns:120px 180px 100px 1fr 130px;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #F2F4F7;">
+      <span style="font-size:13px;font-weight:600;color:var(--color-on-bg);">EF06MA12</span>
+      <span style="font-size:13px;color:var(--color-on-bg-mid);">Ecossistemas</span>
+      <span style="padding:2px 8px;border:1.5px solid #FDB022;color:#FDB022;font-size:12px;font-weight:600;border-radius:99px;text-align:center;display:inline-block;">Moderado</span>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div style="flex:1;background:#EFF2F7;border-radius:99px;height:8px;overflow:hidden;">
+          <div style="width:32%;background:#FDB022;height:100%;border-radius:99px;"></div>
+        </div>
+        <span style="font-size:12px;font-weight:600;color:var(--color-on-bg);min-width:32px;text-align:right;">32%</span>
+      </div>
+      <button onclick="alert('Criar Intervenção')" style="border:none;background:none;font-family:var(--font);font-size:13px;color:var(--color-primary);cursor:pointer;font-weight:500;text-align:right;">Criar Intervenção</button>
+    </div>
+
+    <!-- EF06CI05 — Atenção 25% -->
+    <div style="display:grid;grid-template-columns:120px 180px 100px 1fr 130px;align-items:center;gap:12px;padding:10px 0;">
+      <span style="font-size:13px;font-weight:600;color:var(--color-on-bg);">EF06CI05</span>
+      <span style="font-size:13px;color:var(--color-on-bg-mid);">Cartografia</span>
+      <span style="padding:2px 8px;border:1.5px solid #2E90FA;color:#2E90FA;font-size:12px;font-weight:600;border-radius:99px;text-align:center;display:inline-block;">Atenção</span>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div style="flex:1;background:#EFF2F7;border-radius:99px;height:8px;overflow:hidden;">
+          <div style="width:25%;background:#2E90FA;height:100%;border-radius:99px;"></div>
+        </div>
+        <span style="font-size:12px;font-weight:600;color:var(--color-on-bg);min-width:32px;text-align:right;">25%</span>
+      </div>
+      <button onclick="alert('Criar Intervenção')" style="border:none;background:none;font-family:var(--font);font-size:13px;color:var(--color-primary);cursor:pointer;font-weight:500;text-align:right;">Criar Intervenção</button>
+    </div>
+
+  </div>
+  <!-- END PAINEL HABILIDADES -->
+
+
+  <!-- GRÁFICO — Evolução por Ciclo (card largura total) -->
+  <div style="background:#fff;border:1px solid var(--color-outline);border-radius:12px;padding:20px 24px;margin-bottom:28px;">
+    <div style="margin-bottom:16px;">
+      <h3 style="font-size:15px;font-weight:600;color:var(--color-on-bg);">Evolução por Ciclo</h3>
+      <p style="font-size:12px;color:var(--color-on-bg-light);margin-top:2px;">Taxa de conclusão de trilhas adaptativas</p>
+    </div>
+    <div style="height:220px;">
+      <canvas id="chartCiclos" style="width:100%;height:100%;"></canvas>
+    </div>
+  </div>
+  <!-- END GRÁFICO -->
+  <!-- TABELA DE ESTUDANTES -->
+  <div style="background:#fff;border:1px solid var(--color-outline);border-radius:12px;overflow:hidden;margin-bottom:40px;">
+    <div style="padding:18px 24px;border-bottom:1px solid var(--color-outline);display:flex;align-items:center;justify-content:space-between;">
+      <div>
+        <h3 style="font-size:15px;font-weight:600;color:var(--color-on-bg);">Estudantes — Ciclo 4</h3>
+        <p style="font-size:12px;color:var(--color-on-bg-light);margin-top:2px;">28 estudantes · Turma MAP – Ciências da Natureza – EM1</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div style="position:relative;">
+          <i class="pi pi-search" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--color-on-bg-light);"></i>
+          <input type="text" placeholder="Buscar estudante..." style="padding:7px 12px 7px 32px;border:1px solid var(--color-outline);border-radius:8px;font-family:var(--font);font-size:13px;color:var(--color-on-bg);outline:none;width:200px;">
+        </div>
+      </div>
+    </div>
+
+    <table style="width:100%;border-collapse:collapse;">
+      <thead>
+        <tr style="background:#F8FAFC;">
+          <th style="text-align:left;padding:10px 16px;font-size:11px;font-weight:600;color:var(--color-on-bg-light);letter-spacing:.05em;text-transform:uppercase;border-bottom:1px solid var(--color-outline);">Estudante</th>
+          <th style="text-align:left;padding:10px 16px;font-size:11px;font-weight:600;color:var(--color-on-bg-light);letter-spacing:.05em;text-transform:uppercase;border-bottom:1px solid var(--color-outline);">Nível ↑↓</th>
+          <th style="text-align:left;padding:10px 16px;font-size:11px;font-weight:600;color:var(--color-on-bg-light);letter-spacing:.05em;text-transform:uppercase;border-bottom:1px solid var(--color-outline);">Gap Principal</th>
+          <th style="text-align:left;padding:10px 16px;font-size:11px;font-weight:600;color:var(--color-on-bg-light);letter-spacing:.05em;text-transform:uppercase;border-bottom:1px solid var(--color-outline);">Progresso</th>
+          <th style="text-align:left;padding:10px 16px;font-size:11px;font-weight:600;color:var(--color-on-bg-light);letter-spacing:.05em;text-transform:uppercase;border-bottom:1px solid var(--color-outline);">Status ↑↓</th>
+          <th style="text-align:center;padding:10px 16px;font-size:11px;font-weight:600;color:var(--color-on-bg-light);letter-spacing:.05em;text-transform:uppercase;border-bottom:1px solid var(--color-outline);">Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <!-- Linha 1: Carlos de Oliveira — Crítico — Concluída -->
+        <tr onmouseover="this.style.background='var(--color-state-overlay)'" onmouseout="this.style.background=''">
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);font-size:13.5px;color:var(--color-on-bg);">Carlos de Oliveira</td>
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);text-align:left;">
+            <span style="padding:2px 8px;border:1.5px solid #F97066;color:#F97066;font-size:12px;font-weight:600;border-radius:99px;">Crítico</span>
+          </td>
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);font-size:13px;color:var(--color-on-bg);">Frações <span style="color:var(--color-on-bg-light);">(+2 outras)</span></td>
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);font-size:13px;color:var(--color-on-bg);">20/20</td>
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);font-size:13px;font-weight:500;color:var(--color-success);">Concluída</td>
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);text-align:center;">
+            <button onclick="window.location.href='estudante.html'" style="width:32px;height:32px;border-radius:50%;border:none;background:var(--color-primary-5);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;color:var(--color-primary);font-size:16px;" title="Ver detalhes">
+              <i class="pi pi-eye"></i>
+            </button>
+          </td>
+        </tr>
+
+        <!-- Linha 2: Ana Pereira — Moderado — Concluída -->
+        <tr onmouseover="this.style.background='var(--color-state-overlay)'" onmouseout="this.style.background=''">
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);font-size:13.5px;color:var(--color-on-bg);">Ana Pereira</td>
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);text-align:left;">
+            <span style="padding:2px 8px;border:1.5px solid #FDB022;color:#FDB022;font-size:12px;font-weight:600;border-radius:99px;">Moderado</span>
+          </td>
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);font-size:13px;color:var(--color-on-bg);">Análise de texto</td>
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);font-size:13px;color:var(--color-on-bg);">20/20</td>
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);font-size:13px;font-weight:500;color:var(--color-success);">Concluída</td>
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);text-align:center;">
+            <button onclick="window.location.href='estudante.html'" style="width:32px;height:32px;border-radius:50%;border:none;background:var(--color-primary-5);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;color:var(--color-primary);font-size:16px;" title="Ver detalhes">
+              <i class="pi pi-eye"></i>
+            </button>
+          </td>
+        </tr>
+
+        <!-- Linha 3: Mariana Costa — Moderado — Disponível -->
+        <tr onmouseover="this.style.background='var(--color-state-overlay)'" onmouseout="this.style.background=''">
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);font-size:13.5px;color:var(--color-on-bg);">Mariana Costa</td>
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);text-align:left;">
+            <span style="padding:2px 8px;border:1.5px solid #FDB022;color:#FDB022;font-size:12px;font-weight:600;border-radius:99px;">Moderado</span>
+          </td>
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);font-size:13px;color:var(--color-on-bg);">Interpretação de texto</td>
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);font-size:13px;color:var(--color-on-bg);">0/20</td>
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);font-size:13px;font-weight:500;color:#2177FF;">Disponível</td>
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);text-align:center;">
+            <button onclick="window.location.href='estudante.html'" style="width:32px;height:32px;border-radius:50%;border:none;background:var(--color-primary-5);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;color:var(--color-primary);font-size:16px;" title="Ver detalhes">
+              <i class="pi pi-eye"></i>
+            </button>
+          </td>
+        </tr>
+
+        <!-- Linha 4: Rafael Almeida — Crítico — Em andamento -->
+        <tr onmouseover="this.style.background='var(--color-state-overlay)'" onmouseout="this.style.background=''">
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);font-size:13.5px;color:var(--color-on-bg);">Rafael Almeida</td>
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);text-align:left;">
+            <span style="padding:2px 8px;border:1.5px solid #F97066;color:#F97066;font-size:12px;font-weight:600;border-radius:99px;">Crítico</span>
+          </td>
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);font-size:13px;color:var(--color-on-bg);">Geometria <span style="color:var(--color-on-bg-light);">(+2 outras)</span></td>
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);font-size:13px;color:var(--color-on-bg);">6/20</td>
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);font-size:13px;font-weight:500;color:#F79009;">Em andamento</td>
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);text-align:center;">
+            <button onclick="window.location.href='estudante.html'" style="width:32px;height:32px;border-radius:50%;border:none;background:var(--color-primary-5);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;color:var(--color-primary);font-size:16px;" title="Ver detalhes">
+              <i class="pi pi-eye"></i>
+            </button>
+          </td>
+        </tr>
+
+        <!-- Linha 5: João Silva — Crítico — Em andamento -->
+        <tr onmouseover="this.style.background='var(--color-state-overlay)'" onmouseout="this.style.background=''">
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);font-size:13.5px;color:var(--color-on-bg);">João Silva</td>
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);text-align:left;">
+            <span style="padding:2px 8px;border:1.5px solid #F97066;color:#F97066;font-size:12px;font-weight:600;border-radius:99px;">Crítico</span>
+          </td>
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);font-size:13px;color:var(--color-on-bg);">Equações de 2º grau</td>
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);font-size:13px;color:var(--color-on-bg);">12/20</td>
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);font-size:13px;font-weight:500;color:#F79009;">Em andamento</td>
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);text-align:center;">
+            <button onclick="window.location.href='estudante.html'" style="width:32px;height:32px;border-radius:50%;border:none;background:var(--color-primary-5);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;color:var(--color-primary);font-size:16px;" title="Ver detalhes">
+              <i class="pi pi-eye"></i>
+            </button>
+          </td>
+        </tr>
+
+        <!-- Linha 6: João Silva — Atenção — Em andamento -->
+        <tr onmouseover="this.style.background='var(--color-state-overlay)'" onmouseout="this.style.background=''">
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);font-size:13.5px;color:var(--color-on-bg);">João Silva</td>
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);text-align:left;">
+            <span style="padding:2px 8px;border:1.5px solid #2E90FA;color:#2E90FA;font-size:12px;font-weight:600;border-radius:99px;">Atenção</span>
+          </td>
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);font-size:13px;color:var(--color-on-bg);">Interpretação de texto</td>
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);font-size:13px;color:var(--color-on-bg);">16/20</td>
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);font-size:13px;font-weight:500;color:#F79009;">Em andamento</td>
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);text-align:center;">
+            <button onclick="window.location.href='estudante.html'" style="width:32px;height:32px;border-radius:50%;border:none;background:var(--color-primary-5);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;color:var(--color-primary);font-size:16px;" title="Ver detalhes">
+              <i class="pi pi-eye"></i>
+            </button>
+          </td>
+        </tr>
+
+        <!-- Linha 7: Sofia Martins — Sem evidências — Não gerada -->
+        <tr onmouseover="this.style.background='var(--color-state-overlay)'" onmouseout="this.style.background=''">
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);font-size:13.5px;color:var(--color-on-bg);">Sofia Martins</td>
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);text-align:left;">
+            <span style="padding:2px 8px;background:#F2F4F7;color:var(--color-on-bg-light);font-size:12px;font-weight:500;border-radius:99px;">Sem evidências</span>
+          </td>
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);font-size:13px;color:var(--color-on-bg-light);">—</td>
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);font-size:13px;color:var(--color-on-bg-light);">—</td>
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);font-size:13px;font-weight:500;color:var(--color-on-bg-light);">Não gerada</td>
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);text-align:center;">
+            <button onclick="window.location.href='estudante.html'" style="width:32px;height:32px;border-radius:50%;border:none;background:var(--color-primary-5);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;color:var(--color-primary);font-size:16px;" title="Ver detalhes">
+              <i class="pi pi-eye"></i>
+            </button>
+          </td>
+        </tr>
+
+      </tbody>
+    </table>
+
+    <!-- Paginação -->
+    <div style="padding:12px 24px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--color-outline);">
+      <span style="font-size:13px;color:var(--color-on-bg-light);">Exibindo 7 de 28 estudantes</span>
+      <div style="display:flex;align-items:center;gap:4px;">
+        <button style="width:32px;height:32px;border:1px solid var(--color-outline);border-radius:6px;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;">
+          <i class="pi pi-chevron-left" style="font-size:11px;color:var(--color-on-bg-mid);"></i>
+        </button>
+        <button style="width:32px;height:32px;border:1.5px solid var(--color-primary);border-radius:6px;background:var(--color-primary-5);font-size:13px;font-weight:600;color:var(--color-primary);cursor:pointer;">1</button>
+        <button style="width:32px;height:32px;border:1px solid var(--color-outline);border-radius:6px;background:#fff;font-size:13px;color:var(--color-on-bg-mid);cursor:pointer;">2</button>
+        <button style="width:32px;height:32px;border:1px solid var(--color-outline);border-radius:6px;background:#fff;font-size:13px;color:var(--color-on-bg-mid);cursor:pointer;">3</button>
+        <button style="width:32px;height:32px;border:1px solid var(--color-outline);border-radius:6px;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;">
+          <i class="pi pi-chevron-right" style="font-size:11px;color:var(--color-on-bg-mid);"></i>
+        </button>
+      </div>
+    </div>
+
+  </div>
+  <!-- END TABELA -->
+
+
+</div>
+<!-- END VIEW TURMA -->
+
+</main>
+</div>
+<!-- END APP WRAPPER -->
+
+
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --color-primary: #2177FF;
+  --color-primary-5: rgba(33,119,255,0.05);
+  --color-outline: #DDE4EB;
+  --color-on-bg: #344054;
+  --color-on-bg-mid: #525E76;
+  --color-on-bg-light: #8A95B2;
+  --color-surface: #FFFFFF;
+  --color-state-overlay: rgba(0,0,0,0.03);
+  --color-success: #12B76A;
+  --color-success-light: #ECFDF3;
+  --color-warning: #F79009;
+  --color-warning-light: #FFFAEB;
+  --color-error: #F04438;
+  --color-error-light: #FEF3F2;
+  --color-critical: #F97066;
+  --color-moderate: #FDB022;
+  --color-attention: #2E90FA;
+  --font: 'Outfit', sans-serif;
+}
+body {
+  font-family: var(--font);
+  color: var(--color-on-bg);
+  background: #FFF;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  font-size: 14px;
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header style="position:sticky;top:0;z-index:100;height:64px;background:#fff;border-bottom:1px solid var(--color-outline);display:flex;align-items:center;padding:0 24px;gap:16px;flex-shrink:0;">
+  <svg width="112" height="33" viewBox="0 0 191 56" fill="none" xmlns="http://www.w3.org/2000/svg" style="flex-shrink:0">
+    <g clip-path="url(#clip_logo)">
+      <path d="M41.763 56C56.5366 56 67.7509 45.0144 67.7509 30.4669C67.7509 15.9194 56.5392 4.9364 41.763 4.9364C26.9868 4.9364 15.7776 15.922 15.7776 30.4669C15.7776 45.0119 26.9157 56 41.7655 56M41.7655 52.1357C29.4156 52.1357 20.0967 42.893 20.0967 30.4669C20.0967 18.0408 29.4156 8.79812 41.7655 8.79812C54.1154 8.79812 63.4344 18.0408 63.4344 30.4669C63.4344 42.893 54.1154 52.1357 41.7655 52.1357Z" fill="#1064AD"/>
+      <path d="M92.769 16.8315C91.481 16.453 90.4952 16.3005 88.981 16.3005C84.1335 16.3005 80.4954 19.0291 78.4502 23.4219V18.5718C78.4502 17.5861 77.9192 16.9814 76.936 16.9814H76.0264C75.1169 16.9814 74.5122 17.5886 74.5122 18.5718V53.4238C74.5122 54.4096 75.1194 55.0905 76.0264 55.0905H77.1621C78.0716 55.0905 78.6763 54.4096 78.6763 53.4238V33.1956C78.6763 25.5433 82.8429 20.0124 88.6024 20.0124C89.512 20.0124 90.3453 20.1648 91.4047 20.4671C92.3143 20.7695 93.1476 20.6932 93.5261 19.5576L93.6786 18.9504C94.1334 17.6623 93.5261 17.0551 92.769 16.829" fill="#1064AD"/>
+      <path d="M116.487 16.3006C110.046 16.3006 104.82 19.1028 101.408 23.5743V2.58637C101.408 1.45072 100.954 0.767295 99.6655 1.14584L98.7559 1.37196C97.694 1.67429 97.3154 2.20528 97.3154 3.0386V53.4213C97.3154 54.4071 97.8464 55.088 98.8296 55.088H99.8916C100.877 55.088 101.406 54.4071 101.406 53.4213V48.4976C104.663 53.0428 109.891 55.9975 116.484 55.9975C127.699 55.9975 135.577 47.2095 135.577 36.1478C135.577 25.086 127.699 16.298 116.484 16.298M116.106 52.2095C107.696 52.2095 101.18 46.3 101.027 36.1478C100.875 25.9955 107.77 20.0861 116.106 20.0861C125.272 20.0861 131.334 27.2836 131.334 36.1478C131.334 45.0119 125.272 52.2095 116.106 52.2095Z" fill="#1064AD"/>
+      <path d="M143.848 55.0905H144.984C145.969 55.0905 146.498 54.4096 146.498 53.4239V18.5719C146.498 17.5861 145.967 16.9814 144.984 16.9814H143.848C142.939 16.9814 142.334 17.5887 142.334 18.5719V53.4239C142.334 54.4096 142.941 55.0905 143.848 55.0905Z" fill="#1064AD"/>
+      <path d="M157.566 37.4384H188.478C189.766 37.4384 190.523 36.605 190.523 35.3932C190.523 30.6194 188.856 25.998 185.749 22.5123C182.642 18.6481 177.944 16.3005 172.111 16.3005C161.125 16.3005 153.244 24.8624 153.244 36.2265C153.244 48.6526 162.64 56 172.944 56C178.097 56 184.385 53.9548 188.704 49.4071C189.235 48.7999 189.613 47.8929 188.78 47.0596L188.325 46.6811C187.644 46.0002 186.811 45.8478 185.825 46.6811C181.961 50.5453 177.037 52.212 172.794 52.212C164.99 52.212 158.097 46.7573 157.566 37.4384ZM172.113 20.0886C176.963 20.0886 180.752 22.0575 183.099 25.3934C184.842 27.591 185.901 30.3933 186.28 33.6529H157.566C158.399 25.5458 164.083 20.0911 172.113 20.0911" fill="#1064AD"/>
+      <path d="M140.645 6.44547C141.212 8.48558 143.361 9.68982 145.442 9.13343C147.522 8.57704 148.749 6.47088 148.183 4.43077C147.616 2.39067 145.467 1.18642 143.386 1.74535C141.305 2.30175 140.078 4.40791 140.645 6.44801" fill="#29B84C"/>
+      <path d="M79.9758 3.57717C79.8513 2.26876 78.863 1.32111 78.1465 0.846021C77.547 0.447146 76.203 0 74.6812 0C70.8017 0 64.3155 1.94102 56.6276 5.38608C56.3913 5.49279 54.1327 6.6259 52.9081 7.24072C53.777 7.62689 54.618 8.05626 55.4259 8.52881L57.842 7.26359C65.5299 3.81091 71.6883 1.96897 75.4306 1.96897C76.1776 1.96897 76.9652 2.07059 77.3056 2.2027C77.6486 2.33482 78.0297 2.51266 78.0449 3.22911C78.0881 5.35559 75.4306 9.25542 70.634 14.0292C64.3688 20.2639 55.0677 27.4004 44.4428 34.1203C25.3603 46.1907 10.6528 51.5946 4.54515 51.5946C1.02132 51.5946 2.0274 49.4605 1.96643 49.9457C2.27384 47.489 5.47247 42.6466 13.9911 35.2179L15.9474 33.4979C15.8458 32.5655 15.7873 31.6178 15.7797 30.6498L12.6497 33.3937C4.4486 40.4921 0 46.2644 0 49.6815C0 50.1261 0.193086 52.2856 2.77942 53.2002C3.46031 53.4416 4.30125 53.5636 5.29717 53.5636C12.9266 53.5636 28.8232 46.6277 45.797 35.8911C56.3837 29.1966 65.6849 22.088 71.9881 15.8813C75.9616 11.9662 80.2883 6.88758 79.9758 3.57971" fill="#F79850"/>
+    </g>
+    <defs><clipPath id="clip_logo"><rect width="190.523" height="56" fill="white"/></clipPath></defs>
+  </svg>
+  <div style="flex:1"></div>
+  <div style="display:flex;align-items:center;gap:8px;">
+    <button style="display:flex;align-items:center;gap:6px;border:1px solid var(--color-outline);border-radius:var(--radius-lg);padding:6px 10px 6px 12px;background:white;font-family:var(--font);font-size:13px;color:var(--color-on-bg);cursor:pointer;">
+      Professor <i class="pi pi-chevron-down" style="font-size:11px;color:var(--color-on-bg-light);"></i>
+    </button>
+    <button style="display:flex;align-items:center;gap:6px;border:1px solid var(--color-outline);border-radius:var(--radius-lg);padding:6px 10px 6px 12px;background:white;font-family:var(--font);font-size:13px;color:var(--color-on-bg);cursor:pointer;">
+      Escola SESI SC – Rio do Sul <i class="pi pi-chevron-down" style="font-size:11px;color:var(--color-on-bg-light);"></i>
+    </button>
+    <button style="width:36px;height:36px;border-radius:50%;border:none;background:transparent;cursor:pointer;position:relative;display:flex;align-items:center;justify-content:center;color:var(--color-on-bg-mid);font-size:18px;">
+      <i class="pi pi-bell"></i>
+      <span style="position:absolute;top:6px;right:6px;width:8px;height:8px;background:var(--color-error);border-radius:50%;border:2px solid white;"></span>
+    </button>
+    <div style="width:32px;height:32px;border-radius:50%;background:#E8F0FE;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:13px;color:var(--color-primary);cursor:pointer;">A</div>
+  </div>
+</header>
+
+<!-- APP WRAPPER -->
+<div class="app" style="display:flex;flex:1;">
+
+<!-- SIDEBAR -->
+<aside style="width:235px;background:#fff;border-right:1px solid var(--color-outline);padding:16px 8px;display:flex;flex-direction:column;gap:2px;position:sticky;top:64px;height:calc(100vh - 64px);overflow-y:auto;flex-shrink:0;">
+
+  <div style="padding:0 12px 4px;margin-top:8px;"></div>
+
+  <a href="#" style="display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:6px;text-decoration:none;color:var(--color-on-bg-mid);font-size:14px;font-weight:500;transition:background .12s;" onmouseover="this.style.background='var(--color-state-overlay)'" onmouseout="this.style.background=''">
+    <div style="width:4px;height:18px;border-radius:99px;flex-shrink:0;"></div>
+    <i class="pi pi-home" style="font-size:18px;width:20px;text-align:center;flex-shrink:0;"></i>
+    <span>Início</span>
+  </a>
+
+  <a href="#" style="display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:6px;text-decoration:none;color:var(--color-on-bg-mid);font-size:14px;font-weight:500;transition:background .12s;" onmouseover="this.style.background='var(--color-state-overlay)'" onmouseout="this.style.background=''">
+    <div style="width:4px;height:18px;border-radius:99px;flex-shrink:0;"></div>
+    <i class="pi pi-users" style="font-size:18px;width:20px;text-align:center;flex-shrink:0;"></i>
+    <span>Turmas</span>
+  </a>
+
+  <a href="#" style="display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:6px;text-decoration:none;color:var(--color-on-bg-mid);font-size:14px;font-weight:500;" onmouseover="this.style.background='var(--color-state-overlay)'" onmouseout="this.style.background=''">
+    <div style="width:4px;height:18px;border-radius:99px;flex-shrink:0;"></div>
+    <i class="pi pi-copy" style="font-size:18px;width:20px;text-align:center;flex-shrink:0;"></i>
+    <span style="flex:1">Conteúdos</span>
+    <i class="pi pi-chevron-down" style="font-size:12px;"></i>
+  </a>
+
+  <a href="#" style="display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:6px;text-decoration:none;color:var(--color-on-bg-mid);font-size:14px;font-weight:500;" onmouseover="this.style.background='var(--color-state-overlay)'" onmouseout="this.style.background=''">
+    <div style="width:4px;height:18px;border-radius:99px;flex-shrink:0;"></div>
+    <i class="pi pi-pen-to-square" style="font-size:18px;width:20px;text-align:center;flex-shrink:0;"></i>
+    <span>Correção de Respostas</span>
+  </a>
+
+  <!-- Relatórios — expandido e ativo -->
+  <div style="display:flex;flex-direction:column;gap:0;">
+    <div style="display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:6px;color:var(--color-on-bg);font-size:14px;font-weight:600;cursor:pointer;" onmouseover="this.style.background='var(--color-state-overlay)'" onmouseout="this.style.background=''">
+      <div style="width:4px;height:18px;border-radius:99px;flex-shrink:0;"></div>
+      <i class="pi pi-chart-line" style="font-size:18px;width:20px;text-align:center;flex-shrink:0;"></i>
+      <span style="flex:1">Relatórios</span>
+      <i class="pi pi-chevron-up" style="font-size:12px;"></i>
+    </div>
+    <!-- sub-itens -->
+    <a href="#" style="display:flex;align-items:center;gap:8px;padding:6px 8px 6px 32px;border-radius:6px;text-decoration:none;color:var(--color-on-bg-mid);font-size:13.5px;" onmouseover="this.style.background='var(--color-state-overlay)'" onmouseout="this.style.background=''">
+      <div style="width:4px;height:16px;border-radius:99px;flex-shrink:0;"></div>
+      <span>Acompanhamento</span>
+    </a>
+    <!-- ATIVO -->
+    <a href="#" style="display:flex;align-items:center;gap:8px;padding:6px 8px 6px 32px;border-radius:6px;text-decoration:none;color:var(--color-primary);font-size:13.5px;font-weight:600;background:var(--color-primary-5);">
+      <div style="width:4px;height:16px;border-radius:99px;flex-shrink:0;background:var(--color-primary);"></div>
+      <span>Trilhas Adaptativas</span>
+    </a>
+    <a href="#" style="display:flex;align-items:center;gap:8px;padding:6px 8px 6px 32px;border-radius:6px;text-decoration:none;color:var(--color-on-bg-mid);font-size:13.5px;" onmouseover="this.style.background='var(--color-state-overlay)'" onmouseout="this.style.background=''">
+      <div style="width:4px;height:16px;border-radius:99px;flex-shrink:0;"></div>
+      <span>Downloads</span>
+    </a>
+    <a href="#" style="display:flex;align-items:center;gap:8px;padding:6px 8px 6px 32px;border-radius:6px;text-decoration:none;color:var(--color-on-bg-mid);font-size:13.5px;" onmouseover="this.style.background='var(--color-state-overlay)'" onmouseout="this.style.background=''">
+      <div style="width:4px;height:16px;border-radius:99px;flex-shrink:0;"></div>
+      <span>Feedback de Questões</span>
+    </a>
+  </div>
+
+  <a href="#" style="display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:6px;text-decoration:none;color:var(--color-on-bg-mid);font-size:14px;font-weight:500;" onmouseover="this.style.background='var(--color-state-overlay)'" onmouseout="this.style.background=''">
+    <div style="width:4px;height:18px;border-radius:99px;flex-shrink:0;"></div>
+    <i class="pi pi-question-circle" style="font-size:18px;width:20px;text-align:center;flex-shrink:0;"></i>
+    <span>Central de Ajuda</span>
+  </a>
+
+  <a href="#" style="display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:6px;text-decoration:none;color:var(--color-on-bg-mid);font-size:14px;font-weight:500;" onmouseover="this.style.background='var(--color-state-overlay)'" onmouseout="this.style.background=''">
+    <div style="width:4px;height:18px;border-radius:99px;flex-shrink:0;"></div>
+    <i class="pi pi-star" style="font-size:18px;width:20px;text-align:center;flex-shrink:0;"></i>
+    <span>Favoritos</span>
+  </a>
+
+</aside>
+<!-- END SIDEBAR -->
+
+<main id="main-content" style="flex:1;overflow-y:auto;background:#F8FAFC;">
+
+<!-- ===== VIEW 1: VISÃO DA TURMA ===== -->
+<div id="view-turma" style="padding:32px 36px;max-width:1200px;">
+
+  <!-- Breadcrumb -->
+  <div style="display:flex;align-items:center;gap:6px;margin-bottom:12px;">
+    <a href="#" style="font-size:13px;color:var(--color-on-bg-mid);text-decoration:none;" onmouseover="this.style.color='var(--color-primary)'" onmouseout="this.style.color='var(--color-on-bg-mid)'">Relatórios</a>
+    <i class="pi pi-chevron-right" style="font-size:10px;color:var(--color-on-bg-light);"></i>
+    <span style="font-size:13px;color:var(--color-on-bg);font-weight:500;">Trilhas Adaptativas</span>
+    <button style="width:28px;height:28px;border:none;background:transparent;cursor:pointer;color:var(--color-on-bg-light);font-size:14px;display:flex;align-items:center;justify-content:center;border-radius:50%;" onmouseover="this.style.background='var(--color-state-overlay)'" onmouseout="this.style.background='transparent'">
+      <i class="pi pi-star"></i>
+    </button>
+  </div>
+  <div style="margin-bottom:24px;">
+    <h1 style="font-size:28px;font-weight:700;color:var(--color-on-bg);margin-bottom:0;">Trilhas Adaptativas</h1>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <span style="font-size:13px;color:var(--color-on-bg-light);">Atualizado: 02/07/2026 às 14h32</span>
+        <span style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;background:#EFF8FF;color:#1849A9;font-size:12px;font-weight:600;border-radius:99px;margin-left:4px;"><i class="pi pi-refresh" style="font-size:11px;"></i> Geração semanal</span>
+        <button onclick="alert('Configurações de Trilhas Adaptativas')" style="display:flex;align-items:center;gap:6px;padding:7px 14px;border:1px solid var(--color-outline);border-radius:8px;background:#fff;font-family:var(--font);font-size:13px;color:var(--color-on-bg-mid);cursor:pointer;transition:all .15s;">
+          <i class="pi pi-cog" style="font-size:13px;"></i> Configurar
+        </button>
+      </div>
+    </div>
+    <p style="font-size:14px;color:var(--color-on-bg-mid);">Acompanhe e gerencie as trilhas de recomposição personalizadas geradas para cada estudante com base no diagnóstico de lacunas.</p>
+  </div>
+
+  <!-- FILTROS -->
+  <div style="display:flex;align-items:flex-end;gap:12px;margin-bottom:24px;flex-wrap:wrap;">
+
+    <div style="display:flex;flex-direction:column;gap:5px;">
+      <label style="font-size:12px;font-weight:600;color:var(--color-on-bg-mid);">Ciclo</label>
+      <div style="position:relative;">
+        <select style="appearance:none;padding:8px 32px 8px 12px;border:1px solid var(--color-outline);border-radius:8px;background:#fff;font-family:var(--font);font-size:13px;color:var(--color-on-bg);cursor:pointer;min-width:260px;">
+          <option>Ciclo 4 — 01/07 a 31/07/2026 (atual)</option>
+          <option>Ciclo 3 — 01/06 a 30/06/2026</option>
+          <option>Ciclo 2 — 01/05 a 31/05/2026</option>
+          <option>Ciclo 1 — 01/04 a 30/04/2026</option>
+        </select>
+        <i class="pi pi-chevron-down" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:11px;color:var(--color-on-bg-light);pointer-events:none;"></i>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:5px;">
+      <label style="font-size:12px;font-weight:600;color:var(--color-on-bg-mid);">Turma</label>
+      <div style="position:relative;">
+        <select style="appearance:none;padding:8px 32px 8px 12px;border:1px solid var(--color-outline);border-radius:8px;background:#fff;font-family:var(--font);font-size:13px;color:var(--color-on-bg);cursor:pointer;min-width:280px;">
+          <option>MAP - Ciências da Natureza - EM1 (PI)</option>
+          <option>MAP - Matemática - EM1 (PI)</option>
+          <option>MAP - Língua Portuguesa - EM2 (PI)</option>
+        </select>
+        <i class="pi pi-chevron-down" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:11px;color:var(--color-on-bg-light);pointer-events:none;"></i>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:5px;">
+      <label style="font-size:12px;font-weight:600;color:var(--color-on-bg-mid);">Componente curricular</label>
+      <div style="position:relative;">
+        <select style="appearance:none;padding:8px 32px 8px 12px;border:1px solid var(--color-outline);border-radius:8px;background:#fff;font-family:var(--font);font-size:13px;color:var(--color-on-bg);cursor:pointer;min-width:200px;">
+          <option>Todos os componentes</option>
+          <option>Matemática</option>
+          <option>Língua Portuguesa</option>
+          <option>Ciências da Natureza</option>
+          <option>Geografia</option>
+        </select>
+        <i class="pi pi-chevron-down" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:11px;color:var(--color-on-bg-light);pointer-events:none;"></i>
+      </div>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:5px;">
+      <label style="font-size:12px;font-weight:600;color:var(--color-on-bg-mid);">Status da trilha</label>
+      <div style="position:relative;">
+        <select style="appearance:none;padding:8px 32px 8px 12px;border:1px solid var(--color-outline);border-radius:8px;background:#fff;font-family:var(--font);font-size:13px;color:var(--color-on-bg);cursor:pointer;min-width:160px;">
+          <option>Todos os status</option>
+          <option>Disponível</option>
+          <option>Em andamento</option>
+          <option>Concluída</option>
+          <option>Expirada</option>
+          <option>Não gerada</option>
+        </select>
+        <i class="pi pi-chevron-down" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:11px;color:var(--color-on-bg-light);pointer-events:none;"></i>
+      </div>
+    </div>
+
+    <div style="flex:1;"></div>
+    <button style="display:flex;align-items:center;gap:6px;padding:8px 14px;border:none;background:none;font-family:var(--font);font-size:13px;color:var(--color-primary);cursor:pointer;font-weight:500;">
+      <i class="pi pi-download" style="font-size:13px;"></i> Exportar CSV
+    </button>
+  </div>
+
+  <!-- CARDS DE INDICADORES -->
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:28px;">
+
+    <div style="background:#fff;border:1px solid var(--color-outline);border-radius:12px;padding:18px 20px;">
+      <div style="font-size:12px;font-weight:600;color:var(--color-on-bg-light);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;">Trilhas geradas</div>
+      <div style="font-size:32px;font-weight:700;color:var(--color-on-bg);line-height:1;">28</div>
+      <div style="font-size:13px;color:var(--color-on-bg-light);margin-top:4px;">neste ciclo · 28 estudantes</div>
+    </div>
+
+    <div style="background:#fff;border:1px solid var(--color-outline);border-radius:12px;padding:18px 20px;">
+      <div style="font-size:12px;font-weight:600;color:var(--color-on-bg-light);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;">Taxa de conclusão</div>
+      <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:10px;">
+        <span style="font-size:32px;font-weight:700;color:var(--color-on-bg);line-height:1;">64%</span>
+        <span style="font-size:13px;color:var(--color-success);font-weight:500;">▲ +4% vs. ciclo anterior</span>
+      </div>
+      <div style="background:#EFF2F7;border-radius:99px;height:6px;overflow:hidden;">
+        <div style="width:64%;background:var(--color-primary);height:100%;border-radius:99px;transition:width .6s ease;"></div>
+      </div>
+    </div>
+
+    <div style="background:#fff;border:1px solid var(--color-outline);border-radius:12px;padding:18px 20px;">
+      <div style="font-size:12px;font-weight:600;color:var(--color-on-bg-light);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;">Concluídas</div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span style="font-size:32px;font-weight:700;color:var(--color-on-bg);line-height:1;">18</span>
+        <span style="padding:3px 8px;background:var(--color-success-light);color:var(--color-success);font-size:12px;font-weight:600;border-radius:99px;">● Concluídas</span>
+      </div>
+      <div style="font-size:13px;color:var(--color-on-bg-light);margin-top:4px;">de 28 trilhas geradas</div>
+    </div>
+
+    <div style="background:#fff;border:1px solid var(--color-outline);border-radius:12px;padding:18px 20px;">
+      <div style="font-size:12px;font-weight:600;color:var(--color-on-bg-light);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;">Em andamento</div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span style="font-size:32px;font-weight:700;color:var(--color-on-bg);line-height:1;">6</span>
+        <span style="padding:3px 8px;background:var(--color-warning-light);color:var(--color-warning);font-size:12px;font-weight:600;border-radius:99px;">● Em andamento</span>
+      </div>
+      <div style="font-size:13px;color:var(--color-on-bg-light);margin-top:4px;">estudantes em progresso</div>
+    </div>
+
+    <div style="background:#fff;border:1px solid var(--color-outline);border-radius:12px;padding:18px 20px;">
+      <div style="font-size:12px;font-weight:600;color:var(--color-on-bg-light);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;">Sem lacunas relevantes</div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span style="font-size:32px;font-weight:700;color:var(--color-on-bg);line-height:1;">3</span>
+        <span style="padding:3px 8px;background:#EFF8FF;color:var(--color-attention);font-size:12px;font-weight:600;border-radius:99px;">● Resultado positivo!</span>
+      </div>
+      <div style="font-size:13px;color:var(--color-on-bg-light);margin-top:4px;">nenhuma trilha necessária</div>
+    </div>
+
+    <div style="background:#fff;border:1px solid var(--color-outline);border-radius:12px;padding:18px 20px;">
+      <div style="font-size:12px;font-weight:600;color:var(--color-on-bg-light);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;">Sem evidências no ciclo</div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span style="font-size:32px;font-weight:700;color:var(--color-on-bg);line-height:1;">4</span>
+        <span style="padding:3px 8px;background:#F2F4F7;color:var(--color-on-bg-light);font-size:12px;font-weight:600;border-radius:99px;">● Sem dados</span>
+      </div>
+      <div style="font-size:13px;color:var(--color-on-bg-light);margin-top:4px;">não realizaram atividades</div>
+    </div>
+
+  </div>
+  <!-- END CARDS -->
+
+  <!-- PAINEL HABILIDADES — largura total -->
+  <div style="background:#fff;border:1px solid var(--color-outline);border-radius:12px;padding:20px 24px;margin-bottom:20px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+      <div>
+        <h3 style="font-size:15px;font-weight:600;color:var(--color-on-bg);">Habilidades com maior incidência de gap</h3>
+        <p style="font-size:12px;color:var(--color-on-bg-light);margin-top:2px;">Proporção de estudantes com lacuna identificada por habilidade</p>
+      </div>
+      <button style="border:none;background:none;font-family:var(--font);font-size:13px;color:var(--color-primary);cursor:pointer;font-weight:500;">Ver todas →</button>
+    </div>
+
+    <!-- Cabeçalho das colunas -->
+    <div style="display:grid;grid-template-columns:120px 180px 100px 1fr 130px;gap:12px;padding:8px 0 4px;border-bottom:1px solid var(--color-outline);margin-bottom:4px;">
+      <span style="font-size:11px;font-weight:600;color:var(--color-on-bg-light);text-transform:uppercase;letter-spacing:.05em;">Habilidade</span>
+      <span style="font-size:11px;font-weight:600;color:var(--color-on-bg-light);text-transform:uppercase;letter-spacing:.05em;">Conteúdo</span>
+      <span style="font-size:11px;font-weight:600;color:var(--color-on-bg-light);text-transform:uppercase;letter-spacing:.05em;">Nível de Gap</span>
+      <span style="font-size:11px;font-weight:600;color:var(--color-on-bg-light);text-transform:uppercase;letter-spacing:.05em;">Distribuição</span>
+      <span style="font-size:11px;font-weight:600;color:var(--color-on-bg-light);text-transform:uppercase;letter-spacing:.05em;text-align:right;">Ação</span>
+    </div>
+
+    <!-- EF06MA07 — Crítico 64% -->
+    <div style="display:grid;grid-template-columns:120px 180px 100px 1fr 130px;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #F2F4F7;">
+      <span style="font-size:13px;font-weight:600;color:var(--color-on-bg);">EF06MA07</span>
+      <span style="font-size:13px;color:var(--color-on-bg-mid);">Frações</span>
+      <span style="padding:2px 8px;border:1.5px solid #F97066;color:#F97066;font-size:12px;font-weight:600;border-radius:99px;text-align:center;display:inline-block;">Crítico</span>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div style="flex:1;background:#EFF2F7;border-radius:99px;height:8px;overflow:hidden;">
+          <div style="width:64%;background:#F97066;height:100%;border-radius:99px;"></div>
+        </div>
+        <span style="font-size:12px;font-weight:600;color:var(--color-on-bg);min-width:32px;text-align:right;">64%</span>
+      </div>
+      <button onclick="alert('Criar Intervenção')" style="border:none;background:none;font-family:var(--font);font-size:13px;color:var(--color-primary);cursor:pointer;font-weight:500;text-align:right;">Criar Intervenção</button>
+    </div>
+
+    <!-- EF06LP03 — Crítico 50% -->
+    <div style="display:grid;grid-template-columns:120px 180px 100px 1fr 130px;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #F2F4F7;">
+      <span style="font-size:13px;font-weight:600;color:var(--color-on-bg);">EF06LP03</span>
+      <span style="font-size:13px;color:var(--color-on-bg-mid);">Interpretação de texto</span>
+      <span style="padding:2px 8px;border:1.5px solid #F97066;color:#F97066;font-size:12px;font-weight:600;border-radius:99px;text-align:center;display:inline-block;">Crítico</span>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div style="flex:1;background:#EFF2F7;border-radius:99px;height:8px;overflow:hidden;">
+          <div style="width:50%;background:#F97066;height:100%;border-radius:99px;"></div>
+        </div>
+        <span style="font-size:12px;font-weight:600;color:var(--color-on-bg);min-width:32px;text-align:right;">50%</span>
+      </div>
+      <button onclick="alert('Criar Intervenção')" style="border:none;background:none;font-family:var(--font);font-size:13px;color:var(--color-primary);cursor:pointer;font-weight:500;text-align:right;">Criar Intervenção</button>
+    </div>
+
+    <!-- EF06GE02 — Moderado 43% -->
+    <div style="display:grid;grid-template-columns:120px 180px 100px 1fr 130px;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #F2F4F7;">
+      <span style="font-size:13px;font-weight:600;color:var(--color-on-bg);">EF06GE02</span>
+      <span style="font-size:13px;color:var(--color-on-bg-mid);">Equações</span>
+      <span style="padding:2px 8px;border:1.5px solid #FDB022;color:#FDB022;font-size:12px;font-weight:600;border-radius:99px;text-align:center;display:inline-block;">Moderado</span>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div style="flex:1;background:#EFF2F7;border-radius:99px;height:8px;overflow:hidden;">
+          <div style="width:43%;background:#FDB022;height:100%;border-radius:99px;"></div>
+        </div>
+        <span style="font-size:12px;font-weight:600;color:var(--color-on-bg);min-width:32px;text-align:right;">43%</span>
+      </div>
+      <button onclick="alert('Criar Intervenção')" style="border:none;background:none;font-family:var(--font);font-size:13px;color:var(--color-primary);cursor:pointer;font-weight:500;text-align:right;">Criar Intervenção</button>
+    </div>
+
+    <!-- EF06MA12 — Moderado 32% -->
+    <div style="display:grid;grid-template-columns:120px 180px 100px 1fr 130px;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #F2F4F7;">
+      <span style="font-size:13px;font-weight:600;color:var(--color-on-bg);">EF06MA12</span>
+      <span style="font-size:13px;color:var(--color-on-bg-mid);">Ecossistemas</span>
+      <span style="padding:2px 8px;border:1.5px solid #FDB022;color:#FDB022;font-size:12px;font-weight:600;border-radius:99px;text-align:center;display:inline-block;">Moderado</span>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div style="flex:1;background:#EFF2F7;border-radius:99px;height:8px;overflow:hidden;">
+          <div style="width:32%;background:#FDB022;height:100%;border-radius:99px;"></div>
+        </div>
+        <span style="font-size:12px;font-weight:600;color:var(--color-on-bg);min-width:32px;text-align:right;">32%</span>
+      </div>
+      <button onclick="alert('Criar Intervenção')" style="border:none;background:none;font-family:var(--font);font-size:13px;color:var(--color-primary);cursor:pointer;font-weight:500;text-align:right;">Criar Intervenção</button>
+    </div>
+
+    <!-- EF06CI05 — Atenção 25% -->
+    <div style="display:grid;grid-template-columns:120px 180px 100px 1fr 130px;align-items:center;gap:12px;padding:10px 0;">
+      <span style="font-size:13px;font-weight:600;color:var(--color-on-bg);">EF06CI05</span>
+      <span style="font-size:13px;color:var(--color-on-bg-mid);">Cartografia</span>
+      <span style="padding:2px 8px;border:1.5px solid #2E90FA;color:#2E90FA;font-size:12px;font-weight:600;border-radius:99px;text-align:center;display:inline-block;">Atenção</span>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div style="flex:1;background:#EFF2F7;border-radius:99px;height:8px;overflow:hidden;">
+          <div style="width:25%;background:#2E90FA;height:100%;border-radius:99px;"></div>
+        </div>
+        <span style="font-size:12px;font-weight:600;color:var(--color-on-bg);min-width:32px;text-align:right;">25%</span>
+      </div>
+      <button onclick="alert('Criar Intervenção')" style="border:none;background:none;font-family:var(--font);font-size:13px;color:var(--color-primary);cursor:pointer;font-weight:500;text-align:right;">Criar Intervenção</button>
+    </div>
+
+  </div>
+  <!-- END PAINEL HABILIDADES -->
+
+
+  <!-- GRÁFICO — Evolução por Ciclo (card largura total) -->
+  <div style="background:#fff;border:1px solid var(--color-outline);border-radius:12px;padding:20px 24px;margin-bottom:28px;">
+    <div style="margin-bottom:16px;">
+      <h3 style="font-size:15px;font-weight:600;color:var(--color-on-bg);">Evolução por Ciclo</h3>
+      <p style="font-size:12px;color:var(--color-on-bg-light);margin-top:2px;">Taxa de conclusão de trilhas adaptativas</p>
+    </div>
+    <div style="height:220px;">
+      <canvas id="chartCiclos" style="width:100%;height:100%;"></canvas>
+    </div>
+  </div>
+  <!-- END GRÁFICO -->
+  <!-- TABELA DE ESTUDANTES -->
+  <div style="background:#fff;border:1px solid var(--color-outline);border-radius:12px;overflow:hidden;margin-bottom:40px;">
+    <div style="padding:18px 24px;border-bottom:1px solid var(--color-outline);display:flex;align-items:center;justify-content:space-between;">
+      <div>
+        <h3 style="font-size:15px;font-weight:600;color:var(--color-on-bg);">Estudantes — Ciclo 4</h3>
+        <p style="font-size:12px;color:var(--color-on-bg-light);margin-top:2px;">28 estudantes · Turma MAP – Ciências da Natureza – EM1</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div style="position:relative;">
+          <i class="pi pi-search" style="position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:13px;color:var(--color-on-bg-light);"></i>
+          <input type="text" placeholder="Buscar estudante..." style="padding:7px 12px 7px 32px;border:1px solid var(--color-outline);border-radius:8px;font-family:var(--font);font-size:13px;color:var(--color-on-bg);outline:none;width:200px;">
+        </div>
+      </div>
+    </div>
+
+    <table style="width:100%;border-collapse:collapse;">
+      <thead>
+        <tr style="background:#F8FAFC;">
+          <th style="text-align:left;padding:10px 16px;font-size:11px;font-weight:600;color:var(--color-on-bg-light);letter-spacing:.05em;text-transform:uppercase;border-bottom:1px solid var(--color-outline);">Estudante</th>
+          <th style="text-align:left;padding:10px 16px;font-size:11px;font-weight:600;color:var(--color-on-bg-light);letter-spacing:.05em;text-transform:uppercase;border-bottom:1px solid var(--color-outline);">Nível ↑↓</th>
+          <th style="text-align:left;padding:10px 16px;font-size:11px;font-weight:600;color:var(--color-on-bg-light);letter-spacing:.05em;text-transform:uppercase;border-bottom:1px solid var(--color-outline);">Gap Principal</th>
+          <th style="text-align:left;padding:10px 16px;font-size:11px;font-weight:600;color:var(--color-on-bg-light);letter-spacing:.05em;text-transform:uppercase;border-bottom:1px solid var(--color-outline);">Progresso</th>
+          <th style="text-align:left;padding:10px 16px;font-size:11px;font-weight:600;color:var(--color-on-bg-light);letter-spacing:.05em;text-transform:uppercase;border-bottom:1px solid var(--color-outline);">Status ↑↓</th>
+          <th style="text-align:center;padding:10px 16px;font-size:11px;font-weight:600;color:var(--color-on-bg-light);letter-spacing:.05em;text-transform:uppercase;border-bottom:1px solid var(--color-outline);">Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <!-- Linha 1: Carlos de Oliveira — Crítico — Concluída -->
+        <tr onmouseover="this.style.background='var(--color-state-overlay)'" onmouseout="this.style.background=''">
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);font-size:13.5px;color:var(--color-on-bg);">Carlos de Oliveira</td>
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);text-align:left;">
+            <span style="padding:2px 8px;border:1.5px solid #F97066;color:#F97066;font-size:12px;font-weight:600;border-radius:99px;">Crítico</span>
+          </td>
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);font-size:13px;color:var(--color-on-bg);">Frações <span style="color:var(--color-on-bg-light);">(+2 outras)</span></td>
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);font-size:13px;color:var(--color-on-bg);">20/20</td>
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);font-size:13px;font-weight:500;color:var(--color-success);">Concluída</td>
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);text-align:center;">
+            <button onclick="window.location.href='estudante.html'" style="width:32px;height:32px;border-radius:50%;border:none;background:var(--color-primary-5);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;color:var(--color-primary);font-size:16px;" title="Ver detalhes">
+              <i class="pi pi-eye"></i>
+            </button>
+          </td>
+        </tr>
+
+        <!-- Linha 2: Ana Pereira — Moderado — Concluída -->
+        <tr onmouseover="this.style.background='var(--color-state-overlay)'" onmouseout="this.style.background=''">
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);font-size:13.5px;color:var(--color-on-bg);">Ana Pereira</td>
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);text-align:left;">
+            <span style="padding:2px 8px;border:1.5px solid #FDB022;color:#FDB022;font-size:12px;font-weight:600;border-radius:99px;">Moderado</span>
+          </td>
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);font-size:13px;color:var(--color-on-bg);">Análise de texto</td>
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);font-size:13px;color:var(--color-on-bg);">20/20</td>
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);font-size:13px;font-weight:500;color:var(--color-success);">Concluída</td>
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);text-align:center;">
+            <button onclick="window.location.href='estudante.html'" style="width:32px;height:32px;border-radius:50%;border:none;background:var(--color-primary-5);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;color:var(--color-primary);font-size:16px;" title="Ver detalhes">
+              <i class="pi pi-eye"></i>
+            </button>
+          </td>
+        </tr>
+
+        <!-- Linha 3: Mariana Costa — Moderado — Disponível -->
+        <tr onmouseover="this.style.background='var(--color-state-overlay)'" onmouseout="this.style.background=''">
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);font-size:13.5px;color:var(--color-on-bg);">Mariana Costa</td>
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);text-align:left;">
+            <span style="padding:2px 8px;border:1.5px solid #FDB022;color:#FDB022;font-size:12px;font-weight:600;border-radius:99px;">Moderado</span>
+          </td>
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);font-size:13px;color:var(--color-on-bg);">Interpretação de texto</td>
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);font-size:13px;color:var(--color-on-bg);">0/20</td>
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);font-size:13px;font-weight:500;color:#2177FF;">Disponível</td>
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);text-align:center;">
+            <button onclick="window.location.href='estudante.html'" style="width:32px;height:32px;border-radius:50%;border:none;background:var(--color-primary-5);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;color:var(--color-primary);font-size:16px;" title="Ver detalhes">
+              <i class="pi pi-eye"></i>
+            </button>
+          </td>
+        </tr>
+
+        <!-- Linha 4: Rafael Almeida — Crítico — Em andamento -->
+        <tr onmouseover="this.style.background='var(--color-state-overlay)'" onmouseout="this.style.background=''">
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);font-size:13.5px;color:var(--color-on-bg);">Rafael Almeida</td>
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);text-align:left;">
+            <span style="padding:2px 8px;border:1.5px solid #F97066;color:#F97066;font-size:12px;font-weight:600;border-radius:99px;">Crítico</span>
+          </td>
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);font-size:13px;color:var(--color-on-bg);">Geometria <span style="color:var(--color-on-bg-light);">(+2 outras)</span></td>
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);font-size:13px;color:var(--color-on-bg);">6/20</td>
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);font-size:13px;font-weight:500;color:#F79009;">Em andamento</td>
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);text-align:center;">
+            <button onclick="window.location.href='estudante.html'" style="width:32px;height:32px;border-radius:50%;border:none;background:var(--color-primary-5);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;color:var(--color-primary);font-size:16px;" title="Ver detalhes">
+              <i class="pi pi-eye"></i>
+            </button>
+          </td>
+        </tr>
+
+        <!-- Linha 5: João Silva — Crítico — Em andamento -->
+        <tr onmouseover="this.style.background='var(--color-state-overlay)'" onmouseout="this.style.background=''">
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);font-size:13.5px;color:var(--color-on-bg);">João Silva</td>
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);text-align:left;">
+            <span style="padding:2px 8px;border:1.5px solid #F97066;color:#F97066;font-size:12px;font-weight:600;border-radius:99px;">Crítico</span>
+          </td>
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);font-size:13px;color:var(--color-on-bg);">Equações de 2º grau</td>
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);font-size:13px;color:var(--color-on-bg);">12/20</td>
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);font-size:13px;font-weight:500;color:#F79009;">Em andamento</td>
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);text-align:center;">
+            <button onclick="window.location.href='estudante.html'" style="width:32px;height:32px;border-radius:50%;border:none;background:var(--color-primary-5);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;color:var(--color-primary);font-size:16px;" title="Ver detalhes">
+              <i class="pi pi-eye"></i>
+            </button>
+          </td>
+        </tr>
+
+        <!-- Linha 6: João Silva — Atenção — Em andamento -->
+        <tr onmouseover="this.style.background='var(--color-state-overlay)'" onmouseout="this.style.background=''">
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);font-size:13.5px;color:var(--color-on-bg);">João Silva</td>
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);text-align:left;">
+            <span style="padding:2px 8px;border:1.5px solid #2E90FA;color:#2E90FA;font-size:12px;font-weight:600;border-radius:99px;">Atenção</span>
+          </td>
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);font-size:13px;color:var(--color-on-bg);">Interpretação de texto</td>
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);font-size:13px;color:var(--color-on-bg);">16/20</td>
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);font-size:13px;font-weight:500;color:#F79009;">Em andamento</td>
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);text-align:center;">
+            <button onclick="window.location.href='estudante.html'" style="width:32px;height:32px;border-radius:50%;border:none;background:var(--color-primary-5);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;color:var(--color-primary);font-size:16px;" title="Ver detalhes">
+              <i class="pi pi-eye"></i>
+            </button>
+          </td>
+        </tr>
+
+        <!-- Linha 7: Sofia Martins — Sem evidências — Não gerada -->
+        <tr onmouseover="this.style.background='var(--color-state-overlay)'" onmouseout="this.style.background=''">
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);font-size:13.5px;color:var(--color-on-bg);">Sofia Martins</td>
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);text-align:left;">
+            <span style="padding:2px 8px;background:#F2F4F7;color:var(--color-on-bg-light);font-size:12px;font-weight:500;border-radius:99px;">Sem evidências</span>
+          </td>
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);font-size:13px;color:var(--color-on-bg-light);">—</td>
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);font-size:13px;color:var(--color-on-bg-light);">—</td>
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);font-size:13px;font-weight:500;color:var(--color-on-bg-light);">Não gerada</td>
+          <td style="padding:12px 16px;border-bottom:1px solid var(--color-outline);text-align:center;">
+            <button onclick="window.location.href='estudante.html'" style="width:32px;height:32px;border-radius:50%;border:none;background:var(--color-primary-5);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;color:var(--color-primary);font-size:16px;" title="Ver detalhes">
+              <i class="pi pi-eye"></i>
+            </button>
+          </td>
+        </tr>
+
+      </tbody>
+    </table>
+
+    <!-- Paginação -->
+    <div style="padding:12px 24px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--color-outline);">
+      <span style="font-size:13px;color:var(--color-on-bg-light);">Exibindo 7 de 28 estudantes</span>
+      <div style="display:flex;align-items:center;gap:4px;">
+        <button style="width:32px;height:32px;border:1px solid var(--color-outline);border-radius:6px;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;">
+          <i class="pi pi-chevron-left" style="font-size:11px;color:var(--color-on-bg-mid);"></i>
+        </button>
+        <button style="width:32px;height:32px;border:1.5px solid var(--color-primary);border-radius:6px;background:var(--color-primary-5);font-size:13px;font-weight:600;color:var(--color-primary);cursor:pointer;">1</button>
+        <button style="width:32px;height:32px;border:1px solid var(--color-outline);border-radius:6px;background:#fff;font-size:13px;color:var(--color-on-bg-mid);cursor:pointer;">2</button>
+        <button style="width:32px;height:32px;border:1px solid var(--color-outline);border-radius:6px;background:#fff;font-size:13px;color:var(--color-on-bg-mid);cursor:pointer;">3</button>
+        <button style="width:32px;height:32px;border:1px solid var(--color-outline);border-radius:6px;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;">
+          <i class="pi pi-chevron-right" style="font-size:11px;color:var(--color-on-bg-mid);"></i>
+        </button>
+      </div>
+    </div>
+
+  </div>
+  <!-- END TABELA -->
+
+
+</div>
+<!-- END VIEW TURMA -->
+
+</main>
+</div>
+<!-- END APP WRAPPER -->
+
+<script>
+// Clique em qualquer linha da tabela navega para o estudante
+document.addEventListener('DOMContentLoaded', function () {
+  var tbody = document.querySelector('table tbody');
+  if (tbody) {
+    tbody.addEventListener('click', function(e) {
+      if (e.target.tagName === 'SELECT' || e.target.tagName === 'INPUT') return;
+      var tr = e.target.closest('tr');
+      if (tr) window.location.href = 'estudante.html';
+    });
+    tbody.querySelectorAll('tr').forEach(function(tr) {
+      tr.style.cursor = 'pointer';
+    });
+  }
+});
+
+// ===== CHART.JS: Gráfico de linha — Evolução por ciclo =====
+document.addEventListener('DOMContentLoaded', function () {
+  const ctx = document.getElementById('chartCiclos');
+  if (!ctx) return;
+
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: ['Ciclo 1', 'Ciclo 2', 'Ciclo 3', 'Ciclo 4', 'Ciclo 5'],
+      datasets: [{
+        label: 'Taxa de conclusão',
+        data: [20, 45, 35, 72, 82],
+        borderColor: '#2177FF',
+        backgroundColor: 'rgba(33,119,255,0.08)',
+        pointBackgroundColor: '#2177FF',
+        pointBorderColor: '#fff',
+        pointBorderWidth: 2,
+        pointRadius: 5,
+        pointHoverRadius: 7,
+        borderWidth: 2.5,
+        fill: true,
+        tension: 0.35,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: ctx => ' ' + ctx.raw + '%'
+          },
+          backgroundColor: '#344054',
+          titleColor: '#fff',
+          bodyColor: '#D0D5DD',
+          padding: 10,
+          cornerRadius: 8,
+        }
+      },
+      scales: {
+        x: {
+          grid: { color: '#F2F4F7' },
+          ticks: {
+            font: { family: 'Outfit', size: 11 },
+            color: '#8A95B2'
+          },
+          border: { display: false }
+        },
+        y: {
+          min: 0,
+          max: 100,
+          grid: { color: '#F2F4F7' },
+          ticks: {
+            font: { family: 'Outfit', size: 11 },
+            color: '#8A95B2',
+            callback: v => v + '%',
+            stepSize: 25
+          },
+          border: { display: false }
+        }
+      }
+    }
+  });
+});
+
+// ===== HOVER ESTILO NOS LINKS DA SIDEBAR =====
+document.querySelectorAll('.nav-item:not(.active)').forEach(item => {
+  item.addEventListener('mouseenter', () => {
+    item.style.background = 'var(--color-state-overlay)';
+    item.style.color = 'var(--color-on-bg)';
+  });
+  item.addEventListener('mouseleave', () => {
+    item.style.background = '';
+    item.style.color = 'var(--color-on-bg-mid)';
+  });
+});
+</script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+

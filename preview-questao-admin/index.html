@@ -1,0 +1,605 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Preview Questão — Orbie Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/primeicons@7.0.0/primeicons.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: #F1F4F9;
+      display: flex;
+      align-items: flex-start;
+      justify-content: flex-end;
+      min-height: 100vh;
+      padding: 0;
+    }
+
+    /* ── Page backdrop (simula o conteúdo atrás) ── */
+    .page-bg {
+      flex: 1;
+      min-height: 100vh;
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .page-bg h2 { font-size: 18px; font-weight: 700; color: #344054; }
+    .page-bg p  { font-size: 14px; color: #52607A; }
+
+    /* ── Overlay ── */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.18);
+      z-index: 10;
+    }
+
+    /* ── Side Modal ── */
+    .sidemodal {
+      position: fixed;
+      top: 0; right: 0; bottom: 0;
+      width: 600px;
+      background: #FFFFFF;
+      display: flex;
+      flex-direction: column;
+      z-index: 20;
+      box-shadow: -2px 0 16px rgba(0,0,0,0.12);
+    }
+
+    /* ── Header ── */
+    .modal-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px 24px;
+      flex-shrink: 0;
+    }
+    .modal-header h1 {
+      flex: 1;
+      font-size: 18px;
+      font-weight: 700;
+      line-height: 27px;
+      color: #344054;
+    }
+    .btn-close {
+      width: 40px; height: 40px;
+      border: none; background: none;
+      border-radius: 1000px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      color: #52607A;
+      font-size: 18px;
+      transition: background 150ms;
+    }
+    .btn-close:hover { background: #F1F4F9; }
+
+    /* ── Context header (metadados) — agora dentro de cada tab-panel ── */
+    .modal-meta {
+      padding: 0 0 4px;
+    }
+    .meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 6px;
+    }
+    .meta-text {
+      font-size: 14px;
+      color: #52607A;
+      line-height: 21px;
+      white-space: nowrap;
+    }
+    .meta-dot { color: #52607A; font-size: 14px; }
+    .meta-btn {
+      display: inline-flex; align-items: center; gap: 2px;
+      background: none; border: none; cursor: pointer;
+      font-size: 14px; color: #52607A;
+      font-family: 'Outfit', sans-serif;
+      padding: 0;
+      line-height: 21px;
+    }
+    .meta-btn i { font-size: 16px; color: #2177FF; }
+    .meta-btn:hover .meta-label { text-decoration: underline; }
+
+    /* ── Tabs ── */
+    .tabs-bar {
+      display: flex;
+      align-items: flex-end;
+      border-bottom: 1px solid #dde4eb;
+      padding: 0 24px;
+      flex-shrink: 0;
+      gap: 0;
+      overflow-x: auto;
+    }
+    .tabs-bar::-webkit-scrollbar { display: none; }
+
+    .tab-item {
+      position: relative;
+      padding: 10px 16px;
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 21px;
+      color: #52607A;
+      cursor: pointer;
+      white-space: nowrap;
+      border: none;
+      background: none;
+      font-family: 'Outfit', sans-serif;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      transition: color 150ms, border-color 150ms;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .tab-item:hover { color: #344054; }
+    .tab-item.active {
+      color: #2177FF;
+      border-bottom-color: #2177FF;
+      font-weight: 600;
+    }
+    .tab-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #E1E8EF;
+      color: #52607A;
+      border-radius: 1000px;
+      font-size: 11px;
+      font-weight: 600;
+      min-width: 18px;
+      height: 18px;
+      padding: 0 5px;
+      line-height: 1;
+    }
+    .tab-item.active .tab-badge {
+      background: #E6EEFF;
+      color: #2177FF;
+    }
+
+    /* ── Scroll area ── */
+    .modal-scroll {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .modal-scroll::-webkit-scrollbar { width: 4px; }
+    .modal-scroll::-webkit-scrollbar-thumb { background: #C5D0DE; border-radius: 4px; }
+
+    /* ── Tab panels ── */
+    .tab-panel { display: none; flex-direction: column; gap: 20px; }
+    .tab-panel.active { display: flex; }
+
+    /* ── Seção de conteúdo ── */
+    .section { display: flex; flex-direction: column; gap: 4px; }
+    .section-label {
+      font-size: 14px;
+      font-weight: 700;
+      color: #344054;
+      line-height: 21px;
+    }
+    .section-text {
+      font-size: 14px;
+      color: #344054;
+      line-height: 21px;
+    }
+    .section-text.secondary { color: #52607A; }
+
+    /* ── Imagem ── */
+    .question-image {
+      width: 200px;
+      height: 200px;
+      border-radius: 12px;
+      object-fit: cover;
+      display: block;
+      margin-top: 4px;
+    }
+
+    /* ── Alternativas ── */
+    .alternatives { display: flex; flex-direction: column; gap: 12px; }
+    .alt-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .alt-marker {
+      width: 24px; height: 24px;
+      border-radius: 4px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      font-size: 14px;
+    }
+    .alt-marker.wrong {
+      background: rgba(0,0,0,0.05);
+      color: #52607A;
+    }
+    .alt-marker.correct {
+      background: #29b84c;
+      color: #fff;
+    }
+    .alt-text { font-size: 14px; color: #344054; line-height: 21px; }
+
+    /* ── Divisor ── */
+    .divider { height: 1px; background: #E1E8EF; flex-shrink: 0; }
+
+    /* ── Footer ── */
+    .modal-footer {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 4px;
+      padding: 12px 24px;
+      border-top: 1px solid #dde4eb;
+      height: 64px;
+      flex-shrink: 0;
+    }
+    .btn-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: none; border: none;
+      border-radius: 10px;
+      padding: 6px 12px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      color: #2177FF;
+      cursor: pointer;
+      transition: background 150ms;
+      height: 36px;
+    }
+    .btn-link:hover { background: #E6EEFF; }
+    .btn-link i { font-size: 18px; }
+  </style>
+</head>
+<body>
+
+<!-- Backdrop simulando a tela atrás -->
+<div class="page-bg">
+  <h2>Banco de Questões</h2>
+  <p>Clique em qualquer questão para prévisualizar o conteúdo na sidemodal ao lado.</p>
+</div>
+
+<!-- Overlay -->
+<div class="overlay"></div>
+
+<!-- Sidemodal -->
+<aside class="sidemodal" role="dialog" aria-label="Prévisualização da questão">
+
+  <!-- Header -->
+  <div class="modal-header">
+    <h1>A vida no fundo do mar</h1>
+    <button class="btn-close" aria-label="Fechar" onclick="this.closest('.sidemodal').style.display='none'">
+      <i class="pi pi-times"></i>
+    </button>
+  </div>
+
+  <!-- Tabs -->
+  <nav class="tabs-bar" role="tablist" aria-label="Conteúdo da questão e chances extras">
+    <button class="tab-item active" role="tab" aria-selected="true" aria-controls="panel-principal" id="tab-principal" onclick="switchTab(0)">
+      Questão Principal
+    </button>
+    <button class="tab-item" role="tab" aria-selected="false" aria-controls="panel-chance1" id="tab-chance1" onclick="switchTab(1)">
+      Chance Extra 1
+    </button>
+    <button class="tab-item" role="tab" aria-selected="false" aria-controls="panel-chance2" id="tab-chance2" onclick="switchTab(2)">
+      Chance Extra 2
+    </button>
+    <button class="tab-item" role="tab" aria-selected="false" aria-controls="panel-chance3" id="tab-chance3" onclick="switchTab(3)">
+      Chance Extra 3
+    </button>
+  </nav>
+
+  <!-- Scroll container -->
+  <div class="modal-scroll">
+
+    <!-- ══ PAINEL: Questão Principal ══ -->
+    <div class="tab-panel active" id="panel-principal" role="tabpanel" aria-labelledby="tab-principal">
+
+      <div class="modal-meta">
+        <div class="meta-row">
+          <span class="meta-text">Múltipla Escolha</span>
+          <span class="meta-dot">•</span>
+          <span class="meta-text">Fácil</span>
+          <span class="meta-dot">•</span>
+          <span class="meta-text">200 pontos</span>
+          <span class="meta-dot">•</span>
+          <span class="meta-text">Ensino Fundamental</span>
+          <span class="meta-dot">•</span>
+          <span class="meta-text">Língua Portuguesa</span>
+          <span class="meta-dot">•</span>
+          <button class="meta-btn" aria-label="Ver habilidades">
+            <span class="meta-label">Habilidades</span>
+            <i class="pi pi-eye"></i>
+          </button>
+          <span class="meta-dot">•</span>
+          <button class="meta-btn" aria-label="Ver autoria">
+            <span class="meta-label">Autoria</span>
+            <i class="pi pi-eye"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="section">
+        <span class="section-label">Enunciado e Comando</span>
+        <p class="section-text">Bob Esponja mora em um abacaxi no fundo do mar e trabalha em um restaurante muito famoso da Fenda do Biquíni.<br><br>Qual é o nome desse restaurante onde Bob Esponja trabalha?</p>
+        <img class="question-image" src="https://www.figma.com/api/mcp/asset/b2494be3-b5d4-4b74-935c-03c482ae10f8.png" alt="Ilustração da Fenda do Biquíni" />
+      </div>
+
+      <div class="section">
+        <div class="alternatives">
+          <div class="alt-item">
+            <div class="alt-marker wrong"><i class="pi pi-times" style="font-size:13px"></i></div>
+            <span class="alt-text">Restaurante do Plâncton</span>
+          </div>
+          <div class="alt-item">
+            <div class="alt-marker correct"><i class="pi pi-check" style="font-size:13px"></i></div>
+            <span class="alt-text">Siri Cascudo</span>
+          </div>
+          <div class="alt-item">
+            <div class="alt-marker wrong"><i class="pi pi-times" style="font-size:13px"></i></div>
+            <span class="alt-text">Hamburgueria do Mar</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="section">
+        <span class="section-label">Justificativa da Resposta</span>
+        <p class="section-text">Bob Esponja é o cozinheiro principal da Siri Cascudo, restaurante do Sr. Sirigueijo, famoso pelos hambúrgueres de siri. O "Balde de Lixo" é o restaurante rival de Plâncton.</p>
+      </div>
+
+      <div class="section">
+        <span class="section-label">Dica Para o Estudante</span>
+        <p class="section-text">Pense em onde Bob Esponja prepara os deliciosos hambúrgueres de siri!</p>
+      </div>
+
+    </div><!-- /panel-principal -->
+
+    <!-- ══ PAINEL: Chance Extra 1 ══ -->
+    <div class="tab-panel" id="panel-chance1" role="tabpanel" aria-labelledby="tab-chance1">
+
+      <div class="modal-meta">
+        <div class="meta-row">
+          <span class="meta-text">Múltipla Escolha</span>
+          <span class="meta-dot">•</span>
+          <span class="meta-text">Médio</span>
+          <span class="meta-dot">•</span>
+          <span class="meta-text">150 pontos</span>
+          <span class="meta-dot">•</span>
+          <span class="meta-text">Ensino Fundamental</span>
+          <span class="meta-dot">•</span>
+          <span class="meta-text">Geografia</span>
+          <span class="meta-dot">•</span>
+          <button class="meta-btn" aria-label="Ver habilidades">
+            <span class="meta-label">Habilidades</span>
+            <i class="pi pi-eye"></i>
+          </button>
+          <span class="meta-dot">•</span>
+          <button class="meta-btn" aria-label="Ver autoria">
+            <span class="meta-label">Autoria</span>
+            <i class="pi pi-eye"></i>
+          </button>
+        </div>
+      </div>
+      <div class="section">
+        <span class="section-label">Enunciado e Comando</span>
+        <p class="section-text">O Brasil é um país que ocupa grande parte da América do Sul. Ele faz parte de um grupo de países chamado BRICS.<br><br>O que significa a letra "B" na sigla BRICS?</p>
+      </div>
+
+      <div class="section">
+        <div class="alternatives">
+          <div class="alt-item">
+            <div class="alt-marker wrong"><i class="pi pi-times" style="font-size:13px"></i></div>
+            <span class="alt-text">Bolívia</span>
+          </div>
+          <div class="alt-item">
+            <div class="alt-marker correct"><i class="pi pi-check" style="font-size:13px"></i></div>
+            <span class="alt-text">Brasil</span>
+          </div>
+          <div class="alt-item">
+            <div class="alt-marker wrong"><i class="pi pi-times" style="font-size:13px"></i></div>
+            <span class="alt-text">Bulgária</span>
+          </div>
+          <div class="alt-item">
+            <div class="alt-marker wrong"><i class="pi pi-times" style="font-size:13px"></i></div>
+            <span class="alt-text">Bélgica</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="section">
+        <span class="section-label">Justificativa da Resposta</span>
+        <p class="section-text">A sigla BRICS representa um grupo de economias emergentes: Brasil, Rússia, Índia, China e África do Sul (South Africa). O "B" refere-se ao Brasil.</p>
+      </div>
+
+      <div class="section">
+        <span class="section-label">Dica Para o Estudante</span>
+        <p class="section-text">Pense em qual país da América do Sul é uma das maiores economias do mundo!</p>
+      </div>
+
+    </div><!-- /panel-chance1 -->
+
+    <!-- ══ PAINEL: Chance Extra 2 ══ -->
+    <div class="tab-panel" id="panel-chance2" role="tabpanel" aria-labelledby="tab-chance2">
+
+      <div class="modal-meta">
+        <div class="meta-row">
+          <span class="meta-text">Múltipla Escolha</span>
+          <span class="meta-dot">•</span>
+          <span class="meta-text">Fácil</span>
+          <span class="meta-dot">•</span>
+          <span class="meta-text">100 pontos</span>
+          <span class="meta-dot">•</span>
+          <span class="meta-text">Ensino Fundamental</span>
+          <span class="meta-dot">•</span>
+          <span class="meta-text">Ciências</span>
+          <span class="meta-dot">•</span>
+          <button class="meta-btn" aria-label="Ver habilidades">
+            <span class="meta-label">Habilidades</span>
+            <i class="pi pi-eye"></i>
+          </button>
+          <span class="meta-dot">•</span>
+          <button class="meta-btn" aria-label="Ver autoria">
+            <span class="meta-label">Autoria</span>
+            <i class="pi pi-eye"></i>
+          </button>
+        </div>
+      </div>
+      <div class="section">
+        <span class="section-label">Enunciado e Comando</span>
+        <p class="section-text">Os insetos formam o grupo de animais mais numeroso da Terra. Eles possuem características que os diferenciam dos demais invertebrados.<br><br>Quantas patas um inseto possui?</p>
+      </div>
+
+      <div class="section">
+        <div class="alternatives">
+          <div class="alt-item">
+            <div class="alt-marker wrong"><i class="pi pi-times" style="font-size:13px"></i></div>
+            <span class="alt-text">4 patas</span>
+          </div>
+          <div class="alt-item">
+            <div class="alt-marker correct"><i class="pi pi-check" style="font-size:13px"></i></div>
+            <span class="alt-text">6 patas</span>
+          </div>
+          <div class="alt-item">
+            <div class="alt-marker wrong"><i class="pi pi-times" style="font-size:13px"></i></div>
+            <span class="alt-text">8 patas</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="section">
+        <span class="section-label">Justificativa da Resposta</span>
+        <p class="section-text">Todos os insetos possuem 6 patas (três pares), que é uma das principais características que os define como insetos. Aracnídeos, como as aranhas, possuem 8 patas.</p>
+      </div>
+
+      <div class="section">
+        <span class="section-label">Dica Para o Estudante</span>
+        <p class="section-text">Pense em uma formiga ou em uma borboleta — quantas patas você consegue contar?</p>
+      </div>
+
+    </div><!-- /panel-chance2 -->
+
+    <!-- ══ PAINEL: Chance Extra 3 ══ -->
+    <div class="tab-panel" id="panel-chance3" role="tabpanel" aria-labelledby="tab-chance3">
+
+      <div class="modal-meta">
+        <div class="meta-row">
+          <span class="meta-text">Múltipla Escolha</span>
+          <span class="meta-dot">•</span>
+          <span class="meta-text">Fácil</span>
+          <span class="meta-dot">•</span>
+          <span class="meta-text">100 pontos</span>
+          <span class="meta-dot">•</span>
+          <span class="meta-text">Ensino Fundamental</span>
+          <span class="meta-dot">•</span>
+          <span class="meta-text">Ciências</span>
+          <span class="meta-dot">•</span>
+          <button class="meta-btn" aria-label="Ver habilidades">
+            <span class="meta-label">Habilidades</span>
+            <i class="pi pi-eye"></i>
+          </button>
+          <span class="meta-dot">•</span>
+          <button class="meta-btn" aria-label="Ver autoria">
+            <span class="meta-label">Autoria</span>
+            <i class="pi pi-eye"></i>
+          </button>
+        </div>
+      </div>
+      <div class="section">
+        <span class="section-label">Enunciado e Comando</span>
+        <p class="section-text">A água é fundamental para a vida na Terra. Ela pode ser encontrada nos oceanos, rios, lagos e até no nosso corpo.<br><br>Qual é a fórmula química da água?</p>
+      </div>
+
+      <div class="section">
+        <div class="alternatives">
+          <div class="alt-item">
+            <div class="alt-marker wrong"><i class="pi pi-times" style="font-size:13px"></i></div>
+            <span class="alt-text">CO₂</span>
+          </div>
+          <div class="alt-item">
+            <div class="alt-marker wrong"><i class="pi pi-times" style="font-size:13px"></i></div>
+            <span class="alt-text">NaCl</span>
+          </div>
+          <div class="alt-item">
+            <div class="alt-marker correct"><i class="pi pi-check" style="font-size:13px"></i></div>
+            <span class="alt-text">H₂O</span>
+          </div>
+          <div class="alt-item">
+            <div class="alt-marker wrong"><i class="pi pi-times" style="font-size:13px"></i></div>
+            <span class="alt-text">O₂</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="section">
+        <span class="section-label">Justificativa da Resposta</span>
+        <p class="section-text">A fórmula H₂O indica que cada molécula de água é formada por 2 átomos de hidrogênio (H) e 1 átomo de oxigênio (O). CO₂ é dióxido de carbono, NaCl é o sal de cozinha e O₂ é o oxigênio.</p>
+      </div>
+
+      <div class="section">
+        <span class="section-label">Dica Para o Estudante</span>
+        <p class="section-text">Lembre-se: H de Hidrogênio e O de Oxigênio. Dois hidrogênios para cada oxigênio!</p>
+      </div>
+
+    </div><!-- /panel-chance3 -->
+
+  </div><!-- /modal-scroll -->
+
+  <!-- Footer -->
+  <div class="modal-footer">
+    <button class="btn-link">
+      <i class="pi pi-eye"></i>
+      Ver Como Estudante
+    </button>
+    <button class="btn-link">
+      <i class="pi pi-copy"></i>
+      Duplicar e Editar
+    </button>
+  </div>
+
+</aside><!-- /sidemodal -->
+
+<script>
+  const tabs = document.querySelectorAll('.tab-item');
+  const panels = document.querySelectorAll('.tab-panel');
+
+  const titles = [
+    'A vida no fundo do mar',
+    'BRICS no mundo',
+    'A vida dos insetos',
+    'Propriedades da água'
+  ];
+
+  function switchTab(index) {
+    tabs.forEach((t, i) => {
+      const isActive = i === index;
+      t.classList.toggle('active', isActive);
+      t.setAttribute('aria-selected', isActive);
+    });
+    panels.forEach((p, i) => {
+      p.classList.toggle('active', i === index);
+    });
+    document.querySelector('.modal-header h1').textContent = titles[index];
+    document.querySelector('.modal-scroll').scrollTop = 0;
+  }
+</script>
+</body>
+</html>
+
