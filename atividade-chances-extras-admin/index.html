@@ -1,847 +1,688 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Atividade — Remover Chances Extras | Orbie Admin</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/primeicons@7.0.0/primeicons.css" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=1440"/>
+<title>Prepara AVALIA 1 | Orbie Admin</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/primeicons@7.0.0/primeicons.css"/>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --brand:   #2177FF;
+  --brand-d: #0059E7;
+  --n0:      #FFFFFF;
+  --n50:     #F8F9FC;
+  --n100:    #F1F4F9;
+  --n200:    #E1E8EF;
+  --n300:    #C5D0DE;
+  --n400:    #8A95B2;
+  --n500:    #525E76;
+  --n600:    #344054;
+  --n700:    #1D2939;
+  --err:     #F04438;
+  --err-d:   #B42318;
+  --err-l:   #FEF3F2;
+  --warn-l:  #FFFAEB;
+  --warn:    #F79009;
+  --ok:      #12B76A;
+  --ok-l:    #ECFDF3;
+}
+body{font-family:'Outfit',sans-serif;background:var(--n50);color:var(--n600);display:flex;flex-direction:column;min-height:100vh;min-width:1200px}
 
-    :root {
-      --brand-500: #2177FF;
-      --brand-600: #0059E7;
-      --neutral-0: #FFFFFF;
-      --neutral-50: #F8F9FC;
-      --neutral-100: #F1F4F9;
-      --neutral-200: #E1E8EF;
-      --neutral-300: #C5D0DE;
-      --neutral-400: #8A95B2;
-      --neutral-500: #52607A;
-      --neutral-600: #344054;
-      --neutral-700: #1D2939;
-      --error-light: #FEF3F2;
-      --error-base: #F04438;
-      --error-dark: #B42318;
-      --warning-light: #FFFAEB;
-      --warning-base: #F79009;
-      --success-light: #ECFDF3;
-      --success-base: #12B76A;
-      --sidebar-w: 240px;
-      --topbar-h: 64px;
-    }
+/* ── TOPBAR ── */
+.topbar{height:50px;background:var(--n0);border-bottom:1px solid var(--n200);display:flex;align-items:center;padding:0 16px;gap:12px;flex-shrink:0}
+.topbar-logo{height:22px;margin-right:8px}
+.topbar-menu-btn{font-size:18px;color:var(--n500);cursor:pointer;padding:4px}
+.topbar-right{display:flex;align-items:center;gap:8px;margin-left:auto}
+.select-box{display:flex;align-items:center;gap:6px;height:36px;border:1px solid var(--n200);border-radius:12px;padding:0 10px 0 12px;font-size:14px;color:var(--n600);background:var(--n0);cursor:pointer;white-space:nowrap}
+.select-box i{font-size:14px;color:var(--n400)}
+.notif-btn{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;position:relative;cursor:pointer}
+.notif-btn i{font-size:18px;color:var(--n500)}
+.notif-dot{width:10px;height:10px;background:#F04438;border-radius:50%;position:absolute;top:7px;right:7px;border:2px solid #fff}
+.user-avatar{width:36px;height:36px;border-radius:50%;background:var(--n100);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;color:var(--n600)}
 
-    body {
-      font-family: 'Outfit', sans-serif;
-      background: var(--neutral-50);
-      color: var(--neutral-600);
-      display: flex;
-      min-height: 100vh;
-    }
+/* ── BODY LAYOUT ── */
+.body-wrap{display:flex;flex:1;overflow:hidden;height:calc(100vh - 50px)}
 
-    /* ── Sidebar ── */
-    .sidebar {
-      width: var(--sidebar-w);
-      min-height: 100vh;
-      background: var(--neutral-0);
-      border-right: 1px solid var(--neutral-200);
-      display: flex;
-      flex-direction: column;
-      flex-shrink: 0;
-      padding: 0;
-    }
-    .sidebar-logo {
-      padding: 20px 24px;
-      border-bottom: 1px solid var(--neutral-200);
-    }
-    .sidebar-nav { padding: 12px 12px; flex: 1; }
-    .nav-section-label {
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--neutral-400);
-      text-transform: uppercase;
-      letter-spacing: .6px;
-      padding: 8px 12px 4px;
-    }
-    .nav-item {
-      display: flex; align-items: center; gap: 10px;
-      padding: 9px 12px; border-radius: 8px;
-      font-size: 14px; font-weight: 500; color: var(--neutral-500);
-      cursor: pointer; text-decoration: none;
-      transition: background .15s;
-    }
-    .nav-item:hover { background: var(--neutral-100); }
-    .nav-item.active {
-      background: #EEF4FF; color: var(--brand-500); font-weight: 600;
-    }
-    .nav-item i { font-size: 16px; width: 20px; text-align: center; }
+/* ── SIDEBAR ── */
+.sidebar{width:167px;background:var(--n0);border-right:1px solid var(--n200);overflow-y:auto;flex-shrink:0;padding:8px 8px}
+.nav-item{display:flex;align-items:center;gap:8px;padding:9px 8px;border-radius:6px;font-size:14px;font-weight:500;color:var(--n600);cursor:pointer;text-decoration:none;position:relative;white-space:nowrap}
+.nav-item:hover{background:var(--n50)}
+.nav-item i{font-size:16px;color:var(--n500);width:20px;text-align:center;flex-shrink:0}
+.nav-item .chevron{margin-left:auto;font-size:12px;color:var(--n400)}
+.nav-accordion{display:flex;flex-direction:column}
+.nav-sub{padding-left:12px;display:flex;flex-direction:column;gap:1px}
+.nav-sub-item{display:flex;align-items:center;gap:6px;padding:7px 10px;border-radius:6px;font-size:13px;color:var(--n600);cursor:pointer;text-decoration:none}
+.nav-sub-item:hover{background:var(--n50)}
+.nav-sub-item.active{background:#EEF4FF;color:var(--brand);font-weight:500;position:relative}
+.nav-sub-item.active::before{content:'';position:absolute;left:-12px;top:50%;transform:translateY(-50%);width:4px;height:18px;background:var(--brand);border-radius:999px}
+.nav-divider{height:1px;background:var(--n200);margin:4px 0}
 
-    /* ── Main layout ── */
-    .main-wrap { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+/* ── MAIN CONTENT ── */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
 
-    /* ── Topbar ── */
-    .topbar {
-      height: var(--topbar-h);
-      background: var(--neutral-0);
-      border-bottom: 1px solid var(--neutral-200);
-      display: flex; align-items: center;
-      padding: 0 32px;
-      gap: 16px;
-    }
-    .breadcrumb { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--neutral-400); flex: 1; }
-    .breadcrumb a { color: var(--neutral-400); text-decoration: none; }
-    .breadcrumb a:hover { color: var(--brand-500); }
-    .breadcrumb .sep { font-size: 12px; }
-    .breadcrumb .current { color: var(--neutral-600); font-weight: 500; }
-    .topbar-actions { display: flex; align-items: center; gap: 12px; }
-    .avatar {
-      width: 36px; height: 36px; border-radius: 50%;
-      background: var(--brand-500); color: #fff;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 14px; font-weight: 600;
-    }
+/* ── ACTIVITY HEADER ── */
+.act-header{background:var(--n0);border-bottom:1px solid var(--n200);padding:12px 24px 0;flex-shrink:0}
+.breadcrumb{display:flex;align-items:center;gap:4px;font-size:12px;color:var(--n400);margin-bottom:8px}
+.breadcrumb a{color:var(--n400);text-decoration:none}
+.breadcrumb a:hover{color:var(--brand)}
+.breadcrumb .sep{font-size:11px}
+.breadcrumb .current{color:var(--n400)}
+.breadcrumb-back{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;margin-right:4px}
+.breadcrumb-back:hover{background:var(--n100)}
+.breadcrumb-back i{font-size:14px;color:var(--n500)}
+.fav-btn{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;margin-left:2px}
+.fav-btn:hover{background:var(--n100)}
+.fav-btn i{font-size:14px;color:var(--n400)}
+.act-info{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.act-thumb{width:80px;height:80px;border-radius:14px;object-fit:cover;background:var(--n100);display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;cursor:pointer}
+.act-thumb img{width:100%;height:100%;object-fit:cover}
+.act-details{display:flex;flex-direction:column;gap:8px}
+.act-title-row{display:flex;align-items:center;gap:4px}
+.act-title{font-size:24px;font-weight:700;color:var(--n700);line-height:1.2}
+.act-edit-btn{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+.act-edit-btn:hover{background:var(--n100)}
+.act-edit-btn i{font-size:16px;color:var(--n500)}
+.act-actions{display:flex;align-items:center;gap:4px}
+.act-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:12px;font-size:14px;font-weight:500;color:var(--brand);background:transparent;border:none;cursor:pointer;font-family:'Outfit',sans-serif;transition:background .15s}
+.act-btn:hover{background:rgba(33,119,255,.06)}
+.act-btn i{font-size:16px}
+.tabs{display:flex;gap:4px;align-items:center}
+.tab{padding:10px 14px;font-size:14px;font-weight:500;color:var(--n500);cursor:pointer;border-bottom:2px solid transparent;transition:color .15s,border-color .15s;white-space:nowrap}
+.tab.active{color:var(--brand);border-bottom-color:var(--brand)}
+.tab:hover:not(.active){color:var(--n600)}
 
-    /* ── Page content ── */
-    .page-content { flex: 1; padding: 32px; overflow-y: auto; }
-    .page-header { margin-bottom: 24px; }
-    .page-title { font-size: 22px; font-weight: 700; color: var(--neutral-700); }
-    .page-subtitle { font-size: 14px; color: var(--neutral-500); margin-top: 4px; }
+/* ── SPLIT PANEL ── */
+.split{display:flex;flex:1;overflow:hidden}
 
-    /* ── Global action banner ── */
-    .global-action-banner {
-      background: var(--neutral-0);
-      border: 1px solid var(--neutral-200);
-      border-radius: 12px;
-      padding: 16px 20px;
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      margin-bottom: 20px;
-      box-shadow: 0 1px 3px rgba(0,0,0,.06);
-    }
-    .banner-icon-wrap {
-      width: 40px; height: 40px; border-radius: 10px;
-      background: var(--error-light);
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-    }
-    .banner-icon-wrap i { font-size: 18px; color: var(--error-base); }
-    .banner-text { flex: 1; }
-    .banner-title { font-size: 15px; font-weight: 600; color: var(--neutral-700); }
-    .banner-desc { font-size: 13px; color: var(--neutral-500); margin-top: 2px; }
-    .banner-desc strong { color: var(--error-dark); font-weight: 600; }
-    .btn-remove-all {
-      display: inline-flex; align-items: center; gap: 8px;
-      padding: 9px 18px;
-      background: var(--error-base);
-      color: #fff;
-      border: none;
-      border-radius: 12px;
-      font-family: 'Outfit', sans-serif;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background .15s, transform .1s;
-      white-space: nowrap;
-    }
-    .btn-remove-all:hover { background: var(--error-dark); transform: translateY(-1px); }
-    .btn-remove-all:active { transform: translateY(0); }
-    .btn-remove-all i { font-size: 15px; }
+/* ── LEFT PANEL — question list ── */
+.q-panel{width:360px;flex-shrink:0;background:var(--n0);border-right:1px solid var(--n200);display:flex;flex-direction:column;overflow:hidden}
+.q-panel-header{display:flex;align-items:center;gap:8px;padding:16px 20px 12px;flex-shrink:0}
+.q-panel-title{font-size:20px;font-weight:700;color:var(--n700);flex:1}
+.btn-add{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;background:var(--brand);color:#fff;border:none;border-radius:12px;font-family:'Outfit',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:background .15s;flex-shrink:0}
+.btn-add:hover{background:var(--brand-d)}
+.btn-add i{font-size:16px}
 
-    /* ── Stats row ── */
-    .stats-row {
-      display: flex; gap: 12px; margin-bottom: 20px;
-    }
-    .stat-chip {
-      display: inline-flex; align-items: center; gap: 6px;
-      padding: 6px 12px; border-radius: 1000px;
-      font-size: 13px; font-weight: 500;
-      background: var(--neutral-100); color: var(--neutral-500);
-    }
-    .stat-chip .dot {
-      width: 8px; height: 8px; border-radius: 50%;
-    }
-    .stat-chip.extras { background: #FEF3F2; color: var(--error-dark); }
-    .stat-chip.extras .dot { background: var(--error-base); }
-    .stat-chip.questoes { background: #EFF8FF; color: #1849A9; }
-    .stat-chip.questoes .dot { background: #2E90FA; }
+/* ── Remove-all banner (proposta nova) ── */
+.remove-all-banner{margin:0 16px 10px;padding:10px 12px;background:var(--err-l);border:1px solid rgba(240,68,56,.25);border-radius:10px;display:flex;align-items:center;gap:10px;flex-shrink:0}
+.remove-all-banner.hidden{display:none}
+.rab-text{flex:1;font-size:12px;color:var(--err-d);line-height:1.4}
+.rab-text strong{font-weight:600}
+.rab-btn{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;background:var(--err);color:#fff;border:none;border-radius:8px;font-family:'Outfit',sans-serif;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;transition:background .15s;flex-shrink:0}
+.rab-btn:hover{background:var(--err-d)}
+.rab-btn i{font-size:11px}
 
-    /* ── Questão card ── */
-    .questao-card {
-      background: var(--neutral-0);
-      border: 1px solid var(--neutral-200);
-      border-radius: 12px;
-      margin-bottom: 12px;
-      overflow: hidden;
-      box-shadow: 0 1px 3px rgba(0,0,0,.05);
-    }
+.q-list{flex:1;overflow-y:auto;padding:0 8px 16px}
 
-    /* ── Questão header ── */
-    .questao-header {
-      display: flex; align-items: center; gap: 16px;
-      padding: 16px 20px;
-      cursor: pointer;
-      user-select: none;
-    }
-    .questao-header:hover { background: var(--neutral-50); }
-    .questao-num {
-      width: 28px; height: 28px; border-radius: 8px;
-      background: var(--neutral-100);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 13px; font-weight: 700; color: var(--neutral-600);
-      flex-shrink: 0;
-    }
-    .questao-info { flex: 1; min-width: 0; }
-    .questao-titulo {
-      font-size: 14px; font-weight: 600; color: var(--neutral-700);
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-    }
-    .questao-meta { display: flex; align-items: center; gap: 8px; margin-top: 3px; }
-    .tag {
-      display: inline-flex; align-items: center; gap: 4px;
-      padding: 2px 8px; border-radius: 1000px;
-      font-size: 11px; font-weight: 500;
-    }
-    .tag-blue { background: #EFF8FF; color: #1849A9; }
-    .tag-gray { background: var(--neutral-100); color: var(--neutral-500); }
-    .tag-orange { background: var(--warning-light); color: #B54708; }
-    .tag-red { background: var(--error-light); color: var(--error-dark); }
+/* ── Question item ── */
+.q-item{width:100%;border:none;background:transparent;text-align:left;font-family:'Outfit',sans-serif;cursor:pointer;padding:0;margin-bottom:2px}
+.q-item-inner{display:flex;align-items:center;gap:8px;padding:8px 8px;border-radius:8px;transition:background .12s;position:relative}
+.q-item-inner:hover{background:var(--n50)}
+.q-item-inner.active{background:#EEF4FF;border-left:2px solid var(--brand)}
+.q-item-inner.active .drag-icon{color:var(--brand)}
+.drag-icon{color:var(--n300);font-size:14px;flex-shrink:0;cursor:grab}
+.q-item-text{flex:1;min-width:0}
+.q-item-name{font-size:13px;font-weight:700;color:var(--n700);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:left}
+.q-item-meta{font-size:12px;color:var(--n400);margin-top:1px;text-align:left}
+.q-item-expand{width:28px;height:28px;border-radius:50%;border:none;background:transparent;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:background .12s}
+.q-item-expand:hover{background:var(--n200)}
+.q-item-expand i{font-size:12px;color:var(--n400);transition:transform .2s}
+.q-item.open .q-item-expand i{transform:rotate(180deg)}
 
-    .extras-badge {
-      display: inline-flex; align-items: center; gap: 5px;
-      padding: 4px 10px; border-radius: 1000px;
-      background: var(--error-light); color: var(--error-dark);
-      font-size: 12px; font-weight: 600;
-    }
-    .extras-badge i { font-size: 11px; }
+/* ── Chance Extra sub-item ── */
+.chance-list{display:none;background:rgba(0,0,0,.03);border-radius:8px;margin:0 0 2px 2px;overflow:hidden}
+.q-item.open .chance-list{display:block}
+.chance-sub{display:flex;align-items:center;gap:8px;padding:8px 8px;cursor:pointer;transition:background .12s;border-left:2px solid transparent;position:relative}
+.chance-sub:hover{background:rgba(0,0,0,.04)}
+.chance-sub.active{background:#EEF4FF;border-left-color:var(--brand)}
+.chance-chip{display:inline-flex;align-items:center;padding:1px 10px;border-radius:999px;background:rgba(0,0,0,.05);font-size:11px;color:var(--n600);white-space:nowrap;flex-shrink:0}
+.chance-sub-text{flex:1;min-width:0}
+.chance-sub-name{font-size:12px;font-weight:700;color:var(--n700);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chance-sub-meta{font-size:11px;color:var(--n400)}
+.chance-drag{font-size:12px;color:var(--n300);flex-shrink:0;cursor:grab}
 
-    .chevron-btn {
-      width: 30px; height: 30px; border-radius: 8px;
-      border: none; background: transparent; cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      color: var(--neutral-400);
-      transition: background .15s, color .15s;
-    }
-    .chevron-btn:hover { background: var(--neutral-100); color: var(--neutral-600); }
-    .chevron-btn i { font-size: 14px; transition: transform .2s; }
-    .questao-card.open .chevron-btn i { transform: rotate(180deg); }
+/* ── RIGHT PANEL — question preview ── */
+.preview-panel{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--n0)}
+.preview-header{padding:16px 24px 12px;border-bottom:1px solid var(--n100);flex-shrink:0}
+.preview-title{font-size:16px;font-weight:700;color:var(--n700);margin-bottom:4px}
+.preview-meta{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:13px;color:var(--n500)}
+.preview-meta-sep{color:var(--n300)}
+.preview-meta-link{display:inline-flex;align-items:center;gap:4px;color:var(--n500);cursor:pointer}
+.preview-meta-link:hover{color:var(--brand)}
+.preview-meta-link i{font-size:14px}
+.preview-scroll{flex:1;overflow-y:auto;padding:16px 24px 0}
+.preview-section-label{font-size:13px;font-weight:700;color:var(--n700);margin-bottom:6px}
+.preview-body-text{font-size:13px;color:var(--n600);line-height:1.6;margin-bottom:16px}
+.answer-options{display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
+.answer-opt{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--n600)}
+.answer-badge{width:22px;height:22px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0}
+.answer-badge.correct{background:#29B84C;color:#fff}
+.answer-badge.neutral{background:rgba(0,0,0,.05);color:rgba(0,0,0,.3)}
+.preview-feedback{font-size:13px;font-weight:700;color:var(--n700);margin-bottom:4px;margin-top:8px}
+.preview-feedback-text{font-size:13px;color:var(--n600);line-height:1.6;margin-bottom:16px}
 
-    /* ── Accordion body ── */
-    .questao-body { display: none; border-top: 1px solid var(--neutral-200); }
-    .questao-card.open .questao-body { display: block; }
-    .body-main {
-      padding: 16px 20px;
-      border-bottom: 1px solid var(--neutral-100);
-      background: var(--neutral-50);
-    }
-    .body-main-label {
-      font-size: 11px; font-weight: 600; color: var(--neutral-400);
-      text-transform: uppercase; letter-spacing: .5px;
-      margin-bottom: 6px;
-    }
-    .body-main-text { font-size: 13px; color: var(--neutral-600); line-height: 1.5; }
+/* ── Chance extra badge in preview ── */
+.chance-preview-badge{display:inline-flex;align-items:center;gap:5px;padding:2px 10px;border-radius:999px;background:rgba(0,0,0,.05);font-size:12px;color:var(--n600);margin-bottom:6px}
 
-    /* ── Chances extras list ── */
-    .chances-section { padding: 0 20px 16px; }
-    .chances-label {
-      font-size: 12px; font-weight: 600; color: var(--neutral-500);
-      text-transform: uppercase; letter-spacing: .5px;
-      padding: 12px 0 8px;
-      display: flex; align-items: center; gap: 8px;
-    }
-    .chance-item {
-      display: flex; align-items: center; gap: 12px;
-      padding: 12px 14px;
-      border: 1px solid var(--neutral-200);
-      border-radius: 10px;
-      margin-bottom: 8px;
-      background: var(--neutral-0);
-      transition: border-color .15s, box-shadow .15s;
-    }
-    .chance-item:hover { border-color: var(--neutral-300); box-shadow: 0 2px 6px rgba(0,0,0,.06); }
-    .chance-item.selected {
-      border-color: var(--error-base);
-      background: var(--error-light);
-      box-shadow: 0 0 0 3px rgba(240,68,56,.08);
-    }
-    .chance-num {
-      width: 24px; height: 24px; border-radius: 6px;
-      background: var(--warning-light);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 11px; font-weight: 700; color: var(--warning-base);
-      flex-shrink: 0;
-    }
-    .chance-text { flex: 1; font-size: 13px; color: var(--neutral-600); }
-    .chance-actions { display: flex; align-items: center; gap: 8px; }
-    .btn-remover {
-      display: inline-flex; align-items: center; gap: 6px;
-      padding: 5px 12px;
-      background: transparent;
-      border: 1px solid var(--error-base);
-      color: var(--error-base);
-      border-radius: 8px;
-      font-family: 'Outfit', sans-serif;
-      font-size: 12px; font-weight: 600;
-      cursor: pointer;
-      transition: background .15s, color .15s;
-    }
-    .btn-remover:hover { background: var(--error-base); color: #fff; }
-    .btn-remover i { font-size: 11px; }
-    .removed-tag {
-      display: inline-flex; align-items: center; gap: 5px;
-      padding: 4px 10px; border-radius: 6px;
-      background: var(--neutral-100); color: var(--neutral-400);
-      font-size: 12px; font-weight: 500;
-      font-style: italic;
-    }
+/* ── Preview bottom bar ── */
+.preview-bar{height:56px;border-top:1px solid var(--n200);display:flex;align-items:center;justify-content:flex-end;gap:4px;padding:0 24px;flex-shrink:0}
+.pbar-btn{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:8px;font-family:'Outfit',sans-serif;font-size:13px;font-weight:500;color:var(--brand);background:transparent;border:none;cursor:pointer;transition:background .15s}
+.pbar-btn:hover{background:rgba(33,119,255,.06)}
+.pbar-btn i{font-size:14px}
 
-    /* ── Confirm modal ── */
-    .modal-backdrop {
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,.35);
-      z-index: 100;
-      display: flex; align-items: center; justify-content: center;
-      opacity: 0; pointer-events: none;
-      transition: opacity .2s;
-    }
-    .modal-backdrop.open { opacity: 1; pointer-events: all; }
-    .modal {
-      background: var(--neutral-0);
-      border-radius: 16px;
-      padding: 28px;
-      width: 480px;
-      max-width: 90vw;
-      box-shadow: 0 10px 40px rgba(0,0,0,.18);
-      transform: translateY(12px);
-      transition: transform .2s;
-    }
-    .modal-backdrop.open .modal { transform: translateY(0); }
-    .modal-icon {
-      width: 48px; height: 48px; border-radius: 12px;
-      background: var(--error-light);
-      display: flex; align-items: center; justify-content: center;
-      margin-bottom: 16px;
-    }
-    .modal-icon i { font-size: 22px; color: var(--error-base); }
-    .modal-title { font-size: 18px; font-weight: 700; color: var(--neutral-700); margin-bottom: 8px; }
-    .modal-body { font-size: 14px; color: var(--neutral-500); line-height: 1.6; margin-bottom: 20px; }
-    .modal-body strong { color: var(--neutral-700); font-weight: 600; }
-    .modal-summary {
-      background: var(--neutral-50);
-      border: 1px solid var(--neutral-200);
-      border-radius: 10px;
-      padding: 12px 16px;
-      margin-bottom: 20px;
-    }
-    .modal-summary-row {
-      display: flex; align-items: center; gap: 8px;
-      font-size: 13px; color: var(--neutral-600);
-      padding: 4px 0;
-    }
-    .modal-summary-row i { font-size: 13px; color: var(--error-base); width: 16px; }
-    .modal-footer { display: flex; gap: 10px; justify-content: flex-end; }
-    .btn-secondary {
-      padding: 9px 20px; border-radius: 12px;
-      background: var(--neutral-0); border: 1px solid var(--neutral-200);
-      font-family: 'Outfit', sans-serif;
-      font-size: 14px; font-weight: 600; color: var(--neutral-600);
-      cursor: pointer; transition: background .15s;
-    }
-    .btn-secondary:hover { background: var(--neutral-100); }
-    .btn-primary-danger {
-      padding: 9px 20px; border-radius: 12px;
-      background: var(--error-base); border: none;
-      font-family: 'Outfit', sans-serif;
-      font-size: 14px; font-weight: 600; color: #fff;
-      cursor: pointer; transition: background .15s;
-      display: flex; align-items: center; gap: 8px;
-    }
-    .btn-primary-danger:hover { background: var(--error-dark); }
+/* ── Modal ── */
+.modal-bd{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:200;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
+.modal-bd.open{opacity:1;pointer-events:all}
+.modal{background:var(--n0);border-radius:16px;padding:24px;width:440px;box-shadow:0 12px 40px rgba(0,0,0,.18);transform:translateY(12px);transition:transform .2s}
+.modal-bd.open .modal{transform:translateY(0)}
+.modal-icon{width:44px;height:44px;border-radius:10px;background:var(--err-l);display:flex;align-items:center;justify-content:center;margin-bottom:14px}
+.modal-icon i{font-size:20px;color:var(--err)}
+.modal-title{font-size:17px;font-weight:700;color:var(--n700);margin-bottom:8px}
+.modal-body{font-size:13px;color:var(--n500);line-height:1.6;margin-bottom:14px}
+.modal-body strong{color:var(--n700);font-weight:600}
+.modal-summary{background:var(--n50);border:1px solid var(--n200);border-radius:8px;padding:10px 14px;margin-bottom:16px;display:flex;flex-direction:column;gap:5px}
+.modal-sum-row{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--n600)}
+.modal-sum-row i{font-size:11px;color:var(--err);width:14px}
+.modal-footer{display:flex;gap:8px;justify-content:flex-end}
+.btn-cancel{padding:8px 18px;border-radius:10px;background:var(--n0);border:1px solid var(--n200);font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;color:var(--n600);cursor:pointer;transition:background .15s}
+.btn-cancel:hover{background:var(--n100)}
+.btn-confirm-del{display:flex;align-items:center;gap:6px;padding:8px 18px;border-radius:10px;background:var(--err);border:none;font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;color:#fff;cursor:pointer;transition:background .15s}
+.btn-confirm-del:hover{background:var(--err-d)}
 
-    /* ── Toast ── */
-    .toast {
-      position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(20px);
-      background: var(--neutral-700);
-      color: #fff;
-      padding: 12px 20px; border-radius: 12px;
-      font-size: 14px; font-weight: 500;
-      display: flex; align-items: center; gap: 10px;
-      box-shadow: 0 6px 24px rgba(0,0,0,.22);
-      z-index: 200;
-      opacity: 0;
-      transition: opacity .25s, transform .25s;
-      pointer-events: none;
-    }
-    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-    .toast i { font-size: 16px; color: var(--success-base); }
-
-    /* ── Empty state ── */
-    .empty-extras {
-      padding: 12px 14px;
-      border: 1px dashed var(--neutral-200);
-      border-radius: 10px;
-      text-align: center;
-      font-size: 13px; color: var(--neutral-400);
-      background: var(--neutral-50);
-    }
-    .empty-extras i { display: block; font-size: 20px; margin-bottom: 4px; color: var(--success-base); }
-
-    .questao-card.no-extras .questao-header { opacity: .65; }
-  </style>
+/* ── Toast ── */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--n700);color:#fff;padding:10px 18px;border-radius:10px;font-size:13px;font-weight:500;display:flex;align-items:center;gap:8px;z-index:300;opacity:0;transition:opacity .25s,transform .25s;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast i{color:var(--ok);font-size:15px}
+</style>
 </head>
 <body>
-
-<!-- ═══════════════════════ SIDEBAR ═══════════════════════ -->
-<aside class="sidebar">
-  <div class="sidebar-logo">
-    <svg width="100" height="29" viewBox="0 0 191 56" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <g clip-path="url(#clip_logo)">
-        <path d="M41.763 56C56.5366 56 67.7509 45.0144 67.7509 30.4669C67.7509 15.9194 56.5392 4.9364 41.763 4.9364C26.9868 4.9364 15.7776 15.922 15.7776 30.4669C15.7776 45.0119 26.9157 56 41.7655 56M41.7655 52.1357C29.4156 52.1357 20.0967 42.893 20.0967 30.4669C20.0967 18.0408 29.4156 8.79812 41.7655 8.79812C54.1154 8.79812 63.4344 18.0408 63.4344 30.4669C63.4344 42.893 54.1154 52.1357 41.7655 52.1357Z" fill="#1064AD"/>
-        <path d="M92.769 16.8315C91.481 16.453 90.4952 16.3005 88.981 16.3005C84.1335 16.3005 80.4954 19.0291 78.4502 23.4219V18.5718C78.4502 17.5861 77.9192 16.9814 76.936 16.9814H76.0264C75.1169 16.9814 74.5122 17.5886 74.5122 18.5718V53.4238C74.5122 54.4096 75.1194 55.0905 76.0264 55.0905H77.1621C78.0716 55.0905 78.6763 54.4096 78.6763 53.4238V33.1956C78.6763 25.5433 82.8429 20.0124 88.6024 20.0124C89.512 20.0124 90.3453 20.1648 91.4047 20.4671C92.3143 20.7695 93.1476 20.6932 93.5261 19.5576L93.6786 18.9504C94.1334 17.6623 93.5261 17.0551 92.769 16.829" fill="#1064AD"/>
-        <path d="M116.487 16.3006C110.046 16.3006 104.82 19.1028 101.408 23.5743V2.58637C101.408 1.45072 100.954 0.767295 99.6655 1.14584L98.7559 1.37196C97.694 1.67429 97.3154 2.20528 97.3154 3.0386V53.4213C97.3154 54.4071 97.8464 55.088 98.8296 55.088H99.8916C100.877 55.088 101.406 54.4071 101.406 53.4213V48.4976C104.663 53.0428 109.891 55.9975 116.484 55.9975C127.699 55.9975 135.577 47.2095 135.577 36.1478C135.577 25.086 127.699 16.298 116.484 16.298M116.106 52.2095C107.696 52.2095 101.18 46.3 101.027 36.1478C100.875 25.9955 107.77 20.0861 116.106 20.0861C125.272 20.0861 131.334 27.2836 131.334 36.1478C131.334 45.0119 125.272 52.2095 116.106 52.2095Z" fill="#1064AD"/>
-        <path d="M143.848 55.0905H144.984C145.969 55.0905 146.498 54.4096 146.498 53.4239V18.5719C146.498 17.5861 145.967 16.9814 144.984 16.9814H143.848C142.939 16.9814 142.334 17.5887 142.334 18.5719V53.4239C142.334 54.4096 142.941 55.0905 143.848 55.0905Z" fill="#1064AD"/>
-        <path d="M157.566 37.4384H188.478C189.766 37.4384 190.523 36.605 190.523 35.3932C190.523 30.6194 188.856 25.998 185.749 22.5123C182.642 18.6481 177.944 16.3005 172.111 16.3005C161.125 16.3005 153.244 24.8624 153.244 36.2265C153.244 48.6526 162.64 56 172.944 56C178.097 56 184.385 53.9548 188.704 49.4071C189.235 48.7999 189.613 47.8929 188.78 47.0596L188.325 46.6811C187.644 46.0002 186.811 45.8478 185.825 46.6811C181.961 50.5453 177.037 52.212 172.794 52.212C164.99 52.212 158.097 46.7573 157.566 37.4384ZM172.113 20.0886C176.963 20.0886 180.752 22.0575 183.099 25.3934C184.842 27.591 185.901 30.3933 186.28 33.6529H157.566C158.399 25.5458 164.083 20.0911 172.113 20.0911" fill="#1064AD"/>
-        <path d="M140.645 6.44547C141.212 8.48558 143.361 9.68982 145.442 9.13343C147.522 8.57704 148.749 6.47088 148.183 4.43077C147.616 2.39067 145.467 1.18642 143.386 1.74535C141.305 2.30175 140.078 4.40791 140.645 6.44801" fill="#29B84C"/>
-        <path d="M79.9758 3.57717C79.8513 2.26876 78.863 1.32111 78.1465 0.846021C77.547 0.447146 76.203 0 74.6812 0C70.8017 0 64.3155 1.94102 56.6276 5.38608C56.3913 5.49279 54.1327 6.6259 52.9081 7.24072C53.777 7.62689 54.618 8.05626 55.4259 8.52881L57.842 7.26359C65.5299 3.81091 71.6883 1.96897 75.4306 1.96897C76.1776 1.96897 76.9652 2.07059 77.3056 2.2027C77.6486 2.33482 78.0297 2.51266 78.0449 3.22911C78.0881 5.35559 75.4306 9.25542 70.634 14.0292C64.3688 20.2639 55.0677 27.4004 44.4428 34.1203C25.3603 46.1907 10.6528 51.5946 4.54515 51.5946C1.02132 51.5946 2.0274 49.4605 1.96643 49.9457C2.27384 47.489 5.47247 42.6466 13.9911 35.2179L15.9474 33.4979C15.8458 32.5655 15.7873 31.6178 15.7797 30.6498L12.6497 33.3937C4.4486 40.4921 0 46.2644 0 49.6815C0 50.1261 0.193086 52.2856 2.77942 53.2002C3.46031 53.4416 4.30125 53.5636 5.29717 53.5636C12.9266 53.5636 28.8232 46.6277 45.797 35.8911C56.3837 29.1966 65.6849 22.088 71.9881 15.8813C75.9616 11.9662 80.2883 6.88758 79.9758 3.57971" fill="#F79850"/>
-      </g>
-      <defs><clipPath id="clip_logo"><rect width="190.523" height="56" fill="white"/></clipPath></defs>
-    </svg>
+<!-- ══ TOPBAR ══ -->
+<header class="topbar">
+  <svg class="topbar-logo" viewBox="0 0 191 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <g clip-path="url(#cl)">
+      <path d="M41.763 56C56.5366 56 67.7509 45.0144 67.7509 30.4669C67.7509 15.9194 56.5392 4.9364 41.763 4.9364C26.9868 4.9364 15.7776 15.922 15.7776 30.4669C15.7776 45.0119 26.9157 56 41.7655 56M41.7655 52.1357C29.4156 52.1357 20.0967 42.893 20.0967 30.4669C20.0967 18.0408 29.4156 8.79812 41.7655 8.79812C54.1154 8.79812 63.4344 18.0408 63.4344 30.4669C63.4344 42.893 54.1154 52.1357 41.7655 52.1357Z" fill="#1064AD"/>
+      <path d="M92.769 16.8315C91.481 16.453 90.4952 16.3005 88.981 16.3005C84.1335 16.3005 80.4954 19.0291 78.4502 23.4219V18.5718C78.4502 17.5861 77.9192 16.9814 76.936 16.9814H76.0264C75.1169 16.9814 74.5122 17.5886 74.5122 18.5718V53.4238C74.5122 54.4096 75.1194 55.0905 76.0264 55.0905H77.1621C78.0716 55.0905 78.6763 54.4096 78.6763 53.4238V33.1956C78.6763 25.5433 82.8429 20.0124 88.6024 20.0124C89.512 20.0124 90.3453 20.1648 91.4047 20.4671C92.3143 20.7695 93.1476 20.6932 93.5261 19.5576L93.6786 18.9504C94.1334 17.6623 93.5261 17.0551 92.769 16.829" fill="#1064AD"/>
+      <path d="M116.487 16.3006C110.046 16.3006 104.82 19.1028 101.408 23.5743V2.58637C101.408 1.45072 100.954 0.767295 99.6655 1.14584L98.7559 1.37196C97.694 1.67429 97.3154 2.20528 97.3154 3.0386V53.4213C97.3154 54.4071 97.8464 55.088 98.8296 55.088H99.8916C100.877 55.088 101.406 54.4071 101.406 53.4213V48.4976C104.663 53.0428 109.891 55.9975 116.484 55.9975C127.699 55.9975 135.577 47.2095 135.577 36.1478C135.577 25.086 127.699 16.298 116.484 16.298M116.106 52.2095C107.696 52.2095 101.18 46.3 101.027 36.1478C100.875 25.9955 107.77 20.0861 116.106 20.0861C125.272 20.0861 131.334 27.2836 131.334 36.1478C131.334 45.0119 125.272 52.2095 116.106 52.2095Z" fill="#1064AD"/>
+      <path d="M143.848 55.0905H144.984C145.969 55.0905 146.498 54.4096 146.498 53.4239V18.5719C146.498 17.5861 145.967 16.9814 144.984 16.9814H143.848C142.939 16.9814 142.334 17.5887 142.334 18.5719V53.4239C142.334 54.4096 142.941 55.0905 143.848 55.0905Z" fill="#1064AD"/>
+      <path d="M157.566 37.4384H188.478C189.766 37.4384 190.523 36.605 190.523 35.3932C190.523 30.6194 188.856 25.998 185.749 22.5123C182.642 18.6481 177.944 16.3005 172.111 16.3005C161.125 16.3005 153.244 24.8624 153.244 36.2265C153.244 48.6526 162.64 56 172.944 56C178.097 56 184.385 53.9548 188.704 49.4071C189.235 48.7999 189.613 47.8929 188.78 47.0596L188.325 46.6811C187.644 46.0002 186.811 45.8478 185.825 46.6811C181.961 50.5453 177.037 52.212 172.794 52.212C164.99 52.212 158.097 46.7573 157.566 37.4384ZM172.113 20.0886C176.963 20.0886 180.752 22.0575 183.099 25.3934C184.842 27.591 185.901 30.3933 186.28 33.6529H157.566C158.399 25.5458 164.083 20.0911 172.113 20.0911" fill="#1064AD"/>
+      <path d="M140.645 6.44547C141.212 8.48558 143.361 9.68982 145.442 9.13343C147.522 8.57704 148.749 6.47088 148.183 4.43077C147.616 2.39067 145.467 1.18642 143.386 1.74535C141.305 2.30175 140.078 4.40791 140.645 6.44801" fill="#29B84C"/>
+      <path d="M79.9758 3.57717C79.8513 2.26876 78.863 1.32111 78.1465 0.846021C77.547 0.447146 76.203 0 74.6812 0C70.8017 0 64.3155 1.94102 56.6276 5.38608L52.9081 7.24072C53.777 7.62689 54.618 8.05626 55.4259 8.52881L57.842 7.26359C65.5299 3.81091 71.6883 1.96897 75.4306 1.96897C76.1776 1.96897 76.9652 2.07059 77.3056 2.2027C77.6486 2.33482 78.0297 2.51266 78.0449 3.22911C78.0881 5.35559 75.4306 9.25542 70.634 14.0292C64.3688 20.2639 55.0677 27.4004 44.4428 34.1203C25.3603 46.1907 10.6528 51.5946 4.54515 51.5946C1.02132 51.5946 2.0274 49.4605 1.96643 49.9457C2.27384 47.489 5.47247 42.6466 13.9911 35.2179L15.9474 33.4979C15.8458 32.5655 15.7873 31.6178 15.7797 30.6498L12.6497 33.3937C4.4486 40.4921 0 46.2644 0 49.6815C0 50.1261 0.193086 52.2856 2.77942 53.2002C3.46031 53.4416 4.30125 53.5636 5.29717 53.5636C12.9266 53.5636 28.8232 46.6277 45.797 35.8911C56.3837 29.1966 65.6849 22.088 71.9881 15.8813C75.9616 11.9662 80.2883 6.88758 79.9758 3.57971" fill="#F79850"/>
+    </g>
+    <defs><clipPath id="cl"><rect width="190.523" height="56" fill="white"/></clipPath></defs>
+  </svg>
+  <i class="pi pi-bars topbar-menu-btn"></i>
+  <div class="topbar-right">
+    <div class="select-box">Professor <i class="pi pi-chevron-down"></i></div>
+    <div class="select-box">Escola SESI SC - Rio do Sul <i class="pi pi-chevron-down"></i></div>
+    <div class="notif-btn"><i class="pi pi-bell"></i><div class="notif-dot"></div></div>
+    <div class="user-avatar">A</div>
   </div>
-  <nav class="sidebar-nav">
-    <div class="nav-section-label">Conteúdo</div>
-    <a class="nav-item" href="#"><i class="pi pi-book"></i> Banco de questões</a>
-    <a class="nav-item active" href="#"><i class="pi pi-list"></i> Atividades</a>
-    <a class="nav-item" href="#"><i class="pi pi-star"></i> Trilhas</a>
-    <div class="nav-section-label" style="margin-top:8px">Gestão</div>
-    <a class="nav-item" href="#"><i class="pi pi-users"></i> Turmas</a>
-    <a class="nav-item" href="#"><i class="pi pi-chart-bar"></i> Relatórios</a>
-    <a class="nav-item" href="#"><i class="pi pi-cog"></i> Configurações</a>
-  </nav>
-</aside>
+</header>
 
-<!-- ═══════════════════════ MAIN ═══════════════════════ -->
-<div class="main-wrap">
-  <!-- Topbar -->
-  <header class="topbar">
-    <nav class="breadcrumb">
-      <a href="#">Atividades</a>
-      <i class="pi pi-chevron-right sep"></i>
-      <span class="current">Revisão Matemática — 7º ano</span>
-    </nav>
-    <div class="topbar-actions">
-      <i class="pi pi-bell" style="font-size:18px;color:var(--neutral-400);cursor:pointer"></i>
-      <div class="avatar">LM</div>
+<!-- ══ BODY ══ -->
+<div class="body-wrap">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <a class="nav-item" href="#"><i class="pi pi-home"></i> Início</a>
+    <a class="nav-item" href="#"><i class="pi pi-graduation-cap"></i> Turmas</a>
+    <div class="nav-accordion">
+      <div class="nav-item" style="font-weight:600;color:var(--n700)"><i class="pi pi-book"></i> Biblioteca <i class="pi pi-chevron-up chevron"></i></div>
+      <div class="nav-sub">
+        <a class="nav-sub-item" href="#">Banco de Questões</a>
+        <a class="nav-sub-item active" href="#">Atividades</a>
+        <a class="nav-sub-item" href="#">Avaliações</a>
+        <a class="nav-sub-item" href="#">Trilhas Autoguiadas</a>
+        <a class="nav-sub-item" href="#">Metas</a>
+      </div>
     </div>
-  </header>
+    <a class="nav-item" href="#"><i class="pi pi-pen-to-square"></i> Correção de Respostas</a>
+    <a class="nav-item" href="#"><i class="pi pi-chart-line"></i> Relatórios <i class="pi pi-chevron-down chevron"></i></a>
+    <a class="nav-item" href="#"><i class="pi pi-question-circle"></i> Central de Ajuda</a>
+    <a class="nav-item" href="#"><i class="pi pi-star"></i> Favoritos</a>
+  </aside>
 
-  <!-- Page content -->
-  <main class="page-content">
-    <div class="page-header">
-      <div class="page-title">Revisão Matemática — 7º ano</div>
-      <div class="page-subtitle">Atividade com 5 questões · Turma A · 2º Bimestre</div>
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- ACTIVITY HEADER -->
+    <div class="act-header">
+      <div class="breadcrumb">
+        <div class="breadcrumb-back"><i class="pi pi-arrow-left"></i></div>
+        <a href="#">Biblioteca</a><i class="pi pi-chevron-right sep"></i>
+        <a href="#">Atividades</a><i class="pi pi-chevron-right sep"></i>
+        <a href="#">Criar Atividade</a><i class="pi pi-chevron-right sep"></i>
+        <span class="current">Prepara AVALIA 1</span>
+        <div class="fav-btn"><i class="pi pi-star"></i></div>
+      </div>
+      <div class="act-info">
+        <div class="act-thumb">
+          <img src="https://www.figma.com/api/mcp/asset/d459549e-bd60-41d4-9711-d43523381128.png" alt="thumbnail" onerror="this.parentElement.innerHTML='<i class=\'pi pi-image\' style=\'font-size:28px;color:var(--n300)\'></i>'"/>
+        </div>
+        <div class="act-details">
+          <div class="act-title-row">
+            <span class="act-title">Prepara AVALIA 1</span>
+            <div class="act-edit-btn"><i class="pi pi-pen-to-square"></i></div>
+          </div>
+          <div class="act-actions">
+            <button class="act-btn"><i class="pi pi-save"></i> Salvar e Sair</button>
+            <button class="act-btn"><i class="pi pi-copy"></i> Duplicar</button>
+            <button class="act-btn"><i class="pi pi-send"></i> Publicar</button>
+          </div>
+        </div>
+      </div>
+      <div class="tabs">
+        <div class="tab active">Questões</div>
+        <div class="tab">Acompanhamento</div>
+      </div>
     </div>
 
-    <!-- Stats row -->
-    <div class="stats-row">
-      <span class="stat-chip questoes"><span class="dot"></span> 5 questões</span>
-      <span class="stat-chip extras" id="stats-extras"><span class="dot"></span> <span id="extras-count">9</span> chances extras ativas</span>
-    </div>
+    <!-- SPLIT PANEL -->
+    <div class="split">
+      <!-- LEFT PANEL -->
+      <div class="q-panel">
+        <div class="q-panel-header">
+          <span class="q-panel-title">Questões</span>
+          <button class="btn-add"><i class="pi pi-plus"></i> Adicionar</button>
+        </div>
 
-    <!-- ══ BANNER AÇÃO GLOBAL (PROPOSTA) ══ -->
-    <div class="global-action-banner" id="global-banner">
-      <div class="banner-icon-wrap">
-        <i class="pi pi-trash"></i>
-      </div>
-      <div class="banner-text">
-        <div class="banner-title">Remover todas as chances extras</div>
-        <div class="banner-desc">
-          Esta atividade tem <strong id="banner-count">9 chances extras</strong> distribuídas em 4 questões.
-          Ao remover todas, os estudantes receberão apenas a questão principal ao errar.
+        <!-- ══ PROPOSTA: BANNER REMOVER TODAS CHANCES EXTRAS ══ -->
+        <div class="remove-all-banner" id="rab">
+          <div class="rab-text">
+            <strong id="rab-count">3 chances extras</strong> nesta atividade.<br>
+            Remover todas de uma vez?
+          </div>
+          <button class="rab-btn" onclick="openModal()">
+            <i class="pi pi-trash"></i> Remover todas
+          </button>
         </div>
-      </div>
-      <button class="btn-remove-all" onclick="openModal()">
-        <i class="pi pi-trash"></i>
-        Remover todas
-      </button>
-    </div>
 
-    <!-- ══ LISTA DE QUESTÕES ══ -->
-    <div id="questoes-list">
+        <div class="q-list">
 
-      <!-- Questão 1 — 3 chances extras -->
-      <div class="questao-card" id="q1">
-        <div class="questao-header" onclick="toggleCard('q1')">
-          <div class="questao-num">1</div>
-          <div class="questao-info">
-            <div class="questao-titulo">Qual é o resultado de 3² + 4²?</div>
-            <div class="questao-meta">
-              <span class="tag tag-blue">Múltipla escolha</span>
-              <span class="tag tag-gray">Matemática</span>
-              <span class="extras-badge" id="q1-badge"><i class="pi pi-bolt"></i> <span id="q1-count">3</span> chances extras</span>
+          <!-- Q1 — with chance extra, open/selected -->
+          <div class="q-item open" id="qi1">
+            <div class="q-item-inner" onclick="selectItem('qi1','q1-main')">
+              <i class="pi pi-bars drag-icon"></i>
+              <div class="q-item-text">
+                <div class="q-item-name">A vida no fundo do mar</div>
+                <div class="q-item-meta">Múltipla Escolha • Fácil</div>
+              </div>
+              <button class="q-item-expand" onclick="event.stopPropagation();toggleQ('qi1')"><i class="pi pi-chevron-down"></i></button>
             </div>
-          </div>
-          <button class="chevron-btn"><i class="pi pi-chevron-down"></i></button>
-        </div>
-        <div class="questao-body">
-          <div class="body-main">
-            <div class="body-main-label">Questão principal</div>
-            <div class="body-main-text">Qual é o resultado de 3² + 4²? Selecione a alternativa correta.</div>
-          </div>
-          <div class="chances-section">
-            <div class="chances-label"><i class="pi pi-bolt"></i> Chances extras</div>
-            <div id="q1-extras">
-              <div class="chance-item" id="q1-e1">
-                <div class="chance-num">1ª</div>
-                <div class="chance-text">Calcule 3 ao quadrado mais 4 ao quadrado. O resultado é maior que 20?</div>
-                <div class="chance-actions">
-                  <button class="btn-remover" onclick="removeChance('q1','q1-e1')"><i class="pi pi-times"></i> Remover da atividade</button>
-                </div>
-              </div>
-              <div class="chance-item" id="q1-e2">
-                <div class="chance-num">2ª</div>
-                <div class="chance-text">Quanto é 9 + 16?</div>
-                <div class="chance-actions">
-                  <button class="btn-remover" onclick="removeChance('q1','q1-e2')"><i class="pi pi-times"></i> Remover da atividade</button>
-                </div>
-              </div>
-              <div class="chance-item" id="q1-e3">
-                <div class="chance-num">3ª</div>
-                <div class="chance-text">A soma de 9 e 16 é igual a qual número de dois algarismos?</div>
-                <div class="chance-actions">
-                  <button class="btn-remover" onclick="removeChance('q1','q1-e3')"><i class="pi pi-times"></i> Remover da atividade</button>
+            <div class="chance-list" id="qi1-chances">
+              <div class="chance-sub" id="q1-ce1" onclick="selectItem('qi1','q1-ce1')">
+                <i class="pi pi-bars chance-drag"></i>
+                <div class="chance-chip">Chance Extra</div>
+                <div class="chance-sub-text">
+                  <div class="chance-sub-name">Bob Esponja no Fundo do Mar</div>
+                  <div class="chance-sub-meta">Verdadeiro ou Falso • Médio</div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
 
-      <!-- Questão 2 — sem chances extras -->
-      <div class="questao-card no-extras" id="q2">
-        <div class="questao-header" onclick="toggleCard('q2')">
-          <div class="questao-num">2</div>
-          <div class="questao-info">
-            <div class="questao-titulo">Simplifique a fração 12/18.</div>
-            <div class="questao-meta">
-              <span class="tag tag-blue">Múltipla escolha</span>
-              <span class="tag tag-gray">Matemática</span>
-              <span class="tag tag-gray"><i class="pi pi-minus" style="font-size:10px"></i> Sem chances extras</span>
+          <!-- Q2 — open/selected, with active chance -->
+          <div class="q-item open" id="qi2">
+            <div class="q-item-inner active" onclick="selectItem('qi2','q2-main')">
+              <i class="pi pi-bars drag-icon"></i>
+              <div class="q-item-text">
+                <div class="q-item-name">Curiosidades do Bob Esponja</div>
+                <div class="q-item-meta">Verdadeiro ou Falso, uma escolha • Muito Difícil</div>
+              </div>
+              <button class="q-item-expand" onclick="event.stopPropagation();toggleQ('qi2')"><i class="pi pi-chevron-down"></i></button>
+            </div>
+            <div class="chance-list" id="qi2-chances">
+              <div class="chance-sub active" id="q2-ce1" onclick="selectItem('qi2','q2-ce1')">
+                <i class="pi pi-bars chance-drag"></i>
+                <div class="chance-chip">Chance Extra</div>
+                <div class="chance-sub-text">
+                  <div class="chance-sub-name">Curiosidades do Bob Esponja</div>
+                  <div class="chance-sub-meta">Verdadeiro ou Falso • Muito Difícil</div>
+                </div>
+              </div>
             </div>
           </div>
-          <button class="chevron-btn"><i class="pi pi-chevron-down"></i></button>
-        </div>
-        <div class="questao-body">
-          <div class="body-main">
-            <div class="body-main-label">Questão principal</div>
-            <div class="body-main-text">Simplifique a fração 12/18 à sua forma irredutível.</div>
-          </div>
-          <div class="chances-section">
-            <div class="chances-label"><i class="pi pi-bolt"></i> Chances extras</div>
-            <div class="empty-extras"><i class="pi pi-check-circle"></i>Nenhuma chance extra adicionada</div>
-          </div>
-        </div>
-      </div>
 
-      <!-- Questão 3 — 2 chances extras -->
-      <div class="questao-card" id="q3">
-        <div class="questao-header" onclick="toggleCard('q3')">
-          <div class="questao-num">3</div>
-          <div class="questao-info">
-            <div class="questao-titulo">Um triângulo tem lados 5 cm, 12 cm e 13 cm. Que tipo é?</div>
-            <div class="questao-meta">
-              <span class="tag tag-blue">Múltipla escolha</span>
-              <span class="tag tag-gray">Geometria</span>
-              <span class="extras-badge" id="q3-badge"><i class="pi pi-bolt"></i> <span id="q3-count">2</span> chances extras</span>
-            </div>
-          </div>
-          <button class="chevron-btn"><i class="pi pi-chevron-down"></i></button>
-        </div>
-        <div class="questao-body">
-          <div class="body-main">
-            <div class="body-main-label">Questão principal</div>
-            <div class="body-main-text">Um triângulo tem lados medindo 5 cm, 12 cm e 13 cm. Qual é a classificação correta?</div>
-          </div>
-          <div class="chances-section">
-            <div class="chances-label"><i class="pi pi-bolt"></i> Chances extras</div>
-            <div id="q3-extras">
-              <div class="chance-item" id="q3-e1">
-                <div class="chance-num">1ª</div>
-                <div class="chance-text">Verifique se 5² + 12² = 13². O que isso indica sobre o triângulo?</div>
-                <div class="chance-actions">
-                  <button class="btn-remover" onclick="removeChance('q3','q3-e1')"><i class="pi pi-times"></i> Remover da atividade</button>
-                </div>
+          <!-- Q3 — no chances -->
+          <div class="q-item" id="qi3">
+            <div class="q-item-inner" onclick="selectItem('qi3','q3-main')">
+              <i class="pi pi-bars drag-icon"></i>
+              <div class="q-item-text">
+                <div class="q-item-name">Onde o Bob Esponja trabalha?</div>
+                <div class="q-item-meta">Verdadeiro ou Falso, uma escolha • Muito Difícil</div>
               </div>
-              <div class="chance-item" id="q3-e2">
-                <div class="chance-num">2ª</div>
-                <div class="chance-text">Um triângulo retângulo tem sempre um ângulo de quantos graus?</div>
-                <div class="chance-actions">
-                  <button class="btn-remover" onclick="removeChance('q3','q3-e2')"><i class="pi pi-times"></i> Remover da atividade</button>
-                </div>
-              </div>
+              <button class="q-item-expand" onclick="event.stopPropagation();toggleQ('qi3')"><i class="pi pi-chevron-down"></i></button>
             </div>
+            <div class="chance-list" id="qi3-chances"></div>
           </div>
-        </div>
-      </div>
 
-      <!-- Questão 4 — 1 chance extra -->
-      <div class="questao-card" id="q4">
-        <div class="questao-header" onclick="toggleCard('q4')">
-          <div class="questao-num">4</div>
-          <div class="questao-info">
-            <div class="questao-titulo">Qual é o MDC de 24 e 36?</div>
-            <div class="questao-meta">
-              <span class="tag tag-blue">Múltipla escolha</span>
-              <span class="tag tag-gray">Aritmética</span>
-              <span class="extras-badge" id="q4-badge"><i class="pi pi-bolt"></i> <span id="q4-count">1</span> chance extra</span>
-            </div>
-          </div>
-          <button class="chevron-btn"><i class="pi pi-chevron-down"></i></button>
-        </div>
-        <div class="questao-body">
-          <div class="body-main">
-            <div class="body-main-label">Questão principal</div>
-            <div class="body-main-text">Qual é o Máximo Divisor Comum (MDC) de 24 e 36?</div>
-          </div>
-          <div class="chances-section">
-            <div class="chances-label"><i class="pi pi-bolt"></i> Chances extras</div>
-            <div id="q4-extras">
-              <div class="chance-item" id="q4-e1">
-                <div class="chance-num">1ª</div>
-                <div class="chance-text">Liste todos os divisores de 24 e de 36. O maior em comum é o MDC.</div>
-                <div class="chance-actions">
-                  <button class="btn-remover" onclick="removeChance('q4','q4-e1')"><i class="pi pi-times"></i> Remover da atividade</button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+        </div><!-- /q-list -->
+      </div><!-- /q-panel -->
+      <!-- RIGHT PANEL — PREVIEW DA QUESTÃO -->
+      <div class="preview-panel" id="preview-panel">
 
-      <!-- Questão 5 — 3 chances extras -->
-      <div class="questao-card" id="q5">
-        <div class="questao-header" onclick="toggleCard('q5')">
-          <div class="questao-num">5</div>
-          <div class="questao-info">
-            <div class="questao-titulo">Se um produto custa R$ 80 com 25% de desconto, qual o preço original?</div>
-            <div class="questao-meta">
-              <span class="tag tag-blue">Múltipla escolha</span>
-              <span class="tag tag-orange">Porcentagem</span>
-              <span class="extras-badge" id="q5-badge"><i class="pi pi-bolt"></i> <span id="q5-count">3</span> chances extras</span>
+        <!-- Conteúdo: questão principal -->
+        <div id="view-q2-main" style="display:flex;flex-direction:column;flex:1;overflow:hidden">
+          <div class="preview-header">
+            <div class="preview-title">Curiosidades do Bob Esponja</div>
+            <div class="preview-meta">
+              <span>Verdadeiro ou Falso, uma escolha</span><span class="preview-meta-sep">•</span>
+              <span>Muito Difícil</span><span class="preview-meta-sep">•</span>
+              <span>500 pontos</span><span class="preview-meta-sep">•</span>
+              <span>Ensino Fundamental</span><span class="preview-meta-sep">•</span>
+              <span>Língua Portuguesa</span><span class="preview-meta-sep">•</span>
+              <span class="preview-meta-link">Habilidades <i class="pi pi-eye"></i></span>
+              <span class="preview-meta-sep">•</span>
+              <span class="preview-meta-link">Autoria <i class="pi pi-eye"></i></span>
             </div>
           </div>
-          <button class="chevron-btn"><i class="pi pi-chevron-down"></i></button>
-        </div>
-        <div class="questao-body">
-          <div class="body-main">
-            <div class="body-main-label">Questão principal</div>
-            <div class="body-main-text">Um produto está à venda por R$ 80,00 após um desconto de 25%. Qual era o preço original?</div>
-          </div>
-          <div class="chances-section">
-            <div class="chances-label"><i class="pi pi-bolt"></i> Chances extras</div>
-            <div id="q5-extras">
-              <div class="chance-item" id="q5-e1">
-                <div class="chance-num">1ª</div>
-                <div class="chance-text">Se 25% foi descontado, o produto foi vendido a qual porcentagem do preço original?</div>
-                <div class="chance-actions">
-                  <button class="btn-remover" onclick="removeChance('q5','q5-e1')"><i class="pi pi-times"></i> Remover da atividade</button>
-                </div>
-              </div>
-              <div class="chance-item" id="q5-e2">
-                <div class="chance-num">2ª</div>
-                <div class="chance-text">Se 75% do preço = R$ 80, quanto vale 100%?</div>
-                <div class="chance-actions">
-                  <button class="btn-remover" onclick="removeChance('q5','q5-e2')"><i class="pi pi-times"></i> Remover da atividade</button>
-                </div>
-              </div>
-              <div class="chance-item" id="q5-e3">
-                <div class="chance-num">3ª</div>
-                <div class="chance-text">Divida R$ 80 por 0,75. Qual é o resultado?</div>
-                <div class="chance-actions">
-                  <button class="btn-remover" onclick="removeChance('q5','q5-e3')"><i class="pi pi-times"></i> Remover da atividade</button>
-                </div>
-              </div>
+          <div class="preview-scroll">
+            <p class="preview-section-label">Enunciado e Comando</p>
+            <p class="preview-body-text">A Fenda do Biquíni é o lar de Bob Esponja e seus amigos, cada um com um jeito e uma profissão diferente. Leia as afirmações abaixo sobre os personagens e marque se são Verdadeiras ou Falsas.<br><br>Analise cada afirmação e escolha se ela é verdadeira ou falsa.</p>
+            <div class="answer-options">
+              <div class="answer-opt"><div class="answer-badge correct">V</div> Bob Esponja trabalha como cozinheiro na Siri Cascudo.</div>
+              <div class="answer-opt"><div class="answer-badge correct">V</div> Sr. Sirigueijo é o dono da Siri Cascuda e adora economizar dinheiro.</div>
+              <div class="answer-opt"><div class="answer-badge neutral">F</div> Patrick Estrela é o chefe da Siri Cascudo.</div>
             </div>
+            <p class="preview-feedback">Justificativa da Resposta</p>
+            <p class="preview-feedback-text">Bob Esponja realmente é o cozinheiro da Siri Cascuda, onde trabalha com Lula Molusco e o Sr. Sirigueijo. Patrick é apenas o melhor amigo de Bob Esponja e não trabalha lá. Sandy é um esquilo cientista que usa traje de mergulho. Lula Molusco, por outro lado, costuma ser preguiçoso e mal-humorado. O Sr. Sirigueijo é o proprietário da lanchonete e conhecido por ser muito econômico.</p>
+            <p class="preview-feedback">Dica Para o Estudante</p>
+            <p class="preview-feedback-text">Relembre os episódios e pense nas principais características de cada personagem antes de marcar suas respostas.</p>
+          </div>
+          <div class="preview-bar">
+            <button class="pbar-btn" onclick="removeCurrentChance()"><i class="pi pi-times"></i> Remover da Atividade</button>
+            <button class="pbar-btn"><i class="pi pi-eye"></i> Ver Como Estudante</button>
           </div>
         </div>
-      </div>
-    </div><!-- /questoes-list -->
-  </main>
-</div><!-- /main-wrap -->
 
-<!-- ═══════════════════════ MODAL CONFIRMAR REMOVER TODOS ═══════════════════════ -->
-<div class="modal-backdrop" id="modal">
+        <!-- Conteúdo: chance extra selecionada -->
+        <div id="view-q2-ce1" style="display:none;flex-direction:column;flex:1;overflow:hidden">
+          <div class="preview-header">
+            <div style="margin-bottom:6px"><span class="chance-preview-badge"><i class="pi pi-bolt" style="font-size:11px"></i> Chance Extra</span></div>
+            <div class="preview-title">Curiosidades do Bob Esponja</div>
+            <div class="preview-meta">
+              <span>Verdadeiro ou Falso, uma escolha</span><span class="preview-meta-sep">•</span>
+              <span>Muito Difícil</span><span class="preview-meta-sep">•</span>
+              <span>500 pontos</span>
+            </div>
+          </div>
+          <div class="preview-scroll">
+            <p class="preview-section-label">Enunciado e Comando</p>
+            <p class="preview-body-text">Esta é a questão de chance extra. O estudante recebe esta questão ao errar a questão principal. Responda se cada afirmação sobre os personagens do Bob Esponja é verdadeira ou falsa.</p>
+            <div class="answer-options">
+              <div class="answer-opt"><div class="answer-badge correct">V</div> Bob Esponja é o protagonista da série.</div>
+              <div class="answer-opt"><div class="answer-badge neutral">F</div> Patrick é o dono da Siri Cascudo.</div>
+            </div>
+            <p class="preview-feedback">Justificativa da Resposta</p>
+            <p class="preview-feedback-text">Bob Esponja é de fato o personagem principal. Patrick Estrela é o melhor amigo de Bob, não o dono da lanchonete.</p>
+          </div>
+          <div class="preview-bar">
+            <button class="pbar-btn" onclick="removeCurrentChance()" style="color:var(--err)"><i class="pi pi-times"></i> Remover da Atividade</button>
+            <button class="pbar-btn"><i class="pi pi-eye"></i> Ver Como Estudante</button>
+          </div>
+        </div>
+
+        <!-- Conteúdo padrão para outras questões -->
+        <div id="view-q1-main" style="display:none;flex-direction:column;flex:1;overflow:hidden">
+          <div class="preview-header">
+            <div class="preview-title">A vida no fundo do mar</div>
+            <div class="preview-meta"><span>Múltipla Escolha</span><span class="preview-meta-sep">•</span><span>Fácil</span><span class="preview-meta-sep">•</span><span>300 pontos</span></div>
+          </div>
+          <div class="preview-scroll">
+            <p class="preview-section-label">Enunciado e Comando</p>
+            <p class="preview-body-text">Sobre a vida no fundo do mar, assinale a alternativa correta.</p>
+            <div class="answer-options">
+              <div class="answer-opt"><div class="answer-badge correct">A</div> Os peixes respiram por brânquias.</div>
+              <div class="answer-opt"><div class="answer-badge neutral">B</div> Os golfinhos são peixes.</div>
+              <div class="answer-opt"><div class="answer-badge neutral">C</div> As baleias respiram pela boca embaixo d'água.</div>
+            </div>
+          </div>
+          <div class="preview-bar">
+            <button class="pbar-btn" onclick="removeCurrentChance()"><i class="pi pi-times"></i> Remover da Atividade</button>
+            <button class="pbar-btn"><i class="pi pi-eye"></i> Ver Como Estudante</button>
+          </div>
+        </div>
+
+        <div id="view-q1-ce1" style="display:none;flex-direction:column;flex:1;overflow:hidden">
+          <div class="preview-header">
+            <div style="margin-bottom:6px"><span class="chance-preview-badge"><i class="pi pi-bolt" style="font-size:11px"></i> Chance Extra</span></div>
+            <div class="preview-title">Bob Esponja no Fundo do Mar</div>
+            <div class="preview-meta"><span>Verdadeiro ou Falso</span><span class="preview-meta-sep">•</span><span>Médio</span></div>
+          </div>
+          <div class="preview-scroll">
+            <p class="preview-section-label">Enunciado e Comando</p>
+            <p class="preview-body-text">O fundo do mar é o ambiente onde Bob Esponja vive. Marque se as afirmações são verdadeiras ou falsas.</p>
+            <div class="answer-options">
+              <div class="answer-opt"><div class="answer-badge correct">V</div> A Fenda do Biquíni fica embaixo d'água.</div>
+              <div class="answer-opt"><div class="answer-badge neutral">F</div> Bob Esponja respira como um humano.</div>
+            </div>
+          </div>
+          <div class="preview-bar">
+            <button class="pbar-btn" onclick="removeCurrentChance()" style="color:var(--err)"><i class="pi pi-times"></i> Remover da Atividade</button>
+            <button class="pbar-btn"><i class="pi pi-eye"></i> Ver Como Estudante</button>
+          </div>
+        </div>
+
+        <div id="view-q3-main" style="display:none;flex-direction:column;flex:1;overflow:hidden">
+          <div class="preview-header">
+            <div class="preview-title">Onde o Bob Esponja trabalha?</div>
+            <div class="preview-meta"><span>Verdadeiro ou Falso, uma escolha</span><span class="preview-meta-sep">•</span><span>Muito Difícil</span></div>
+          </div>
+          <div class="preview-scroll">
+            <p class="preview-section-label">Enunciado e Comando</p>
+            <p class="preview-body-text">Bob Esponja tem uma profissão muito conhecida pelos fãs da série. Leia e responda.</p>
+            <div class="answer-options">
+              <div class="answer-opt"><div class="answer-badge correct">V</div> Bob Esponja trabalha na Siri Cascudo.</div>
+              <div class="answer-opt"><div class="answer-badge neutral">F</div> Bob Esponja trabalha no restaurante de Lula Molusco.</div>
+            </div>
+          </div>
+          <div class="preview-bar">
+            <button class="pbar-btn" onclick="removeCurrentChance()"><i class="pi pi-times"></i> Remover da Atividade</button>
+            <button class="pbar-btn"><i class="pi pi-eye"></i> Ver Como Estudante</button>
+          </div>
+        </div>
+
+      </div><!-- /preview-panel -->
+    </div><!-- /split -->
+  </div><!-- /main -->
+</div><!-- /body-wrap -->
+<!-- MODAL -->
+<div class="modal-bd" id="modal">
   <div class="modal">
     <div class="modal-icon"><i class="pi pi-trash"></i></div>
     <div class="modal-title">Remover todas as chances extras?</div>
-    <div class="modal-body">
-      Essa ação vai remover <strong id="modal-count-text">9 chances extras</strong> distribuídas nesta atividade.
-      Os estudantes que errarem as questões <strong>não</strong> receberão questões de apoio — passarão direto para a próxima.
-    </div>
-    <div class="modal-summary" id="modal-summary"></div>
+    <div class="modal-body">Esta ação vai remover <strong id="modal-count">3 chances extras</strong> desta atividade. Os estudantes que errarem as questões não receberão questões de apoio.</div>
+    <div class="modal-summary" id="modal-sum"></div>
     <div class="modal-footer">
-      <button class="btn-secondary" onclick="closeModal()">Cancelar</button>
-      <button class="btn-primary-danger" onclick="confirmRemoveAll()">
-        <i class="pi pi-trash"></i> Sim, remover todas
-      </button>
+      <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
+      <button class="btn-confirm-del" onclick="confirmAll()"><i class="pi pi-trash"></i> Sim, remover todas</button>
     </div>
   </div>
 </div>
 
-<!-- ═══════════════════════ TOAST ═══════════════════════ -->
-<div class="toast" id="toast">
-  <i class="pi pi-check-circle"></i>
-  <span id="toast-msg">Todas as chances extras foram removidas.</span>
-</div>
+<!-- TOAST -->
+<div class="toast" id="toast"><i class="pi pi-check-circle"></i><span id="toast-msg">Chance extra removida.</span></div>
 
-<!-- ═══════════════════════ SCRIPT ═══════════════════════ -->
 <script>
-  // Estado: mapa de questão → lista de ids de chances ativas
-  const state = {
-    q1: ['q1-e1','q1-e2','q1-e3'],
-    q3: ['q3-e1','q3-e2'],
-    q4: ['q4-e1'],
-    q5: ['q5-e1','q5-e2','q5-e3']
-  };
+// ─────────────────────────────────────────────
+// State
+// ─────────────────────────────────────────────
+const state = {
+  'qi1': { chances: ['q1-ce1'], views: { 'q1-main': 'view-q1-main', 'q1-ce1': 'view-q1-ce1' } },
+  'qi2': { chances: ['q2-ce1'], views: { 'q2-main': 'view-q2-main', 'q2-ce1': 'view-q2-ce1' } },
+  'qi3': { chances: [],         views: { 'q3-main': 'view-q3-main' } },
+};
+const chanceLabels = {
+  'q1-ce1': { q: 'Q1 — A vida no fundo do mar', label: 'Bob Esponja no Fundo do Mar' },
+  'q2-ce1': { q: 'Q2 — Curiosidades do Bob Esponja', label: 'Curiosidades do Bob Esponja' },
+};
 
-  const questaoLabels = {
-    q1: 'Questão 1 — 3² + 4²',
-    q3: 'Questão 3 — Triângulo',
-    q4: 'Questão 4 — MDC',
-    q5: 'Questão 5 — Porcentagem'
-  };
+let currentQId = 'qi2';
+let currentItem = 'q2-main';
 
-  function toggleCard(id) {
-    const card = document.getElementById(id);
-    card.classList.toggle('open');
+function allChances() {
+  return Object.entries(state).flatMap(([qid, d]) => d.chances.map(c => ({ qid, cid: c })));
+}
+function totalChances() { return allChances().length; }
+
+// ─────────────────────────────────────────────
+// Show/hide views
+// ─────────────────────────────────────────────
+function showView(viewId) {
+  document.querySelectorAll('[id^="view-"]').forEach(el => el.style.display = 'none');
+  const el = document.getElementById(viewId);
+  if (el) { el.style.display = 'flex'; }
+}
+
+// ─────────────────────────────────────────────
+// Select item (questão ou chance)
+// ─────────────────────────────────────────────
+function selectItem(qid, itemId) {
+  // clear all active states
+  document.querySelectorAll('.q-item-inner,.chance-sub').forEach(el => el.classList.remove('active'));
+
+  currentQId = qid;
+  currentItem = itemId;
+
+  // mark active
+  const isChance = itemId.includes('-ce');
+  if (isChance) {
+    const sub = document.getElementById(itemId);
+    if (sub) sub.classList.add('active');
+    // also mark parent q as active slightly
+    document.querySelector('#' + qid + ' .q-item-inner').classList.add('active');
+  } else {
+    document.querySelector('#' + qid + ' .q-item-inner').classList.add('active');
   }
 
-  function totalExtras() {
-    return Object.values(state).reduce((acc, arr) => acc + arr.length, 0);
+  // show correct view
+  const viewMap = state[qid]?.views || {};
+  const viewId = viewMap[itemId];
+  if (viewId) showView(viewId);
+}
+
+// ─────────────────────────────────────────────
+// Toggle accordion
+// ─────────────────────────────────────────────
+function toggleQ(qid) {
+  const el = document.getElementById(qid);
+  el.classList.toggle('open');
+}
+
+// ─────────────────────────────────────────────
+// Remove single chance (from bar button or inline)
+// ─────────────────────────────────────────────
+function removeCurrentChance() {
+  const isChance = currentItem.includes('-ce');
+  if (!isChance) {
+    // remove entire q from activity — not in scope for this prototype
+    showToast('Questão removida da atividade.');
+    return;
   }
 
-  function questoesComExtras() {
-    return Object.entries(state).filter(([,arr]) => arr.length > 0);
+  doRemoveChance(currentQId, currentItem);
+
+  // go back to parent q view
+  const qView = state[currentQId]?.views[currentQId.replace('qi','q') + '-main']
+              || Object.values(state[currentQId]?.views || {})[0];
+  selectItem(currentQId, currentQId.replace('qi','q') + '-main');
+  showToast('Chance extra removida da atividade.');
+}
+
+function doRemoveChance(qid, cid) {
+  // Remove from state
+  if (state[qid]) {
+    state[qid].chances = state[qid].chances.filter(c => c !== cid);
+    delete state[qid].views[cid];
   }
-
-  function updateStats() {
-    const total = totalExtras();
-    document.getElementById('extras-count').textContent = total;
-    document.getElementById('banner-count').textContent = total + ' chance' + (total !== 1 ? 's extras' : ' extra');
-
-    const banner = document.getElementById('global-banner');
-    const statsChip = document.getElementById('stats-extras');
-    if (total === 0) {
-      banner.style.display = 'none';
-      statsChip.className = 'stat-chip';
-      statsChip.innerHTML = '<span class="dot" style="background:var(--success-base)"></span> Sem chances extras';
-    }
-  }
-
-  function updateQuestaoUI(qid) {
-    const ativos = state[qid] || [];
-    const badge = document.getElementById(qid + '-badge');
-    const card = document.getElementById(qid);
-    const n = ativos.length;
-    if (badge) {
-      if (n > 0) {
-        badge.innerHTML = '<i class="pi pi-bolt"></i> <span>' + n + '</span> chance' + (n !== 1 ? 's extras' : ' extra');
-        badge.style.display = 'inline-flex';
-      } else {
-        badge.style.display = 'none';
-        card.classList.add('no-extras');
-        const extrasSection = card.querySelector('#' + qid + '-extras');
-        if (extrasSection) {
-          extrasSection.innerHTML = '<div class="empty-extras"><i class="pi pi-check-circle"></i>Nenhuma chance extra ativa</div>';
-        }
-      }
-    }
-    const countEl = document.getElementById(qid + '-count');
-    if (countEl) countEl.textContent = n;
-  }
-
-  function removeChance(qid, eid) {
-    const el = document.getElementById(eid);
-    if (!el) return;
-    el.style.transition = 'opacity .2s, transform .2s';
-    el.style.opacity = '0';
-    el.style.transform = 'translateX(12px)';
-    setTimeout(() => {
-      el.remove();
-      state[qid] = (state[qid] || []).filter(id => id !== eid);
-      updateQuestaoUI(qid);
-      updateStats();
-      showToast('Chance extra removida da atividade.');
-    }, 200);
-  }
-
-  function openModal() {
-    const total = totalExtras();
-    if (total === 0) return;
-    document.getElementById('modal-count-text').textContent = total + ' chance' + (total !== 1 ? 's extras' : ' extra');
-    // Monta resumo por questão
-    const pairs = questoesComExtras();
-    let html = '';
-    pairs.forEach(([qid, arr]) => {
-      html += `<div class="modal-summary-row">
-        <i class="pi pi-bolt"></i>
-        <span><strong>${questaoLabels[qid] || qid}</strong> — ${arr.length} chance${arr.length !== 1 ? 's extras' : ' extra'}</span>
-      </div>`;
-    });
-    document.getElementById('modal-summary').innerHTML = html;
-    document.getElementById('modal').classList.add('open');
-  }
-
-  function closeModal() {
-    document.getElementById('modal').classList.remove('open');
-  }
-
-  function confirmRemoveAll() {
-    closeModal();
-    // Remove com delay escalonado para feedback visual
-    let delay = 0;
-    Object.entries(state).forEach(([qid, ids]) => {
-      [...ids].forEach(eid => {
-        setTimeout(() => removeChanceQuiet(qid, eid), delay);
-        delay += 60;
-      });
-    });
-    setTimeout(() => {
-      showToast('Todas as chances extras foram removidas da atividade.');
-    }, delay);
-  }
-
-  function removeChanceQuiet(qid, eid) {
-    const el = document.getElementById(eid);
-    if (!el) return;
+  // Remove DOM element
+  const el = document.getElementById(cid);
+  if (el) {
     el.style.transition = 'opacity .15s, transform .15s';
     el.style.opacity = '0';
     el.style.transform = 'translateX(8px)';
-    setTimeout(() => {
-      el.remove();
-      state[qid] = (state[qid] || []).filter(id => id !== eid);
-      updateQuestaoUI(qid);
-      updateStats();
-    }, 150);
+    setTimeout(() => el.remove(), 160);
   }
+  updateBanner();
+}
 
-  let toastTimer;
-  function showToast(msg) {
-    const toast = document.getElementById('toast');
-    document.getElementById('toast-msg').textContent = msg;
-    toast.classList.add('show');
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => toast.classList.remove('show'), 3000);
+// ─────────────────────────────────────────────
+// Banner update
+// ─────────────────────────────────────────────
+function updateBanner() {
+  const total = totalChances();
+  const banner = document.getElementById('rab');
+  const countEl = document.getElementById('rab-count');
+  if (total === 0) {
+    banner.classList.add('hidden');
+  } else {
+    banner.classList.remove('hidden');
+    countEl.textContent = total + ' chance' + (total !== 1 ? 's extras' : ' extra');
   }
+}
 
-  // Fechar modal ao clicar fora
-  document.getElementById('modal').addEventListener('click', function(e) {
-    if (e.target === this) closeModal();
+// ─────────────────────────────────────────────
+// Modal
+// ─────────────────────────────────────────────
+function openModal() {
+  const total = totalChances();
+  document.getElementById('modal-count').textContent = total + ' chance' + (total !== 1 ? 's extras' : ' extra');
+
+  const chances = allChances();
+  let html = '';
+  // group by question
+  const byQ = {};
+  chances.forEach(({ qid, cid }) => {
+    if (!byQ[qid]) byQ[qid] = [];
+    byQ[qid].push(cid);
   });
+  const qNames = { qi1: 'Q1 — A vida no fundo do mar', qi2: 'Q2 — Curiosidades do Bob Esponja', qi3: 'Q3 — Onde o Bob Esponja trabalha?' };
+  Object.entries(byQ).forEach(([qid, cids]) => {
+    html += `<div class="modal-sum-row"><i class="pi pi-bolt"></i><span><strong>${qNames[qid]}</strong> — ${cids.length} chance${cids.length !== 1 ? 's extras' : ' extra'}</span></div>`;
+  });
+  document.getElementById('modal-sum').innerHTML = html;
+  document.getElementById('modal').classList.add('open');
+}
 
-  // Inicializa stats
-  updateStats();
+function closeModal() { document.getElementById('modal').classList.remove('open'); }
+
+function confirmAll() {
+  closeModal();
+  const all = allChances();
+  let delay = 0;
+  all.forEach(({ qid, cid }) => {
+    setTimeout(() => doRemoveChance(qid, cid), delay);
+    delay += 80;
+  });
+  setTimeout(() => {
+    showToast('Todas as chances extras foram removidas.');
+    // reset view to first q
+    selectItem('qi2', 'q2-main');
+  }, delay);
+}
+
+// Close modal on backdrop click
+document.getElementById('modal').addEventListener('click', e => { if (e.target.id === 'modal') closeModal(); });
+
+// ─────────────────────────────────────────────
+// Toast
+// ─────────────────────────────────────────────
+let toastT;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-msg').textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastT);
+  toastT = setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+// ─────────────────────────────────────────────
+// Init
+// ─────────────────────────────────────────────
+showView('view-q2-main');
+document.querySelector('#qi2 .q-item-inner').classList.add('active');
+updateBanner();
 </script>
 </body>
 </html>
