@@ -1,0 +1,1756 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SENAI Soluções Digitais</title>
+  <link rel="icon" type="image/svg+xml" href="assets/loader-logo.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Michroma&family=Inter:wght@400;500;600;700&family=Unbounded:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    /* ── RESET ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: auto; }
+
+    /* ── TOKENS ── */
+    :root {
+      --blue:   #0A8AFF;
+      --dark:   #060606;
+      --dark2:  #141414;
+      --dark3:  #1D1D1D;
+      --light:  #F3F5F1;
+      --white:  #FFFFFF;
+      --gray:   #999999;
+      --gray2:  #B9B9B9;
+      --gray3:  #E5E5E5;
+      --text:   #060606;
+      --border: #383838;
+      --pad:    363px;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--dark);
+      color: var(--white);
+      overflow-x: hidden;
+    }
+
+    /* ── LABEL ── */
+    .label {
+      font-family: 'Inter', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 0.32px;
+      text-transform: uppercase;
+      color: var(--blue);
+    }
+
+    /* ── HEADING ── */
+    .heading {
+      font-family: 'Michroma', sans-serif;
+      font-weight: 400;
+      line-height: 1.07;
+      color: var(--white);
+    }
+
+    /* ── CONTAINER ── */
+    .container {
+      max-width: 1184px;
+      margin: 0 auto;
+      padding: 0 40px;
+    }
+    .container-wide {
+      max-width: 1910px;
+      padding: 0 var(--pad);
+      margin: 0 auto;
+    }
+
+    /* ── BUTTONS ── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12.5px 24px;
+      min-height: 46px;
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: opacity .18s, transform .18s, background .18s, box-shadow .18s;
+      white-space: nowrap;
+      border: none;
+    }
+    .btn:hover { opacity: .85; transform: translateY(-2px); }
+    .btn:active { transform: translateY(0); }
+    .btn-white  { background: var(--white); color: var(--dark); }
+    .btn-white:hover { box-shadow: 0 8px 24px rgba(255,255,255,.15); opacity: 1; }
+    .btn-outline { background: transparent; color: var(--white); border: 1px solid var(--white); }
+    .btn-outline:hover { background: rgba(255,255,255,.06); }
+    .btn-dark   { background: var(--dark); color: var(--white); border: 1px solid var(--dark); }
+    .btn-dark:hover { background: #1a1a1a; }
+    .btn-pill   { border-radius: 32px; }
+    .btn-pill-active { background: var(--dark); color: var(--white); }
+    .btn-pill-ghost  { background: rgba(6,6,6,.05); color: var(--dark); }
+    .btn-pill-ghost:hover { background: rgba(6,6,6,.12); }
+
+    /* ════════════════════════════════
+       PAGE LOADER
+    ════════════════════════════════ */
+    #loader {
+      position: fixed;
+      inset: 0;
+      background: var(--dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      transition: opacity .5s ease, visibility .5s;
+    }
+    #loader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+    .loader-logo {
+      width: 80px;
+      animation: loaderPulse 1.2s ease-in-out infinite;
+    }
+    @keyframes loaderPulse {
+      0%,100% { opacity: .3; transform: scale(.95); }
+      50%      { opacity: 1;  transform: scale(1.05); }
+    }
+    .loader-bar {
+      position: absolute;
+      bottom: 0; left: 0;
+      height: 2px;
+      background: var(--blue);
+      animation: loaderBar 1.6s ease-in-out forwards;
+    }
+    @keyframes loaderBar {
+      from { width: 0; }
+      to   { width: 100%; }
+    }
+
+    /* ════════════════════════════════
+       HEADER
+    ════════════════════════════════ */
+    #header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 103px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--pad);
+      backdrop-filter: blur(9px);
+      -webkit-backdrop-filter: blur(9px);
+      background: rgba(6,6,6,.8);
+      z-index: 100;
+      transition: box-shadow .3s;
+    }
+    #header.scrolled { box-shadow: 0 1px 0 rgba(255,255,255,.06); }
+
+    .header-logo { display: flex; align-items: center; text-decoration: none; flex-shrink: 0; }
+    .header-logo img { height: 55px; }
+
+    .header-nav { display: flex; align-items: center; gap: 32px; position: absolute; left: 50%; transform: translateX(-50%); }
+    .header-nav a {
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--white);
+      text-decoration: none;
+      padding: 8px 0;
+      position: relative;
+      transition: color .2s;
+    }
+    .header-nav a::after {
+      content: '';
+      position: absolute;
+      bottom: 4px; left: 0; right: 0;
+      height: 1.5px;
+      background: var(--blue);
+      transform: scaleX(0);
+      transition: transform .2s;
+    }
+    .header-nav a:hover::after,
+    .header-nav a.active::after { transform: scaleX(1); }
+    .header-nav a:hover { color: var(--blue); }
+
+    /* ════════════════════════════════
+       HERO
+    ════════════════════════════════ */
+    #hero {
+      min-height: 100vh;
+      background: var(--dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 103px var(--pad) 50px;
+      position: relative;
+      overflow: hidden;
+      text-align: center;
+    }
+
+    /* blur radial de fundo */
+    .hero-blur {
+      position: absolute;
+      width: 2437px;
+      height: 865px;
+      top: 96px;
+      left: 50%;
+      transform: translateX(-50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .hero-blur img { width: 100%; height: 100%; object-fit: cover; }
+
+    /* grade */
+    #hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(10,138,255,.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(10,138,255,.08) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(ellipse 70% 80% at 50% 40%, #000 10%, transparent 72%);
+      -webkit-mask-image: radial-gradient(ellipse 70% 80% at 50% 40%, #000 10%, transparent 72%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
+      width: 100%;
+      max-width: 1128px;
+    }
+
+    /* Logo 3D */
+    .hero-logo-3d {
+      width: 394px;
+      height: 288px;
+      object-fit: contain;
+      object-position: bottom;
+      filter: drop-shadow(0 20px 60px rgba(10,138,255,.25));
+      animation: floatLogo 5s ease-in-out infinite;
+    }
+    @keyframes floatLogo {
+      0%,100% { transform: translateY(0) rotateX(2deg); }
+      50%      { transform: translateY(-16px) rotateX(-2deg); }
+    }
+
+    .hero-text { display: flex; flex-direction: column; gap: 32px; align-items: center; }
+
+    .hero-title {
+      font-family: 'Michroma', sans-serif;
+      font-size: 70px;
+      font-weight: 400;
+      line-height: 1;
+      letter-spacing: -2.1px;
+      color: var(--white);
+      text-align: center;
+    }
+    .hero-title .accent { color: var(--blue); }
+
+    .hero-subtitle {
+      font-size: 18px;
+      line-height: 1.5;
+      color: var(--gray2);
+      max-width: 760px;
+      text-align: center;
+    }
+
+    .hero-btns { display: flex; gap: 16px; align-items: center; }
+
+    /* ════════════════════════════════
+       LOGOS CLIENTES
+    ════════════════════════════════ */
+    #logos-clientes {
+      background: var(--dark2);
+      padding: 40px var(--pad) 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .logos-row {
+      display: flex;
+      align-items: center;
+      gap: 64px;
+    }
+    .logo-item {
+      height: 58px;
+      display: flex;
+      align-items: center;
+      opacity: .65;
+      transition: opacity .2s;
+      flex-shrink: 0;
+    }
+    .logo-item:hover { opacity: 1; }
+    .logo-item img { height: 100%; object-fit: contain; filter: brightness(0) invert(1); }
+    .logo-sep {
+      color: var(--blue);
+      font-size: 24px;
+      line-height: 1;
+      opacity: .7;
+    }
+
+    /* ════════════════════════════════
+       CASES
+    ════════════════════════════════ */
+    #cases {
+      background: var(--light);
+      padding: 100px var(--pad) 110px;
+      border-radius: 64px 32px 0 0;
+      position: relative;
+      margin-top: -34px;
+    }
+
+    .cases-header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      text-align: center;
+      margin-bottom: 64px;
+    }
+    .cases-header .heading { font-size: 56px; color: var(--text); letter-spacing: -4.68px; line-height: 60px; }
+
+    /* filtros */
+    .cases-filters {
+      background: var(--white);
+      border-radius: 999px;
+      padding: 16px;
+      display: inline-flex;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 64px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .filter-btn {
+      padding: 12.5px 24px;
+      min-height: 46px;
+      border-radius: 32px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: background .2s, color .2s, transform .15s;
+    }
+    .filter-btn:hover { transform: translateY(-1px); }
+    .filter-btn.active { background: var(--dark); color: var(--white); }
+    .filter-btn:not(.active) { background: rgba(6,6,6,.05); color: var(--dark); }
+    .filter-btn:not(.active):hover { background: rgba(6,6,6,.12); }
+
+    /* carrossel */
+    .cases-carousel {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      justify-content: center;
+      margin-bottom: 40px;
+    }
+    .carousel-btn {
+      width: 66px; height: 66px;
+      border-radius: 999px;
+      border: 1px solid var(--dark);
+      background: transparent;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      transition: background .2s, transform .15s;
+    }
+    .carousel-btn:hover { background: rgba(6,6,6,.06); transform: scale(1.05); }
+    .carousel-btn:active { transform: scale(.97); }
+
+    .case-card {
+      width: 1184px;
+      min-height: 506px;
+      border-radius: 24px;
+      background: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 60px;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .case-copy {
+      width: 408px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+      align-self: flex-end;
+      padding-bottom: 8px;
+    }
+
+    .case-meta { display: flex; flex-direction: column; gap: 21px; }
+    .case-app-icon {
+      width: 157px; height: 157px;
+      border-radius: 26px;
+      object-fit: cover;
+    }
+    .case-title {
+      font-family: 'Michroma', sans-serif;
+      font-size: 26.6px;
+      color: var(--text);
+      line-height: 1.3;
+    }
+    .case-desc {
+      font-size: 16px;
+      line-height: 1.5;
+      color: #555;
+    }
+    .case-store-btns {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+    .case-store-btns img { height: 40px; transition: opacity .2s, transform .15s; }
+    .case-store-btns a:hover img { opacity: .8; transform: translateY(-2px); }
+
+    /* visual do case */
+    .case-visual {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      height: 506px;
+      flex-shrink: 0;
+    }
+    .case-kira {
+      width: 383px;
+      height: 472px;
+      object-fit: cover;
+      position: relative;
+      z-index: 2;
+    }
+    .case-screenshots {
+      display: flex;
+      flex-direction: column;
+      gap: 13.6px;
+    }
+    .case-screenshots img {
+      width: 228px;
+      height: 109px;
+      border-radius: 11px;
+      object-fit: cover;
+      box-shadow: 3.4px 3.4px 9px rgba(0,0,0,.25);
+      transition: transform .2s;
+    }
+    .case-screenshots img:hover { transform: scale(1.03); }
+
+    /* dots indicador */
+    .carousel-dots {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .carousel-dots img { width: 165px; }
+
+    .cases-cta { text-align: center; margin-top: 16px; }
+
+    /* ════════════════════════════════
+       SERVIÇOS
+    ════════════════════════════════ */
+    #servicos {
+      background: var(--dark);
+      padding: 100px var(--pad);
+      overflow: hidden;
+    }
+
+    .servicos-header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      text-align: center;
+      margin-bottom: 100px;
+    }
+    .servicos-header .heading { font-size: 56px; line-height: 60px; }
+    .servicos-header p { font-size: 18px; line-height: 1.4; color: var(--gray); max-width: 768px; }
+
+    .servicos-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 67px;
+    }
+
+    .servico-item {
+      display: flex;
+      gap: 24px;
+      align-items: center;
+    }
+    .servico-icon {
+      width: 80px; height: 80px;
+      flex-shrink: 0;
+      position: relative;
+    }
+    .servico-icon img { width: 100%; height: 100%; object-fit: contain; }
+
+    .servico-body { display: flex; flex-direction: column; gap: 8px; }
+    .servico-title {
+      font-family: 'Inter', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--gray3);
+      line-height: 1.4;
+      letter-spacing: .02em;
+    }
+    .servico-desc { font-size: 16px; line-height: 1.5; color: var(--gray); }
+
+    .servicos-cta { text-align: center; margin-top: 100px; }
+
+    /* ════════════════════════════════
+       AWS
+    ════════════════════════════════ */
+    #aws {
+      background: var(--dark2);
+      padding: 100px var(--pad);
+      border-radius: 24px;
+      display: flex;
+      gap: 100px;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .aws-image {
+      width: 436px;
+      height: 437px;
+      flex-shrink: 0;
+      border-radius: 16px;
+      overflow: hidden;
+    }
+    .aws-image img { width: 100%; height: 100%; object-fit: cover; transition: transform .4s; }
+    .aws-image:hover img { transform: scale(1.04); }
+
+    .aws-copy { display: flex; flex-direction: column; gap: 20px; max-width: 648px; }
+    .aws-copy .heading-lg {
+      font-family: 'Michroma', sans-serif;
+      font-size: 56px;
+      line-height: 60px;
+      color: var(--white);
+    }
+    .aws-copy .heading-sm {
+      font-family: 'Michroma', sans-serif;
+      font-size: 24px;
+      line-height: 1.2;
+      color: var(--white);
+    }
+    .aws-copy p { font-size: 18px; line-height: 1.5; color: var(--white); }
+
+    /* ════════════════════════════════
+       SOBRE (About)
+    ════════════════════════════════ */
+    #sobre {
+      background: var(--light);
+      padding: 100px var(--pad);
+      border-radius: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 100px;
+    }
+
+    .sobre-main {
+      display: flex;
+      gap: 100px;
+      align-items: center;
+    }
+
+    .sobre-copy {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .sobre-copy .heading {
+      font-family: 'Michroma', sans-serif;
+      font-size: 56px;
+      line-height: 60px;
+      color: var(--text);
+    }
+    .sobre-copy p { font-size: 18px; line-height: 1.4; color: var(--text); }
+
+    /* collage de fotos */
+    .sobre-fotos {
+      width: 625px;
+      height: 507px;
+      flex-shrink: 0;
+      position: relative;
+    }
+    .sobre-foto {
+      position: absolute;
+      border-radius: 32px;
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity .55s ease, transform .55s ease;
+    }
+    .sobre-foto.foto-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .sobre-foto img { width: 100%; height: 100%; object-fit: cover; }
+    .foto-1 { left: 0;      top: 0;      width: 368px; height: 348px; }
+    .foto-2 { left: 319px;  top: 24px;   width: 188px; height: 178px; }
+    .foto-3 { left: 340px;  top: 238px;  width: 285px; height: 269px; }
+    .foto-4 { left: 94px;   top: 307px;  width: 213px; height: 173px; }
+
+    /* números */
+    .sobre-numeros {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 100px;
+    }
+    .numero-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      text-align: center;
+    }
+    .numero-value {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 56px;
+      font-weight: 400;
+      color: var(--text);
+      line-height: 1;
+    }
+    .numero-label { font-size: 18px; line-height: 1.4; color: var(--text); max-width: 180px; }
+    .numero-sep {
+      width: 0;
+      height: 126px;
+      border-left: 1px solid rgba(6,6,6,.15);
+    }
+
+    /* ════════════════════════════════
+       CONTATO
+    ════════════════════════════════ */
+    #contato {
+      background: var(--dark);
+      padding: 100px var(--pad);
+      border-radius: 24px;
+    }
+    .contato-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 64px;
+    }
+    .contato-header {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .contato-header .heading { font-size: 56px; line-height: 60px; }
+
+    .contato-form {
+      width: 552px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .form-field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .form-field label {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--white);
+    }
+    .form-field input,
+    .form-field select,
+    .form-field textarea {
+      background: var(--dark3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12.5px 16px;
+      min-height: 46px;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      color: var(--white);
+      outline: none;
+      transition: border-color .2s, background .2s;
+      -webkit-appearance: none;
+    }
+    .form-field select { cursor: pointer; }
+    .form-field select option { background: #1d1d1d; }
+    .form-field textarea { min-height: 146px; resize: vertical; }
+    .form-field input::placeholder,
+    .form-field textarea::placeholder { color: var(--gray); }
+    .form-field input:focus,
+    .form-field select:focus,
+    .form-field textarea:focus {
+      border-color: var(--blue);
+      background: rgba(10,138,255,.04);
+    }
+
+    .select-wrap { position: relative; }
+    .select-wrap select { width: 100%; padding-right: 40px; }
+    .select-arrow {
+      position: absolute;
+      right: 14px; top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+      width: 24px; height: 24px;
+    }
+    .select-arrow img { width: 100%; }
+
+    .form-submit .btn { width: 100%; font-size: 14px; }
+
+    .contato-alt {
+      font-size: 16px;
+      color: var(--gray);
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .contato-alt a { color: var(--blue); text-decoration: none; }
+    .contato-alt a:hover { text-decoration: underline; }
+
+    /* ════════════════════════════════
+       FOOTER
+    ════════════════════════════════ */
+    #footer {
+      background: var(--dark);
+      padding: 60px var(--pad) 0;
+      border-top: 1px solid rgba(255,255,255,.06);
+    }
+
+    .footer-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      padding-bottom: 60px;
+    }
+
+    .footer-brand {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      max-width: 552px;
+    }
+    .footer-logo-wrap {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+    }
+    .footer-logo-icon { height: 79px; }
+    .footer-logo-text { display: flex; flex-direction: column; gap: 9px; align-items: center; }
+    .footer-logo-text img { display: block; }
+
+    .footer-tagline { font-size: 14px; color: var(--gray); line-height: 1.2; max-width: 280px; }
+    .footer-social { display: flex; gap: 12px; align-items: center; }
+    .footer-social a:hover { opacity: .65; }
+
+    .footer-nav {
+      display: flex;
+      gap: 0;
+    }
+    .footer-nav-col { width: 165px; display: flex; flex-direction: column; gap: 12px; }
+    .footer-nav-title { font-size: 18px; font-weight: 600; color: var(--white); padding: 10px 0 11px; }
+    .footer-nav-links { display: flex; flex-direction: column; gap: 8px; }
+    .footer-nav-links a {
+      font-size: 14px;
+      color: var(--gray);
+      text-decoration: none;
+      padding: 4px 0;
+      transition: color .2s;
+    }
+    .footer-nav-links a:hover { color: var(--white); }
+
+    .footer-divider { height: 1px; background: rgba(255,255,255,.06); }
+
+    .footer-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 24px 0;
+    }
+    .footer-copy { font-size: 12px; color: var(--white); }
+    .footer-back {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--white);
+      text-decoration: none;
+      cursor: pointer;
+      transition: color .2s;
+    }
+    .footer-back:hover { color: var(--blue); }
+    .footer-back svg { transition: transform .2s; }
+    .footer-back:hover svg { transform: translateY(-2px); }
+
+    /* ════════════════════════════════
+       SCROLL ANIMATIONS
+    ════════════════════════════════ */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity .65s ease, transform .65s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ════════════════════════════════
+       RESPONSIVE
+    ════════════════════════════════ */
+    @media (max-width: 1200px) {
+      :root { --pad: 48px; }
+      .hero-title { font-size: 52px; }
+      .cases-grid, .servicos-grid { grid-template-columns: 1fr 1fr; }
+      .case-card { width: 100%; flex-direction: column; height: auto; }
+      #aws { flex-direction: column; }
+      .sobre-main { flex-direction: column; }
+      .sobre-fotos { width: 100%; height: 320px; }
+      .footer-nav { gap: 16px; }
+    }
+    @media (max-width: 768px) {
+      :root { --pad: 24px; }
+      .header-nav { display: none; }
+      .hero-title { font-size: 36px; }
+      .hero-logo-3d { width: 240px; height: 176px; }
+      .servicos-grid { grid-template-columns: 1fr; }
+      .cases-carousel { flex-direction: column; }
+      .carousel-btn { display: none; }
+      .contato-form { width: 100%; }
+      .footer-top { flex-direction: column; gap: 40px; }
+      .footer-nav { flex-wrap: wrap; }
+    }
+    /* ════════════════════════════════
+       MODAL GMAIL COMPOSE
+    ════════════════════════════════ */
+    .gmail-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.55);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      z-index: 500;
+      display: flex;
+      align-items: flex-end;
+      justify-content: flex-end;
+      padding: 0 32px 32px 0;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity .25s ease, visibility .25s;
+    }
+    .gmail-overlay.open {
+      opacity: 1;
+      visibility: visible;
+    }
+    .gmail-modal {
+      width: 440px;
+      background: #1f1f1f;
+      border-radius: 16px 16px 0 0;
+      box-shadow: 0 8px 48px rgba(0,0,0,.6);
+      overflow: hidden;
+      transform: translateY(32px);
+      transition: transform .3s cubic-bezier(.16,1,.3,1);
+    }
+    .gmail-overlay.open .gmail-modal {
+      transform: translateY(0);
+    }
+    .gmail-header {
+      background: #333;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .gmail-header span {
+      font-size: 14px;
+      font-weight: 600;
+      color: #fff;
+    }
+    .gmail-header button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: rgba(255,255,255,.7);
+      font-size: 18px;
+      line-height: 1;
+      padding: 2px 6px;
+      border-radius: 4px;
+      transition: background .15s, color .15s;
+    }
+    .gmail-header button:hover { background: rgba(255,255,255,.1); color: #fff; }
+
+    .gmail-fields { border-bottom: 1px solid #383838; }
+    .gmail-field {
+      display: flex;
+      align-items: center;
+      padding: 10px 16px;
+      border-bottom: 1px solid #2e2e2e;
+      gap: 8px;
+    }
+    .gmail-field label {
+      font-size: 13px;
+      color: rgba(255,255,255,.5);
+      width: 52px;
+      flex-shrink: 0;
+    }
+    .gmail-field input {
+      flex: 1;
+      background: none;
+      border: none;
+      outline: none;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      color: #fff;
+    }
+    .gmail-field input::placeholder { color: rgba(255,255,255,.3); }
+    .gmail-field input[readonly] { color: rgba(255,255,255,.5); cursor: default; }
+
+    .gmail-body-wrap { padding: 12px 16px; }
+    .gmail-body {
+      width: 100%;
+      min-height: 140px;
+      max-height: 240px;
+      background: none;
+      border: none;
+      outline: none;
+      resize: vertical;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      color: #fff;
+      line-height: 1.6;
+    }
+    .gmail-body::placeholder { color: rgba(255,255,255,.3); }
+
+    .gmail-footer {
+      padding: 12px 16px;
+      border-top: 1px solid #383838;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .gmail-send {
+      background: var(--blue);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 22px;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: opacity .2s, transform .15s;
+    }
+    .gmail-send:hover { opacity: .88; transform: translateY(-1px); }
+    .gmail-discard {
+      background: none;
+      border: none;
+      color: rgba(255,255,255,.45);
+      font-size: 13px;
+      cursor: pointer;
+      padding: 6px;
+      border-radius: 6px;
+      transition: color .15s, background .15s;
+    }
+    .gmail-discard:hover { color: #fff; background: rgba(255,255,255,.06); }
+  </style>
+</head>
+<body>
+
+  <!-- ═══════════════════════════
+       PAGE LOADER
+  ═══════════════════════════ -->
+  <div id="loader">
+    <img class="loader-logo" src="assets/loader-logo.svg" alt="SENAI" />
+    <div class="loader-bar"></div>
+  </div>
+
+  <!-- ═══════════════════════════
+       HEADER
+  ═══════════════════════════ -->
+  <header id="header">
+    <a href="#hero" class="header-logo">
+      <img src="assets/loader-logo.svg" alt="SENAI Soluções Digitais" />
+    </a>
+
+    <nav class="header-nav">
+      <a href="#cases">Cases</a>
+      <a href="#servicos">Serviços</a>
+      <a href="#aws">AWS</a>
+      <a href="#sobre">Sobre</a>
+      <a href="#contato">Contato</a>
+    </nav>
+
+    <a href="#contato" class="btn btn-white">Fale com nosso time</a>
+  </header>
+
+  <!-- ═══════════════════════════
+       HERO
+  ═══════════════════════════ -->
+  <section id="hero">
+    <div class="hero-blur" aria-hidden="true">
+      <img src="assets/blur-bg.svg" alt="" />
+    </div>
+
+    <div class="hero-content">
+      <img
+        class="hero-logo-3d reveal"
+        src="assets/logo-sd-3d.png"
+        alt="SENAI Soluções Digitais — logo 3D"
+      />
+
+      <div class="hero-text reveal" style="transition-delay:.15s">
+        <h1 class="hero-title">
+          Soluções que <span class="accent">transformam o futuro</span> da indústria
+        </h1>
+        <p class="hero-subtitle">
+          Parte do ecossistema FIESC, o maior sistema industrial de Santa Catarina. Desenvolvemos soluções digitais para empresas que precisam de mais do que uma agência, precisam de um parceiro que entende a indústria por dentro.
+        </p>
+        <div class="hero-btns">
+          <a href="#contato" class="btn btn-white">Fale com nosso time</a>
+          <a href="#cases" class="btn btn-outline">Conheça nossos cases</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════
+       LOGOS CLIENTES
+  ═══════════════════════════ -->
+  <div id="logos-clientes">
+    <div class="logos-row reveal">
+      <div class="logo-item" style="height:48px">
+        <img src="assets/logo-p1.png" alt="Parceiro" />
+      </div>
+      <span class="logo-sep">❋</span>
+      <div class="logo-item">
+        <img src="assets/logo-p2.svg" alt="Parceiro" />
+      </div>
+      <span class="logo-sep">❋</span>
+      <div class="logo-item" style="height:58px;width:194px">
+        <img src="assets/logo-p3.png" alt="Parceiro" style="width:100%;object-fit:contain" />
+      </div>
+      <span class="logo-sep">❋</span>
+      <div class="logo-item" style="height:58px;width:189px">
+        <img src="assets/logo-p4.png" alt="Parceiro" style="width:100%;object-fit:contain" />
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════
+       CASES
+  ═══════════════════════════ -->
+  <section id="cases">
+    <div class="cases-header reveal">
+      <span class="label">Cases</span>
+      <h2 class="heading" style="font-size:56px;line-height:60px;color:var(--text);letter-spacing:-4.68px">Conheça nossas soluções</h2>
+    </div>
+
+    <!-- Filtros -->
+    <div class="cases-filters reveal" style="transition-delay:.1s">
+      <button class="filter-btn active" data-filter="xr">Realidade Estendida</button>
+      <button class="filter-btn" data-filter="web">Web</button>
+      <button class="filter-btn" data-filter="mobile">Mobile</button>
+      <button class="filter-btn" data-filter="ia">Inteligência Artificial</button>
+      <button class="filter-btn" data-filter="edtech">EdTech &amp; HealthTech</button>
+      <button class="filter-btn" data-filter="data">Big Data &amp; Analytics</button>
+    </div>
+
+    <!-- Carrossel -->
+    <div class="cases-carousel reveal" style="transition-delay:.2s">
+      <!-- Seta esquerda -->
+      <button class="carousel-btn" id="btn-prev" aria-label="Anterior">
+        <svg width="18" height="24" viewBox="0 0 18 24" fill="none">
+          <path d="M12 4L6 12L12 20" stroke="#060606" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+
+      <!-- Card -->
+      <div class="case-card" id="case-card">
+        <div class="case-copy">
+          <div class="case-meta">
+            <img class="case-app-icon" src="assets/case-logo.png" alt="SENAI Lab" />
+            <h3 class="case-title">SENAI Lab experience</h3>
+            <p class="case-desc">
+              Sala de aula virtual estruturada para a prática da Metodologia SENAI de Educação. O usuário pode personalizar seu avatar e conectar-se com os docentes e colegas de turma para discutirem e criarem soluções juntos em um ambiente imersivo, utilizando texto, voz ou mesmo emojis para comunicação.
+            </p>
+          </div>
+          <div class="case-store-btns">
+            <a href="#" target="_blank" rel="noopener">
+              <img src="assets/appstore.svg" alt="App Store" />
+            </a>
+            <a href="https://play.google.com/store/apps/details?id=com.finder.yeslyvr" target="_blank" rel="noopener">
+              <img src="assets/googleplay.svg" alt="Google Play" />
+            </a>
+          </div>
+        </div>
+
+        <div class="case-visual">
+          <img class="case-kira" src="assets/kira-kara.png" alt="Kira & Kara" />
+          <div class="case-screenshots">
+            <img src="assets/case-img1.png" alt="Screenshot 1" />
+            <img src="assets/case-img2.png" alt="Screenshot 2" />
+            <img src="assets/case-img3.png" alt="Screenshot 3" />
+            <img src="assets/case-img4.png" alt="Screenshot 4" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Seta direita -->
+      <button class="carousel-btn" id="btn-next" aria-label="Próximo">
+        <svg width="18" height="24" viewBox="0 0 18 24" fill="none">
+          <path d="M6 4L12 12L6 20" stroke="#060606" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Dots -->
+    <div class="carousel-dots">
+      <img src="assets/carousel-dots.svg" alt="" />
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════
+       SERVIÇOS
+  ═══════════════════════════ -->
+  <section id="servicos">
+    <div class="servicos-header reveal">
+      <span class="label">Serviços</span>
+      <h2 class="heading" style="font-size:56px;line-height:60px">Temos a solução que você precisa</h2>
+      <p>Desenvolvemos com as tecnologias mais modernas para garantir eficiência, escalabilidade e inovação na sua operação.</p>
+    </div>
+
+    <div class="servicos-grid">
+      <div class="servico-item reveal">
+        <div class="servico-icon"><img src="assets/icon-ai.svg" alt="" /></div>
+        <div class="servico-body">
+          <span class="servico-title">Inteligência Artificial</span>
+          <span class="servico-desc">Desenvolvemos modelos preditivos, automação inteligente e soluções de visão computacional.</span>
+        </div>
+      </div>
+      <div class="servico-item reveal" style="transition-delay:.05s">
+        <div class="servico-icon"><img src="assets/icon-xr.svg" alt="" /></div>
+        <div class="servico-body">
+          <span class="servico-title">Realidade Estendida</span>
+          <span class="servico-desc">Experiências imersivas com AR, VR e simulações 3D para treinamento e engajamento.</span>
+        </div>
+      </div>
+      <div class="servico-item reveal" style="transition-delay:.1s">
+        <div class="servico-icon"><img src="assets/icon-web.svg" alt="" /></div>
+        <div class="servico-body">
+          <span class="servico-title">Desenvolvimento Web</span>
+          <span class="servico-desc">Plataformas web modernas e responsivas com performance e segurança.</span>
+        </div>
+      </div>
+      <div class="servico-item reveal" style="transition-delay:.15s">
+        <div class="servico-icon"><img src="assets/icon-mobile.svg" alt="" /></div>
+        <div class="servico-body">
+          <span class="servico-title">Desenvolvimento Mobile</span>
+          <span class="servico-desc">Apps nativos e multiplataforma para iOS e Android com foco em performance.</span>
+        </div>
+      </div>
+      <div class="servico-item reveal" style="transition-delay:.2s">
+        <div class="servico-icon"><img src="assets/icon-data.svg" alt="" /></div>
+        <div class="servico-body">
+          <span class="servico-title">Big Data &amp; Analytics</span>
+          <span class="servico-desc">Análise de grandes volumes de dados para insights estratégicos e dashboards.</span>
+        </div>
+      </div>
+      <div class="servico-item reveal" style="transition-delay:.25s">
+        <div class="servico-icon"><img src="assets/icon-edtech.svg" alt="" /></div>
+        <div class="servico-body">
+          <span class="servico-title">EdTech &amp; HealthTech</span>
+          <span class="servico-desc">Soluções especializadas para educação e saúde com foco em gestão e cuidado.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="servicos-cta reveal">
+      <a href="#contato" class="btn btn-white">Fale com nosso time</a>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════
+       AWS
+  ═══════════════════════════ -->
+  <section id="aws">
+    <div class="aws-image reveal">
+      <img src="assets/aws-image.png" alt="Soluções AWS" />
+    </div>
+    <div class="aws-copy reveal" style="transition-delay:.15s">
+      <span class="label">Soluções AWS</span>
+      <h2 class="heading-lg">Somos parceiros da AWS</h2>
+      <p class="heading-sm" style="font-family:'Michroma',sans-serif;font-size:24px;line-height:1.2;color:var(--white)">Tecnologia em nuvem para transformar sua operação</p>
+      <p style="font-size:16px;line-height:1.5;color:var(--gray)">Combinamos sua tecnologia de nuvem com mais de 20 anos de experiência no desenvolvimento de soluções para a indústria. Assim, ajudamos empresas a modernizar sistemas, migrar para a nuvem e criar produtos digitais preparados para crescer com segurança, escala e eficiência.</p>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════
+       SOBRE
+  ═══════════════════════════ -->
+  <section id="sobre">
+    <!-- Conteúdo principal -->
+    <div class="sobre-main">
+      <div class="sobre-copy reveal">
+        <span class="label">Sobre</span>
+        <h2 class="heading" style="font-family:'Michroma',sans-serif;font-size:56px;line-height:60px;color:var(--text)">Somos parte de algo maior</h2>
+        <p>O SENAI Soluções Digitais faz parte do SENAI/SC, uma das entidades que compõem a FIESC, Federação das Indústrias do Estado de Santa Catarina.</p>
+        <p>Dentro desse ecossistema, contamos com um time remoto espalhado pelo Brasil, que trabalha em conjunto com diferentes áreas e parceiros para transformar tecnologia, inovação e conhecimento em soluções para desafios reais.</p>
+        <p>Essa conexão nos aproxima de empresas, profissionais, especialistas, pesquisadores e dos desafios da indústria, criando um ambiente favorável para transformar ideias em soluções.</p>
+        <a href="https://fiesc.pandape.infojobs.com.br/" target="_blank" rel="noopener" class="btn btn-dark" style="margin-top:4px;width:fit-content">
+          Quero fazer parte desse time
+          <img src="assets/arrow-icon.svg" alt="" style="height:18px" />
+        </a>
+      </div>
+
+      <div class="sobre-fotos reveal" style="transition-delay:.2s">
+        <div class="sobre-foto foto-1"><img src="assets/about1.png" alt="Time SENAI" /></div>
+        <div class="sobre-foto foto-2"><img src="assets/about2.png" alt="Time SENAI" /></div>
+        <div class="sobre-foto foto-3"><img src="assets/about3.png" alt="Time SENAI" /></div>
+        <div class="sobre-foto foto-4"><img src="assets/about4.png" alt="Time SENAI" /></div>
+      </div>
+    </div>
+
+    <!-- Números -->
+    <div class="sobre-numeros">
+      <div class="numero-item reveal">
+        <span class="numero-value" data-target="100">0</span>
+        <span class="numero-label">Projetos entregues e em produção</span>
+      </div>
+      <div class="numero-sep"></div>
+      <div class="numero-item reveal" style="transition-delay:.1s">
+        <span class="numero-value" data-target="240">0</span>
+        <span class="numero-label">Especialistas dedicados a cada projeto</span>
+      </div>
+      <div class="numero-sep"></div>
+      <div class="numero-item reveal" style="transition-delay:.2s">
+        <span class="numero-value" data-target="20">0</span>
+        <span class="numero-label">Anos de experiência no mercado digital</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════
+       CONTATO
+  ═══════════════════════════ -->
+  <section id="contato">
+    <div class="contato-inner">
+      <div class="contato-header reveal">
+        <span class="label">Contato</span>
+        <h2 class="heading" style="font-size:56px;line-height:60px">Fale com a gente</h2>
+      </div>
+
+      <form class="contato-form reveal" style="transition-delay:.1s" id="contato-form"
+        action="https://formspree.io/f/xpwzgvqk"
+        method="POST">
+
+        <input type="hidden" name="_replyto" value="leonardomottameirellesdasilva@gmail.com" />
+        <input type="hidden" name="_subject" value="Nova mensagem — SENAI Soluções Digitais" />
+        <input type="hidden" name="_language" value="pt" />
+        <div class="form-field">
+          <label for="f-nome">Nome</label>
+          <input type="text" id="f-nome" placeholder="Digite seu nome" required />
+        </div>
+        <div class="form-field">
+          <label for="f-email">E-mail</label>
+          <input type="email" id="f-email" placeholder="Digite seu e-mail" required />
+        </div>
+        <div class="form-field">
+          <label for="f-assunto">Como podemos lhe ajudar?</label>
+          <div class="select-wrap">
+            <select id="f-assunto">
+              <option value="" disabled selected>Selecione um assunto</option>
+              <option>Novo projeto digital</option>
+              <option>Inteligência Artificial</option>
+              <option>Soluções AWS / Nuvem</option>
+              <option>Realidade Estendida (AR/VR)</option>
+              <option>Parceria estratégica</option>
+              <option>Outro</option>
+            </select>
+            <span class="select-arrow"><img src="assets/kbd-arrow.svg" alt="" /></span>
+          </div>
+        </div>
+        <div class="form-field">
+          <label for="f-msg">Mensagem</label>
+          <textarea id="f-msg" placeholder="Escreva sua mensagem"></textarea>
+        </div>
+        <div class="form-submit">
+          <button type="submit" class="btn btn-white">Enviar mensagem</button>
+        </div>
+
+        <div class="contato-alt">
+          <span>Prefere escrever direto?</span>
+          <a href="#" class="gmail-trigger" id="gmail-trigger">solucoesdigitais@sc.senai.br</a>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════
+       FOOTER
+  ═══════════════════════════ -->
+  <footer id="footer">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="footer-logo-wrap">
+          <img src="assets/logo-footer-full.svg" alt="SENAI Soluções Digitais" style="height:55px;width:auto" />
+        </div>
+        <p class="footer-tagline">Parte do ecossistema FIESC — tecnologia para a indústria catarinense.</p>
+        <div class="footer-social">
+          <a href="https://www.instagram.com/senaisolucoesdigitais.sc/" target="_blank" rel="noopener" aria-label="Instagram" style="display:inline-block;transition:opacity .2s">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block">
+              <path d="M9.28 0H22.72C27.84 0 32 4.16 32 9.28V22.72C32 25.1812 31.0223 27.5416 29.282 29.282C27.5416 31.0223 25.1812 32 22.72 32H9.28C4.16 32 0 27.84 0 22.72V9.28C0 6.81879 0.977712 4.45839 2.71805 2.71805C4.45839 0.977712 6.81879 0 9.28 0ZM8.96 3.2C7.43235 3.2 5.96727 3.80686 4.88707 4.88707C3.80686 5.96727 3.2 7.43235 3.2 8.96V23.04C3.2 26.224 5.776 28.8 8.96 28.8H23.04C24.5676 28.8 26.0327 28.1931 27.1129 27.1129C28.1931 26.0327 28.8 24.5676 28.8 23.04V8.96C28.8 5.776 26.224 3.2 23.04 3.2H8.96ZM24.4 5.6C24.9304 5.6 25.4391 5.81071 25.8142 6.18579C26.1893 6.56086 26.4 7.06957 26.4 7.6C26.4 8.13043 26.1893 8.63914 25.8142 9.01421C25.4391 9.38929 24.9304 9.6 24.4 9.6C23.8696 9.6 23.3609 9.38929 22.9858 9.01421C22.6107 8.63914 22.4 8.13043 22.4 7.6C22.4 7.06957 22.6107 6.56086 22.9858 6.18579C23.3609 5.81071 23.8696 5.6 24.4 5.6ZM16 8C18.1217 8 20.1566 8.84285 21.6569 10.3431C23.1571 11.8434 24 13.8783 24 16C24 18.1217 23.1571 20.1566 21.6569 21.6569C20.1566 23.1571 18.1217 24 16 24C13.8783 24 11.8434 23.1571 10.3431 21.6569C8.84285 20.1566 8 18.1217 8 16C8 13.8783 8.84285 11.8434 10.3431 10.3431C11.8434 8.84285 13.8783 8 16 8ZM16 11.2C14.727 11.2 13.5061 11.7057 12.6059 12.6059C11.7057 13.5061 11.2 14.727 11.2 16C11.2 17.273 11.7057 18.4939 12.6059 19.3941C13.5061 20.2943 14.727 20.8 16 20.8C17.273 20.8 18.4939 20.2943 19.3941 19.3941C20.2943 18.4939 20.8 17.273 20.8 16C20.8 14.727 20.2943 13.5061 19.3941 12.6059C18.4939 11.7057 17.273 11.2 16 11.2Z" fill="white"/>
+            </svg>
+          </a>
+          <a href="https://www.linkedin.com/company/senai-solu%C3%A7%C3%B5es-digitais/posts/?feedView=all" target="_blank" rel="noopener" aria-label="LinkedIn" style="display:inline-block;transition:opacity .2s">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block">
+              <path d="M0 2.292C0 1.026 1.052 0 2.35 0H29.65C30.948 0 32 1.026 32 2.292V29.708C32 30.974 30.948 32 29.65 32H2.35C1.052 32 0 30.974 0 29.708V2.292ZM9.886 26.788V12.338H5.084V26.788H9.886ZM7.486 10.364C9.16 10.364 10.202 9.256 10.202 7.868C10.172 6.45 9.162 5.372 7.518 5.372C5.874 5.372 4.8 6.452 4.8 7.868C4.8 9.256 5.842 10.364 7.454 10.364H7.486ZM17.302 26.788V18.718C17.302 18.286 17.334 17.854 17.462 17.546C17.808 16.684 18.598 15.79 19.926 15.79C21.664 15.79 22.358 17.114 22.358 19.058V26.788H27.16V18.5C27.16 14.06 24.792 11.996 21.632 11.996C19.084 11.996 17.942 13.396 17.302 14.382V12.338H12.502C12.562 13.694 12.502 26.788 12.502 26.788H17.302Z" fill="white"/>
+            </svg>
+          </a>
+          <a href="https://www.facebook.com/senaisolucoesdigitais.sc/" target="_blank" rel="noopener" aria-label="Facebook" style="display:inline-block;transition:opacity .2s">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block">
+              <path d="M32 16.4351C32 7.58098 24.832 0.39502 16 0.39502C7.168 0.39502 0 7.58098 0 16.4351C0 24.1985 5.504 30.6627 12.8 32.1544V21.2471H9.6V16.4351H12.8V12.4251C12.8 9.32936 15.312 6.81106 18.4 6.81106H22.4V11.6231H19.2C18.32 11.6231 17.6 12.3449 17.6 13.2271V16.4351H22.4V21.2471H17.6V32.395C25.68 31.593 32 24.7599 32 16.4351Z" fill="white"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="footer-nav">
+        <div class="footer-nav-col">
+          <span class="footer-nav-title">Navegue</span>
+          <div class="footer-nav-links">
+            <a href="#hero">Início</a>
+            <a href="#cases">Cases</a>
+            <a href="#servicos">Serviços</a>
+            <a href="#aws">AWS</a>
+            <a href="#sobre">Sobre</a>
+            <a href="#contato">Contato</a>
+          </div>
+        </div>
+        <div class="footer-nav-col">
+          <span class="footer-nav-title">Social</span>
+          <div class="footer-nav-links">
+            <a href="https://www.instagram.com/senaisolucoesdigitais.sc/" target="_blank" rel="noopener">Instagram</a>
+            <a href="https://www.linkedin.com/company/senai-solu%C3%A7%C3%B5es-digitais/posts/?feedView=all" target="_blank" rel="noopener">LinkedIn</a>
+            <a href="https://www.facebook.com/senaisolucoesdigitais.sc/" target="_blank" rel="noopener">Facebook</a>
+          </div>
+        </div>
+        <div class="footer-nav-col">
+          <span class="footer-nav-title">Trabalhe conosco</span>
+          <div class="footer-nav-links">
+            <a href="https://fiesc.pandape.infojobs.com.br/" target="_blank" rel="noopener">Ver vagas abertas</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-divider"></div>
+
+    <div class="footer-bottom">
+      <span class="footer-copy">© 2026 SENAI Soluções Digitais. Todos os direitos reservados.</span>
+      <a href="#hero" class="footer-back">
+        Voltar ao início
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M8 12L8 4M4 8L8 4L12 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+    </div>
+  </footer>
+
+  <!-- ═══════════════════════════
+       MODAL GMAIL COMPOSE
+  ═══════════════════════════ -->
+  <div class="gmail-overlay" id="gmail-overlay">
+    <div class="gmail-modal" role="dialog" aria-modal="true" aria-label="Compor e-mail">
+      <div class="gmail-header">
+        <span>Nova mensagem</span>
+        <button id="gmail-close" aria-label="Fechar">✕</button>
+      </div>
+
+      <div class="gmail-fields">
+        <div class="gmail-field">
+          <label>Para</label>
+          <input type="email" value="solucoesdigitais@sc.senai.br" readonly />
+        </div>
+        <div class="gmail-field">
+          <label>Assunto</label>
+          <input type="text" id="gmail-subject" placeholder="Assunto" value="Contato via site SENAI Soluções Digitais" />
+        </div>
+      </div>
+
+      <div class="gmail-body-wrap">
+        <textarea class="gmail-body" id="gmail-body" placeholder="Escreva sua mensagem..."></textarea>
+      </div>
+
+      <div class="gmail-footer">
+        <button class="gmail-send" id="gmail-send">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+          </svg>
+          Enviar no Gmail
+        </button>
+        <button class="gmail-discard" id="gmail-discard">Descartar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ═══════════════════════════
+    // MODAL GMAIL COMPOSE
+    // ═══════════════════════════
+    (function () {
+      const overlay  = document.getElementById('gmail-overlay');
+      const trigger  = document.getElementById('gmail-trigger');
+      const closeBtn = document.getElementById('gmail-close');
+      const discard  = document.getElementById('gmail-discard');
+      const sendBtn  = document.getElementById('gmail-send');
+      const bodyTA   = document.getElementById('gmail-body');
+      const subjectI = document.getElementById('gmail-subject');
+
+      function openModal(e) {
+        e && e.preventDefault();
+        overlay.classList.add('open');
+        setTimeout(() => bodyTA.focus(), 300);
+      }
+
+      function closeModal() {
+        overlay.classList.remove('open');
+      }
+
+      function sendMail() {
+        const to      = 'solucoesdigitais@sc.senai.br';
+        const subject = encodeURIComponent(subjectI.value || 'Contato via site SENAI Soluções Digitais');
+        const body    = encodeURIComponent(bodyTA.value || '');
+        const url     = `https://mail.google.com/mail/?view=cm&to=${to}&su=${subject}&body=${body}`;
+        window.open(url, '_blank', 'noopener');
+        closeModal();
+        bodyTA.value   = '';
+        subjectI.value = 'Contato via site SENAI Soluções Digitais';
+      }
+
+      trigger  && trigger.addEventListener('click',  openModal);
+      closeBtn && closeBtn.addEventListener('click',  closeModal);
+      discard  && discard.addEventListener('click',   closeModal);
+      sendBtn  && sendBtn.addEventListener('click',   sendMail);
+
+      overlay.addEventListener('click', function (e) {
+        if (e.target === overlay) closeModal();
+      });
+
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && overlay.classList.contains('open')) closeModal();
+      });
+    })();
+
+    // ═══════════════════════════
+    // PAGE LOADER
+    // ═══════════════════════════
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        document.getElementById('loader').classList.add('hidden');
+      }, 1400);
+    });
+
+    // ═══════════════════════════
+    // SMOOTH SCROLL (lerp — estilo Framer)
+    // ═══════════════════════════
+    (function () {
+      // Não aplicar em touch — scroll nativo já tem inércia
+      if ('ontouchstart' in window) return;
+
+      const HEADER_H = 103;
+      const EASE     = 0.08;  // inércia — menor = mais pesado
+
+      let current = window.scrollY;
+      let target  = window.scrollY;
+      let running = false;
+
+      function lerp(a, b, t) { return a + (b - a) * t; }
+
+      function clamp(v) {
+        return Math.max(0, Math.min(v, document.body.scrollHeight - window.innerHeight));
+      }
+
+      function tick() {
+        const diff = target - current;
+        if (Math.abs(diff) < 0.4) {
+          current = target;
+          window.scrollTo(0, current);
+          running = false;
+          return;
+        }
+        current = lerp(current, target, EASE);
+        window.scrollTo(0, current);
+        requestAnimationFrame(tick);
+      }
+
+      function start() {
+        if (!running) { running = true; requestAnimationFrame(tick); }
+      }
+
+      // ── Wheel / trackpad
+      window.addEventListener('wheel', function (e) {
+        e.preventDefault();
+        // normaliza delta entre mouse wheel e trackpad
+        const delta = e.deltaMode === 1 ? e.deltaY * 24 : e.deltaY;
+        target = clamp(target + delta);
+        current = window.scrollY;
+        start();
+      }, { passive: false });
+
+      // ── Teclado (PageDown, PageUp, Home, End, setas)
+      const keyMap = {
+        ArrowDown: 80, ArrowUp: -80,
+        PageDown: window.innerHeight * 0.9, PageUp: -(window.innerHeight * 0.9),
+        End: 99999, Home: -99999
+      };
+      window.addEventListener('keydown', function (e) {
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+        const delta = keyMap[e.key];
+        if (delta === undefined) return;
+        e.preventDefault();
+        target = clamp(target + delta);
+        current = window.scrollY;
+        start();
+      });
+
+      // ── Âncoras (cliques em #links)
+      function getOffsetTop(el) {
+        let top = 0;
+        while (el) { top += el.offsetTop; el = el.offsetParent; }
+        return top;
+      }
+
+      document.addEventListener('click', function (e) {
+        const link = e.target.closest('a[href^="#"]');
+        if (!link) return;
+        const id = link.getAttribute('href').slice(1);
+        if (!id) { e.preventDefault(); target = 0; current = window.scrollY; start(); return; }
+        const el = document.getElementById(id);
+        if (!el) return;
+        e.preventDefault();
+        target = clamp(getOffsetTop(el) - HEADER_H);
+        current = window.scrollY;
+        start();
+      });
+
+      // Sincroniza se o usuário usar scrollbar nativa
+      window.addEventListener('scroll', function () {
+        if (!running) {
+          current = window.scrollY;
+          target  = window.scrollY;
+        }
+      }, { passive: true });
+    })();
+    const header = document.getElementById('header');
+    window.addEventListener('scroll', () => {
+      header.classList.toggle('scrolled', window.scrollY > 40);
+      updateActiveNav();
+    }, { passive: true });
+
+    // ═══════════════════════════
+    // ACTIVE NAV
+    // ═══════════════════════════
+    const navLinks = document.querySelectorAll('.header-nav a');
+    const sections = document.querySelectorAll('section[id], div[id]');
+
+    function updateActiveNav() {
+      let current = '';
+      sections.forEach(s => {
+        if (window.scrollY >= s.offsetTop - 140) current = s.id;
+      });
+      navLinks.forEach(a => {
+        a.classList.toggle('active', a.getAttribute('href') === '#' + current);
+      });
+    }
+
+    // ═══════════════════════════
+    // REVEAL ON SCROLL
+    // ═══════════════════════════
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // ═══════════════════════════
+    // COUNTER ANIMATION
+    // ═══════════════════════════
+    const counterObserver = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          animateCounter(e.target);
+          counterObserver.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.5 });
+
+    document.querySelectorAll('[data-target]').forEach(el => counterObserver.observe(el));
+
+    function animateCounter(el) {
+      const target = parseInt(el.dataset.target);
+      const duration = 1800;
+      const start = performance.now();
+      function step(now) {
+        const progress = Math.min((now - start) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        el.textContent = Math.round(eased * target) + '+';
+        if (progress < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    }
+
+    // ═══════════════════════════
+    // CASE FILTERS
+    // ═══════════════════════════
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', function () {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        // animação de troca
+        const card = document.getElementById('case-card');
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(12px)';
+        setTimeout(() => {
+          card.style.transition = 'opacity .3s, transform .3s';
+          card.style.opacity = '1';
+          card.style.transform = 'translateY(0)';
+        }, 180);
+      });
+    });
+
+    // ═══════════════════════════
+    // CAROUSEL BTNS
+    // ═══════════════════════════
+    ['btn-prev', 'btn-next'].forEach(id => {
+      document.getElementById(id)?.addEventListener('click', () => {
+        const card = document.getElementById('case-card');
+        const dir = id === 'btn-prev' ? 1 : -1;
+        card.style.transition = 'opacity .2s, transform .2s';
+        card.style.opacity = '0';
+        card.style.transform = `translateX(${dir * 40}px)`;
+        setTimeout(() => {
+          card.style.transform = `translateX(${dir * -20}px)`;
+          setTimeout(() => {
+            card.style.transition = 'opacity .3s, transform .3s';
+            card.style.opacity = '1';
+            card.style.transform = 'translateX(0)';
+          }, 40);
+        }, 200);
+      });
+    });
+
+    // ═══════════════════════════
+    // FORM HANDLER — Formspree
+    // ═══════════════════════════
+    const contatoForm = document.getElementById('contato-form');
+    if (contatoForm) {
+      contatoForm.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        const btn = this.querySelector('[type=submit]');
+        const originalText = btn.textContent;
+
+        // Loading state
+        btn.textContent = 'Enviando...';
+        btn.disabled = true;
+        btn.style.opacity = '.7';
+
+        try {
+          const data = new FormData(this);
+          const res  = await fetch('https://formspree.io/f/xpwzgvqk', {
+            method:  'POST',
+            body:    data,
+            headers: { 'Accept': 'application/json' }
+          });
+
+          if (res.ok) {
+            btn.textContent  = 'Mensagem enviada ✓';
+            btn.style.background = '#16a34a';
+            btn.style.color  = '#fff';
+            btn.style.opacity = '1';
+            this.reset();
+            setTimeout(() => {
+              btn.textContent  = originalText;
+              btn.style.background = '';
+              btn.style.color  = '';
+              btn.disabled = false;
+            }, 4000);
+          } else {
+            throw new Error('Erro no envio');
+          }
+        } catch {
+          btn.textContent  = 'Erro ao enviar. Tente novamente.';
+          btn.style.background = '#dc2626';
+          btn.style.color  = '#fff';
+          btn.style.opacity = '1';
+          btn.disabled = false;
+          setTimeout(() => {
+            btn.textContent  = originalText;
+            btn.style.background = '';
+            btn.style.color  = '';
+          }, 4000);
+        }
+      });
+    }
+
+    // ═══════════════════════════
+    // FOTOS SOBRE — surgem em cascata
+    // ═══════════════════════════
+    const sobreFootos = document.querySelectorAll('.sobre-foto');
+    // ordem de surgimento: foto-1 (fundo) → foto-4 → foto-2 → foto-3 (de baixo pra cima na pilha)
+    const fotoOrder = ['foto-1', 'foto-4', 'foto-2', 'foto-3'];
+    const fotoDelay = [0, 180, 320, 480]; // ms entre cada
+
+    const sobreObserver = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          fotoOrder.forEach((cls, i) => {
+            const el = document.querySelector('.' + cls);
+            if (el) setTimeout(() => el.classList.add('foto-visible'), fotoDelay[i]);
+          });
+          sobreObserver.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.2 });
+
+    const sobreFotos = document.querySelector('.sobre-fotos');
+    if (sobreFotos) sobreObserver.observe(sobreFotos);
+    // ═══════════════════════════
+    const heroLogo = document.querySelector('.hero-logo-3d');
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        requestAnimationFrame(() => {
+          const hero = document.getElementById('hero');
+          const prog = Math.min(window.scrollY / hero.offsetHeight, 1);
+          if (heroLogo) {
+            heroLogo.style.transform = `translateY(${prog * -40}px) rotateX(${2 - prog * 20}deg) scale(${1 - prog * .1})`;
+            heroLogo.style.opacity = 1 - prog * .6;
+          }
+          ticking = false;
+        });
+        ticking = true;
+      }
+    }, { passive: true });
+  </script>
+</body>
+</html>
+
