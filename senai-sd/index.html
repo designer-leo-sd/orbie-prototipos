@@ -273,7 +273,7 @@
     ════════════════════════════════ */
     #logos-clientes {
       background: var(--dark2);
-      padding: 40px var(--pad) 80px;
+      padding: 40px 0 80px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -284,21 +284,15 @@
       gap: 64px;
     }
     .logo-item {
-      height: 58px;
       display: flex;
       align-items: center;
-      opacity: .65;
-      transition: opacity .2s;
       flex-shrink: 0;
     }
-    .logo-item:hover { opacity: 1; }
-    .logo-item img { height: 100%; object-fit: contain; filter: brightness(0) invert(1); }
-    .logo-sep {
-      color: var(--blue);
-      font-size: 24px;
-      line-height: 1;
-      opacity: .7;
+    .logo-item img {
+      display: block;
+      object-fit: contain;
     }
+    .logo-sep { color: var(--blue); font-size: 24px; line-height: 1; opacity: .7; }
 
     /* ════════════════════════════════
        CASES
@@ -1032,20 +1026,24 @@
   ═══════════════════════════ -->
   <div id="logos-clientes">
     <div class="logos-row reveal">
-      <div class="logo-item" style="height:48px">
-        <img src="assets/logo-p1.png" alt="Parceiro" />
-      </div>
-      <span class="logo-sep">❋</span>
+      <!-- WEG: 68×48px -->
       <div class="logo-item">
-        <img src="assets/logo-p2.svg" alt="Parceiro" />
+        <img src="assets/logo-weg.png" alt="WEG" width="68" height="48" style="width:68px;height:48px;object-fit:contain" />
       </div>
       <span class="logo-sep">❋</span>
-      <div class="logo-item" style="height:58px;width:194px">
-        <img src="assets/logo-p3.png" alt="Parceiro" style="width:100%;object-fit:contain" />
+      <!-- Governo de Santa Catarina / SENAI vectorized: 125×58px -->
+      <div class="logo-item">
+        <img src="assets/logo-senai-vec.svg" alt="Governo de Santa Catarina" width="125" height="58" style="width:125px;height:58px;object-fit:contain" />
       </div>
       <span class="logo-sep">❋</span>
-      <div class="logo-item" style="height:58px;width:189px">
-        <img src="assets/logo-p4.png" alt="Parceiro" style="width:100%;object-fit:contain" />
+      <!-- Festo: 194×58px -->
+      <div class="logo-item">
+        <img src="assets/logo-festo.png" alt="Festo" width="194" height="58" style="width:194px;height:58px;object-fit:contain" />
+      </div>
+      <span class="logo-sep">❋</span>
+      <!-- Diamante: 189×58px -->
+      <div class="logo-item">
+        <img src="assets/logo-diamante.png" alt="Diamante" width="189" height="58" style="width:189px;height:58px;object-fit:contain" />
       </div>
     </div>
   </div>
